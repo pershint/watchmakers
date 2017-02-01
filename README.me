@@ -1,8 +1,36 @@
-# Watchmakers (WATer CHerenkov Montecarlo and Analyisis Kit for Reactor Sensitivity) is a python module 
-# used by the Wacthman Collaboration for detector design studies.
-#  
-# It has three main purpose:
-#
-#  io_operations : Handles the generation of macro and submission jobs
-#  analysis	 : Applies analysis criteria and reduces the files format to a more manageable size
-#  sensitivity   : Evaluate Sensitivity of detector to a reactor signal
+Watchmakers (WATer CHerenkov Montecarlo and Analyisis Kit for Reactor Sensitivity) is a python module 
+used by the Wacthman Collaboration for detector design studies.
+  
+It has three main purpose:
+
+  io_operations : Handles the generation of macro and submission jobs
+  analysis	 : Applies analysis criteria and reduces the files format to a more manageable size
+  sensitivity   : Evaluate Sensitivity of detector to a reactor signal
+
+The module may be used in different ways. One way is simply to call the code directly in a macro. For example:
+
+   python watchmakers.py -m
+
+Will create macros for different signal and background in our detector. An environment script is setup for 
+simplicitiy (in bash).
+
+   source /path/to/watchmakers_env.sh
+   watch -m 
+
+Is equivalent to the line above. Watchmakers also allows the creation of jobs:
+
+   watch -j
+
+Will create jobs for the macros that were defined by the -m option. These two option are often used together. For
+example:
+
+   watch -m -j -e 10000 -N 100
+
+will generate macros 100 macros for each specific configuration (process [ie IBD], photocoverage [ie 20 percent],...), 
+with 10000 event to simulated per macro. Once each macro has been fed to rat-pac, the command
+
+  watch -M
+
+Will merge the resulting file such that only one file per specific configuration.
+
+ 
