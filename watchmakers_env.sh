@@ -1,4 +1,7 @@
-#!/bin/sh
-LOCATION="$PWD/watchmakers.py "
-##echo "alias watchmakers=\"python $LOCATION\""
-alias watchmakers="python $LOCATION"
+#!/bin/bash
+
+#echo $BASH_SOURCE
+LOC=`dirname $BASH_SOURCE`
+LOCATION="$PWD/$LOC/watchmakers.py "
+#echo $LOCATION
+alias watch="python $LOCATION"
