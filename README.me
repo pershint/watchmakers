@@ -1,11 +1,17 @@
-Watchmakers (WATer CHerenkov Montecarlo and Analyisis Kit for Reactor Sensitivity) is a python module 
-used by the Wacthman Collaboration for detector design studies.
+Watchmakers (WATer CHerenkov Montecarlo and Analyisis Kit for Reactor Sensitivity) 
+----------------------------------------------------------------------------------
+
+WATCHMAKERS is a python module used by the Wacthman Collaboration for detector design studies.
   
-It has three main purpose:
+It has three main objective:
 
   io_operations : Handles the generation of macro and submission jobs
-  analysis	 : Applies analysis criteria and reduces the files format to a more manageable size
+  analysis	: Applies analysis criteria and reduces the files format to a more manageable size
   sensitivity   : Evaluate Sensitivity of detector to a reactor signal
+
+
+-----------------------------------------------------------------------------------------------------------
+File IO:
 
 The module may be used in different ways. One way is simply to call the code directly in a macro. For example:
 
@@ -56,3 +62,5 @@ Options are:
     -R                  Read analyisis result
     -D                  Delete all current photocoverage directory.
     --fv                Fiducial Volome [Default: 5.42] 
+
+---------------------------------------------------------------------------------------
