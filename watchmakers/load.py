@@ -85,8 +85,11 @@ def loadSimulationParameters():
     d['CHAIN_232Th_NA'] = ['232Th','228Ac','212Pb','212Bi','208Tl']
     d['CHAIN_222Rn_NA'] = ['222Rn','214Pb','214Bi','210Bi','210Tl']
     # Radioisotope that should have beta-Neutron modes, (beta only generated)
-    A = ['16','17','18','17','18','8','9','11']
-    Z = ['6','6','6','7','7','2','3','3']
+#    A = ['16','17','18','17','18','8','9','11']
+#    Z = ['6','6','6','7','7','2','3','3']
+    #Reduced selection
+    A = ['9','11']
+    Z = ['3','3']
     ZA = A
     for i in range(len(A)):
         ZA[i] = str(int(A[i])*1000 +int(Z[i]))
