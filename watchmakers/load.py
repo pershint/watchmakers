@@ -45,14 +45,16 @@ docstring = """
     -r=<rate>           rate of accidentals in hz [Default: 10.0]
     -d=<distance>       Maximal distance between two events (m) [Default: 2.0]
     -t=<time>           Maximal time between two events (micro) [Default: 100.0]
-    -T=<tubes>          Minimal number of tubes hit [Default: 3.0]
+    -T=<tubes>          Minimal number of tubes hit [Default: 6.0]
     -g=<goodness>       Bonsai position goodness parameter [Default: 0.1]
-    -G=<goodness>       Bonsai direction goodness parameter [Default: 0.1]
+    -G=<Goodness>       Bonsai direction goodness parameter [Default: 0.1]
     -P                  Pick a single physics process to analyis (used for ntup)
     -C                  Pick a single coverage to analyse
     -R                  Read analyisis result
     -D                  Delete all current photocoverage directory.
-    --fv                Fiducial Volome [Default: 5.42]
+    --fv=<fidV>         Fiducial Volome [Default: 5.42]
+    --psup=<psupV>      Distance to PMT support, assuming right cylinder [Default: 6.4]
+    --tankDis=<tankV>   Distance to tank wall, assuming right cylinder [Default: 8.0001]
     """
 
 try:
@@ -65,8 +67,8 @@ except ImportError:
 
 gSystem.Load("libRATEvent")
 gSystem.AddIncludePath(" -I$RATROOT/include")
-gROOT.LoadMacro("$RATROOT/tools/photocoverageAnalysisOnlyData.C")
-from ROOT import photocoverageAnalysisOnlyData
+gROOT.LoadMacro("watchmakers/goldenFileExtractor.C")
+from ROOT import goldenFileExtractor
 
 def loadSimulationParameters():
     #Chain and subsequent isotopes

@@ -362,6 +362,10 @@ def extractNtuple(arguments):
     dirGoodness  = float(arguments['-G'])
     minNHIT      = float(arguments['-T'])
     file         = arguments["-f"]
+    fidV         = float(arguments["--fv"])
+    pmtV         = float(arguments["--psup"])
+    tankV        = float(arguments["--tankDis"])
+    
     print file
     d,iso,loc,coverage,coveragePCT = loadSimulationParameters()
-    photocoverageAnalysisOnlyData(file,minNHIT,goodness,dirGoodness,timemask,rate,distancemask)
+    goldenFileExtractor(file,minNHIT,goodness,dirGoodness,timemask,rate,distancemask,fidV,pmtV,tankV)

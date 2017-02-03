@@ -3,8 +3,8 @@ from load import *
 def fillHistograms(inFile,a1,t1,h,cover,ii,locj,covPCT):
     # Obtain logarithmic binnings
     nbins, xbins, ybins = logx_logy_array()
-    print arguments["--fv"]
-
+    fiducialVolume = arguments["--fv"]
+    print "Fiducial volume is ", fiducialVolume
     #Read-in file
     try:
         s =  "%s_%s_%s_%s.root"%(inFile,ii,cover,locj)
@@ -12,8 +12,8 @@ def fillHistograms(inFile,a1,t1,h,cover,ii,locj,covPCT):
         t           = root2rec(s)
 
         #Apply some analysis
-        r           = npa(t.reco_r<5.4,dtype=bool)
-        z           = npa(absolute(t.reco_z)<5.4,dtype=bool)
+        r           = npa(t.reco_r<fiducialVolume,dtype=bool)
+        z           = npa(absolute(t.reco_z)<fiducialVolume,dtype=bool)
         isFV        = logical_and(r,z,dtype=bool)
         notFV       = npa(isFV!=1,dtype=bool)
         isFV_t      = npa(t.FV_t==1,dtype=bool)
