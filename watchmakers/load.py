@@ -74,7 +74,7 @@ except ImportError:
 
 gSystem.Load("libRATEvent")
 gSystem.AddIncludePath(" -I$RATROOT/include")
-gROOT.LoadMacro("watchmakers/goldenFileExtractor.C")
+gROOT.LoadMacro("$WATCHENV/watchmakers/goldenFileExtractor.C")
 from ROOT import goldenFileExtractor
 
 def loadSimulationParameters():
