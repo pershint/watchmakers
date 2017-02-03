@@ -142,6 +142,7 @@ def jobString(percentage,j,runs,models,arguments):
     ratDir      = os.environ['RATROOT']
     rootDir     = os.environ['ROOTSYS']
     g4Dir       =  os.environ['G4INSTALL']
+    watchmakersDir = os.environ['WATCHENV']
     
     software    = "%s/bin/rat" %(ratDir)
     d,iso,loc,coverage,coveragePCT = loadSimulationParameters()
@@ -213,12 +214,13 @@ source %s/bin/thisroot.sh
 source %s/../../../bin/geant4.sh
 source %s/geant4make.sh
 source %s/env.sh
+source %s/env_wm.sh
 export G4NEUTRONHP_USE_ONLY_PHOTONEVAPORATION=1\n
 """ %(percentage,location,runs,\
 directory,percentage,location,runs,\
 directory,percentage,location,runs,\
 directory,\
-rootDir,g4Dir,g4Dir,ratDir)
+rootDir,g4Dir,g4Dir,ratDir,watchmakersDir)
 
     for mods in models:
         if location == "FN":
@@ -231,10 +233,10 @@ rootDir,g4Dir,g4Dir,ratDir)
             fileN = "root_files/%s/%s/watchman_%s_%s_%s_%d.root" %(mods,percentage,mods,percentage,location,runs)
             if additionalString != "":
                 fileNO = "ntuple_root_files/%s/%s/watchman_%s_%s_%s%s_%d.root" %(mods,percentage,mods,percentage,location,additionalString,runs)
-                line1 += "python watchmakers.py -n %s -f %s --ntupleout %s\n" %(additionalCommands,fileN,fileNO)
+                line1 += "watch -n %s -f %s --ntupleout %s\n" %(additionalCommands,fileN,fileNO)
 
             else:
-                line1 += "python watchmakers.py -n -f %s\n" %(fileN)
+                line1 += "watch -n -f %s\n" %(fileN)
 
     return line1
 
