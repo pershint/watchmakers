@@ -200,7 +200,7 @@ int goldenFileExtractor(const char *file, double nhit_min =3., double goodness_m
                     oldFVX = posReco.X();
                     oldFVY = posReco.Y();
                     oldFVZ = posReco.Z();
-                    cout << inner_dist_fv << endl;
+//                    cout << inner_dist_fv << endl;
 
                     
                 }else{
