@@ -224,8 +224,8 @@ rootDir,g4Dir,g4Dir,ratDir)
         if location == "FN":
             line1 += "export PHYSLIST=%s\n" %(mods)
         if case == 1 or case == 2:
-            line1 += "%s -l log/rat.%s_%s_%s_%d.log %s/macro_%s/run%s_%s_%d.mac\n" %(software,\
-                                                      percentage,mods,location,runs,\
+            line1 += "%s -l log/%s/%s/rat.%s_%s_%s_%d.log %s/macro_%s/run%s_%s_%d.mac\n" %(software,\
+                                                      mods,percentage,percentage,mods,location,runs,\
                                                                                  directory,percentage,mods,location,runs)
         if case == 1 or case == 3:
             fileN = "root_files/%s/%s/watchman_%s_%s_%s_%d.root" %(mods,percentage,mods,percentage,location,runs)
@@ -315,6 +315,13 @@ def generateJobs(N,arguments):
         for ii in d["%s"%(iso[int(j)])]:
             for idx,cover in enumerate(coverage):
                 directory = "ntuple_root_files/%s/%s" %(ii,cover)
+                if not os.path.exists(directory):
+                    os.makedirs(directory)
+
+    for j in range(len(iso)):
+        for ii in d["%s"%(iso[int(j)])]:
+            for idx,cover in enumerate(coverage):
+                directory = "log/%s/%s" %(ii,cover)
                 if not os.path.exists(directory):
                     os.makedirs(directory)
 
