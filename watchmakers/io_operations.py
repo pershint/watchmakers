@@ -285,8 +285,15 @@ def generateJobs(N,arguments):
         rmtree(directory)
         os.makedirs(directory)
 
-
-
+    for j in range(len(iso)):
+        for ii in d["%s"%(iso[int(j)])]:
+            for idx,cover in enumerate(coverage):
+                directory = "jobs/%s/%s" %(ii,cover)
+                if not os.path.exists(directory):
+                    os.makedirs(directory)
+                else:
+                    rmtree(directory)
+                    os.makedirs(directory)
 
     '''Find wheter the jobs folder exist: if no create, if yes clean and recreate'''
     directory = 'log'
@@ -350,7 +357,7 @@ def generateJobs(N,arguments):
             models  = d["%s" %(iso[j])]
             for index in range(N):
                 line = jobString(cover,j,index,models,arguments)
-                stringFile = "jobs/jobs%s_%s_%s_%d.sh" %(cover,\
+                stringFile = "jobs/%s/%s/jobs%s_%s_%s_%d.sh" %(loc[j],cover,cover,\
                                                             "%s"%(iso[int(j)]),loc[j],index)
                 if index == 0:
                     job_list+= '(msub ' + stringFile +') || ./'+ stringFile + '\n'
@@ -358,8 +365,8 @@ def generateJobs(N,arguments):
                 outfile = open(stringFile,"wb")
                 outfile.writelines(line)
                 if index < N-1:
-                    stringFile1 = "(msub jobs/jobs%s_%s_%s_%d.sh || ./jobs/jobs%s_%s_%s_%d.sh)" %(cover,\
-                                                                                                 "%s"%(iso[int(j)]),loc[j],index+1,cover,\
+                    stringFile1 = "(msub jobs/%s/%s/jobs%s_%s_%s_%d.sh || ./jobs/%s/%s/jobs%s_%s_%s_%d.sh)" %(loc[j],cover,cover,\
+                                                                                                 "%s"%(iso[int(j)]),loc[j],index+1,loc[j],cover,cover,\
                                                                                                  "%s"%(iso[int(j)]),loc[j],index+1)
                     outfile.writelines(stringFile1)
                 outfile.close
