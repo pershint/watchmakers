@@ -42,7 +42,7 @@ int goldenFileExtractor(const char *file, double nhit_min =3., double goodness_m
     
     //Define all the analysis parameters
     Double_t totPE = 0.0,totNHIT = 0,totMom,goodness,dirGoodness,qTmp,timeTmp,timeTmp1,n9;
-    Double_t oldX=-1e9,oldY=-1e9,oldZ=-1e9,newX,newY,newZ,dirX,dirY,dirZ;
+    Double_t oldX=-1e9,oldY=-1e9,oldZ=-1e9,newX,newY,newZ,dirX,dirY,dirZ,oldFVX=-1e9,oldFVY=-1e9,oldFVZ=-1e9,oldFVT;
     Double_t totQB = 0.0, q2 = 0.0, pmtCount = 0.0;
     Int_t ibd=0,es=0,cc=0,icc=0,nc=0,old_singal,evt;
     Double_t cosTheta,cosThetaSN,cosThetaSNIBD, local_time,local_time_tmp,delta_time,mc_nu_energy,mc_energy;
@@ -56,7 +56,7 @@ int goldenFileExtractor(const char *file, double nhit_min =3., double goodness_m
     TVector3 posTruth,posReco,dirTruth,dirNu,dirReco,dirIBD,pos1,pos2;
     
     Int_t totcandidates, totMultiples;
-    Double_t inner_dist,inner_time;;
+    Double_t inner_dist,inner_time,inner_dist_fv,inner_time_fv;
     Int_t SV,old_FV,FV,GSV,IV,EV,OV,FV_t,GSV_t,IV_t,EV_t,OV_t,cnt_1,tot_FV,consecutive_FV;
     
     TTree *data = new TTree("data","low-energy detector events");
@@ -103,7 +103,8 @@ int goldenFileExtractor(const char *file, double nhit_min =3., double goodness_m
     
     data->Branch("inner_dist",&inner_dist,"inner_dist/D");
     data->Branch("inner_time",&inner_time,"inner_time/D");
-    //    data->Branch("old_FV",&old_FV,"old_FV/I");
+    data->Branch("inner_dist_fv",&inner_dist_fv,"inner_dist_fv/D");
+//    data->Branch("inner_time_fv",&inner_time_fv,"inner_time_fv/D");    //    data->Branch("old_FV",&old_FV,"old_FV/I");
     data->Branch("tot_FV",&tot_FV,"tot_FV/I");
     data->Branch("consecutive_FV",&consecutive_FV,"consecutive_FV/I");
     vector <double> subeventInfo;
@@ -195,8 +196,15 @@ int goldenFileExtractor(const char *file, double nhit_min =3., double goodness_m
                 if (FV==1) {
                     tot_FV+=1;
                     consecutive_FV+=1;
+                    inner_dist_fv =sqrt(pow(posReco.X()-oldFVX,2)+ pow(posReco.Y()-oldFVY,2)+pow(posReco.Z()-oldFVZ,2))/1000.
+                    oldFVX = posReco.X();
+                    oldFVY = posReco.Y();
+                    oldFVZ = posReco.Z();
+
+                    
                 }else{
                     consecutive_FV=0;
+                    inner_dist_fv = 0.;
                 }
                 
                 
