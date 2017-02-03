@@ -17,7 +17,7 @@ if __name__ == "__main__":
     if arguments['-m']:
         generateMacros(int(arguments['-N']),int(arguments['-e']))
 
-    if arguments['-j']:
+    if arguments['-j'] != "0":
         generateJobs(int(arguments['-N']),arguments)
 
     if arguments['-n']:

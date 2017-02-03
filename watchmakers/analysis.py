@@ -16,8 +16,8 @@ def fillHistograms(inFile,a1,t1,h,cover,ii,locj,covPCT):
         z           = npa(absolute(t.reco_z)<fiducialVolume,dtype=bool)
         isFV        = logical_and(r,z,dtype=bool)
         notFV       = npa(isFV!=1,dtype=bool)
-        isFV_t      = npa(t.FV_t==1,dtype=bool)
-        notFV_t     = npa(t.FV_t!=1,dtype=bool)
+        isFV_t      = npa(t.FV_truth==1,dtype=bool)
+        notFV_t     = npa(t.FV_truth!=1,dtype=bool)
 
         iCandidate  = npa(t.candidate==1,dtype=bool)
         totalEvtGen = npa(t.all_ev==t.all_ev_tot,dtype=bool)

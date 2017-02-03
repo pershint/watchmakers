@@ -20,7 +20,7 @@ TRandom3 randNum;
 
 //#include <libRATEvent.h>
 
-int goldenFileExtractor(const char *file, double nhit_min =3., double goodness_min = 0.1, double goodness_dir = 0.1, double timeWindow_ns = 100000, double rate = 10.0, double maxDistance = 2.0, double fidBound = 5.4, double pmtBound = 6.4, double tankBound = 8.00001) {
+int goldenFileExtractor(const char *file, double nhit_min =3., double goodness_min = 0.1, double goodness_dir = 0.1, double timeWindow_ns = 100000, double rate = 10.0, double maxDistance = 2.0, double fidBound = 5.4, double pmtBound = 6.4, double tankBound = 8.0000, const char *outfile = "null") {
     
     // Define the incoming out outgoing Trees
     TFile *f = new TFile(file);
@@ -28,12 +28,19 @@ int goldenFileExtractor(const char *file, double nhit_min =3., double goodness_m
     if (tree==0x0){
         return -1;
     }
-    
-    TFile *f_out = new TFile(Form("ntuple_%s",f->GetName()),"Recreate");
-    
+    TFile *f_out;
+    printf("outfile: %s\n",outfile);
+    if (TString(outfile) == TString("null")) {
+        printf("we have no entries...\n");
+        f_out = new TFile(Form("ntuple_%s",f->GetName()),"Recreate");
+    }else{
+        printf("Trigger this also...\n");
+        
+        f_out = new TFile(outfile,"Recreate");
+    }
+        
     RAT::DS::Root *rds = new RAT::DS::Root();
     tree->SetBranchAddress("ds", &rds);
-    
     int nEvents = tree->GetEntries();
     
     //Define all the analysis parameters
@@ -41,7 +48,6 @@ int goldenFileExtractor(const char *file, double nhit_min =3., double goodness_m
     Double_t oldX=-1e9,oldY=-1e9,oldZ=-1e9,newX,newY,newZ,dirX,dirY,dirZ;
     Double_t totQB = 0.0, q2 = 0.0, pmtCount = 0.0;
     Int_t ibd=0,es=0,cc=0,icc=0,nc=0,old_singal,evt;
-    
     Double_t cosTheta,cosThetaSN,cosThetaSNIBD, local_time,local_time_tmp,delta_time,mc_nu_energy,mc_energy;
     
     int sub_ev=0,cnt_all = 0;
@@ -54,14 +60,13 @@ int goldenFileExtractor(const char *file, double nhit_min =3., double goodness_m
     
     Int_t totcandidates, totMultiples;
     Double_t inner_dist,inner_time;;
-    Int_t SV,old_FV,FV,GSV,IV,EV,OV,FV_t,GSV_t,IV_t,EV_t,OV_t,cnt_1;
+    Int_t SV,old_FV,FV,GSV,IV,EV,OV,FV_t,GSV_t,IV_t,EV_t,OV_t,cnt_1,tot_FV;
     
     TTree *data = new TTree("data","low-energy detector events");
     data->Branch("pe",&totPE,"pe/D");
     data->Branch("nhit",&totNHIT,"nhit/D");
     data->Branch("n9",&n9,"n9/D");
-//    data->Branch("cosTheta",&cosTheta,"cosTheta/D");
-
+    
     data->Branch("delta_time_ns",&delta_time,"delta_time_s/D");
     data->Branch("detected_ev",&sub_ev,"detected_ev/I");
     data->Branch("detected_ev_tot",&cnt,"detected_ev_tot/I");
@@ -85,8 +90,6 @@ int goldenFileExtractor(const char *file, double nhit_min =3., double goodness_m
     
     data->Branch("dir_goodness",&dirGoodness,"dir_goodness/D");
     data->Branch("dirReco","TVector3",&dirReco,32000,0);
-    //    data->Branch("dirPrimaryMC","TVector3",&dirIBD,32000,0);
-    //    data->Branch("dirTruth","TVector3",&dirTruth,32000,0);
     data->Branch("dirPrimaryMC","TVector3",&dirNu,32000,0);
     
     data->Branch("FV",&FV,"FV/I");
@@ -95,16 +98,16 @@ int goldenFileExtractor(const char *file, double nhit_min =3., double goodness_m
     data->Branch("OV",&OV,"OV/I");
     data->Branch("IV",&IV,"IV/I");
     
-    data->Branch("FV_t",&FV_t,"FV_t/I");
-    data->Branch("GSV_t",&GSV_t,"GSV_t/I");
-    data->Branch("EV_t",&EV_t,"EV_t/I");
-    data->Branch("OV_t",&OV_t,"OV_t/I");
-    data->Branch("IV_t",&IV_t,"IV_t/I");
+    data->Branch("FV_truth",&FV_t,"FV_truth/I");
+    data->Branch("GSV_truth",&GSV_t,"GSV_truth/I");
+    data->Branch("EV_truth",&EV_t,"EV_truth/I");
+    data->Branch("OV_truth",&OV_t,"OV_truth/I");
+    data->Branch("IV_truth",&IV_t,"IV_truth/I");
     
     data->Branch("inner_dist",&inner_dist,"inner_dist/D");
     data->Branch("inner_time",&inner_time,"inner_time/D");
-    data->Branch("old_FV",&old_FV,"old_FV/I");
-    
+    //    data->Branch("old_FV",&old_FV,"old_FV/I");
+    data->Branch("tot_FV",&tot_FV,"tot_FV/I");
     vector <double> subeventInfo;
     vector<vector <double> > eventInfo;
     RAT::DS::MC *mc;
@@ -135,10 +138,10 @@ int goldenFileExtractor(const char *file, double nhit_min =3., double goodness_m
         subeventInfo.resize(0);
         eventInfo.resize(0);
         
-        cnt_all = cnt = old_FV =  0 ;
+        cnt_all = cnt = old_FV = tot_FV =  0 ;
         
         if(subevents == 0){
-//            resetVector(subeventInfo,eventInfo);
+            //            resetVector(subeventInfo,eventInfo);
             sub_ev      = 0;
             inner_time  = 0;
             inner_dist  = 0;
@@ -159,7 +162,7 @@ int goldenFileExtractor(const char *file, double nhit_min =3., double goodness_m
             dirReco     = TVector3(0.,0.,0.);
             cnt_1       = 0;
             data->Fill();
-
+            
         }
         
         for (int k = 0; k<subevents; k++) {
@@ -191,7 +194,10 @@ int goldenFileExtractor(const char *file, double nhit_min =3., double goodness_m
                 r = sqrt(pow(posReco.X(),2)+ pow(posReco.Y(),2))/1000.;
                 z = posReco.Z()/1000.;
                 FindVolume(r,z,FV,GSV,IV,EV,OV,fidBound,pmtBound,tankBound);
-
+                if (FV==1) {
+                    tot_FV+=1;
+                }
+                
                 //                printf("%d %f\n",cnt,timeTmp);
                 if (cnt ==1) {
                     inner_dist = sqrt(pow(newX-oldX,2)+ pow(newY-oldY,2) + pow(newZ-oldZ,2))/1000.;
@@ -250,7 +256,7 @@ int goldenFileExtractor(const char *file, double nhit_min =3., double goodness_m
                     subeventInfo.push_back(abs(timeDiff));      //1 time difference
                     subeventInfo.push_back(inner_dist);         //2 distance
                     if (timeDiff < timeWindow_ns && inner_dist < maxDistance) {
-//                        eventInfo[cnt-2][3] = 1 ; // Issue with this if no event in middle
+                        //                        eventInfo[cnt-2][3] = 1 ; // Issue with this if no event in middle
                         subeventInfo.push_back(1);              //3a is a candidate
                         if(eventInfo[cnt-2][13] == 1){
                             old_FV = 1;
@@ -280,7 +286,7 @@ int goldenFileExtractor(const char *file, double nhit_min =3., double goodness_m
                     subeventInfo.push_back(dirZ);               //21 New z direction
                     subeventInfo.push_back(cnt_all);            //22 All sub-ev
                     subeventInfo.push_back(n9);                 //23 hit in 9 nanosecond
-
+                    
                     eventInfo.push_back(subeventInfo);
                     subeventInfo.resize(0);
                     
@@ -294,7 +300,7 @@ int goldenFileExtractor(const char *file, double nhit_min =3., double goodness_m
                 subeventInfo.push_back(totNHIT);                //4 Record nhit
                 subeventInfo.push_back(totPE);                  //5 record photoelectrons
                 subeventInfo.push_back(0);                     //6 is in Fiducial Volume
-
+                
                 subeventInfo.push_back(0);                    //7 is in GammaShield volume
                 subeventInfo.push_back(0);                     //8 is in InnerVolume
                 subeventInfo.push_back(0);                     //9 is in EntireVolume
@@ -312,7 +318,7 @@ int goldenFileExtractor(const char *file, double nhit_min =3., double goodness_m
                 subeventInfo.push_back(0);                   //21 New z direction
                 subeventInfo.push_back(cnt_all);              //22 All sub-ev
                 subeventInfo.push_back(n9);                 //23 hit in 9 nanosecond
-
+                
                 eventInfo.push_back(subeventInfo);
                 subeventInfo.resize(0);
                 
@@ -342,7 +348,7 @@ int goldenFileExtractor(const char *file, double nhit_min =3., double goodness_m
             n9          = eventInfo[evt_idx][23];
             data->Fill();
         }
-
+        
     }
     
     data->Write();
@@ -403,6 +409,6 @@ void resetVector(    vector <double> subeventInfo,vector<vector <double> > &even
     subeventInfo.push_back(0.0);
     eventInfo.push_back(subeventInfo);
     
-
+    
 }
 

@@ -44,10 +44,10 @@ def macroGenerator(percentage,isotope,location,runs,events):
 
 # Use IO.default_output_filename
 /rat/proclast outroot
-/rat/procset file "%s/root_files/watchman_%s_%s_%s_%d.root"
+/rat/procset file "%s/root_files/%s/%s/watchman_%s_%s_%s_%d.root"
 #END EVENT LOOP
 
-''' %(covPCT[percentage],dir,isotope,percentage,location,runs)
+''' %(covPCT[percentage],dir,isotope,percentage,isotope,percentage,location,runs)
     
     
     #Part of macro that varies with the various conditions
@@ -150,8 +150,53 @@ def jobString(percentage,j,runs,models,arguments):
     location = loc[j]
     
     goodness     = float(arguments['-g'])
+    case = int(arguments['-j'])
+#    print defaultValues
 
+    additionalString      = ""
+    additionalCommands    = ""
+
+    if float(arguments['-r'])          != defaultValues[6]:
+        additionalString += "_rate_%f" %(float(arguments['-r']))
+        additionalCommands += " -r %f " %(float(arguments['-r']))
     
+    if float(arguments['-d'])          != defaultValues[7]:
+        additionalString += "_deltaR_%f" %(float(arguments['-d']))
+        additionalCommands += " -d %f" %(float(arguments['-d']))
+    
+    if float(arguments['-t'])          != defaultValues[8]:
+        additionalString += "_deltaT_%f" %(float(arguments['-t']))
+        additionalCommands +=  " -t %f" %(float(arguments['-t']))
+
+    if float(arguments['-T'])            != (defaultValues[9]):
+        additionalString += "_nhitMin_%d" %(int(arguments['-T']))
+        additionalCommands += " -T %d" %(int(arguments['-T']))
+
+    if float(arguments['-g'])          != defaultValues[10]:
+        additionalString += "_posGood_%f" %(float(arguments['-g']))
+        additionalCommands += " -g %f" %(float(arguments['-g']))
+
+    if float(arguments['-G'])          != defaultValues[11]:
+        additionalString += "_dirGood_%f" %(float(arguments['-G']))
+        additionalCommands += " -G %f" %(float(arguments['-G']))
+
+    if float(arguments['--fv'])        !=  defaultValues[12]:
+        additionalString += "_FVboundary_%f" %(float(arguments['--fv']))
+        additionalCommands +=  "--fv %f" %(float(arguments['--fv']))
+
+    if float(arguments['--psup'])      != defaultValues[13]:
+        additionalString += "_PMTboundary_%f" %(float(arguments['--psup']))
+        additionalCommands += "--psup %f" %(float(arguments['--psup']))
+
+    if float(arguments['--tankDis'])   != defaultValues[14]:
+        additionalString += "_Tankboundary_%f" %(float(arguments['--tankDist']))
+        additionalCommands +=" --tankDist %f" %(float(arguments['--tankDist']))
+
+
+    if additionalString != "":
+        print additionalString
+        print additionalCommands
+        print type(additionalCommands)
 
     line1 = """#!/bin/sh
 #MSUB -N WM_%s_%s_%d    #name of job
@@ -178,12 +223,18 @@ rootDir,g4Dir,g4Dir,ratDir)
     for mods in models:
         if location == "FN":
             line1 += "export PHYSLIST=%s\n" %(mods)
-        
-        line1 += "%s -l log/rat.%s_%s_%s_%d.log %s/macro_%s/run%s_%s_%d.mac\n" %(software,\
+        if case == 1 or case == 2:
+            line1 += "%s -l log/rat.%s_%s_%s_%d.log %s/macro_%s/run%s_%s_%d.mac\n" %(software,\
                                                       percentage,mods,location,runs,\
                                                                                  directory,percentage,mods,location,runs)
-        fileN = "root_files/watchman_%s_%s_%s_%d.root" %(mods,percentage,location,runs)
-        line1 += "python watchmakers.py -n -g %f -f %s\n" %(goodness,fileN)
+        if case == 1 or case == 3:
+            fileN = "root_files/%s/%s/watchman_%s_%s_%s_%d.root" %(mods,percentage,mods,percentage,location,runs)
+            if additionalString != "":
+                fileNO = "ntuple_root_files/%s/%s/watchman_%s_%s_%s%s_%d.root" %(mods,percentage,mods,percentage,location,additionalString,runs)
+                line1 += "python watchmakers.py -n %s -f %s --ntupleout %s\n" %(additionalCommands,fileN,fileNO)
+
+            else:
+                line1 += "python watchmakers.py -n -f %s\n" %(fileN)
 
     return line1
 
@@ -232,6 +283,9 @@ def generateJobs(N,arguments):
         rmtree(directory)
         os.makedirs(directory)
 
+
+
+
     '''Find wheter the jobs folder exist: if no create, if yes clean and recreate'''
     directory = 'log'
     if not os.path.exists(directory):
@@ -240,13 +294,30 @@ def generateJobs(N,arguments):
         rmtree(directory)
         os.makedirs(directory)
 
-    directory = 'root_files'
-    if not os.path.exists(directory):
-        os.makedirs(directory)
+#    directory = 'root_files'
+#    if not os.path.exists(directory):
+#        os.makedirs(directory)
 
-    directory = 'ntuple_root_files'
-    if not os.path.exists(directory):
-        os.makedirs(directory)
+    for j in range(len(iso)):
+        for ii in d["%s"%(iso[int(j)])]:
+            for idx,cover in enumerate(coverage):
+                directory = "root_files/%s/%s" %(ii,cover)
+                if not os.path.exists(directory):
+                    os.makedirs(directory)
+
+
+#
+#    directory = 'ntuple_root_files'
+#    if not os.path.exists(directory):
+#        os.makedirs(directory)
+
+    for j in range(len(iso)):
+        for ii in d["%s"%(iso[int(j)])]:
+            for idx,cover in enumerate(coverage):
+                directory = "ntuple_root_files/%s/%s" %(ii,cover)
+                if not os.path.exists(directory):
+                    os.makedirs(directory)
+
 
     '''Make sure that the softlink are correct for Bonsai input'''
 
@@ -341,7 +412,7 @@ def mergeFiles():
                 t_name  = "data_%s_%s_%s"%(ii,cover,loc[j])
                 trees[t_name] = TChain("data")
                 
-                s = "ntuple_root_files/watchman_%s_%s_%s_*.root" %(ii,cover,loc[j])
+                s = "ntuple_root_files/%s/%s/watchman_%s_%s_%s_*.root" %(ii,cover,ii,cover,loc[j])
                 sw = "%s_%s_%s_%s.root"%(pathFinal,ii,cover,loc[j])
             
                 print "Writing ", sw,"from",s
@@ -365,7 +436,9 @@ def extractNtuple(arguments):
     fidV         = float(arguments["--fv"])
     pmtV         = float(arguments["--psup"])
     tankV        = float(arguments["--tankDis"])
+    outF         = arguments["--ntupleout"]
     
     print file
     d,iso,loc,coverage,coveragePCT = loadSimulationParameters()
-    goldenFileExtractor(file,minNHIT,goodness,dirGoodness,timemask,rate,distancemask,fidV,pmtV,tankV)
+    goldenFileExtractor(file,minNHIT,goodness,dirGoodness,timemask,\
+                        rate,distancemask,fidV,pmtV,tankV,outF)

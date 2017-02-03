@@ -27,35 +27,42 @@ try:
 except:
     print "Could not load in root_numpy or rootpy, they are required to run this module."
 
+defaultValues  = [3,5000,0,'root_files/merged_ntuple_watchman','null', \
+                  'processed_watchman.root',10.,2.0,100.0,6.0,0.1,0.1,5.42,6.4,8.0]
+
 docstring = """
     Usage: watchmakers.py [options]
     
     Arguments:
     
     Options:
-    -f=<ifile>          Input file [Default: root_files/merged_ntuple_watchman]
-    -o=<outputfile>     Optional output file [Default: processed_watchman.root]
-    -M                  Merge result files
     -m                  generate macro files
-    -n                  generate ntuple from analysis files
-    -N=<N>              Number of MC script that were run [Default: 3]
-    -e=<runBeamEntry>   Number of entries per macro [Default: 5000]
+    -N=<N>              Number of MC script that were run [Default: %d]
+    -e=<runBeamEntry>   Number of entries per macro [Default: %d]
+    -j=<jobType>        Create submision scripts and macros [Default: %d]
+    -f=<ifile>          Input file [Default: %s]
+    --ntupleout=<outN>  Name of ntuple out [Default: %s]
+    -n                  generate ntuple from rat-pac root files
+    -o=<outputfile>     Efficiency output file [Default: %s]
+    -M                  Merge result files
     -a                  Do the analysis on the merged file
-    -j                  Create submision scripts and macros
-    -r=<rate>           rate of accidentals in hz [Default: 10.0]
-    -d=<distance>       Maximal distance between two events (m) [Default: 2.0]
-    -t=<time>           Maximal time between two events (micro) [Default: 100.0]
-    -T=<tubes>          Minimal number of tubes hit [Default: 6.0]
-    -g=<goodness>       Bonsai position goodness parameter [Default: 0.1]
-    -G=<Goodness>       Bonsai direction goodness parameter [Default: 0.1]
+    -r=<rate>           rate of accidentals in hz [Default: %f]
+    -d=<distance>       Maximal distance between two events (m) [Default: %f]
+    -t=<time>           Maximal time between two events (micro) [Default: %f]
+    -T=<tubes>          Minimal number of tubes hit [Default: %f]
+    -g=<goodness>       Bonsai position goodness parameter [Default: %f]
+    -G=<Goodness>       Bonsai direction goodness parameter [Default: %f]
     -P                  Pick a single physics process to analyis (used for ntup)
     -C                  Pick a single coverage to analyse
     -R                  Read analyisis result
     -D                  Delete all current photocoverage directory.
-    --fv=<fidV>         Fiducial Volome [Default: 5.42]
-    --psup=<psupV>      Distance to PMT support, assuming right cylinder [Default: 6.4]
-    --tankDis=<tankV>   Distance to tank wall, assuming right cylinder [Default: 8.0001]
-    """
+    --fv=<fidV>         Fiducial Volome [Default: %f]
+    --psup=<psupV>      Distance to PMT support, assuming right cylinder [Default: %f]
+    --tankDis=<tankV>   Distance to tank wall, assuming right cylinder [Default: %f]
+    """ % (defaultValues[0],defaultValues[1],defaultValues[2],defaultValues[3],\
+           defaultValues[4],defaultValues[5],defaultValues[6],defaultValues[7],\
+           defaultValues[8],defaultValues[9],defaultValues[10],defaultValues[11],\
+           defaultValues[12],defaultValues[13],defaultValues[14])
 
 try:
     import docopt
