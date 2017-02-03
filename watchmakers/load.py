@@ -27,7 +27,7 @@ try:
 except:
     print "Could not load in root_numpy or rootpy, they are required to run this module."
 
-defaultValues  = [3,5000,0,'root_files/merged_ntuple_watchman','null', \
+defaultValues  = [3,2500,0,'root_files/merged_ntuple_watchman','null', \
                   'processed_watchman.root',10.,2.0,100.0,6.0,0.1,0.1,5.42,6.4,8.0]
 
 docstring = """
@@ -38,7 +38,7 @@ docstring = """
     Options:
     -m                  generate macro files
     -N=<N>              Number of MC script that were run [Default: %d]
-    -e=<runBeamEntry>   Number of entries per macro [Default: %d]
+    -e=<runBeamEntry>   Number of entries per macro (U/Th event x5) [Default: %d]
     -j=<jobType>        Create submision scripts and macros [Default: %d]
     -f=<ifile>          Input file [Default: %s]
     --ntupleout=<outN>  Name of ntuple out [Default: %s]

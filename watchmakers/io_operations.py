@@ -56,14 +56,14 @@ def macroGenerator(percentage,isotope,location,runs,events):
 /generator/add decaychain %s:regexfill
 /generator/pos/set inner_pmts[0-9]+
 
-/run/beamOn %d''' %(isotope,events)
+/run/beamOn %d''' %(isotope,events*5)
     elif location == 'FV':
         line1 = '''
 /generator/add decaychain %s:fill:poisson
 /generator/pos/set  0 0 0
 /generator/rate/set 6.43
 
-/run/beamOn %d''' %(isotope,events)
+/run/beamOn %d''' %(isotope,events*5)
     elif location == 'FN':
         line1 = '''
 /generator/add combo fastneutron:regexfill
