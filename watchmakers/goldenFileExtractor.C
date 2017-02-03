@@ -196,7 +196,7 @@ int goldenFileExtractor(const char *file, double nhit_min =3., double goodness_m
                 if (FV==1) {
                     tot_FV+=1;
                     consecutive_FV+=1;
-                    inner_dist_fv =sqrt(pow(posReco.X()-oldFVX,2)+ pow(posReco.Y()-oldFVY,2)+pow(posReco.Z()-oldFVZ,2))/1000.
+                    inner_dist_fv =sqrt(pow(posReco.X()-oldFVX,2)+ pow(posReco.Y()-oldFVY,2)+pow(posReco.Z()-oldFVZ,2))/1000.;
                     oldFVX = posReco.X();
                     oldFVY = posReco.Y();
                     oldFVZ = posReco.Z();
