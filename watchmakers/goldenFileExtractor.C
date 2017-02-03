@@ -60,7 +60,7 @@ int goldenFileExtractor(const char *file, double nhit_min =3., double goodness_m
     
     Int_t totcandidates, totMultiples;
     Double_t inner_dist,inner_time;;
-    Int_t SV,old_FV,FV,GSV,IV,EV,OV,FV_t,GSV_t,IV_t,EV_t,OV_t,cnt_1,tot_FV;
+    Int_t SV,old_FV,FV,GSV,IV,EV,OV,FV_t,GSV_t,IV_t,EV_t,OV_t,cnt_1,tot_FV,consecutive_FV;
     
     TTree *data = new TTree("data","low-energy detector events");
     data->Branch("pe",&totPE,"pe/D");
@@ -108,6 +108,7 @@ int goldenFileExtractor(const char *file, double nhit_min =3., double goodness_m
     data->Branch("inner_time",&inner_time,"inner_time/D");
     //    data->Branch("old_FV",&old_FV,"old_FV/I");
     data->Branch("tot_FV",&tot_FV,"tot_FV/I");
+    data->Branch("consecutive_FV",&consecutive_FV,"consecutive_FV/I");
     vector <double> subeventInfo;
     vector<vector <double> > eventInfo;
     RAT::DS::MC *mc;
@@ -196,7 +197,11 @@ int goldenFileExtractor(const char *file, double nhit_min =3., double goodness_m
                 FindVolume(r,z,FV,GSV,IV,EV,OV,fidBound,pmtBound,tankBound);
                 if (FV==1) {
                     tot_FV+=1;
+                    consecutive_FV+=1;
+                }else{
+                    consecutive_FV=0;
                 }
+                
                 
                 //                printf("%d %f\n",cnt,timeTmp);
                 if (cnt ==1) {
