@@ -364,8 +364,8 @@ def generateJobs(N,arguments):
                 outfile = open(stringFile,"wb")
                 outfile.writelines(line)
                 if index < N-1:
-                    stringFile1 = "(msub jobs/%s/%s/jobs%s_%s_%s_%d.sh || ./jobs/%s/%s/jobs%s_%s_%s_%d.sh)" %(models,cover,cover,\
-                                                                                                 "%s"%(iso[int(j)]),loc[j],index+1,models,cover,cover,\
+                    stringFile1 = "(msub jobs/%s/%s/jobs%s_%s_%s_%d.sh || ./jobs/%s/%s/jobs%s_%s_%s_%d.sh)" %(loc[j],cover,cover,\
+                                                                                                 "%s"%(iso[int(j)]),loc[j],index+1,loc[j],cover,cover,\
                                                                                                  "%s"%(iso[int(j)]),loc[j],index+1)
                     outfile.writelines(stringFile1)
                 outfile.close
