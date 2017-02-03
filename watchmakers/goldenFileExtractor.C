@@ -31,11 +31,8 @@ int goldenFileExtractor(const char *file, double nhit_min =3., double goodness_m
     TFile *f_out;
     printf("outfile: %s\n",outfile);
     if (TString(outfile) == TString("null")) {
-        printf("we have no entries...\n");
         f_out = new TFile(Form("ntuple_%s",f->GetName()),"Recreate");
     }else{
-        printf("Trigger this also...\n");
-        
         f_out = new TFile(outfile,"Recreate");
     }
         
@@ -365,15 +362,15 @@ int goldenFileExtractor(const char *file, double nhit_min =3., double goodness_m
 void FindVolume(Double_t r_t,Double_t z_t,Int_t &FV_t,Int_t &GSV_t,Int_t &IV_t,Int_t &EV_t,Int_t &OV_t,double fidBound, double pmtBound, double tankBound){
     
     FV_t = GSV_t = IV_t = EV_t = OV_t = 0;
-    if (r_t < fidBound && abs(z_t) < fidBound) {
+    if (r_t < fidBound && fabs(z_t) < fidBound) {
         FV_t =1;
         IV_t =1;
         EV_t =1;
-    }else if(!(r_t < fidBound && abs(z_t) < fidBound) && (r_t < pmtBound && abs(z_t) < pmtBound)){
+    }else if(!(r_t < fidBound && fabs(z_t) < fidBound) && (r_t < pmtBound && fabs(z_t) < pmtBound)){
         GSV_t =1;
         IV_t  =1;
         EV_t =1;
-    }else if(!(r_t < pmtBound && abs(z_t) < pmtBound) && (r_t < tankBound && abs(z_t) < tankBound)){
+    }else if(!(r_t < pmtBound && fabs(z_t) < pmtBound) && (r_t < tankBound && fabs(z_t) < tankBound)){
         OV_t =1;
         EV_t =1;
     }else{
