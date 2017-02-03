@@ -226,9 +226,9 @@ rootDir,g4Dir,g4Dir,ratDir,watchmakersDir)
         if location == "FN":
             line1 += "export PHYSLIST=%s\n" %(mods)
         if case == 1 or case == 2:
-            line1 += "%s -l log/%s/%s/rat.%s_%s_%s_%d.log %s/macro_%s/run%s_%s_%d.mac\n" %(software,\
-                                                      mods,percentage,percentage,mods,location,runs,\
-                                                                                 directory,percentage,mods,location,runs)
+            _log = "log/%s/%s/rat.%s_%s_%s_%d.log" %(mods,percentage,percentage,mods,location,runs)
+            _mac = "%s/macro/%s/%s/run%s_%s_%d.mac" %(directory,mods,percentage,mods,location,runs)
+            line1 += "%s -l %s %s\n" %(software,_log,_mac)
         if case == 1 or case == 3:
             fileN = "root_files/%s/%s/watchman_%s_%s_%s_%d.root" %(mods,percentage,mods,percentage,location,runs)
             if additionalString != "":
@@ -247,9 +247,11 @@ def generateMacros(N,e):
 #    N = int(arguments['-N'])
     print N,e
     ##Clean or create macro directories
-    for idx,cover in enumerate(coverage):
-        dir = "macro_%s" %(cover)
-        testCreateDirectory(dir)
+    for j in range(len(iso)):
+        for ii in d["%s"%(iso[int(j)])]:
+            for idx,cover in enumerate(coverage):
+                dir = "macro/%s/%s" %(ii,cover)
+                testCreateDirectory(dir)
 #    for idx,cover in enumerate(coverage):
 #        dir = "%s" %(cover)
 #        testCreateDirectory(dir)
@@ -259,7 +261,7 @@ def generateMacros(N,e):
             for idx,cover in enumerate(coverage):
                 for val in range(N):
                     line = macroGenerator(cover,ii,loc[j],val,e )
-                    dir = "macro_%s" %(cover)
+                    dir = "macro/%s/%s" %(ii,cover)
 
                     outfile = open("%s/run%s_%s_%d.mac" %(dir,ii,\
                     loc[j],val),"wb")
@@ -267,11 +269,6 @@ def generateMacros(N,e):
                     outfile.close
     return 0
 
-def removeMacrosAndDirectories():
-    d,iso,loc,coverage,coveragePCT = loadSimulationParameters()
-    for idx,cover in enumerate(coverage):
-        dir = "macro_%s" %(cover)
-        deleteDirectory(dir)
 
 
 def generateJobs(N,arguments):
@@ -391,7 +388,7 @@ def deleteAllWorkDirectories():
         rmtree(dir)
 
     for idx,cover in enumerate(coverage):
-        dir = "macro_%s" %(cover)
+        dir = "macro"
         if os.path.exists(dir):
             rmtree(dir)
 
