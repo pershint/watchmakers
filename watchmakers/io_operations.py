@@ -462,12 +462,11 @@ def mergeNtupleFiles(arguments):
             del trees[t_name]
 
 
-    if (arguments["-P"] and !arguments["-L"]) or (arguments["-L"] and !arguments["-P"]):
-        print "arguments -L and -P must be used at the same time"
+    if (arguments["-P"] and not arguments["-L"]) or (arguments["-L"] and not arguments["-P"]):
+        print "arguments -L and -P must be used at the same time, for now"
     
-    if (arguments["-P"] and !arguments["-L"]) or (arguments["-L"] and !arguments["-P"]):
-    
-    if (!arguments["-P"] and !arguments["-L"]):
+
+    if (not arguments["-P"] and not arguments["-L"]):
         for j in range(len(iso)):
             for ii in d["%s"%(iso[int(j)])]:
                 for idx,cover in enumerate(coverage):
