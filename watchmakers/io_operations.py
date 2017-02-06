@@ -462,23 +462,27 @@ def mergeNtupleFiles(arguments):
             del trees[t_name]
 
 
-    if (arguments["-P"] and not arguments["-L"]) or (arguments["-L"] and not arguments["-P"]):
+    if (arguments["-P"] and !arguments["-L"]) or (arguments["-L"] and !arguments["-P"]):
         print "arguments -L and -P must be used at the same time"
     
-    for j in range(len(iso)):
-        for ii in d["%s"%(iso[int(j)])]:
-            for idx,cover in enumerate(coverage):
-                t_name  = "data_%s_%s_%s"%(ii,cover,loc[j])
-                trees[t_name] = TChain("data")
+    if (arguments["-P"] and !arguments["-L"]) or (arguments["-L"] and !arguments["-P"]):
+    
+    if (!arguments["-P"] and !arguments["-L"]):
+        for j in range(len(iso)):
+            for ii in d["%s"%(iso[int(j)])]:
+                for idx,cover in enumerate(coverage):
+                    t_name  = "data_%s_%s_%s"%(ii,cover,loc[j])
+                    trees[t_name] = TChain("data")
+                    
+                    s = "ntuple_root_files/%s/%s/watchman_%s_%s_%s_*.root" %(ii,cover,ii,cover,loc[j])
+                    sw = "%s_%s_%s_%s.root"%(pathFinal,ii,cover,loc[j])
                 
-                s = "ntuple_root_files/%s/%s/watchman_%s_%s_%s_*.root" %(ii,cover,ii,cover,loc[j])
-                sw = "%s_%s_%s_%s.root"%(pathFinal,ii,cover,loc[j])
-            
-                print "Writing ", sw,"from",s
-                trees[t_name].Add(s)
-                print "Number of entries ",trees[t_name].GetEntries()
-                trees[t_name].Merge(sw)
-                del trees[t_name]
+                    print "Writing ", sw,"from",s
+                    trees[t_name].Add(s)
+                    print "Number of entries ",trees[t_name].GetEntries()
+                    trees[t_name].Merge(sw)
+                    del trees[t_name]
+
     del trees
     return 0
 
