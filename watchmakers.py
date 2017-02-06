@@ -24,7 +24,7 @@ if __name__ == "__main__":
         extractNtuple(arguments)
 
     if arguments['-M']:
-        mergeFiles()
+        mergeNtupleFiles(arguments)
 
     if arguments['-a']:
         g,h = {},{}

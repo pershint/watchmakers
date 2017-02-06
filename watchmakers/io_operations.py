@@ -436,6 +436,56 @@ def mergeFiles():
     return 0
 
 
+
+def mergeNtupleFiles(arguments):
+    # Read external requirements
+    #arguments = docopt.docopt(docstring)
+    # Load internal requirements
+    d,iso,loc,coverage,coveragePCT = loadSimulationParameters()
+    trees = {}
+    pathFinal = "root_files/merged_ntuple_watchman"
+    
+    if arguments["-P"] and arguments["-L"]:
+        ii      = arguments["-P"]
+        locj    = arguments["-L"]
+        for idx,cover in enumerate(coverage):
+            t_name  = "data_%s_%s_%s"%(ii,cover,locj)
+            trees[t_name] = TChain("data")
+            
+            s = "ntuple_root_files/%s/%s/watchman_%s_%s_%s_*.root" %(ii,cover,ii,cover,locj)
+            sw = "%s_%s_%s_%s.root"%(pathFinal,ii,cover,locj)
+        
+            print "Writing ", sw,"from",s
+            trees[t_name].Add(s)
+            print "Number of entries ",trees[t_name].GetEntries()
+            trees[t_name].Merge(sw)
+            del trees[t_name]
+
+
+    if (arguments["-P"] and not arguments["-L"]) or (arguments["-L"] and not arguments["-P"]):
+        print "arguments -L and -P must be used at the same time"
+    
+    for j in range(len(iso)):
+        for ii in d["%s"%(iso[int(j)])]:
+            for idx,cover in enumerate(coverage):
+                t_name  = "data_%s_%s_%s"%(ii,cover,loc[j])
+                trees[t_name] = TChain("data")
+                
+                s = "ntuple_root_files/%s/%s/watchman_%s_%s_%s_*.root" %(ii,cover,ii,cover,loc[j])
+                sw = "%s_%s_%s_%s.root"%(pathFinal,ii,cover,loc[j])
+            
+                print "Writing ", sw,"from",s
+                trees[t_name].Add(s)
+                print "Number of entries ",trees[t_name].GetEntries()
+                trees[t_name].Merge(sw)
+                del trees[t_name]
+    del trees
+    return 0
+
+
+
+
+
 def extractNtuple(arguments):
     N            = int(arguments["-N"])
     rate         = float(arguments["-r"])

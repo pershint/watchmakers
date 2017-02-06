@@ -52,7 +52,8 @@ docstring = """
     -T=<tubes>          Minimal number of tubes hit [Default: %f]
     -g=<goodness>       Bonsai position goodness parameter [Default: %f]
     -G=<Goodness>       Bonsai direction goodness parameter [Default: %f]
-    -P                  Pick a single physics process to analyis (used for ntup)
+    -P                  Pick a single physics process to analyis/merge (used for ntup)
+    -L                  Pick a single physics location to analyis/merge (used for ntup)
     -C                  Pick a single coverage to analyse
     -R                  Read analyisis result
     -D                  Delete all current photocoverage directory.
