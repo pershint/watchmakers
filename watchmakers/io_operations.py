@@ -414,9 +414,9 @@ source %s/geant4make.sh
 source %s/env.sh
 source %s/env_wm.sh
 export G4NEUTRONHP_USE_ONLY_PHOTONEVAPORATION=1\n
-                """ %(percentage,loc[j],\
-                      directory,percentage,loc[j],\
-                      directory,percentage,loc[j],\
+                """ %(ii,loc[j],\
+                      directory,ii,loc[j],\
+                      directory,ii,loc[j],\
                       directory,\
                       rootDir,g4Dir,g4Dir,ratDir,watchmakersDir)
             print " "
