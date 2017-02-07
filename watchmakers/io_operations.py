@@ -380,6 +380,27 @@ def generateJobs(N,arguments):
 
 
 def customJob(arguments):
+    
+    directory   = os.getcwd()
+    softDir     = "/usr/gapps/adg/geant4/rat_pac_and_dependency"
+    ratDir      = os.environ['RATROOT']
+    rootDir     = os.environ['ROOTSYS']
+    g4Dir       =  os.environ['G4INSTALL']
+    watchmakersDir = os.environ['WATCHENV']
+    
+    software    = "%s/bin/rat" %(ratDir)
+    
+    d,iso,loc,coverage,coveragePCT = loadSimulationParameters()
+    
+    ele =  d["%s"%(iso[j])]
+    location = loc[j]
+    
+    goodness     = float(arguments['-g'])
+    case = int(arguments['-j'])
+    #    print defaultValues
+    
+    additionalString,additionalCommands = testEnabledCondition(arguments)
+
 
     ''' Custom job for photocoverage 02-2017 analyis'''
     
@@ -387,15 +408,40 @@ def customJob(arguments):
 
     for j in range(len(iso)):
         for ii in d["%s"%(iso[int(j)])]:
-            print "watch --extractNtup -P %s -L %s" %(ii,loc[j])
-            print "watch --extractNtup -P %s -L %s --fv 4.302" %(ii,loc[j])
-            print "watch --extractNtup -P %s -L %s --fv 4.302 -g 0.65" %(ii,loc[j])
-            print "watch --extractNtup -P %s -L %s --fv 4.302 -g 0.65 -T 12" %(ii,loc[j])
-            print "watch --extractNtup -P %s -L %s --fv 4.302 -T 12" %(ii,loc[j])
-            print "watch --extractNtup -P %s -L %s -g 0.65" %(ii,loc[j])
-            print "watch --extractNtup -P %s -L %s -g 0.65 -T 12" %(ii,loc[j])
-            print "watch --extractNtup -P %s -L %s -T 12" %(ii,loc[j])
+            line1 = """#!/bin/sh
+#MSUB -N WM_%s_%S    #name of job
+#MSUB -A adg         # sets bank account
+#MSUB -l nodes=1:ppn=1,walltime=23:59:59,partition=borax  # uses 1 node
+#MSUB -q pbatch         #pool
+#MSUB -o %s/log/CJwmpc_%s_%s.log
+#MSUB -e %s/log/CJwmpc_%s_%s.err
+#MSUB -d %s  # directory to run from
+#MSUB -V
+#MSUB                     # no more psub commands
 
+source %s/bin/thisroot.sh
+source %s/../../../bin/geant4.sh
+source %s/geant4make.sh
+source %s/env.sh
+source %s/env_wm.sh
+export G4NEUTRONHP_USE_ONLY_PHOTONEVAPORATION=1\n
+                """ %(percentage,loc[j],\
+                      directory,percentage,loc[j],\
+                      directory,percentage,loc[j],\
+                      directory,\
+                      rootDir,g4Dir,g4Dir,ratDir,watchmakersDir)
+            print " "
+            print line1
+            line2 = ""
+            line2+= "watch --extractNtup -P %s -L %s" %(ii,loc[j])
+            line2+= "watch --extractNtup -P %s -L %s --fv 4.302" %(ii,loc[j])
+            line2+= "watch --extractNtup -P %s -L %s --fv 4.302 -g 0.65" %(ii,loc[j])
+            line2+= "watch --extractNtup -P %s -L %s --fv 4.302 -g 0.65 -T 12" %(ii,loc[j])
+            line2+= "watch --extractNtup -P %s -L %s --fv 4.302 -T 12" %(ii,loc[j])
+            line2+= "watch --extractNtup -P %s -L %s -g 0.65" %(ii,loc[j])
+            line2+= "watch --extractNtup -P %s -L %s -g 0.65 -T 12" %(ii,loc[j])
+            line2+= "watch --extractNtup -P %s -L %s -T 12" %(ii,loc[j])
+            print line2
 
 
 
