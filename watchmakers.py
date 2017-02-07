@@ -23,6 +23,9 @@ if __name__ == "__main__":
     if arguments['-n']:
         extractNtuple(arguments)
 
+    if arguments['--extractNtup']:
+        extractNtupleALL(arguments)
+
     if arguments['-M']:
         mergeNtupleFiles(arguments)
 

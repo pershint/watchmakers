@@ -42,7 +42,8 @@ docstring = """
     -j=<jobType>        Create submision scripts and macros [Default: %d]
     -f=<ifile>          Input file [Default: %s]
     --ntupleout=<outN>  Name of ntuple out [Default: %s]
-    -n                  generate ntuple from rat-pac root files
+    -n                  generate ntuple from single rat-pac root files
+    --extractNtup       generate ntuple from all rat-pac root files
     -o=<outputfile>     Efficiency output file [Default: %s]
     -M                  Merge result files
     -a                  Do the analysis on the merged file

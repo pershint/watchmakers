@@ -154,50 +154,52 @@ def jobString(percentage,j,runs,models,arguments):
     case = int(arguments['-j'])
 #    print defaultValues
 
-    additionalString      = ""
-    additionalCommands    = ""
-
-    if float(arguments['-r'])          != defaultValues[6]:
-        additionalString += "_rate_%f" %(float(arguments['-r']))
-        additionalCommands += " -r %f " %(float(arguments['-r']))
-    
-    if float(arguments['-d'])          != defaultValues[7]:
-        additionalString += "_deltaR_%f" %(float(arguments['-d']))
-        additionalCommands += " -d %f" %(float(arguments['-d']))
-    
-    if float(arguments['-t'])          != defaultValues[8]:
-        additionalString += "_deltaT_%f" %(float(arguments['-t']))
-        additionalCommands +=  " -t %f" %(float(arguments['-t']))
-
-    if float(arguments['-T'])            != (defaultValues[9]):
-        additionalString += "_nhitMin_%d" %(int(arguments['-T']))
-        additionalCommands += " -T %d" %(int(arguments['-T']))
-
-    if float(arguments['-g'])          != defaultValues[10]:
-        additionalString += "_posGood_%f" %(float(arguments['-g']))
-        additionalCommands += " -g %f" %(float(arguments['-g']))
-
-    if float(arguments['-G'])          != defaultValues[11]:
-        additionalString += "_dirGood_%f" %(float(arguments['-G']))
-        additionalCommands += " -G %f" %(float(arguments['-G']))
-
-    if float(arguments['--fv'])        !=  defaultValues[12]:
-        additionalString += "_FVboundary_%f" %(float(arguments['--fv']))
-        additionalCommands +=  "--fv %f" %(float(arguments['--fv']))
-
-    if float(arguments['--psup'])      != defaultValues[13]:
-        additionalString += "_PMTboundary_%f" %(float(arguments['--psup']))
-        additionalCommands += "--psup %f" %(float(arguments['--psup']))
-
-    if float(arguments['--tankDis'])   != defaultValues[14]:
-        additionalString += "_Tankboundary_%f" %(float(arguments['--tankDist']))
-        additionalCommands +=" --tankDist %f" %(float(arguments['--tankDist']))
-
-
-    if additionalString != "":
-        print additionalString
-        print additionalCommands
-        print type(additionalCommands)
+    additionalString,additionalCommands = testEnabledCondition(arguments)
+#
+#    additionalString      = ""
+#    additionalCommands    = ""
+#
+#    if float(arguments['-r'])          != defaultValues[6]:
+#        additionalString += "_rate_%f" %(float(arguments['-r']))
+#        additionalCommands += " -r %f " %(float(arguments['-r']))
+#    
+#    if float(arguments['-d'])          != defaultValues[7]:
+#        additionalString += "_deltaR_%f" %(float(arguments['-d']))
+#        additionalCommands += " -d %f" %(float(arguments['-d']))
+#    
+#    if float(arguments['-t'])          != defaultValues[8]:
+#        additionalString += "_deltaT_%f" %(float(arguments['-t']))
+#        additionalCommands +=  " -t %f" %(float(arguments['-t']))
+#
+#    if float(arguments['-T'])            != (defaultValues[9]):
+#        additionalString += "_nhitMin_%d" %(int(arguments['-T']))
+#        additionalCommands += " -T %d" %(int(arguments['-T']))
+#
+#    if float(arguments['-g'])          != defaultValues[10]:
+#        additionalString += "_posGood_%f" %(float(arguments['-g']))
+#        additionalCommands += " -g %f" %(float(arguments['-g']))
+#
+#    if float(arguments['-G'])          != defaultValues[11]:
+#        additionalString += "_dirGood_%f" %(float(arguments['-G']))
+#        additionalCommands += " -G %f" %(float(arguments['-G']))
+#
+#    if float(arguments['--fv'])        !=  defaultValues[12]:
+#        additionalString += "_FVboundary_%f" %(float(arguments['--fv']))
+#        additionalCommands +=  "--fv %f" %(float(arguments['--fv']))
+#
+#    if float(arguments['--psup'])      != defaultValues[13]:
+#        additionalString += "_PMTboundary_%f" %(float(arguments['--psup']))
+#        additionalCommands += "--psup %f" %(float(arguments['--psup']))
+#
+#    if float(arguments['--tankDis'])   != defaultValues[14]:
+#        additionalString += "_Tankboundary_%f" %(float(arguments['--tankDist']))
+#        additionalCommands +=" --tankDist %f" %(float(arguments['--tankDist']))
+#
+#
+#    if additionalString != "":
+#        print additionalString
+#        print additionalCommands
+#        print type(additionalCommands)
 
     line1 = """#!/bin/sh
 #MSUB -N WM_%s_%s_%d    #name of job
@@ -435,6 +437,49 @@ def mergeFiles():
     del trees
     return 0
 
+def testEnabledCondition(arguments):
+
+    additionalString      = ""
+    additionalCommands    = ""
+    
+    if float(arguments['-r'])          != defaultValues[6]:
+        additionalString += "_rate_%f" %(float(arguments['-r']))
+        additionalCommands += " -r %f " %(float(arguments['-r']))
+    
+    if float(arguments['-d'])          != defaultValues[7]:
+        additionalString += "_deltaR_%f" %(float(arguments['-d']))
+        additionalCommands += " -d %f" %(float(arguments['-d']))
+    
+    if float(arguments['-t'])          != defaultValues[8]:
+        additionalString += "_deltaT_%f" %(float(arguments['-t']))
+        additionalCommands +=  " -t %f" %(float(arguments['-t']))
+    
+    if float(arguments['-T'])            != (defaultValues[9]):
+        additionalString += "_n9Min_%d" %(int(arguments['-T']))
+        additionalCommands += " -T %d" %(int(arguments['-T']))
+    
+    if float(arguments['-g'])          != defaultValues[10]:
+        additionalString += "_posGood_%f" %(float(arguments['-g']))
+        additionalCommands += " -g %f" %(float(arguments['-g']))
+    
+    if float(arguments['-G'])          != defaultValues[11]:
+        additionalString += "_dirGood_%f" %(float(arguments['-G']))
+        additionalCommands += " -G %f" %(float(arguments['-G']))
+    
+    if float(arguments['--fv'])        !=  defaultValues[12]:
+        additionalString += "_FVboundary_%f" %(float(arguments['--fv']))
+        additionalCommands +=  "--fv %f" %(float(arguments['--fv']))
+    
+    if float(arguments['--psup'])      != defaultValues[13]:
+        additionalString += "_PMTboundary_%f" %(float(arguments['--psup']))
+        additionalCommands += "--psup %f" %(float(arguments['--psup']))
+    
+    if float(arguments['--tankDis'])   != defaultValues[14]:
+        additionalString += "_Tankboundary_%f" %(float(arguments['--tankDist']))
+        additionalCommands +=" --tankDist %f" %(float(arguments['--tankDist']))
+    
+    
+    return  additionalString,additionalCommands
 
 
 def mergeNtupleFiles(arguments):
@@ -507,3 +552,33 @@ def extractNtuple(arguments):
     d,iso,loc,coverage,coveragePCT = loadSimulationParameters()
     goldenFileExtractor(file,minNHIT,goodness,dirGoodness,timemask,\
                         rate,distancemask,fidV,pmtV,tankV,outF)
+
+
+def extractNtupleALL(arguments):
+
+    N            = int(arguments["-N"])
+    rate         = float(arguments["-r"])
+    timemask     = float(arguments['-t'])*1000.0
+    distancemask = float(arguments['-d'])
+    goodness     = float(arguments['-g'])
+    dirGoodness  = float(arguments['-G'])
+    minNHIT      = float(arguments['-T'])
+    fidV         = float(arguments["--fv"])
+    pmtV         = float(arguments["--psup"])
+    tankV        = float(arguments["--tankDis"])
+
+    additionalString,additionalCommands = testEnabledCondition(arguments)
+    
+    for j in range(len(iso)):
+        for ii in d["%s"%(iso[int(j)])]:
+            for idx,cover in enumerate(coverage):
+                directory = "ntuple_root_files/%s/%s/%s" %(additionalString,ii,cover)
+                if not os.path.exists(directory):
+                    os.makedirs(directory)
+    
+
+
+    for j in range(len(iso)):
+            for ii in d["%s"%(iso[int(j)])]:
+                for idx,cover in enumerate(coverage):
+                    t_name  = "data_%s_%s_%s"%(ii,cover,loc[j])
