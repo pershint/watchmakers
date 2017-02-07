@@ -398,7 +398,7 @@ def customJob(arguments):
     cnt = 0
 
     outF2 = open('sub_cust_job',"wb")
-    outF2.writelines('#!/bin/sh')
+    outF2.writelines('#!/bin/sh\n')
 
 
     for j in range(len(iso)):
