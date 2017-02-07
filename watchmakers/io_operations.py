@@ -558,6 +558,7 @@ def extractNtuple(arguments):
 def extractNtupleALL(arguments):
     d,iso,loc,coverage,coveragePCT = loadSimulationParameters()
 
+    N            = int(arguments["-N"])
 
     rate         = float(arguments["-r"])
     timemask     = float(arguments['-t'])*1000.0
@@ -572,7 +573,7 @@ def extractNtupleALL(arguments):
     additionalString,additionalCommands = testEnabledCondition(arguments)
     
     if additionalString == "":
-        additionalString = "default"
+        additionalString = "_default"
     
     for j in range(len(iso)):
         for ii in d["%s"%(iso[int(j)])]:
@@ -586,4 +587,5 @@ def extractNtupleALL(arguments):
     for j in range(len(iso)):
             for ii in d["%s"%(iso[int(j)])]:
                 for idx,cover in enumerate(coverage):
-                    t_name  = "data_%s_%s_%s"%(ii,cover,loc[j])
+                    for run in range(N):
+                        print "root_files/%s/%s/watchman_%s_%s_%s_%d.root" %(ii,cover,ii,cover,loc[j],run)
