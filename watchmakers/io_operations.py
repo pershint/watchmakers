@@ -431,54 +431,54 @@ export G4NEUTRONHP_USE_ONLY_PHOTONEVAPORATION=1\n
             line9 = "watch --extractNtup -N 600 -P %s -L %s -T 12\n" %(ii,loc[j])
             
             outfile = open('sub_jobs__%d_2'%(cnt),"wb")
-            print 'msub sub_jobs__%d_2'%(cnt)'
+            print 'msub sub_jobs__%d_2'%(cnt)
             outfile.writelines(line1)
             outfile.writelines(line2)
             outfile.close
 
             outfile = open('sub_jobs_%d_3'%(cnt),"wb")
-            print 'msub sub_jobs__%d_3'%(cnt)'
+            print 'msub sub_jobs__%d_3'%(cnt)
 
             outfile.writelines(line1)
             outfile.writelines(line3)
             outfile.close
             outfile = open('sub_jobs_%d_4'%(cnt),"wb")
-            print 'msub sub_jobs__%d_4'%(cnt)'
+            print 'msub sub_jobs__%d_4'%(cnt)
 
             outfile.writelines(line1)
             outfile.writelines(line4)
             outfile.close
 
             outfile = open('sub_jobs_%d_5'%(cnt),"wb")
-            print 'msub sub_jobs__%d_5'%(cnt)'
+            print 'msub sub_jobs__%d_5'%(cnt)
 
             outfile.writelines(line1)
             outfile.writelines(line5)
             outfile.close
 
             outfile = open('sub_jobs_%d_6'%(cnt),"wb")
-            print 'msub sub_jobs__%d_6'%(cnt)'
+            print 'msub sub_jobs__%d_6'%(cnt)
 
             outfile.writelines(line1)
             outfile.writelines(line6)
             outfile.close
 
             outfile = open('sub_jobs_%d_7'%(cnt),"wb")
-            print 'msub sub_jobs__%d_7'%(cnt)'
+            print 'msub sub_jobs__%d_7'%(cnt)
 
             outfile.writelines(line1)
             outfile.writelines(line7)
             outfile.close
 
             outfile = open('sub_jobs_%d_8'%(cnt),"wb")
-            print 'msub sub_jobs__%d_8'%(cnt)'
+            print 'msub sub_jobs__%d_8'%(cnt)
 
             outfile.writelines(line1)
             outfile.writelines(line8)
             outfile.close
 
             outfile = open('sub_jobs_%d_9'%(cnt),"wb")
-            print 'msub sub_jobs__%d_9'%(cnt)'
+            print 'msub sub_jobs__%d_9'%(cnt)
 
             outfile.writelines(line1)
             outfile.writelines(line9)
