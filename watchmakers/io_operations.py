@@ -421,15 +421,15 @@ export G4NEUTRONHP_USE_ONLY_PHOTONEVAPORATION=1\n
                       rootDir,g4Dir,g4Dir,ratDir,watchmakersDir)
             print " "
             print line1
-            line2 = ""
-            line2+= "watch --extractNtup -P %s -L %s" %(ii,loc[j])
-            line2+= "watch --extractNtup -P %s -L %s --fv 4.302" %(ii,loc[j])
-            line2+= "watch --extractNtup -P %s -L %s --fv 4.302 -g 0.65" %(ii,loc[j])
-            line2+= "watch --extractNtup -P %s -L %s --fv 4.302 -g 0.65 -T 12" %(ii,loc[j])
-            line2+= "watch --extractNtup -P %s -L %s --fv 4.302 -T 12" %(ii,loc[j])
-            line2+= "watch --extractNtup -P %s -L %s -g 0.65" %(ii,loc[j])
-            line2+= "watch --extractNtup -P %s -L %s -g 0.65 -T 12" %(ii,loc[j])
-            line2+= "watch --extractNtup -P %s -L %s -T 12" %(ii,loc[j])
+            line2 = "\n"
+            line2+= "watch --extractNtup -P %s -L %s \n" %(ii,loc[j])
+            line2+= "watch --extractNtup -P %s -L %s --fv 4.302\n" %(ii,loc[j])
+            line2+= "watch --extractNtup -P %s -L %s --fv 4.302 -g 0.65\n" %(ii,loc[j])
+            line2+= "watch --extractNtup -P %s -L %s --fv 4.302 -g 0.65 -T 12\n" %(ii,loc[j])
+            line2+= "watch --extractNtup -P %s -L %s --fv 4.302 -T 12\n" %(ii,loc[j])
+            line2+= "watch --extractNtup -P %s -L %s -g 0.65\n" %(ii,loc[j])
+            line2+= "watch --extractNtup -P %s -L %s -g 0.65 -T 12\n" %(ii,loc[j])
+            line2+= "watch --extractNtup -P %s -L %s -T 12\n" %(ii,loc[j])
             print line2
 
 
