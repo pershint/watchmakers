@@ -398,6 +398,8 @@ def customJob(arguments):
     cnt = 0
 
     outF2 = open('sub_cust_job',"wb")
+    outF2.writelines('#!/bin/sh')
+
 
     for j in range(len(iso)):
         for ii in d["%s"%(iso[int(j)])]:
@@ -433,54 +435,54 @@ export G4NEUTRONHP_USE_ONLY_PHOTONEVAPORATION=1\n
             line9 = "watch --extractNtup -N 600 -P %s -L %s -T 12\n" %(ii,loc[j])
             
             outfile = open('sub_jobs__%d_2'%(cnt),"wb")
-            outF2.writelines('msub sub_jobs__%d_2'%(cnt))
+            outF2.writelines('msub sub_jobs__%d_2\n'%(cnt))
             outfile.writelines(line1)
             outfile.writelines(line2)
             outfile.close
 
             outfile = open('sub_jobs__%d_3'%(cnt),"wb")
-            outF2.writelines('msub sub_jobs__%d_3'%(cnt))
+            outF2.writelines('msub sub_jobs__%d_3\n'%(cnt))
 
             outfile.writelines(line1)
             outfile.writelines(line3)
             outfile.close
             outfile = open('sub_jobs__%d_4'%(cnt),"wb")
-            outF2.writelines('msub sub_jobs__%d_4'%(cnt))
+            outF2.writelines('msub sub_jobs__%d_4\n'%(cnt))
 
             outfile.writelines(line1)
             outfile.writelines(line4)
             outfile.close
 
             outfile = open('sub_jobs__%d_5'%(cnt),"wb")
-            outF2.writelines('msub sub_jobs__%d_5'%(cnt))
+            outF2.writelines('msub sub_jobs__%d_5\n'%(cnt))
 
             outfile.writelines(line1)
             outfile.writelines(line5)
             outfile.close
 
             outfile = open('sub_jobs__%d_6'%(cnt),"wb")
-            outF2.writelines('msub sub_jobs__%d_6'%(cnt))
+            outF2.writelines('msub sub_jobs__%d_6\n'%(cnt))
 
             outfile.writelines(line1)
             outfile.writelines(line6)
             outfile.close
 
             outfile = open('sub_jobs__%d_7'%(cnt),"wb")
-            outF2.writelines('msub sub_jobs__%d_7'%(cnt))
+            outF2.writelines('msub sub_jobs__%d_7\n'%(cnt))
 
             outfile.writelines(line1)
             outfile.writelines(line7)
             outfile.close
 
             outfile = open('sub_jobs__%d_8'%(cnt),"wb")
-            outF2.writelines('msub sub_jobs__%d_8'%(cnt))
+            outF2.writelines('msub sub_jobs__%d_8\n'%(cnt))
 
             outfile.writelines(line1)
             outfile.writelines(line8)
             outfile.close
 
             outfile = open('sub_jobs__%d_9'%(cnt),"wb")
-            outF2.writelines('msub sub_jobs__%d_9'%(cnt))
+            outF2.writelines('msub sub_jobs__%d_9\n'%(cnt))
 
             outfile.writelines(line1)
             outfile.writelines(line9)
