@@ -38,5 +38,8 @@ if __name__ == "__main__":
         readAnalysisResult(arguments["-o"])
 
 
+    if arguments['--customJob']:
+        customJob(arguments)
+
 
 ######################## Waba Luba Dub Dub!! ###########################

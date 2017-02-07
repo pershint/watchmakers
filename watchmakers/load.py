@@ -62,6 +62,7 @@ docstring = """
     --psup=<psupV>      Distance to PMT support, assuming right cylinder [Default: %f]
     --tankDis=<tankV>   Distance to tank wall, assuming right cylinder [Default: %f]
     --detectorDepth=<DD> Depth of detector [Default: %f]
+    --customJob          Custom job for photocoverage 02-2017
 
     """ % (defaultValues[0],defaultValues[1],defaultValues[2],defaultValues[3],\
            defaultValues[4],defaultValues[5],defaultValues[6],defaultValues[7],\
