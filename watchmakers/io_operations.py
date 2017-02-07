@@ -571,6 +571,9 @@ def extractNtupleALL(arguments):
 
     additionalString,additionalCommands = testEnabledCondition(arguments)
     
+    if additionalString == "":
+        additionalString = "default"
+    
     for j in range(len(iso)):
         for ii in d["%s"%(iso[int(j)])]:
             for idx,cover in enumerate(coverage):
