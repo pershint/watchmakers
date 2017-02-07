@@ -397,6 +397,8 @@ def customJob(arguments):
     
     cnt = 0
 
+    outF2 = open('sub_cust_job',"wb")
+
     for j in range(len(iso)):
         for ii in d["%s"%(iso[int(j)])]:
             line1 = """#!/bin/sh
@@ -431,54 +433,54 @@ export G4NEUTRONHP_USE_ONLY_PHOTONEVAPORATION=1\n
             line9 = "watch --extractNtup -N 600 -P %s -L %s -T 12\n" %(ii,loc[j])
             
             outfile = open('sub_jobs__%d_2'%(cnt),"wb")
-            print 'msub sub_jobs__%d_2'%(cnt)
+            outF2.writelines('msub sub_jobs__%d_2'%(cnt))
             outfile.writelines(line1)
             outfile.writelines(line2)
             outfile.close
 
             outfile = open('sub_jobs__%d_3'%(cnt),"wb")
-            print 'msub sub_jobs__%d_3'%(cnt)
+            outF2.writelines('msub sub_jobs__%d_3'%(cnt))
 
             outfile.writelines(line1)
             outfile.writelines(line3)
             outfile.close
             outfile = open('sub_jobs__%d_4'%(cnt),"wb")
-            print 'msub sub_jobs__%d_4'%(cnt)
+            outF2.writelines('msub sub_jobs__%d_4'%(cnt))
 
             outfile.writelines(line1)
             outfile.writelines(line4)
             outfile.close
 
             outfile = open('sub_jobs__%d_5'%(cnt),"wb")
-            print 'msub sub_jobs__%d_5'%(cnt)
+            outF2.writelines('msub sub_jobs__%d_5'%(cnt))
 
             outfile.writelines(line1)
             outfile.writelines(line5)
             outfile.close
 
             outfile = open('sub_jobs__%d_6'%(cnt),"wb")
-            print 'msub sub_jobs__%d_6'%(cnt)
+            outF2.writelines('msub sub_jobs__%d_6'%(cnt))
 
             outfile.writelines(line1)
             outfile.writelines(line6)
             outfile.close
 
             outfile = open('sub_jobs__%d_7'%(cnt),"wb")
-            print 'msub sub_jobs__%d_7'%(cnt)
+            outF2.writelines('msub sub_jobs__%d_7'%(cnt))
 
             outfile.writelines(line1)
             outfile.writelines(line7)
             outfile.close
 
             outfile = open('sub_jobs__%d_8'%(cnt),"wb")
-            print 'msub sub_jobs__%d_8'%(cnt)
+            outF2.writelines('msub sub_jobs__%d_8'%(cnt))
 
             outfile.writelines(line1)
             outfile.writelines(line8)
             outfile.close
 
             outfile = open('sub_jobs__%d_9'%(cnt),"wb")
-            print 'msub sub_jobs__%d_9'%(cnt)
+            outF2.writelines('msub sub_jobs__%d_9'%(cnt))
 
             outfile.writelines(line1)
             outfile.writelines(line9)
@@ -489,6 +491,7 @@ export G4NEUTRONHP_USE_ONLY_PHOTONEVAPORATION=1\n
 
 
             cnt+=1
+    outF2.close
 
 
 
