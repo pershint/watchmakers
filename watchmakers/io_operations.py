@@ -390,17 +390,6 @@ def customJob(arguments):
     
     software    = "%s/bin/rat" %(ratDir)
     
-    d,iso,loc,coverage,coveragePCT = loadSimulationParameters()
-    
-    ele =  d["%s"%(iso[j])]
-    location = loc[j]
-    
-    goodness     = float(arguments['-g'])
-    case = int(arguments['-j'])
-    #    print defaultValues
-    
-    additionalString,additionalCommands = testEnabledCondition(arguments)
-
 
     ''' Custom job for photocoverage 02-2017 analyis'''
     
