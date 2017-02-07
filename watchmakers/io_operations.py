@@ -559,7 +559,6 @@ def extractNtupleALL(arguments):
     d,iso,loc,coverage,coveragePCT = loadSimulationParameters()
 
 
-    N            = int(arguments["-N"])
     rate         = float(arguments["-r"])
     timemask     = float(arguments['-t'])*1000.0
     distancemask = float(arguments['-d'])
@@ -575,7 +574,7 @@ def extractNtupleALL(arguments):
     for j in range(len(iso)):
         for ii in d["%s"%(iso[int(j)])]:
             for idx,cover in enumerate(coverage):
-                directory = "ntuple_root_files/%s/%s/%s" %(additionalString,ii,cover)
+                directory = "ntuple_root_files%s/%s/%s" %(additionalString,ii,cover)
                 if not os.path.exists(directory):
                     os.makedirs(directory)
     
