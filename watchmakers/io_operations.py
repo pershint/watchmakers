@@ -416,7 +416,7 @@ source %s/geant4make.sh
 source %s/env.sh
 source %s/env_wm.sh
 export G4NEUTRONHP_USE_ONLY_PHOTONEVAPORATION=1\n
-                """ %(ii,loc[j],\
+""" %(ii,loc[j],\
                       directory,ii,loc[j],\
                       directory,ii,loc[j],\
                       directory,\
