@@ -398,7 +398,7 @@ def customJob(arguments):
     for j in range(len(iso)):
         for ii in d["%s"%(iso[int(j)])]:
             line1 = """#!/bin/sh
-#MSUB -N WM_%s_%S    #name of job
+#MSUB -N WM_%s_%s    #name of job
 #MSUB -A adg         # sets bank account
 #MSUB -l nodes=1:ppn=1,walltime=23:59:59,partition=borax  # uses 1 node
 #MSUB -q pbatch         #pool
