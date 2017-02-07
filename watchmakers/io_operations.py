@@ -69,12 +69,12 @@ def macroGenerator(percentage,isotope,location,runs,events):
 /generator/add combo fastneutron:regexfill
 /generator/pos/set rock_[0-9]+
 /generator/vtx/set 0 0 0
-/generator/fastneutron/depth 1434.0
+/generator/fastneutron/depth %f
 /generator/fastneutron/enthresh 10.0
 /generator/fastneutron/sidewalls 1.0
 
-/run/beamOn %d'''%(events)
-    elif location == 'FNimb':
+/run/beamOn %d'''%(events,depth)
+    elif location == 'FNFairport':
         line1 = '''
 /generator/add combo fastneutron:regexfill
 /generator/pos/set rock_[0-9]+
@@ -84,7 +84,7 @@ def macroGenerator(percentage,isotope,location,runs,events):
 /generator/fastneutron/sidewalls 1.0
 
 /run/beamOn %d'''%(events)
-    elif location == 'FNboulby':
+    elif location == 'FNBoulby':
         line1 = '''
 /generator/add combo fastneutron:regexfill
 /generator/pos/set rock_[0-9]+

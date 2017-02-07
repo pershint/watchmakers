@@ -28,7 +28,7 @@ except:
     print "Could not load in root_numpy or rootpy, they are required to run this module."
 
 defaultValues  = [3,2500,0,'root_files/merged_ntuple_watchman','null', \
-                  'processed_watchman.root',10.,2.0,100.0,6.0,0.1,0.1,5.42,6.4,8.0]
+                  'processed_watchman.root',10.,2.0,100.0,6.0,0.1,0.1,5.42,6.4,8.0,2805.]
 
 docstring = """
     Usage: watchmakers.py [options]
@@ -60,10 +60,12 @@ docstring = """
     --fv=<fidV>         Fiducial Volome [Default: %f]
     --psup=<psupV>      Distance to PMT support, assuming right cylinder [Default: %f]
     --tankDis=<tankV>   Distance to tank wall, assuming right cylinder [Default: %f]
+    --detectorDepth=<DD> Depth of detector [Default: %f]
+
     """ % (defaultValues[0],defaultValues[1],defaultValues[2],defaultValues[3],\
            defaultValues[4],defaultValues[5],defaultValues[6],defaultValues[7],\
            defaultValues[8],defaultValues[9],defaultValues[10],defaultValues[11],\
-           defaultValues[12],defaultValues[13],defaultValues[14])
+           defaultValues[12],defaultValues[13],defaultValues[14],defaultValues[15])
 
 try:
     import docopt

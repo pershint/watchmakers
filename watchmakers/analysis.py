@@ -4,7 +4,8 @@ def fillHistograms(inFile,a1,t1,h,cover,ii,locj,covPCT):
     # Obtain logarithmic binnings
     nbins, xbins, ybins = logx_logy_array()
     fiducialVolume = arguments["--fv"]
-    print "Fiducial volume is ", fiducialVolume
+    pmtDist         = float(arguments["--psup"])
+#    print "Fiducial volume is ", fiducialVolume
     #Read-in file
     try:
         s =  "%s_%s_%s_%s.root"%(inFile,ii,cover,locj)
@@ -93,7 +94,7 @@ def fillHistograms(inFile,a1,t1,h,cover,ii,locj,covPCT):
                     h[s_dl].fill_array(anaVar)
                     r_r         = t.reco_r[mask,...]
                     r_z         = t.reco_z[mask,...]
-                    anaVar      = column_stack((power(r_r/6.4,2),r_z/6.4))
+                    anaVar      = column_stack((power(r_r/pmtDist,2),r_z/pmtDist))
                     s_dl       = "%s_dRdZ_%s_%s_%s_%d"%(type,cover,ii,locj,subE)
                     h[s_dl]= Hist2D(100,0,1.6,200,-1.6,1.6,name=s_dl,title=s_dl)
                     h[s_dl].SetXTitle('(r / R_{pmt})^{2} [unitless]')
@@ -101,7 +102,7 @@ def fillHistograms(inFile,a1,t1,h,cover,ii,locj,covPCT):
                     h[s_dl].fill_array(anaVar)
                     t_r         = t.true_r[mask,...]
                     t_z         = t.true_z[mask,...]
-                    anaVar      = column_stack((power(t_r/6.4,2),t_z/6.4))
+                    anaVar      = column_stack((power(t_r/pmtDist,2),t_z/pmtDist))
                     s_dl       = "%s_tRtZ_%s_%s_%s_%d"%(type,cover,ii,locj,subE)
                     h[s_dl]= Hist2D(100,0,1.6,200,-1.6,1.6,name=s_dl,title=s_dl)
                     h[s_dl].SetXTitle('(r / R_{pmt})^{2} [unitless]')
@@ -159,7 +160,7 @@ def fillHistograms(inFile,a1,t1,h,cover,ii,locj,covPCT):
                     r_r         = t.reco_r[mask,...]
                     r_z         = t.reco_z[mask,...]
 
-                    anaVar      = column_stack((power(r_r/6.4,2),r_z/6.4))
+                    anaVar      = column_stack((power(r_r/pmtDist,2),r_z/pmtDist))
                     s_dl        ="%s_dRdZ_%s_%s_%s_%d"%(type,cover,ii,locj,subE)
                     h[s_dl]= Hist2D(100,0,1.6,200,-1.6,1.6,name=s_dl,title=s_dl)
                     h[s_dl].SetXTitle('(r / R_{pmt})^{2} [unitless]')
@@ -168,7 +169,7 @@ def fillHistograms(inFile,a1,t1,h,cover,ii,locj,covPCT):
                     t_r         = t.true_r[mask,...]
                     t_z         = t.true_z[mask,...]
 
-                    anaVar      = column_stack((power(t_r/6.4,2),t_z/6.4))
+                    anaVar      = column_stack((power(t_r/pmtDist,2),t_z/pmtDist))
                     s_dl       = "%s_tRtZ_%s_%s_%s_%d"%(type,cover,ii,locj,subE)
                     h[s_dl]= Hist2D(100,0,1.6,200,-1.6,1.6,name=s_dl,title=s_dl)
                     h[s_dl].SetXTitle('(r / R_{pmt})^{2} [unitless]')
@@ -224,7 +225,7 @@ def fillHistograms(inFile,a1,t1,h,cover,ii,locj,covPCT):
                     h[s_dl].fill_array(anaVar)
                     r_r         = t.reco_r[mask,...]
                     r_z         = t.reco_z[mask,...]
-                    anaVar      = column_stack((power(r_r/6.4,2),r_z/6.4))
+                    anaVar      = column_stack((power(r_r/pmtDist,2),r_z/pmtDist))
                     s_dl= "%s_dRdZ_%s_%s_%s_%d"%(type,cover,ii,locj,subE)
                     h[s_dl]= Hist2D(100,0,1.6,200,-1.6,1.6,name=s_dl,title=s_dl)
                     h[s_dl].SetXTitle('(r / R_{pmt})^{2} [unitless]')
@@ -234,7 +235,7 @@ def fillHistograms(inFile,a1,t1,h,cover,ii,locj,covPCT):
                     t_r         = t.true_r[mask,...]
                     t_z         = t.true_z[mask,...]
 
-                    anaVar      = column_stack((power(t_r/6.4,2),t_z/6.4))
+                    anaVar      = column_stack((power(t_r/pmtDist,2),t_z/pmtDist))
                     s_dl       = "%s_tRtZ_%s_%s_%s_%d"%(type,cover,ii,locj,subE)
                     h[s_dl]= Hist2D(100,0,1.6,200,-1.6,1.6,name=s_dl,title=s_dl)
                     h[s_dl].SetXTitle('(r / R_{pmt})^{2} [unitless]')
@@ -287,7 +288,7 @@ def fillHistograms(inFile,a1,t1,h,cover,ii,locj,covPCT):
                     h[s_dl].fill_array(anaVar)
                     r_r         = t.reco_r[mask,...]
                     r_z         = t.reco_z[mask,...]
-                    anaVar      = column_stack((power(r_r/6.4,2),r_z/6.4))
+                    anaVar      = column_stack((power(r_r/pmtDist,2),r_z/pmtDist))
                     s_dl       = "%s_dRdZ_%s_%s_%s_%d"%(type,cover,ii,locj,subE)
                     h[s_dl]= Hist2D(100,0,1.6,200,-1.6,1.6,name=s_dl,title=s_dl)
                     h[s_dl].SetXTitle('(r / R_{pmt})^{2} [unitless]')
@@ -295,7 +296,7 @@ def fillHistograms(inFile,a1,t1,h,cover,ii,locj,covPCT):
                     h[s_dl].fill_array(anaVar)
                     t_r         = t.true_r[mask,...]
                     t_z         = t.true_z[mask,...]
-                    anaVar      = column_stack((power(t_r/6.4,2),t_z/6.4))
+                    anaVar      = column_stack((power(t_r/pmtDist,2),t_z/pmtDist))
                     s_dl       = "%s_tRtZ_%s_%s_%s_%d"%(type,cover,ii,locj,subE)
                     h[s_dl]= Hist2D(100,0,1.6,200,-1.6,1.6,name=s_dl,title=s_dl)
                     h[s_dl].SetXTitle('(r / R_{pmt})^{2} [unitless]')
