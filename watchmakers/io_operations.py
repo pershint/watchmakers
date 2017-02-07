@@ -394,6 +394,8 @@ def customJob(arguments):
     ''' Custom job for photocoverage 02-2017 analyis'''
     
     d,iso,loc,coverage,coveragePCT = loadSimulationParameters()
+    
+    cnt = 0
 
     for j in range(len(iso)):
         for ii in d["%s"%(iso[int(j)])]:
@@ -419,8 +421,6 @@ export G4NEUTRONHP_USE_ONLY_PHOTONEVAPORATION=1\n
                       directory,ii,loc[j],\
                       directory,\
                       rootDir,g4Dir,g4Dir,ratDir,watchmakersDir)
-            print " "
-            print line1
             line2 = "\n"
             line2+= "watch --extractNtup -N 600 -P %s -L %s \n" %(ii,loc[j])
             line2+= "watch --extractNtup -N 600 -P %s -L %s --fv 4.302\n" %(ii,loc[j])
@@ -430,7 +430,15 @@ export G4NEUTRONHP_USE_ONLY_PHOTONEVAPORATION=1\n
             line2+= "watch --extractNtup -N 600 -P %s -L %s -g 0.65\n" %(ii,loc[j])
             line2+= "watch --extractNtup -N 600 -P %s -L %s -g 0.65 -T 12\n" %(ii,loc[j])
             line2+= "watch --extractNtup -N 600 -P %s -L %s -T 12\n" %(ii,loc[j])
-            print line2
+            
+            outfile = open('sub_jobs__%d'%(cnt),"wb")
+            outfile.writelines(line1)
+            outfile.writelines(line2)
+            outfile.close
+
+            cnt+=1
+
+
 
 
 
