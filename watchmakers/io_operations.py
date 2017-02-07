@@ -535,6 +535,8 @@ def mergeNtupleFiles(arguments):
 
 
 def extractNtuple(arguments):
+    d,iso,loc,coverage,coveragePCT = loadSimulationParameters()
+
     N            = int(arguments["-N"])
     rate         = float(arguments["-r"])
     timemask     = float(arguments['-t'])*1000.0
