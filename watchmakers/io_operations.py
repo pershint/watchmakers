@@ -378,6 +378,27 @@ def generateJobs(N,arguments):
     os.chmod('sub_jobs',S_IRWXU)
     return 0
 
+
+def customJob(arguments):
+
+    ''' Custom job for photocoverage 02-2017 analyis'''
+    
+    d,iso,loc,coverage,coveragePCT = loadSimulationParameters()
+
+    for j in range(len(iso)):
+        for ii in d["%s"%(iso[int(j)])]:
+            print "watch --extractNtup -P %s -L %s" %(ii,loc[j])
+            print "watch --extractNtup -P %s -L %s --fv 4.302" %(ii,loc[j])
+            print "watch --extractNtup -P %s -L %s --fv 4.302 -g 0.65" %(ii,loc[j])
+            print "watch --extractNtup -P %s -L %s --fv 4.302 -g 0.65 -T 12" %(ii,loc[j])
+            print "watch --extractNtup -P %s -L %s --fv 4.302 -T 12" %(ii,loc[j])
+            print "watch --extractNtup -P %s -L %s -g 0.65" %(ii,loc[j])
+            print "watch --extractNtup -P %s -L %s -g 0.65 -T 12" %(ii,loc[j])
+            print "watch --extractNtup -P %s -L %s -T 12" %(ii,loc[j])
+
+
+
+
 def deleteAllWorkDirectories():
     d,iso,loc,coverage,coveragePCT = loadSimulationParameters()
 
