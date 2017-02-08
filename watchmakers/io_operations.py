@@ -621,17 +621,19 @@ def mergeNtupleFiles(arguments):
         locj    = arguments["-L"]
         for idx,cover in enumerate(coverage):
             t_name  = "data_%s_%s_%s"%(ii,cover,locj)
-            trees[t_name] = TChain("data")
+            try:
+                trees[t_name] = TChain("data")
+                
+                s = "ntuple_root_files%s/%s/%s/watchman_%s_%s_%s_*.root" %(additionalString,ii,cover,ii,cover,locj)
+                sw = "%s_%s_%s_%s.root"%(pathFinal,ii,cover,locj)
             
-            s = "ntuple_root_files%s/%s/%s/watchman_%s_%s_%s_*.root" %(additionalString,ii,cover,ii,cover,locj)
-            sw = "%s_%s_%s_%s.root"%(pathFinal,ii,cover,locj)
-        
-            print "Writing ", sw,"from",s
-            trees[t_name].Add(s)
-            print "Number of entries ",trees[t_name].GetEntries()
-            trees[t_name].Merge(sw)
-            del trees[t_name]
-
+                print "Writing ", sw,"from",s
+                trees[t_name].Add(s)
+                print "Number of entries ",trees[t_name].GetEntries()
+                trees[t_name].Merge(sw)
+                del trees[t_name]
+            except:
+                print 'Error for %s' %(t_name)
 
     if (arguments["-P"] and not arguments["-L"]) or (arguments["-L"] and not arguments["-P"]):
         print "arguments -L and -P must be used at the same time, for now"
@@ -642,16 +644,20 @@ def mergeNtupleFiles(arguments):
             for ii in d["%s"%(iso[int(j)])]:
                 for idx,cover in enumerate(coverage):
                     t_name  = "data_%s_%s_%s"%(ii,cover,loc[j])
-                    trees[t_name] = TChain("data")
+                    try:
+                        trees[t_name] = TChain("data")
+                        
+                        s = "ntuple_root_files%s/%s/%s/watchman_%s_%s_%s_*.root" %(additionalString,ii,cover,ii,cover,loc[j])
+                        sw = "%s_%s_%s_%s.root"%(pathFinal,ii,cover,loc[j])
                     
-                    s = "ntuple_root_files%s/%s/%s/watchman_%s_%s_%s_*.root" %(additionalString,ii,cover,ii,cover,loc[j])
-                    sw = "%s_%s_%s_%s.root"%(pathFinal,ii,cover,loc[j])
-                
-                    print "Writing ", sw,"from",s
-                    trees[t_name].Add(s)
-                    print "Number of entries ",trees[t_name].GetEntries()
-                    trees[t_name].Merge(sw)
-                    del trees[t_name]
+                        print "Writing ", sw,"from",s
+                        trees[t_name].Add(s)
+                        print "Number of entries ",trees[t_name].GetEntries()
+                        trees[t_name].Merge(sw)
+                        del trees[t_name]
+                    except:
+                        print 'Error for %s' %(t_name)
+
 
     del trees
     return 0
