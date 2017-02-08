@@ -609,7 +609,12 @@ def mergeNtupleFiles(arguments):
     # Load internal requirements
     d,iso,loc,coverage,coveragePCT = loadSimulationParameters()
     trees = {}
-    pathFinal = "root_files/merged_ntuple_watchman"
+
+    additionalString,additionalCommands = testEnabledCondition(arguments)
+    if additionalString == "":
+        additionalString = "_default"
+
+    pathFinal = "root_files%s/merged_ntuple_watchman" %(additionalString)
     
     if arguments["-P"] and arguments["-L"]:
         ii      = arguments["-P"]
@@ -618,7 +623,7 @@ def mergeNtupleFiles(arguments):
             t_name  = "data_%s_%s_%s"%(ii,cover,locj)
             trees[t_name] = TChain("data")
             
-            s = "ntuple_root_files/%s/%s/watchman_%s_%s_%s_*.root" %(ii,cover,ii,cover,locj)
+            s = "ntuple_root_files%s/%s/%s/watchman_%s_%s_%s_*.root" %(additionalString,ii,cover,ii,cover,locj)
             sw = "%s_%s_%s_%s.root"%(pathFinal,ii,cover,locj)
         
             print "Writing ", sw,"from",s
@@ -639,7 +644,7 @@ def mergeNtupleFiles(arguments):
                     t_name  = "data_%s_%s_%s"%(ii,cover,loc[j])
                     trees[t_name] = TChain("data")
                     
-                    s = "ntuple_root_files/%s/%s/watchman_%s_%s_%s_*.root" %(ii,cover,ii,cover,loc[j])
+                    s = "ntuple_root_files%s/%s/%s/watchman_%s_%s_%s_*.root" %(additionalString,ii,cover,ii,cover,loc[j])
                     sw = "%s_%s_%s_%s.root"%(pathFinal,ii,cover,loc[j])
                 
                     print "Writing ", sw,"from",s
