@@ -614,7 +614,7 @@ def mergeNtupleFiles(arguments):
     if additionalString == "":
         additionalString = "_default"
 
-    pathFinal = "root_files%s/merged_ntuple_watchman" %(additionalString)
+    pathFinal = "ntuple_root_files%s/merged_ntuple_watchman" %(additionalString)
     
     if arguments["-P"] and arguments["-L"]:
         ii      = arguments["-P"]
