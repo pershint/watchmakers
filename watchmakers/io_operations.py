@@ -524,14 +524,6 @@ def deleteAllWorkDirectories():
     if os.path.exists('sub_jobs'):
         os.remove('sub_jobs')
 
-def writeResultsToFile(s,g,h):
-    d,iso,loc,coverage,coveragePCT = loadSimulationParameters()
-    f_root = TFile(s,"recreate")
-    for gE in g:
-        g["%s"%(gE)].Write()
-    for hE in h:
-        h["%s"%(hE)].Write()
-    f_root.Close()
 
 
 def mergeFiles():
@@ -601,6 +593,21 @@ def testEnabledCondition(arguments):
     
     
     return  additionalString,additionalCommands
+
+
+
+
+
+def writeResultsToFile(s,g,h):
+    additionalString,additionalCommands = testEnabledCondition(arguments)
+    _str = "ntuple_root_files%s/%s" %(additionalString,s)
+    d,iso,loc,coverage,coveragePCT = loadSimulationParameters()
+    f_root = TFile(_str,"recreate")
+    for gE in g:
+        g["%s"%(gE)].Write()
+    for hE in h:
+        h["%s"%(hE)].Write()
+    f_root.Close()
 
 
 def mergeNtupleFiles(arguments):
