@@ -13,6 +13,7 @@ def fillHistograms(inFile,a1,t1,h,cover,ii,locj,covPCT):
     #Read-in file
     try:
         s =  "ntuple_root_files%s/%s_%s_%s_%s.root"%(additionalString,inFile,ii,cover,locj)
+        print "Reading in ",s 
 #        data = root2array(s)
         t           = root2rec(s)
 
