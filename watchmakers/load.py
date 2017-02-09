@@ -27,7 +27,7 @@ try:
 except:
     print "Could not load in root_numpy or rootpy, they are required to run this module."
 
-defaultValues  = [3,2500,0,'root_files/merged_ntuple_watchman','null', \
+defaultValues  = [3,2500,0,'merged_ntuple_watchman','null', \
                   'processed_watchman.root',10.,2.0,100.0,6.0,0.1,0.1,5.42,6.4,8.0,2805.]
 
 docstring = """
