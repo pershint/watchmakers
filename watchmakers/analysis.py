@@ -7,7 +7,7 @@ def fillHistograms(inFile,a1,t1,h,cover,ii,locj,covPCT):
     
     additionalString,additionalCommands = testEnabledCondition(arguments)
     
-    fiducialVolume = arguments["--fv"]
+    fiducialVolume = float(arguments["--fv"])
     pmtDist         = float(arguments["--psup"])
 #    print "Fiducial volume is ", fiducialVolume
     #Read-in file
@@ -20,6 +20,7 @@ def fillHistograms(inFile,a1,t1,h,cover,ii,locj,covPCT):
         #Apply some analysis
         r           = npa(t.reco_r<fiducialVolume,dtype=bool)
         z           = npa(absolute(t.reco_z)<fiducialVolume,dtype=bool)
+        
         isFV        = logical_and(r,z,dtype=bool)
         notFV       = npa(isFV!=1,dtype=bool)
         isFV_t      = npa(t.FV_truth==1,dtype=bool)
