@@ -41,8 +41,5 @@ if __name__ == "__main__":
     if arguments['--customJob']:
         customJob(arguments)
 
-    h = {}
-    a1 = t1 = 0
-    h  = fillHistograms(arguments['-f'],a1,t1,h,'20pct','imb','S',19.4453)
 
 ######################## Waba Luba Dub Dub!! ###########################
