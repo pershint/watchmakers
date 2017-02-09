@@ -5,8 +5,6 @@ from watchmakers.io_operations import *
 from watchmakers.analysis import *
 from watchmakers.sensitivity import *
 
-fv_rad = 5.42
-
 ######################## Start of main function ###########################
 
 if __name__ == "__main__":
