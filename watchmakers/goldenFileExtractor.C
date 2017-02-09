@@ -123,6 +123,7 @@ int goldenFileExtractor(const char *file, double nhit_min =3., double goodness_m
         mcmomv_nu                   = prim->GetMomentum();
         dirNu                       = prim->GetMomentum();
         mc_nu_energy                = prim->ke;
+        posTruth                    = prim->GetPosition();
         
         r_t = sqrt(pow(prim->GetPosition().X(),2)+ pow(prim->GetPosition().Y(),2))/1000.;
         z_t = prim->GetPosition().Z()/1000.;
@@ -171,7 +172,7 @@ int goldenFileExtractor(const char *file, double nhit_min =3., double goodness_m
             goodness                = pb->GetGoodness();
             dirGoodness             = pb->GetDirGoodness();
             posReco                 = pb->GetPosition();
-            nhit                  = pb->GetIDHit();
+            totNHIT                     = pb->GetIDHit();
             totPE                   = pb->GetIDCharge();
             dirReco                 = pb->GetDirection();
             n9                      = pb->GetN9();
