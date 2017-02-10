@@ -444,55 +444,55 @@ export G4NEUTRONHP_USE_ONLY_PHOTONEVAPORATION=1\n
             line9 = "watch --extractNtup -N 600 -P %s -L %s -T 14\n" %(ii,loc[j])
 
 
-            outfile = open('sub_jobs__%d_2'%(cnt),"wb")
-            outF2.writelines('msub sub_jobs__%d_2\n'%(cnt))
+            outfile = open('jobs/sub_jobs__%d_2'%(cnt),"wb")
+            outF2.writelines('msub jobs/sub_jobs__%d_2\n'%(cnt))
             outfile.writelines(line1)
             outfile.writelines(line2)
             outfile.close
 
-            outfile = open('sub_jobs__%d_3'%(cnt),"wb")
-            outF2.writelines('msub sub_jobs__%d_3\n'%(cnt))
+            outfile = open('jobs/sub_jobs__%d_3'%(cnt),"wb")
+            outF2.writelines('msub jobs/sub_jobs__%d_3\n'%(cnt))
 
             outfile.writelines(line1)
             outfile.writelines(line3)
             outfile.close
-            outfile = open('sub_jobs__%d_4'%(cnt),"wb")
-            outF2.writelines('msub sub_jobs__%d_4\n'%(cnt))
+            outfile = open('jobs/sub_jobs__%d_4'%(cnt),"wb")
+            outF2.writelines('msub jobs/sub_jobs__%d_4\n'%(cnt))
 
             outfile.writelines(line1)
             outfile.writelines(line4)
             outfile.close
 
-            outfile = open('sub_jobs__%d_5'%(cnt),"wb")
-            outF2.writelines('msub sub_jobs__%d_5\n'%(cnt))
+            outfile = open('jobs/sub_jobs__%d_5'%(cnt),"wb")
+            outF2.writelines('msub jobs/sub_jobs__%d_5\n'%(cnt))
 
             outfile.writelines(line1)
             outfile.writelines(line5)
             outfile.close
 
-            outfile = open('sub_jobs__%d_6'%(cnt),"wb")
-            outF2.writelines('msub sub_jobs__%d_6\n'%(cnt))
+            outfile = open('jobs/sub_jobs__%d_6'%(cnt),"wb")
+            outF2.writelines('msub jobs/sub_jobs__%d_6\n'%(cnt))
 
             outfile.writelines(line1)
             outfile.writelines(line6)
             outfile.close
 
-            outfile = open('sub_jobs__%d_7'%(cnt),"wb")
-            outF2.writelines('msub sub_jobs__%d_7\n'%(cnt))
+            outfile = open('jobs/sub_jobs__%d_7'%(cnt),"wb")
+            outF2.writelines('msub jobs/sub_jobs__%d_7\n'%(cnt))
 
             outfile.writelines(line1)
             outfile.writelines(line7)
             outfile.close
 
-            outfile = open('sub_jobs__%d_8'%(cnt),"wb")
-            outF2.writelines('msub sub_jobs__%d_8\n'%(cnt))
+            outfile = open('jobs/sub_jobs__%d_8'%(cnt),"wb")
+            outF2.writelines('msub jobs/sub_jobs__%d_8\n'%(cnt))
 
             outfile.writelines(line1)
             outfile.writelines(line8)
             outfile.close
 
-            outfile = open('sub_jobs__%d_9'%(cnt),"wb")
-            outF2.writelines('msub sub_jobs__%d_9\n'%(cnt))
+            outfile = open('jobs/sub_jobs__%d_9'%(cnt),"wb")
+            outF2.writelines('msub jobs/sub_jobs__%d_9\n'%(cnt))
 
             outfile.writelines(line1)
             outfile.writelines(line9)
