@@ -338,161 +338,21 @@ def logx_logy_array(nbins = 500,xmin = 1e-2,xmax = 30.,ymin = 1e-9,ymax = 1e3):
         ybins[i] = ymin + pow(10,logymin+i*ybinwidth)
     return nbins,xbins,ybins
 
+
+
+
 def obtainAbsoluteEfficiency(f,timeScale='day',cut = 10.0):
 
-    # Default units are in sec. Conversion factor are below
-    timeSec     = 1.0/365./24./3600.
-
-    # Number of free proton
-    if timeScale == 'sec':
-        timeS   = 1.0
-    if timeScale == 'day':
-        timeS   = 24.0*3600.
-    if timeScale == 'month':
-        timeS   = 365.0/12.*24.0*3600.
-    if timeScale == 'year':
-        timeS   = 365.0*24.0*3600.
-
-    #Mass in kilograms
-    mass = 2.0
-    nKiloTons   = 3.22
-    FreeProtons = 0.6065
-    TNU         = FreeProtons* nKiloTons *timeSec
-
-    #Fast neutrons conversion
-    #Rock mass
-    volumeR         = (2.*22.5*23.8*1.0+2.*17*23.8*1.0+2.*22.5*17.*1.0)
-    density         = 2.39 #from McGrath
-    rockMass        = volumeR*power(100.,3)*density
-    avgMuon         = npa([180.,264.])
-    avgMuonNC       = power(avgMuon,0.849)
-    avgNFluxMag     = 1e-6
-    muonRate        = npa([7.06e-7,4.09e-8]) # mu/cm2/s
-    tenMeVRatio     = npa([7.51/34.1,1.11/4.86])
-    fastNeutrons    = rockMass*avgMuonNC*avgNFluxMag*muonRate*tenMeVRatio
-
-    avgRNYieldRC    = power(avgMuon,0.73)
-    skRNRate        = 0.5e-7 # 1/mu/g cm2
-    avgMuonSK       = power(219.,0.73)
-    skMuFlux        = 1.58e-7 #mu/cm2/sec
-    radionuclideRate= (skRNRate*avgRNYieldRC/avgMuonSK)*muonRate*nKiloTons*1e9
-    
-    boulbyIBDRate   = 924.48*TNU
-    fairportIBDRate = 7583.*TNU
-#    print boulbyIBDRate*timeS/nKiloTons,fairportIBDRate*timeS/nKiloTons
-
-#    print "Using ",timeScale, " as a time scale"
-#    print "Fast neutron ", fastNeutrons*timeS
-#    print "radionuclide ", radionuclideRate*timeS
-    #Radionuclides
-
-
-    covPCT      = {'9.86037':1432., '14.887':2162.,'19.4453':2824.,\
-    '24.994':3558.,'28.8925':4196.,'34.3254':4985.,'39.1385':5684.}
-    pct         = npa([9.86037,14.887,19.4453,24.994,28.8925,\
-    34.3254,39.1385])
+    covPCT      = {'9.86037':1432., '14.887':2162.,'19.4453':2824.,'24.994':3558.,'28.8925':4196.,'34.3254':4985.,'39.1385':5684.}
+    pct         = npa([9.86037,14.887,19.4453,24.994,28.8925,34.3254,39.1385])
     pctVal      = ['10pct','15pct','20pct','25pct','30pct','35pct','40pct']
 
-    #Cuts
     f           = TFile(f,'read')
     EG          = {}
-    inta        = ['si','so','eo','ei']
-
-    #Add the U-238 chain
-    proc        = ['234Pa','214Pb','214Bi','210Bi','210Tl']
-    loca        = ['PMT',  'PMT',  'PMT',  'PMT',  'PMT']
-    acc         = ['acc',  'acc',  'acc',  'acc',  'acc']
-    br          = [1.0,     1.0,    1.0,   1.0 ,   0.002]
-    site        = ['',      '',     '',     '',     '']
-    arr         = empty(5)
-    arr[:]      = 0.993
-    Activity    = arr
-    #Add the Th-232 chain
-    proc        +=['232Th','228Ac','212Pb','212Bi','208Tl']
-    loca        +=['PMT'  ,'PMT',   'PMT', 'PMT',  'PMT'  ]
-    acc         +=['acc'  ,'acc',   'acc', 'acc',  'acc'  ]
-    br          += [1.0,     1.0,    1.0,   1.0 ,   1.0]
-    site        += ['',      '',     '',     '',     '']
-    arr         = empty(5)
-    arr[:]      = 0.124
-    Activity    = append(   Activity,arr)
-    #Add the Rn-222 chain
-    proc        +=['214Pb','214Bi','210Bi','210Tl']
-    loca        +=['FV',   'FV',   'FV',   'FV']
-    acc         +=['acc',  'acc',  'acc',   'acc']
-    br          += [1.0,   1.0,   1.0,     0.002]
-    site        += ['',     '',     '',     '']
-    arr = empty(4)
-    arr[:]      = 6.4
-    Activity    = append(   Activity,arr)
+    
 
 
-    #Add the neutrino signal
-    proc        +=['imb','imb','boulby','boulby']
-    loca        +=['S','S',     'S',  'S']
-    acc         +=['di', 'corr', 'di', 'corr']
-    br          += [1.0,  1.0, 1.0 , 1.0]
-    site        += [''   ,'' , '', '']
-    arr         = npa([fairportIBDRate,fairportIBDRate,boulbyIBDRate,boulbyIBDRate])
-    Activity    = append(    Activity,arr)
-
-    # Add the neutron
-    proc        +=['neutron','neutron']
-    loca        +=['N',     'N']
-    acc         +=['corr',  'corr']
-    br          += [1.0,   1.0]
-    arr         = npa([fairportIBDRate,boulbyIBDRate])
-#    print "Neutrino activity ",arr*timeS/nKiloTons
-    Activity    = append(    Activity,arr)
-    site        += [ '','boulby']
-
-    # add a fast neutron at Fairport
-    proc        += ['QGSP_BERT_EMV','QGSP_BERT_EMX','QGSP_BERT','QGSP_BIC',\
-    'QBBC','QBBC_EMZ','FTFP_BERT','QGSP_FTFP_BERT']
-    loca        +=  ['FN','FN','FN','FN','FN','FN','FN','FN']
-    acc         +=  ['corr','corr','corr','corr','corr','corr','corr','corr']
-    br          +=  [1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0]
-    arr = empty(8)
-    arr[:]      = fastNeutrons[0]
-    Activity    = append(Activity,arr)
-    site        += ['',      '','',      '','',      '','',      '']
-    # add a fast neutron at Boulby
-    proc        += ['QGSP_BERT_EMV','QGSP_BERT_EMX','QGSP_BERT','QGSP_BIC',\
-    'QBBC','QBBC_EMZ','FTFP_BERT','QGSP_FTFP_BERT']
-    loca        +=  ['FN','FN','FN','FN','FN','FN','FN','FN']
-    acc         +=  ['corr','corr','corr','corr','corr','corr','corr','corr']
-    br          +=  [1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0]
-    arr = empty(8)
-    arr[:]      = fastNeutrons[1]
-    Activity    = append(Activity,arr)
-    site        += ['boulby','boulby','boulby','boulby','boulby','boulby',\
-    'boulby','boulby']
-
-    # Read in the different radionuclide
-    proc        +=  ['16006','17006','18006','17007','18007','8002','9003',\
-    '11003']
-    loca        +=  ['RN','RN','RN','RN','RN','RN','RN','RN']
-    acc         +=  ['di','di','di','di','di','di','di','di']
-    #normalised to 9Li from SK
-    arr         = npa([0.02,0.001,0.001,0.59*0.002,4e-6,0.23,1.9,0.01])/1.9
-    arr         *= radionuclideRate[0]
-    Activity    = append(Activity,arr)
-    br         +=  [.988,1.0,1.0,0.951,0.143,0.16,0.495,0.927]
-    site        += ['','','','','','','','']
-
-    # Read in the different radionuclide
-    proc        +=  ['16006','17006','18006','17007','18007','8002','9003',\
-    '11003']
-    loca        +=  ['RN','RN','RN','RN','RN','RN','RN','RN']
-    acc         +=  ['di','di','di','di','di','di','di','di']
-    #normalised to 9Li from SK
-    arr         = npa([ 0.02,0.001,0.001,0.59*0.002,4e-6,0.23,1.9,0.01])/1.9
-    arr         *= radionuclideRate[1]
-    Activity    = append(Activity,arr)
-    br         +=  [.988,1.0,1.0,0.951,0.143,0.16,0.495,0.927]
-    site        += ['boulby','boulby','boulby','boulby','boulby','boulby',\
-    'boulby','boulby']
-
+    inta,proc,loca,acc,arr,Activity,br,site,timeS,boulbyNeutronFV,mass = loadAnalysisParameters(timeScale)
 
 
     x,y         = Double(0.),Double(0.)
@@ -510,8 +370,7 @@ def obtainAbsoluteEfficiency(f,timeScale='day',cut = 10.0):
             EG[_strEff].SetPoint(cnter,0.,0.)
             cnter+=1
             for cc,val in enumerate(pctVal):
-                s              = "%s_pe_%s_%s_%s_1"%(_inta,val,proc[ii],\
-                loca[ii])
+                s              = "%s_pe_%s_%s_%s_1"%(_inta,val,proc[ii],loca[ii])
                 eff = histIntegral(s,f,cut)
                 if eff>0.00:
                     EG[_strEff].SetPoint(cnter,pct[cc],eff)
@@ -562,7 +421,7 @@ def obtainAbsoluteEfficiency(f,timeScale='day',cut = 10.0):
                     if acc[ii] == 'di' and (_inta == 'si' or _inta == 'ei'):
                         x   = float(value)
                         aY  = EG['scaled_ei_neutron_Nboulby_1_abs_corr'].Eval(x)
-                        oY  = aY/(boulbyIBDRate*timeS/nKiloTons)
+                        oY  = aY/(boulbyNeutronFV*timeS)
                         nY  = EG[_scal_str1].Eval(float(value))
                         EG[_scal_str1].SetPoint(iii,x,oY*nY)
                     if acc[ii] == 'acc' and _inta != 'si' and _inta != 'ei':
@@ -584,245 +443,6 @@ def obtainAbsoluteEfficiency(f,timeScale='day',cut = 10.0):
     return EG
 
 
-#def obtainAbsoluteEfficiency(f,timeScale='day',cut = 10.0):
-#
-#    # Default units are in sec. Conversion factor are below
-#    timeSec     = 1.0/365./24./3600.
-#
-#    # Number of free proton
-#    if timeScale == 'sec':
-#        timeS   = 1.0
-#    if timeScale == 'day':
-#        timeS   = 24.0*3600.
-#    if timeScale == 'month':
-#        timeS   = 365.0/12.*24.0*3600.
-#    if timeScale == 'year':
-#        timeS   = 365.0*24.0*3600.
-#
-#    #Mass in kilograms
-#    mass = 2.0
-#    nKiloTons   = 3.22
-#    FreeProtons = 0.6065
-#    TNU         = FreeProtons* nKiloTons *timeSec
-#
-#    #Fast neutrons conversion
-#    #Rock mass
-#    volumeR         = (2.*22.5*23.8*1.0+2.*17*23.8*1.0+2.*22.5*17.*1.0)
-#    density         = 2.39 #from McGrath
-#    rockMass        = volumeR*power(100.,3)*density
-#    avgMuon         = npa([180.,264.])
-#    avgMuonNC       = power(avgMuon,0.849)
-#    avgNFluxMag     = 1e-6
-#    muonRate        = npa([7.06e-7,4.09e-8]) # mu/cm2/s
-#    tenMeVRatio     = npa([7.51/34.1,1.11/4.86])
-#    fastNeutrons    = rockMass*avgMuonNC*avgNFluxMag*muonRate*tenMeVRatio
-#
-#    avgRNYieldRC    = power(avgMuon,0.73)
-#    skRNRate        = 0.5e-7 # 1/mu/g cm2
-#    avgMuonSK       = power(219.,0.73)
-#    skMuFlux        = 1.58e-7 #mu/cm2/sec
-#    radionuclideRate= (skRNRate*avgRNYieldRC/avgMuonSK)*muonRate*nKiloTons*1e9
-#
-##    print "Using ",timeScale, " as a time scale"
-##    print "Fast neutron ", fastNeutrons*timeS
-##    print "radionuclide ", radionuclideRate*timeS
-#    #Radionuclides
-#
-#
-#    covPCT      = {'9.86037':1432., '14.887':2162.,'19.4453':2824.,\
-#    '24.994':3558.,'28.8925':4196.,'34.3254':4985.,'39.1385':5684.}
-#    pct         = npa([9.86037,14.887,19.4453,24.994,28.8925,\
-#    34.3254,39.1385])
-#    pctVal      = ['10pct','15pct','20pct','25pct','30pct','35pct','40pct']
-#
-#    #Cuts
-#    f           = TFile(f,'read')
-#    EG          = {}
-#    inta        = ['si','so','eo','ei']
-#
-#    #Add the U-238 chain
-#    proc        = ['234Pa','214Pb','214Bi','210Bi','210Tl']
-#    loca        = ['PMT',  'PMT',  'PMT',  'PMT',  'PMT']
-#    acc         = ['acc',  'acc',  'acc',  'acc',  'acc']
-#    br          = [1.0,     1.0,    1.0,   1.0 ,   0.002]
-#    site        = ['',      '',     '',     '',     '']
-#    arr         = empty(5)
-#    arr[:]      = 0.993
-#    Activity    = arr
-#    #Add the Th-232 chain
-#    proc        +=['232Th','228Ac','212Pb','212Bi','208Tl']
-#    loca        +=['PMT'  ,'PMT',   'PMT', 'PMT',  'PMT'  ]
-#    acc         +=['acc'  ,'acc',   'acc', 'acc',  'acc'  ]
-#    br          += [1.0,     1.0,    1.0,   1.0 ,   1.0]
-#    site        += ['',      '',     '',     '',     '']
-#    arr         = empty(5)
-#    arr[:]      = 0.124
-#    Activity    = append(   Activity,arr)
-#    #Add the Rn-222 chain
-#    proc        +=['214Pb','214Bi','210Bi','210Tl']
-#    loca        +=['FV',   'FV',   'FV',   'FV']
-#    acc         +=['acc',  'acc',  'acc',   'acc']
-#    br          += [1.0,   1.0,   1.0,     0.002]
-#    site        += ['',     '',     '',     '']
-#    arr = empty(4)
-#    arr[:]      = 6.4
-#    Activity    = append(   Activity,arr)
-#
-#
-#    #Add the neutrino signal
-#    proc        +=['imb','imb','boulby','boulby']
-#    loca        +=['S','S',     'S',  'S']
-#    acc         +=['di', 'corr', 'di', 'corr']
-#    br          += [1.0,  1.0, 1.0 , 1.0]
-#    site        += [''   ,'' , '', '']
-#    arr         = npa([7583.*TNU,7583.*TNU,924.48*TNU,924.48*TNU])
-#    Activity    = append(    Activity,arr)
-#
-#    # Add the neutron
-#    proc        +=['neutron','neutron']
-#    loca        +=['N',     'N']
-#    acc         +=['corr',  'corr']
-#    br          += [1.0,   1.0]
-#    arr         = npa([7583.*TNU,924.48*TNU])
-#    # print "Neutrino activity ",arr*timeS/nKiloTons
-#    Activity    = append(    Activity,arr)
-#    site        += [ '','boulby']
-#
-#    # add a fast neutron at Fairport
-#    proc        += ['QGSP_BERT_EMV','QGSP_BERT_EMX','QGSP_BERT','QGSP_BIC',\
-#    'QBBC','QBBC_EMZ','FTFP_BERT','QGSP_FTFP_BERT']
-#    loca        +=  ['FN','FN','FN','FN','FN','FN','FN','FN']
-#    acc         +=  ['corr','corr','corr','corr','corr','corr','corr','corr']
-#    br          +=  [1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0]
-#    arr = empty(8)
-#    arr[:]      = fastNeutrons[0]
-#    Activity    = append(Activity,arr)
-#    site        += ['',      '','',      '','',      '','',      '']
-#    # add a fast neutron at Boulby
-#    proc        += ['QGSP_BERT_EMV','QGSP_BERT_EMX','QGSP_BERT','QGSP_BIC',\
-#    'QBBC','QBBC_EMZ','FTFP_BERT','QGSP_FTFP_BERT']
-#    loca        +=  ['FN','FN','FN','FN','FN','FN','FN','FN']
-#    acc         +=  ['corr','corr','corr','corr','corr','corr','corr','corr']
-#    br          +=  [1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0]
-#    arr = empty(8)
-#    arr[:]      = fastNeutrons[1]
-#    Activity    = append(Activity,arr)
-#    site        += ['boulby','boulby','boulby','boulby','boulby','boulby',\
-#    'boulby','boulby']
-#
-#    # Read in the different radionuclide
-#    proc        +=  ['16006','17006','18006','17007','18007','8002','9003',\
-#    '11003']
-#    loca        +=  ['RN','RN','RN','RN','RN','RN','RN','RN']
-#    acc         +=  ['di','di','di','di','di','di','di','di']
-#    #normalised to 9Li from SK
-#    arr         = npa([0.02,0.001,0.001,0.59*0.002,4e-6,0.23,1.9,0.01])/1.9
-#    arr         *= radionuclideRate[0]
-#    Activity    = append(Activity,arr)
-#    br         +=  [.988,1.0,1.0,0.951,0.143,0.16,0.495,0.927]
-#    site        += ['','','','','','','','']
-#
-#    # Read in the different radionuclide
-#    proc        +=  ['16006','17006','18006','17007','18007','8002','9003',\
-#    '11003']
-#    loca        +=  ['RN','RN','RN','RN','RN','RN','RN','RN']
-#    acc         +=  ['di','di','di','di','di','di','di','di']
-#    #normalised to 9Li from SK
-#    arr         = npa([ 0.02,0.001,0.001,0.59*0.002,4e-6,0.23,1.9,0.01])/1.9
-#    arr         *= radionuclideRate[1]
-#    Activity    = append(Activity,arr)
-#    br         +=  [.988,1.0,1.0,0.951,0.143,0.16,0.495,0.927]
-#    site        += ['boulby','boulby','boulby','boulby','boulby','boulby',\
-#    'boulby','boulby']
-#
-#
-#
-#    x,y         = Double(0.),Double(0.)
-#    boolFirst   = True
-#    for _inta in inta:
-#        for ii in range(len(proc)):
-#            _str1               = "%s_%s_%s_1_abs" %(_inta,proc[ii],loca[ii])
-#            _scal_str1          = "scaled_%s_%s_%s%s_1_abs_%s"%(_inta,proc[ii],\
-#            loca[ii],site[ii],acc[ii])
-#            _strEff             = "eff_%s_%s_%s%s_1_abs" %(_inta,proc[ii],\
-#            loca[ii],site[ii])
-#
-#            EG[_strEff]         = Graph()
-#            cnter = 0
-#            EG[_strEff].SetPoint(cnter,0.,0.)
-#            cnter+=1
-#            for cc,val in enumerate(pctVal):
-#                s              = "%s_pe_%s_%s_%s_1"%(_inta,val,proc[ii],\
-#                loca[ii])
-#                eff = histIntegral(s,f,cut)
-#                if eff>0.00:
-#                    EG[_strEff].SetPoint(cnter,pct[cc],eff)
-#                    cnter+=1
-##                    if loca[ii]=="RN":
-##                        print _inta,val,proc[ii],loca[ii],cnter,pct[cc],eff
-#
-#            try:
-#                EG[_str1] = f.Get(_str1)
-#                EG[_scal_str1] = EG[_str1].Clone()
-#
-#                for i in range(EG[_str1].GetN()):
-#                    EG[_str1].GetPoint(i,x,y)
-#                    nY      = y*Activity[ii]*timeS*br[ii]*EG[_strEff].Eval(x)
-#                    if loca[ii] == 'PMT':
-#                        nY      *= mass*covPCT["%s"%(x)]
-#                        EG[_scal_str1].SetPoint(i,x,nY)
-#                    else:
-#                        EG[_scal_str1].SetPoint(i,x,nY)
-#            except:
-#                a = 0
-#
-#    _scal_acc,_scal_acc_notFV,_scal_acc1,_scal_acc_notFV1 ="scaled_accidental",\
-#    "scaled_accidental_notFV","cut_accidental","all_cut_accidental"
-#    EG[_scal_acc],EG[_scal_acc_notFV],EG[_scal_acc1],EG[_scal_acc_notFV1] = \
-#    Graph(),Graph(),Graph(),Graph()
-#
-#    for i,p  in enumerate(pct):
-#        EG[_scal_acc].SetPoint(i ,p ,0.0)
-#        EG[_scal_acc_notFV].SetPoint(i,p,0.)
-#        EG[_scal_acc1].SetPoint(i,p,0.)
-#        EG[_scal_acc_notFV1].SetPoint(i,p,0.)
-#
-#
-#    for _inta in inta:
-#        for ii in range(len(proc)):
-#            _scal_str1          = "scaled_%s_%s_%s%s_1_abs_%s"%(_inta,\
-#            proc[ii],loca[ii],site[ii],acc[ii])
-#            for iii,value in enumerate(pct):
-#                try:
-#                    if acc[ii] == 'acc' and (_inta == 'si' or _inta == 'ei'):
-#                        x   = float(value)
-#                        oY  = EG[_scal_acc].Eval(x)
-#                        nY  = EG[_scal_str1].Eval(float(value))
-#                        EG[_scal_acc].SetPoint(iii,x,oY+nY)
-#                    if acc[ii] == 'di' and (_inta == 'si' or _inta == 'ei'):
-#                        x   = float(value)
-#                        oY  = EG['scaled_ei_neutron_Nboulby_1_abs_corr'].Eval(x)
-#                        oY  /= (63.21751667*12./365./24./3600.*timeS)
-#                        nY  = EG[_scal_str1].Eval(float(value))
-##                        print _scal_str1,x,oY,nY,oY*nY
-#                        EG[_scal_str1].SetPoint(iii,x,oY*nY)
-#                    if acc[ii] == 'acc' and _inta != 'si' and _inta != 'ei':
-#                        x   = float(value)
-#                        oY  = EG[_scal_acc_notFV].Eval(x)
-#                        nY  = EG[_scal_str1].Eval(float(value))
-#                        EG[_scal_acc_notFV].SetPoint(iii,x,oY+nY)
-#                except:
-#                    a = 1
-#
-#
-#    distanceEff = 0.004
-#    for iii,value in enumerate(pct):
-#        x   = float(value)
-#        oY  = EG[_scal_acc].Eval(x)
-#        nY  = 0.0001/timeS*oY*oY
-#        EG[_scal_acc1].SetPoint(iii,x,nY)
-#        EG[_scal_acc_notFV1].SetPoint(iii,x,nY*distanceEff)
-#    return EG
 
 def pickColor(H,_loc,r_c,o_c,b_c,c_c ):
     if _loc=='PMT':

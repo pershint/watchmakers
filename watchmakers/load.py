@@ -3,6 +3,11 @@ from ROOT import TChain,TGraph,TGraphErrors,gSystem,gROOT,TH1D,TH2D,TFile,TCanva
 from ROOT import THStack,Double
 from ROOT import kRed,kBlue,kGreen,kCyan,kOrange
 
+from ROOT import kOrange as kO,kBlue as kB,kGreen as kG
+from ROOT import kMagenta as kM,kAzure as kA,kRed as kR
+from ROOT import TCanvas,TLine, TLatex
+from ROOT import sqrt
+from ROOT import gStyle,gPad,TPaletteAxis
 import os.path
 from stat import S_IRWXG,S_IRWXU
 from shutil import rmtree
@@ -21,14 +26,15 @@ try:
     from rootpy.io import root_open
     #from rootpy.interactive import wait
 
-    set_style('ATLAS')
+#    set_style('ATLAS')
 
     warnings.simplefilter("ignore")
 except:
     print "Could not load in root_numpy or rootpy, they are required to run this module."
 
 defaultValues  = [3,2500,0,'merged_ntuple_watchman','null', \
-                  'processed_watchman.root',10.,2.0,100.0,6.0,0.1,0.1,5.42,6.4,8.0,2805.]
+                  'processed_watchman.root',10.,2.0,100.0,6.0,0.1,0.1,5.42,6.4,8.0,2805.,'day',\
+                  'boulby',1.0]
 
 docstring = """
     Usage: watchmakers.py [options]
@@ -62,12 +68,16 @@ docstring = """
     --psup=<psupV>      Distance to PMT support, assuming right cylinder [Default: %f]
     --tankDis=<tankV>   Distance to tank wall, assuming right cylinder [Default: %f]
     --detectorDepth=<DD> Depth of detector [Default: %f]
-    --customJob          Custom job for photocoverage 02-2017
+    --customJob         Custom job for photocoverage 02-2017
+    --timeScale=<_ts>   Integration period (sec,day,month,year) [Default: %s]
+    --site=<_site>      Site of the experiment (boulby,fairport) [Default: %s]
+    --OnOff=<_OOratio>  Ratio of reactor on to reactor off [Default: %d]
 
     """ % (defaultValues[0],defaultValues[1],defaultValues[2],defaultValues[3],\
            defaultValues[4],defaultValues[5],defaultValues[6],defaultValues[7],\
            defaultValues[8],defaultValues[9],defaultValues[10],defaultValues[11],\
-           defaultValues[12],defaultValues[13],defaultValues[14],defaultValues[15])
+           defaultValues[12],defaultValues[13],defaultValues[14],defaultValues[15],\
+           defaultValues[16],defaultValues[17],defaultValues[18])
 
 try:
     import docopt
@@ -117,4 +127,179 @@ def loadSimulationParameters():
     '25pct':24.994,'30pct':28.8925,'35pct':34.3254,'40pct':39.1385}
 
     return d, iso,loc,coverage,coveragePCT
+
+def loadAnalysisParameters(timeScale='day'):
+
+
+    # Default units are in sec. Conversion factor are below
+    timeSec     = 1.0/365./24./3600.
+    
+    # Number of free proton
+    if timeScale == 'sec':
+        timeS   = 1.0
+    if timeScale == 'day':
+        timeS   = 24.0*3600.
+    if timeScale == 'month':
+        timeS   = 365.0/12.*24.0*3600.
+    if timeScale == 'year':
+        timeS   = 365.0*24.0*3600.
+        
+    #Mass in kilograms
+    mass = 2.0
+
+    #Evaluate FV to total detector volume ratio
+    nKiloTons   = 3.22
+    FreeProtons = 0.6065
+    TNU         = FreeProtons* nKiloTons *timeSec
+    FVkTonRatio = pow(float(arguments['--fv']),3)/pow(float(arguments['--tankDis']),3)
+    
+    
+    #Fast neutrons conversion
+    #Rock mass
+    volumeR         = (2.*22.5*23.8*1.0+2.*17*23.8*1.0+2.*22.5*17.*1.0)
+    density         = 2.39 #from McGrath
+    rockMass        = volumeR*power(100.,3)*density
+    #Mass of rock evalyated
+    avgMuon         = npa([180.,264.])
+    avgMuonNC       = power(avgMuon,0.849)
+    avgNFluxMag     = 1e-6
+    muonRate        = npa([7.06e-7,4.09e-8]) # mu/cm2/s
+    tenMeVRatio     = npa([7.51/34.1,1.11/4.86])
+    fastNeutrons    = rockMass*avgMuonNC*avgNFluxMag*muonRate*tenMeVRatio
+    
+    avgRNYieldRC    = power(avgMuon,0.73)
+    skRNRate        = 0.5e-7 # 1/mu/g cm2
+    avgMuonSK       = power(219.,0.73)
+    skMuFlux        = 1.58e-7 #mu/cm2/sec
+    radionuclideRate= (skRNRate*avgRNYieldRC/avgMuonSK)*muonRate*nKiloTons*1e9
+    
+    
+    boulbyIBDRate   = 1120.8*.4/.6 *TNU #//924.48*TNU Taken from website, average corrected
+    fairportIBDRate = 7583.*TNU
+
+    inta        = ['si','so','eo','ei']
+
+    #Add the U-238 chain
+    proc        = ['234Pa','214Pb','214Bi','210Bi','210Tl']
+    loca        = ['PMT',  'PMT',  'PMT',  'PMT',  'PMT']
+    acc         = ['acc',  'acc',  'acc',  'acc',  'acc']
+    br          = [1.0,     1.0,    1.0,   1.0 ,   0.002]
+    site        = ['',      '',     '',     '',     '']
+    arr         = empty(5)
+    arr[:]      = 0.993
+    Activity    = arr
+    #Add the Th-232 chain
+    proc        +=['232Th','228Ac','212Pb','212Bi','208Tl']
+    loca        +=['PMT'  ,'PMT',   'PMT', 'PMT',  'PMT'  ]
+    acc         +=['acc'  ,'acc',   'acc', 'acc',  'acc'  ]
+    br          += [1.0,     1.0,    1.0,   1.0 ,   1.0]
+    site        += ['',      '',     '',     '',     '']
+    arr         = empty(5)
+    arr[:]      = 0.124
+    Activity    = append(   Activity,arr)
+    #Add the Rn-222 chain
+    proc        +=['214Pb','214Bi','210Bi','210Tl']
+    loca        +=['FV',   'FV',   'FV',   'FV']
+    acc         +=['acc',  'acc',  'acc',   'acc']
+    br          += [1.0,   1.0,   1.0,     0.002]
+    site        += ['',     '',     '',     '']
+    arr = empty(4)
+    arr[:]      = 6.4
+    Activity    = append(   Activity,arr)
+
+
+    #Add the neutrino signal
+    proc        +=['imb','imb','boulby','boulby']
+    loca        +=['S','S',     'S',  'S']
+    acc         +=['di', 'corr', 'di', 'corr']
+    br          += [1.0,  1.0, 1.0 , 1.0]
+    site        += [''   ,'' , '', '']
+    arr         = npa([fairportIBDRate,fairportIBDRate,boulbyIBDRate,boulbyIBDRate])
+    Activity    = append(    Activity,arr)
+
+    # Add the neutron
+    proc        +=['neutron','neutron']
+    loca        +=['N',     'N']
+    acc         +=['corr',  'corr']
+    br          += [1.0,   1.0]
+    arr         = npa([fairportIBDRate,boulbyIBDRate])
+#    print "Neutrino activity ",arr*timeS/nKiloTons
+    Activity    = append(    Activity,arr)
+    site        += [ '','boulby']
+
+    # add a fast neutron at Fairport
+    proc        += ['QGSP_BERT_EMV','QGSP_BERT_EMX','QGSP_BERT','QGSP_BIC',\
+    'QBBC','QBBC_EMZ','FTFP_BERT','QGSP_FTFP_BERT']
+    loca        +=  ['FN','FN','FN','FN','FN','FN','FN','FN']
+    acc         +=  ['corr','corr','corr','corr','corr','corr','corr','corr']
+    br          +=  [1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0]
+    arr = empty(8)
+    arr[:]      = fastNeutrons[0]
+    Activity    = append(Activity,arr)
+    site        += ['',      '','',      '','',      '','',      '']
+    # add a fast neutron at Boulby
+    proc        += ['QGSP_BERT_EMV','QGSP_BERT_EMX','QGSP_BERT','QGSP_BIC',\
+    'QBBC','QBBC_EMZ','FTFP_BERT','QGSP_FTFP_BERT']
+    loca        +=  ['FN','FN','FN','FN','FN','FN','FN','FN']
+    acc         +=  ['corr','corr','corr','corr','corr','corr','corr','corr']
+    br          +=  [1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0]
+    arr = empty(8)
+    arr[:]      = fastNeutrons[1]
+    Activity    = append(Activity,arr)
+    site        += ['boulby','boulby','boulby','boulby','boulby','boulby',\
+    'boulby','boulby']
+
+#    # Read in the different radionuclide
+#    proc        +=  ['16006','17006','18006','17007','18007','8002','9003',\
+#    '11003']
+#    loca        +=  ['RN','RN','RN','RN','RN','RN','RN','RN']
+#    acc         +=  ['di','di','di','di','di','di','di','di']
+#    #normalised to 9Li from SK
+#    arr         = npa([0.02,0.001,0.001,0.59*0.002,4e-6,0.23,1.9,0.01])/1.9
+#    arr         *= radionuclideRate[0]
+#    Activity    = append(Activity,arr)
+#    br         +=  [.988,1.0,1.0,0.951,0.143,0.16,0.495,0.927]
+#    site        += ['','','','','','','','']
+#
+
+    # Read in the different radionuclide
+    proc        +=  ['9003', '11003']
+    loca        +=  ['RN','RN']
+    acc         +=  ['di','di']
+    #normalised to 9Li from SK
+    arr         = npa([1.9,0.01])/1.9
+    arr         *= radionuclideRate[0]
+    Activity    = append(Activity,arr)
+    br         +=  [0.495,0.927]
+    site        += ['','']
+
+
+
+#    # Read in the different radionuclide
+#    proc        +=  ['16006','17006','18006','17007','18007','8002','9003',\
+#    '11003']
+#    loca        +=  ['RN','RN','RN','RN','RN','RN','RN','RN']
+#    acc         +=  ['di','di','di','di','di','di','di','di']
+#    #normalised to 9Li from SK
+#    arr         = npa([ 0.02,0.001,0.001,0.59*0.002,4e-6,0.23,1.9,0.01])/1.9
+#    arr         *= radionuclideRate[1]
+#    Activity    = append(Activity,arr)
+#    br         +=  [.988,1.0,1.0,0.951,0.143,0.16,0.495,0.927]
+#    site        += ['boulby','boulby','boulby','boulby','boulby','boulby',\
+#    'boulby','boulby']
+#
+#
+
+    proc        +=  ['9003', '11003']
+    loca        +=  ['RN','RN']
+    acc         +=  ['di','di']
+    #normalised to 9Li from SK
+    arr         = npa([1.9,0.01])/1.9
+    arr         *= radionuclideRate[1]
+    Activity    = append(Activity,arr)
+    br         +=  [0.495,0.927]
+    site        += ['boulby','boulby']
+
+    return inta,proc,loca,acc,arr,Activity,br,site,timeS,boulbyIBDRate*FVkTonRatio,mass
+
 

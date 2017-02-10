@@ -4,6 +4,7 @@ from watchmakers.load import *
 from watchmakers.io_operations import *
 from watchmakers.analysis import *
 from watchmakers.sensitivity import *
+from watchmakers.read import *
 
 ######################## Start of main function ###########################
 
@@ -33,7 +34,11 @@ if __name__ == "__main__":
         writeResultsToFile(arguments["-o"],g,h)
 
     if arguments['-R']:
-        readAnalysisResult(arguments["-o"])
+#        site = 'boulby'
+#        hBoulby = TH2D('hBoulby','hBoulby',40,0.5,40.5,40,0.5,40.5)
+        sensitivityMap()
+#        hBoulby.SaveAs('test.C')
+#        runSensitivity()
 
 
     if arguments['--customJob']:

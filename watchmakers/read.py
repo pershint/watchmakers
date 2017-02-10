@@ -1,10 +1,11 @@
 #import watchmakers as PR
-from ROOT import kOrange as kO,kBlue as kB,kGreen as kG
-from ROOT import kMagenta as kM,kAzure as kA,kRed as kR
-from ROOT import TCanvas,TLine, TLatex
-from ROOT import sqrt, TH2D
 
-t = 'day'
+from watchmakers.load import *
+from watchmakers.analysis import *
+from io_operations import testEnabledCondition
+
+from ROOT import max
+t = arguments['--timeScale']
 
 def drange(start, stop, step):
 	rii= start
@@ -84,13 +85,14 @@ def siteCanvas(Graphs,site,cut,hist):
     lineS       += [1,2,2]
     scale       += [-1.0,0.0,0.0]
 
-    proc        += ['16006','17006','18006','17007','18007','8002',\
-    '9003','11003']
+    proc        += ['9003','11003']
     _t          =  'RN%s' % (site)
-    loca        += [_t,_t,_t,_t,_t,_t,_t,_t]
-    type        += ['ei','ei','ei','ei','ei','ei','ei','ei']
-    acc         += ['di','di','di','di','di','di','di','di']
-    color       += [kG+3, kG+3,kG+3, kG+3,kG+3,kG+3,kG+3,kG+3]
+    loca        += [_t,_t]
+    type        += ['ei','ei']
+    acc         += ['di','di']
+    color       += [kG+3,kG+3]
+
+
     lineS       += [1,1,1,1,1,1,1,1]
     scale       += [1.,1.,1.,1.,1.,1.,1.,1.]
 
@@ -159,7 +161,32 @@ def siteCanvas(Graphs,site,cut,hist):
 
 
 
-def sensitivityMap(site,hist):
+def sensitivityMap():
+    
+    
+    
+    site = arguments["--site"]
+    if site != 'boulby':
+        site = ''
+    # Need to fix this for future running
+    
+    OnOffRatio = float(arguments["--OnOff"])
+    print site,OnOffRatio
+
+    if t == 'sec':
+        timeAdjustment = 24*3600.
+
+    if t == 'day':
+        timeAdjustment = 1.0
+
+    if t == 'month':
+        timeAdjustment = 1./31.
+
+    if t == 'year':
+        timeAdjustment = 1./365.
+
+    maxTime = 400.*timeAdjustment
+
     proc        = []
     loca        = []
     type        = []
@@ -178,15 +205,14 @@ def sensitivityMap(site,hist):
     lineS       += [2,2,2,2,2,2,2,2]
     scale       += [1./8.,1./8.,1./8.,1./8.,1./8.,1./8.,1./8.,1./8.]
     #radionuclides
-    proc        += ['16006','17006','18006','17007','18007','8002',\
-                    '9003','11003']
+    proc        += ['9003','11003']
     _t          =  'RN%s' % (site)
-    loca        += [_t,_t,_t,_t,_t,_t,_t,_t]
-    type        += ['ei','ei','ei','ei','ei','ei','ei','ei']
-    acc         += ['di','di','di','di','di','di','di','di']
-    color       += [kG+3, kG+3,kG+3, kG+3,kG+3,kG+3,kG+3,kG+3]
-    lineS       += [1,1,1,1,1,1,1,1]
-    scale       += [1.,1.,1.,1.,1.,1.,1.,1.]
+    loca        += [_t,_t]
+    type        += ['ei','ei']
+    acc         += ['di','di']
+    color       += [kG+3,kG+3]
+    lineS       += [1,1]
+    scale       += [1.,1.]
     #ibds
     if site == 'boulby':
         proc    += ['boulby','boulby','neutron']
@@ -199,17 +225,139 @@ def sensitivityMap(site,hist):
     lineS       += [1,2,2]
     scale       += [-1.0,0.0,0.0]
 
+    c1 = TCanvas('c1','c1',1618,1000)
+    c1.SetRightMargin(0.53)
+    c1.Divide(2,2)
 
+
+    additionalString,additionalCommands = testEnabledCondition(arguments)
+    if additionalString == "":
+        additionalString = "_default"
+
+    if site == 'boulby':
+        location = 'Boulby '
+    else:
+        location = 'Fairport '
+
+    hist = TH2D('hist','3#sigma discovery phase space -  %s '%(location),31,9.5,40.5,30,9.5,39.5)
+    hist.SetXTitle('photocoverage [%]')
+    hist.SetYTitle('photoelectron threhsold cut [p.e.]')
+    hist.SetZTitle('off-time [%s] for 3 #sigma discovery'%(t))
+    hist.GetZaxis().SetTitleOffset(-.55);
+    hist.GetZaxis().SetTitleColor(1);
+    hist.GetZaxis().CenterTitle();
+
+    gStyle.SetOptStat(0)
+    gStyle.SetPalette(55)
+
+#    palette=TPaletteAxis(hist.FindObject("palette"))
+#    #palette=histo.FindObject("palette")
+#    palette.SetLabelFont(42)
+#    palette.SetLabelSize(0.030)
+#    palette.SetX1NDC(0.905)
+#    palette.SetX2NDC(0.918)
+#    axis = palette.GetAxis()
+#    axis.SetDecimals(kTRUE)
+#    axis.SetMaxDigits(3)
+#    axis.SetNoExponent(kFALSE)
+#    gPad.Update()
+
+
+    fileIN = 'processed_watchman_Feb%s.root' %(additionalString)
+
+    print 'Will read in', fileIN
+
+    _graph = Graph()
+    _graph.SetName('_graph')
+    _graph.SetTitle('off-time [%s] required till a 3#sigma discovery'%(t))
+
+    _graphS = Graph()
+    _graphS.SetName('_graphS')
+    _graphS.SetTitle('IBDs from 1-core at full power')
+
+    _graphB = Graph()
+    _graphB.SetName('_graphB')
+    _graphB.SetTitle('total background rate after optimization')
+
+    _graphBFN = Graph()
+    _graphBFN.SetLineColor(kO+6)
+    _graphBFN.SetName('_graphBFN')
+    _graphBFN.SetTitle('total fast neutron component')
+
+    _graphBRN = Graph()
+    _graphBRN.SetLineColor(kG+3)
+    _graphBRN.SetName('_graphBFN')
+    _graphBRN.SetTitle('total radionuclide component')
+
+
+    _graphBAC = Graph()
+    _graphBAC.SetLineColor(2)
+    _graphBAC.SetName('_graphBFN')
+    _graphBAC.SetTitle('total accidental component')
+
+
+    _graph.SetLineWidth(2)
+    _graphS.SetLineWidth(2)
+    _graphS.SetLineColor(4)
+    _graphB.SetLineWidth(2)
+    _graphBAC.SetLineWidth(2)
+    _graphBFN.SetLineWidth(2)
+    _graphBRN.SetLineWidth(2)
+
+
+
+
+    minY    =   0
+
+    gCnt = 0
     for PC in range(10,41):
 #        print 'processing photocoverage ',PC,'% :',
         S_tmp           = 0.
-        B_tmp           = 0.1
+        B_tmp           = 0.0
+        BFN_tmp           = 0.0
+        BRN_tmp           = 0.0
+        BAC_tmp           = 0.0
         SoverS_B        = 0.
         SoverS_B_sys20  = 0.
+        T3SIGMA_MIN     = 16000
         cut_tmp     = 0.
+        c1.cd(1)
+        hist.Draw('colz')
+        gPad.SetTicks()
+
+        c1.cd(2)
+        _graph.Draw('AL')
+        _graph.GetXaxis().SetTitle('photocoverage [%]')
+        _graph.GetYaxis().SetTitle('time [%s]'%(t))
+        gPad.SetTicks()
+        gPad.SetGridy()
+        
+        
+        c1.cd(3)
+        _graphS.Draw('AL')
+        y = _graphS.GetYaxis().GetXmax()
+        _graphS.GetYaxis().SetRangeUser(0.,_graphS.GetYaxis().GetXmax()*2.)
+        _graphS.GetXaxis().SetTitle('photocoverage [%]')
+        _graphS.GetYaxis().SetTitle('event rate [%s^{-1}]'%(t))
+        c1.cd(3).BuildLegend(0.42, 0.84, 0.85, 0.88)
+        gPad.SetGridy()
+        gPad.SetTicks()
+
+        c1.cd(4)
+        _graphB.Draw('AL')
+        _graphB.GetYaxis().SetRangeUser(0., _graphB.GetYaxis().GetXmax()*2.)
+        _graphB.GetXaxis().SetTitle('photocoverage [%]')
+        _graphB.GetYaxis().SetTitle('event rate [%s^{-1}]'%(t))
+        _graphBAC.Draw('same')
+        _graphBFN.Draw('same')
+        _graphBRN.Draw('same')
+        c1.cd(4).BuildLegend(0.42, 0.72, 0.85, 0.88)
+        gPad.SetGridy()
+        gPad.SetTicks()
+
+        c1.Update()
         for cut in range(4,40):
-            Graphs =PR.obtainAbsoluteEfficiency('processed_data_watchman.root',\
-            timeScale=t,cut=cut)
+            Graphs =obtainAbsoluteEfficiency(fileIN,timeScale=t,cut=cut)
 
             S       = 0.
             BFN     = 0.
@@ -217,52 +365,93 @@ def sensitivityMap(site,hist):
             BAC     = 0.
             _str    = 'all_cut_accidental'
             BAC = Graphs[_str].Eval(PC)
-#            B = Graphs[_str].Eval(PC)
-#            if  cut > 9 and cut < 11:
-#                print '\n',PC, cut, _str,B,Graphs[_str].Eval(PC)
-#            print ''
             for i,arr in enumerate(proc):
                 _str = 'scaled_%s_%s_%s_1_abs_%s' %(type[i],proc[i],loca[i],acc[i])
                 if scale[i] > 0.:
-#                    B+=Graphs[_str].Eval(PC)*scale[i]
-                    if loca[i] == 'FNboulby':
+                    if loca[i] == 'FN%s'%(site):
                         BFN += Graphs[_str].Eval(PC)*scale[i]
-                    elif loca[i] == 'RNboulby':
+                    elif loca[i] == 'RN%s'%(site):
                         BRN += Graphs[_str].Eval(PC)*scale[i]
-#                    if cut > 9 and cut < 11:
-#                        print loca[i],B,Graphs[_str].Eval(PC)*scale[i]
                 elif scale[i] < 0:
                     S =Graphs[_str].Eval(PC)
-#                    if cut > 9 and cut <11:
                     B = BAC+BRN+BFN
-                    if cut < 12 or 9*(S+2*(S+B))/S/S < 600.:
-                        print PC,cut,S,S/1.53615649315,BAC,BRN,BFN,B,S/sqrt(S+S+B),9*(S+2*(S+B))/S/S
-#            print ''
-    #        print cut,S,B,S/B,S/sqrt(B+S)
-            if S/sqrt(B+S) >  SoverS_B:
-                    S_tmp       = S
-                    B_tmp       = B
-                    SoverS_B    = S/sqrt(S+B)
-                    cut_tmp     = cut
-#        print '\n',PC,cut_tmp,S_tmp,B_tmp,SoverS_B,'\n'
-#        print '10% :',
-#        for value in drange(.2,12.,0.2):
-#            print "%4.2f "%(S_tmp*sqrt(value)/sqrt(S_tmp+B_tmp + pow(B_tmp*0.10,2)*value)),
-#        print '\n20% :',
-#        for value in drange(.2,12.,0.2):
-#            print "%4.2f "%(S_tmp*sqrt(value)/sqrt(S_tmp+B_tmp + pow(B_tmp*0.20,2)*value)),
-#        print '\n30% :',
-#        for value in drange(.2,12.,0.2):
-#            print "%4.2f "%(S_tmp*sqrt(value)/sqrt(S_tmp+B_tmp + pow(B_tmp*0.30,2)*value)),
-#        print ''
-    return hist
+                    SSBB = S/sqrt(S+S+B)
+                    #Include 29% other reactor
+                    if site == 'boulby':
+                        T3SIGMA = 9*(S+2*(S*1.29+B)/OnOffRatio)/S/S #1.29% other reactor
+                    else:
+                        T3SIGMA = 9*(S+2*(S*0.05+B)/OnOffRatio)/S/S #5% other reactor
+
+                    if  T3SIGMA < maxTime:
+                        print PC,cut,S,S/1.3,BAC,BRN,BFN,B,SSBB,T3SIGMA
+                        hist.Fill(PC,cut,T3SIGMA)
+                    if  T3SIGMA >= maxTime:
+                        hist.Fill(PC,cut,maxTime)
+
+                    if T3SIGMA <   T3SIGMA_MIN:
+                            S_tmp       = S
+                            B_tmp       = B
+                            BFN_tmp       = BFN
+                            BRN_tmp       = BRN
+                            BAC_tmp       = BAC
+                            T3SIGMA_MIN    =T3SIGMA
+        _graph.SetPoint(gCnt,PC,T3SIGMA_MIN)
+        _graphS.SetPoint(gCnt,PC,S_tmp)
+        _graphB.SetPoint(gCnt,PC,B_tmp)
+        _graphBFN.SetPoint(gCnt,PC,BFN_tmp)
+        _graphBRN.SetPoint(gCnt,PC,BRN_tmp)
+        _graphBAC.SetPoint(gCnt,PC,BAC_tmp)
+
+        gCnt+=1
+
+    c1.cd(1)
+    hist.Draw('colz')
+    gPad.SetTicks()
+
+    c1.cd(2)
+    _graph.Draw('AL')
+    _graph.GetXaxis().SetTitle('photocoverage [%]')
+    _graph.GetYaxis().SetTitle('time [%s]'%(t))
+    gPad.SetTicks()
+    gPad.SetGridy()
+
+
+    c1.cd(3)
+    _graphS.Draw('AL')
+    y = _graphS.GetYaxis().GetXmax()
+    _graphS.GetYaxis().SetRangeUser(0.,_graphS.GetYaxis().GetXmax()*2.)
+    _graphS.GetXaxis().SetTitle('photocoverage [%]')
+    _graphS.GetYaxis().SetTitle('event rate [%s^{-1}]'%(t))
+    c1.cd(3).BuildLegend(0.42, 0.84, 0.85, 0.88)
+    gPad.SetGridy()
+    gPad.SetTicks()
+
+    c1.cd(4)
+    _graphB.Draw('AL')
+    _graphB.GetYaxis().SetRangeUser(0., _graphB.GetYaxis().GetXmax()*2.)
+    _graphB.GetXaxis().SetTitle('photocoverage [%]')
+    _graphB.GetYaxis().SetTitle('event rate [%s^{-1}]'%(t))
+    _graphBAC.Draw('same')
+    _graphBFN.Draw('same')
+    _graphBRN.Draw('same')
+    c1.cd(4).BuildLegend(0.42, 0.72, 0.85, 0.88)
+    gPad.SetGridy()
+    gPad.SetTicks()
+
+    hist.SaveAs('results/%sSensitivityMap%s.C'%(site,additionalString))
+    _graph.SaveAs('results/%sSensitivityMapGraph%s.C'%(site,additionalString))
+    _graphS.SaveAs('results/%sSensitivityMapGraphS%s.C'%(site,additionalString))
+    _graphB.SaveAs('results/%sSensitivityMapGraphB%s.C'%(site,additionalString))
+
+    c1.SaveAs('results/%sSensitivityMapCanvas%s.C'%(site,additionalString))
+    c1.SaveAs('results/%sSensitivityMapCanvas%s.gif'%(site,additionalString))
 
 
 def runSensitivity():
     hBoulby = TH2D('hBoulby','hBoulby',50,0.5,50.5,50,0.5,50.5)
     print 'Boulby:'
     for cut in range(4,40):
-        Graphs = PR.obtainAbsoluteEfficiency('processed_data_watchman.root',timeScale=t,cut=cut)
+        Graphs = obtainAbsoluteEfficiency('processed_data_watchman.root',timeScale=t,cut=cut)
         hBoulby =  siteCanvas(Graphs,'boulby',cut,hBoulby)
     hBoulby.SaveAs('hBoulby.C')
 
@@ -270,7 +459,7 @@ def runSensitivity():
     hFairport = TH2D('hFairport','hFairport',50,0.5,50.5,50,0.5,50.5)
     print 'Fairport:'
     for cut in range(4,40):
-        Graphs = PR.obtainAbsoluteEfficiency('processed_data_watchman.root',timeScale=t,cut=cut)
+        Graphs = obtainAbsoluteEfficiency('processed_data_watchman.root',timeScale=t,cut=cut)
         hFairport =  siteCanvas(Graphs,'',cut,hFairport)
     hFairport.SaveAs('hFairport.C')
 
