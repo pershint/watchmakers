@@ -425,15 +425,25 @@ export G4NEUTRONHP_USE_ONLY_PHOTONEVAPORATION=1\n
                       directory,ii,loc[j],\
                       directory,\
                       rootDir,g4Dir,g4Dir,ratDir,watchmakersDir)
+#            line2 = "watch --extractNtup -N 600 -P %s -L %s \n" %(ii,loc[j])
+#            line3 = "watch --extractNtup -N 600 -P %s -L %s --fv 4.302\n" %(ii,loc[j])
+#            line4 = "watch --extractNtup -N 600 -P %s -L %s --fv 4.302 -g 0.65\n" %(ii,loc[j])
+#            line5 = "watch --extractNtup -N 600 -P %s -L %s --fv 4.302 -g 0.65 -T 12\n" %(ii,loc[j])
+#            line6 = "watch --extractNtup -N 600 -P %s -L %s --fv 4.302 -T 12\n" %(ii,loc[j])
+#            line7 = "watch --extractNtup -N 600 -P %s -L %s -g 0.65\n" %(ii,loc[j])
+#            line8 = "watch --extractNtup -N 600 -P %s -L %s -g 0.65 -T 12\n" %(ii,loc[j])
+#            line9 = "watch --extractNtup -N 600 -P %s -L %s -T 12\n" %(ii,loc[j])
+
             line2 = "watch --extractNtup -N 600 -P %s -L %s \n" %(ii,loc[j])
-            line3 = "watch --extractNtup -N 600 -P %s -L %s --fv 4.302\n" %(ii,loc[j])
-            line4 = "watch --extractNtup -N 600 -P %s -L %s --fv 4.302 -g 0.65\n" %(ii,loc[j])
-            line5 = "watch --extractNtup -N 600 -P %s -L %s --fv 4.302 -g 0.65 -T 12\n" %(ii,loc[j])
-            line6 = "watch --extractNtup -N 600 -P %s -L %s --fv 4.302 -T 12\n" %(ii,loc[j])
-            line7 = "watch --extractNtup -N 600 -P %s -L %s -g 0.65\n" %(ii,loc[j])
-            line8 = "watch --extractNtup -N 600 -P %s -L %s -g 0.65 -T 12\n" %(ii,loc[j])
-            line9 = "watch --extractNtup -N 600 -P %s -L %s -T 12\n" %(ii,loc[j])
-            
+            line3 = "watch --extractNtup -N 600 -P %s -L %s -g 0.65\n" %(ii,loc[j])
+            line4 = "watch --extractNtup -N 600 -P %s -L %s -g 0.65 -T 12\n" %(ii,loc[j])
+            line5 = "watch --extractNtup -N 600 -P %s -L %s -T 12\n" %(ii,loc[j])
+            line6 = "watch --extractNtup -N 600 -P %s -L %s -g 0.65 -T 10\n" %(ii,loc[j])
+            line7 = "watch --extractNtup -N 600 -P %s -L %s -T 10\n" %(ii,loc[j])
+            line8 = "watch --extractNtup -N 600 -P %s -L %s -g 0.65 -T 14\n" %(ii,loc[j])
+            line9 = "watch --extractNtup -N 600 -P %s -L %s -T 14\n" %(ii,loc[j])
+
+
             outfile = open('sub_jobs__%d_2'%(cnt),"wb")
             outF2.writelines('msub sub_jobs__%d_2\n'%(cnt))
             outfile.writelines(line1)
