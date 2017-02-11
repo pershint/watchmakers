@@ -235,7 +235,7 @@ rootDir,g4Dir,g4Dir,ratDir,watchmakersDir)
             _log = "log/%s/%s/rat.%s_%s_%s_%d.log" %(mods,percentage,percentage,mods,location,runs)
             _mac = "%s/macro/%s/%s/run%s_%s_%d.mac" %(directory,mods,percentage,mods,location,runs)
             line1 += "%s -l %s %s\n" %(software,_log,_mac)
-        if case == 1 or case == 3:
+        if case == 2 or case == 3:
             fileN = "root_files/%s/%s/watchman_%s_%s_%s_%d.root" %(mods,percentage,mods,percentage,location,runs)
             if additionalString != "":
                 fileNO = "ntuple_root_files/%s/%s/watchman_%s_%s_%s%s_%d.root" %(mods,percentage,mods,percentage,location,additionalString,runs)
