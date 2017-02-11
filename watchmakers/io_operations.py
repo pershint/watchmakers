@@ -605,7 +605,9 @@ def testEnabledCondition(arguments):
         additionalString += "_Tankboundary_%f" %(float(arguments['--tankDist']))
         additionalCommands +=" --tankDist %f" %(float(arguments['--tankDist']))
     
-    
+    if additionalString == "":
+        additionalString = "_default"
+
     return  additionalString,additionalCommands
 
 
