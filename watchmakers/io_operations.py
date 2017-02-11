@@ -22,6 +22,7 @@ def macroGenerator(percentage,isotope,location,runs,events):
 
     #Part of the macro that is the same for all jobs
     dir = os.getcwd()
+    print arguments
     print arguments["--detectorDepth"]
     
     depth = float(arguments["--detectorDepth"])
