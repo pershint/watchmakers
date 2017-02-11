@@ -32,7 +32,7 @@ try:
 except:
     print "Could not load in root_numpy or rootpy, they are required to run this module."
 
-defaultValues  = [3,2500,'merged_ntuple_watchman','null', \
+defaultValues  = [3,2500,0,'merged_ntuple_watchman','null', \
                   'processed_watchman.root',10.,2.0,100.0,6.0,\
                   0.1,0.1,5.42,6.4,8.0,2805.,'day',\
                   'boulby',1.0]
@@ -74,11 +74,11 @@ docstring = """
     --site=<_site>      Site of the experiment (boulby,fairport) [Default: %s]
     --OnOff=<_OOratio>  Ratio of reactor on to reactor off [Default: %d]
 
-    """ % (defaultValues[0],defaultValues[1],defaultValues[2],defaultValues[3],\
-           defaultValues[4],defaultValues[5],defaultValues[6],defaultValues[7],\
-           defaultValues[8],defaultValues[9],defaultValues[10],defaultValues[11],\
-           defaultValues[12],defaultValues[13],defaultValues[14],defaultValues[15],\
-           defaultValues[16],defaultValues[17])
+    """ % (defaultValues[0],defaultValues[1],defaultValues[3],defaultValues[4],\
+           defaultValues[5],defaultValues[6],defaultValues[7],defaultValues[8],\
+           defaultValues[9],defaultValues[10],defaultValues[11],defaultValues[12],\
+           defaultValues[13],defaultValues[14],defaultValues[15],defaultValues[16],\
+           defaultValues[17],defaultValues[18])
 
 try:
     import docopt
