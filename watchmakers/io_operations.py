@@ -22,9 +22,9 @@ def macroGenerator(percentage,isotope,location,runs,events):
 
     #Part of the macro that is the same for all jobs
     dir = os.getcwd()
-    print arguments
-    print arguments["--depth"]
-    
+#    print arguments
+#    print arguments["--depth"]
+
     depth = float(arguments["--depth"])
     
     header = '''
