@@ -23,6 +23,8 @@ def macroGenerator(percentage,isotope,location,runs,events):
     #Part of the macro that is the same for all jobs
     dir = os.getcwd()
     
+    depth = float(arguments["--detectorDepth"])
+    
     header = '''
 /glg4debug/glg4param omit_muon_processes  0.0
 /glg4debug/glg4param omit_hadronic_processes  0.0
