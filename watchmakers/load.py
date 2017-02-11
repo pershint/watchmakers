@@ -46,7 +46,7 @@ docstring = """
     -m                  generate macro files
     -N=<N>              Number of MC script that were run [Default: %d]
     -e=<runBeamEntry>   Number of entries per macro (U/Th event x5) [Default: %d]
-    -j=<jobType>        Create submision scripts and macros
+    -j=<jobType>        Create submision scripts and macros [default 1]
     -f=<ifile>          Input file [Default: %s]
     --ntupleout=<outN>  Name of ntuple out [Default: %s]
     -n                  generate ntuple from single rat-pac root files
