@@ -9,19 +9,7 @@
 #include <TFile.h>
 #include <TTree.h>
 
-#include <iostream>
-#include <iomanip>
-#include <TROOT.h>
-#include <TFile.h>
-#include <TTree.h>
-#include <TClass.h>
-#include <TH1D.h>
-#include <TH2D.h>
-#include <TVector3.h>
-#include <vector>
-#include <TRandom3.h>
-
-int supernovaAnalysis(const char *file, const char *outfile) {
+void supernovaAnalysis(const char *file,const char *outfile) {
     Double_t reconstructedRadius = 0.0;
     
     TH1D *hPos0FB = new TH1D("hPos0FB","primary event",1000,0.01,10);
@@ -90,23 +78,9 @@ int supernovaAnalysis(const char *file, const char *outfile) {
     TFile *f = new TFile(file);
     TTree *tree = (TTree*) f->Get("T");
     
-    if (tree==0x0){
-        return -1;
-    }
-    
-//    TFile *f_out = new TFile(Form("ntuple_%s",f->GetName()),"Recreate");
+    TFile *f_out = new TFile(Form("ntuple_%s",f->GetName()),"Recreate");
     //    TNtuple* data = new TNtuple("data","Ntuple for Watchman Reconstruction Studies",
     //                                "pe:r_bonsai_true:cosTheta:cosThetaSN:local_time_ns:sub_ev:sub_ev_cnt:interaction");
-    
-    
-    TFile *f_out;
-    printf("outfile: %s\n",outfile);
-    if (TString(outfile) == TString("")) {
-        f_out = new TFile(Form("ntuple_%s",f->GetName()),"Recreate");
-    }else{
-        f_out = new TFile(outfile,"Recreate");
-    }
-    
     
     RAT::DS::Root *rds = new RAT::DS::Root();
     tree->SetBranchAddress("ds", &rds);
@@ -655,6 +629,6 @@ int supernovaAnalysis(const char *file, const char *outfile) {
     
     
     printf("(ibd,es,cc,icc,nc): (%5.4f, %5.4f, %5.4f, %5.4f, %5.4f)  (tot:%d)\n",ibd/tot,es/tot,cc/tot,icc/tot,nc/tot,tot);
-    return 0;
+    
     
 }
