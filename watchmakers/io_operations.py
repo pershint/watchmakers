@@ -763,7 +763,7 @@ def extractNtupleALL(arguments):
                         goldenFileExtractor(fIn,minNHIT,goodness,dirGoodness,timemask,\
                                             rate,distancemask,fidV,pmtV,tankV,fOut)
                     else:
-                        supernovaAnalysis(file,fOut)
+                        supernovaAnalysis(file)
 
 
     if (arguments["-P"] and not arguments["-L"]) or (arguments["-L"] and not arguments["-P"]):
@@ -783,7 +783,7 @@ def extractNtupleALL(arguments):
                                 goldenFileExtractor(fIn,minNHIT,goodness,dirGoodness,timemask,\
                                                     rate,distancemask,fidV,pmtV,tankV,fOut)
                             else:
-                                supernovaAnalysis(file,fOut)
+                                supernovaAnalysis(file)
 
 
 

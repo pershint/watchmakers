@@ -74,11 +74,15 @@ void supernovaAnalysis(const char *file,const char *outfile) {
     hNuP->SetXTitle("Cherenkov-inducing particle Energy (MeV)");
     hNuP->SetYTitle("Counts");
     
-    
+    printf("infile: %s\n",file);
+
     TFile *f = new TFile(file);
     TTree *tree = (TTree*) f->Get("T");
     
-    TFile *f_out = new TFile(Form("ntuple_%s",f->GetName()),"Recreate");
+//    TFile *f_out = new TFile(Form("ntuple_%s",f->GetName()),"Recreate");
+    printf("outfile: %s\n",outfile);
+
+     TFile *f_out = new TFile(outfile,"Recreate");
     //    TNtuple* data = new TNtuple("data","Ntuple for Watchman Reconstruction Studies",
     //                                "pe:r_bonsai_true:cosTheta:cosThetaSN:local_time_ns:sub_ev:sub_ev_cnt:interaction");
     
