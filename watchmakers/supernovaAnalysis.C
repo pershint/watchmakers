@@ -22,7 +22,7 @@
 #include <vector>
 #include <TRandom3.h>
 
-void supernovaAnalysis(const char *file,const char *outfile = "null") {
+int supernovaAnalysis(const char *file, const char *outfile = "null") {
     Double_t reconstructedRadius = 0.0;
     
     TH1D *hPos0FB = new TH1D("hPos0FB","primary event",1000,0.01,10);
@@ -89,15 +89,30 @@ void supernovaAnalysis(const char *file,const char *outfile = "null") {
     
     printf("infile: %s\n",file);
 
+//    TFile *f = new TFile(file);
+//    TTree *tree = (TTree*) f->Get("T");
+//    
+////    TFile *f_out = new TFile(Form("ntuple_%s",f->GetName()),"Recreate");
+//    printf("outfile: %s\n",outfile);
+//
+//     TFile *f_out = new TFile(outfile,"Recreate");
+//    //    TNtuple* data = new TNtuple("data","Ntuple for Watchman Reconstruction Studies",
+//    //                                "pe:r_bonsai_true:cosTheta:cosThetaSN:local_time_ns:sub_ev:sub_ev_cnt:interaction");
+//    
+
     TFile *f = new TFile(file);
     TTree *tree = (TTree*) f->Get("T");
-    
-//    TFile *f_out = new TFile(Form("ntuple_%s",f->GetName()),"Recreate");
+    if (tree==0x0){
+        return -1;
+    }
+    TFile *f_out;
     printf("outfile: %s\n",outfile);
-
-     TFile *f_out = new TFile(outfile,"Recreate");
-    //    TNtuple* data = new TNtuple("data","Ntuple for Watchman Reconstruction Studies",
-    //                                "pe:r_bonsai_true:cosTheta:cosThetaSN:local_time_ns:sub_ev:sub_ev_cnt:interaction");
+    if (TString(outfile) == TString("null")) {
+        f_out = new TFile(Form("ntuple_%s",f->GetName()),"Recreate");
+    }else{
+        f_out = new TFile(outfile,"Recreate");
+    }
+    
     
     RAT::DS::Root *rds = new RAT::DS::Root();
     tree->SetBranchAddress("ds", &rds);
@@ -646,6 +661,6 @@ void supernovaAnalysis(const char *file,const char *outfile = "null") {
     
     
     printf("(ibd,es,cc,icc,nc): (%5.4f, %5.4f, %5.4f, %5.4f, %5.4f)  (tot:%d)\n",ibd/tot,es/tot,cc/tot,icc/tot,nc/tot,tot);
-    
+    return 0;
     
 }
