@@ -9,6 +9,19 @@
 #include <TFile.h>
 #include <TTree.h>
 
+
+#include <iostream>
+#include <iomanip>
+#include <TROOT.h>
+#include <TFile.h>
+#include <TTree.h>
+#include <TClass.h>
+#include <TH1D.h>
+#include <TH2D.h>
+#include <TVector3.h>
+#include <vector>
+#include <TRandom3.h>
+
 void supernovaAnalysis(const char *file,const char *outfile) {
     Double_t reconstructedRadius = 0.0;
     
