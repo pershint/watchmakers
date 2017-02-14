@@ -364,7 +364,7 @@ def generateJobs(N,arguments):
             models  = d["%s" %(iso[j])]
             for index in range(N):
                 line,case = jobString(cover,j,index,models,arguments)
-                stringFile = "jobs/%s/%s/jobs%s_%s_%s_%d_%d.sh" %(loc[j],cover,cover,\
+                stringFile = "jobs/%s/%s/jobs%s_%s_%s_%d_case%d.sh" %(loc[j],cover,cover,\
                                                             "%s"%(iso[int(j)]),loc[j],index,case)
                 if index == 0:
                     job_list+= '(msub ' + stringFile +') || ./'+ stringFile + '\n'
@@ -372,7 +372,7 @@ def generateJobs(N,arguments):
                 outfile = open(stringFile,"wb")
                 outfile.writelines(line)
                 if index < N-1:
-                    stringFile1 = "(msub jobs/%s/%s/jobs%s_%s_%s_%d_%d.sh || ./jobs/%s/%s/jobs%s_%s_%s_%d_%d.sh)" %(loc[j],cover,cover,\
+                    stringFile1 = "(msub jobs/%s/%s/jobs%s_%s_%s_%d_case%d.sh || ./jobs/%s/%s/jobs%s_%s_%s_%d_case%d.sh)" %(loc[j],cover,cover,\
                                                                                                  "%s"%(iso[int(j)]),loc[j],index+1,case,loc[j],cover,cover,\
                                                                                                  "%s"%(iso[int(j)]),loc[j],index+1,case)
                     outfile.writelines(stringFile1)
