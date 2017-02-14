@@ -716,7 +716,7 @@ def extractNtuple(arguments):
         goldenFileExtractor(fIn,minNHIT,goodness,dirGoodness,timemask,\
                             rate,distancemask,fidV,pmtV,tankV,outF)
     else:
-        supernovaAnalysis(file,outF)
+        supernovaAnalysis(fIn,outF)
 
 def extractNtupleALL(arguments):
     d,iso,loc,coverage,coveragePCT = loadSimulationParameters()
@@ -775,7 +775,7 @@ def extractNtupleALL(arguments):
                         goldenFileExtractor(fIn,minNHIT,goodness,dirGoodness,timemask,\
                                             rate,distancemask,fidV,pmtV,tankV,fOut)
                     else:
-                        supernovaAnalysis(file,fOut)
+                        supernovaAnalysis(fIn,fOut)
 
 
     if (arguments["-P"] and not arguments["-L"]) or (arguments["-L"] and not arguments["-P"]):
@@ -795,7 +795,7 @@ def extractNtupleALL(arguments):
                                 goldenFileExtractor(fIn,minNHIT,goodness,dirGoodness,timemask,\
                                                     rate,distancemask,fidV,pmtV,tankV,fOut)
                             else:
-                                supernovaAnalysis(file,fOut)
+                                supernovaAnalysis(fIn,fOut)
 
 
 
