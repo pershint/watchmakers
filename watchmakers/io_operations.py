@@ -750,18 +750,6 @@ def extractNtupleALL(arguments):
     
 
 
-#    for j in range(len(iso)):
-#            for ii in d["%s"%(iso[int(j)])]:
-#                for idx,cover in enumerate(coverage):
-#                    for run in range(N):
-#                        fIn =  "root_files/%s/%s/watchman_%s_%s_%s_%d.root" %(ii,cover,ii,cover,loc[j],run)
-#                        fOut = "ntuple_root_files%s/%s/%s/watchman_%s_%s_%s_%d.root" %(additionalString,ii,cover,ii,cover,loc[j],run)
-#                        print fIn, " -> ", fOut
-#                        goldenFileExtractor(fIn,minNHIT,goodness,dirGoodness,timemask,\
-#                                                rate,distancemask,fidV,pmtV,tankV,fOut)
-
-
-
     if arguments["-P"] and arguments["-L"]:
         ii      = arguments["-P"]
         locj    = arguments["-L"]

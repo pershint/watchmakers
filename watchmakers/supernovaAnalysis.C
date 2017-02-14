@@ -9,6 +9,18 @@
 #include <TFile.h>
 #include <TTree.h>
 
+#include <iostream>
+#include <iomanip>
+#include <TROOT.h>
+#include <TFile.h>
+#include <TTree.h>
+#include <TClass.h>
+#include <TH1D.h>
+#include <TH2D.h>
+#include <TVector3.h>
+#include <vector>
+#include <TRandom3.h>
+
 void supernovaAnalysis(const char *file, const char *outfile = "null") {
     Double_t reconstructedRadius = 0.0;
     
@@ -89,7 +101,7 @@ void supernovaAnalysis(const char *file, const char *outfile = "null") {
     
     TFile *f_out;
     printf("outfile: %s\n",outfile);
-    if (TString(outfile) == TString("null")) {
+    if (TString(outfile) == TString("")) {
         f_out = new TFile(Form("ntuple_%s",f->GetName()),"Recreate");
     }else{
         f_out = new TFile(outfile,"Recreate");
