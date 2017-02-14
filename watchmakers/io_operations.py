@@ -732,8 +732,7 @@ def extractNtupleALL(arguments):
     fidV         = float(arguments["--fv"])
     pmtV         = float(arguments["--psup"])
     tankV        = float(arguments["--tankDis"])
-    superNova    = arguments["    superNova    = arguments["--supernovaFile"]
-"]
+    superNova    = arguments["--supernovaFile"]
 
 
     additionalString,additionalCommands = testEnabledCondition(arguments)
