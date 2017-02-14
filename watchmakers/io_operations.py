@@ -231,7 +231,7 @@ rootDir,g4Dir,g4Dir,ratDir,watchmakersDir)
     for mods in models:
         if location == "FN":
             line1 += "export PHYSLIST=%s\n" %(mods)
-        if case == 1 or case == 2:
+        if case == 1 or case == 2 or case ==4:
             _log = "log/%s/%s/rat.%s_%s_%s_%d.log" %(mods,percentage,percentage,mods,location,runs)
             _mac = "%s/macro/%s/%s/run%s_%s_%d.mac" %(directory,mods,percentage,mods,location,runs)
             line1 += "%s -l %s %s\n" %(software,_log,_mac)
@@ -243,8 +243,13 @@ rootDir,g4Dir,g4Dir,ratDir,watchmakersDir)
 
             else:
                 line1 += "watch -n -f %s\n" %(fileN)
+        if case == 4 or case ==5 :
+            fileN = "root_files/%s/%s/watchman_%s_%s_%s_%d.root" %(mods,percentage,mods,percentage,location,runs)
+            if additionalString != "":
+                fileNO = "ntuple_root_files/%s/%s/watchman_%s_%s_%s%s_%d.root" %(mods,percentage,mods,percentage,location,additionalString,runs)
+                line1 += "watch -n --superNova %s -f %s --ntupleout %s\n" %(additionalCommands,fileN,fileNO)
 
-    return line1
+    return line1,case
 
 
 
@@ -358,18 +363,18 @@ def generateJobs(N,arguments):
         for idx,cover in enumerate(coverage):
             models  = d["%s" %(iso[j])]
             for index in range(N):
-                line = jobString(cover,j,index,models,arguments)
-                stringFile = "jobs/%s/%s/jobs%s_%s_%s_%d.sh" %(loc[j],cover,cover,\
-                                                            "%s"%(iso[int(j)]),loc[j],index)
+                line,case = jobString(cover,j,index,models,arguments)
+                stringFile = "jobs/%s/%s/jobs%s_%s_%s_%d_%d.sh" %(loc[j],cover,cover,\
+                                                            "%s"%(iso[int(j)]),loc[j],index,case)
                 if index == 0:
                     job_list+= '(msub ' + stringFile +') || ./'+ stringFile + '\n'
                 
                 outfile = open(stringFile,"wb")
                 outfile.writelines(line)
                 if index < N-1:
-                    stringFile1 = "(msub jobs/%s/%s/jobs%s_%s_%s_%d.sh || ./jobs/%s/%s/jobs%s_%s_%s_%d.sh)" %(loc[j],cover,cover,\
-                                                                                                 "%s"%(iso[int(j)]),loc[j],index+1,loc[j],cover,cover,\
-                                                                                                 "%s"%(iso[int(j)]),loc[j],index+1)
+                    stringFile1 = "(msub jobs/%s/%s/jobs%s_%s_%s_%d_%d.sh || ./jobs/%s/%s/jobs%s_%s_%s_%d_%d.sh)" %(loc[j],cover,cover,\
+                                                                                                 "%s"%(iso[int(j)]),loc[j],index+1,case,loc[j],cover,cover,\
+                                                                                                 "%s"%(iso[int(j)]),loc[j],index+1,case)
                     outfile.writelines(stringFile1)
                 outfile.close
                 os.chmod(stringFile,S_IRWXU)
