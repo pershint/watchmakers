@@ -714,7 +714,7 @@ def extractNtuple(arguments):
     d,iso,loc,coverage,coveragePCT = loadSimulationParameters()
     if not superNova:
         goldenFileExtractor(fIn,minNHIT,goodness,dirGoodness,timemask,\
-                            rate,distancemask,fidV,pmtV,tankV,fOut)
+                            rate,distancemask,fidV,pmtV,tankV,outF)
     else:
         supernovaAnalysis(file,outF)
 
