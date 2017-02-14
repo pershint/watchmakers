@@ -21,7 +21,7 @@
 #include <vector>
 #include <TRandom3.h>
 
-void supernovaAnalysis(const char *file, const char *outfile = "null") {
+int supernovaAnalysis(const char *file, const char *outfile = "null") {
     Double_t reconstructedRadius = 0.0;
     
     TH1D *hPos0FB = new TH1D("hPos0FB","primary event",1000,0.01,10);
@@ -655,6 +655,6 @@ void supernovaAnalysis(const char *file, const char *outfile = "null") {
     
     
     printf("(ibd,es,cc,icc,nc): (%5.4f, %5.4f, %5.4f, %5.4f, %5.4f)  (tot:%d)\n",ibd/tot,es/tot,cc/tot,icc/tot,nc/tot,tot);
-    
+    return 0;
     
 }
