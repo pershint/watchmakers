@@ -247,7 +247,7 @@ rootDir,g4Dir,g4Dir,ratDir,watchmakersDir)
             fileN = "root_files/%s/%s/watchman_%s_%s_%s_%d.root" %(mods,percentage,mods,percentage,location,runs)
             if additionalString != "":
                 fileNO = "ntuple_root_files/%s/%s/watchman_%s_%s_%s%s_%d.root" %(mods,percentage,mods,percentage,location,additionalString,runs)
-                line1 += "watch -n --superNova %s -f %s --ntupleout %s\n" %(additionalCommands,fileN,fileNO)
+                line1 += "watch -n --supernovaFormat %s -f %s --ntupleout %s\n" %(additionalCommands,fileN,fileNO)
 
     return line1,case
 
@@ -708,7 +708,7 @@ def extractNtuple(arguments):
     pmtV         = float(arguments["--psup"])
     tankV        = float(arguments["--tankDis"])
     outF         = arguments["--ntupleout"]
-    superNova    = arguments["--supernovaFile"]
+    superNova    = arguments["--supernovaFormat"]
     
     print file
     d,iso,loc,coverage,coveragePCT = loadSimulationParameters()
@@ -732,7 +732,7 @@ def extractNtupleALL(arguments):
     fidV         = float(arguments["--fv"])
     pmtV         = float(arguments["--psup"])
     tankV        = float(arguments["--tankDis"])
-    superNova    = arguments["--supernovaFile"]
+    superNova    = arguments["--supernovaFormat"]
 
 
     additionalString,additionalCommands = testEnabledCondition(arguments)

@@ -74,7 +74,7 @@ docstring = """
     --site=<_site>      Site of the experiment (boulby,fairport) [Default: %s]
     --OnOff=<_OOratio>  Ratio of reactor on to reactor off [Default: %d]
     --cores=<_cores>    Number of cores to discover [Default: 1]
-    --superNova         Record supernova files instead of golden files
+    --supernovaFormat   Record supernova files instead of golden files
 
 
     """ % (defaultValues[0],defaultValues[1],defaultValues[3],defaultValues[4],\
