@@ -1,0 +1,29 @@
+#!/bin/bash
+# Configure script
+# Run once when you unpack source
+
+
+### Create environment files
+wmroot=`pwd`
+
+cat > env_wm.sh <<EOF
+#!/bin/sh
+WATCHENV=$wmroot
+PATH=\$WATCHENV:\$PATH
+PYTHONPATH=\$WATCHENV:\$PYTHONPATH
+export WATCHENV PATH PYTHONPATH
+alias watch="python $WATCHENV/watchmakers.py "
+EOF
+
+cat > env_wm.csh <<EOF
+#!/bin/csh
+setenv WATCHENV $wmroot
+setenv PATH "\$WATCHENV:\$PATH"
+
+if ({\$?PYTHONPATH}) then
+  setenv PYTHONPATH "\$WATCHENV:\$PYTHONPATH"
+else
+  setenv PYTHONPATH "\$WATCHENV"
+endif
+alias watch "python $WATCHENV/watchmakers.py "
+EOF
