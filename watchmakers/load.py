@@ -73,6 +73,9 @@ docstring = """
     --timeScale=<_ts>   Integration period (sec,day,month,year) [Default: %s]
     --site=<_site>      Site of the experiment (boulby,fairport) [Default: %s]
     --OnOff=<_OOratio>  Ratio of reactor on to reactor off [Default: %d]
+    --cores=<_cores>    Number of cores to discover [Default: 1]
+    --superNova         Record supernova files instead of golden files
+
 
     """ % (defaultValues[0],defaultValues[1],defaultValues[3],defaultValues[4],\
            defaultValues[5],defaultValues[6],defaultValues[7],defaultValues[8],\
@@ -92,6 +95,10 @@ gSystem.Load("libRATEvent")
 gSystem.AddIncludePath(" -I$RATROOT/include")
 gROOT.LoadMacro("$WATCHENV/watchmakers/goldenFileExtractor.C")
 from ROOT import goldenFileExtractor
+
+
+gROOT.LoadMacro("$WATCHENV/watchmakers/supernovaAnalysis.C")
+from ROOT import supernovaAnalysis
 
 def loadSimulationParameters():
     #Chain and subsequent isotopes

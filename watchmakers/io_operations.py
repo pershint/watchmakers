@@ -703,12 +703,15 @@ def extractNtuple(arguments):
     pmtV         = float(arguments["--psup"])
     tankV        = float(arguments["--tankDis"])
     outF         = arguments["--ntupleout"]
+    superNova    = arguments["--supernovaFile"]
     
     print file
     d,iso,loc,coverage,coveragePCT = loadSimulationParameters()
-    goldenFileExtractor(file,minNHIT,goodness,dirGoodness,timemask,\
-                        rate,distancemask,fidV,pmtV,tankV,outF)
-
+    if not superNova:
+        goldenFileExtractor(fIn,minNHIT,goodness,dirGoodness,timemask,\
+                            rate,distancemask,fidV,pmtV,tankV,fOut)
+            else:
+                supernovaAnalysis(file,outF)
 
 def extractNtupleALL(arguments):
     d,iso,loc,coverage,coveragePCT = loadSimulationParameters()
@@ -724,6 +727,9 @@ def extractNtupleALL(arguments):
     fidV         = float(arguments["--fv"])
     pmtV         = float(arguments["--psup"])
     tankV        = float(arguments["--tankDis"])
+    superNova    = arguments["    superNova    = arguments["--supernovaFile"]
+"]
+
 
     additionalString,additionalCommands = testEnabledCondition(arguments)
     
@@ -760,8 +766,11 @@ def extractNtupleALL(arguments):
                 fOut = "ntuple_root_files%s/%s/%s/watchman_%s_%s_%s_%d.root" %(additionalString,ii,cover,ii,cover,locj,run)
                 if os.path.isfile(fIn) and not os.path.isfile(fOut):
                     print fIn, " -> ", fOut
-                    goldenFileExtractor(fIn,minNHIT,goodness,dirGoodness,timemask,\
+                    if not superNova:
+                        goldenFileExtractor(fIn,minNHIT,goodness,dirGoodness,timemask,\
                                             rate,distancemask,fidV,pmtV,tankV,fOut)
+                    else:
+                        supernovaAnalysis(file,outF)
 
 
     if (arguments["-P"] and not arguments["-L"]) or (arguments["-L"] and not arguments["-P"]):
@@ -777,6 +786,11 @@ def extractNtupleALL(arguments):
                         fOut = "ntuple_root_files%s/%s/%s/watchman_%s_%s_%s_%d.root" %(additionalString,ii,cover,ii,cover,loc[j],run)
                         if os.path.isfile(fIn) and not os.path.isfile(fOut):
                             print fIn, " -> ", fOut
-                            goldenFileExtractor(fIn,minNHIT,goodness,dirGoodness,timemask,\
-                                                rate,distancemask,fidV,pmtV,tankV,fOut)
+                            if not superNova:
+                                goldenFileExtractor(fIn,minNHIT,goodness,dirGoodness,timemask,\
+                                                    rate,distancemask,fidV,pmtV,tankV,fOut)
+                            else:
+                                supernovaAnalysis(file,outF)
+
+
 

@@ -173,6 +173,8 @@ def sensitivityMap():
     OnOffRatio = float(arguments["--OnOff"])
     print site,OnOffRatio
 
+    cores = int(arguments["--cores"])
+
     if t == 'sec':
         timeAdjustment = 24*3600.
 
@@ -273,7 +275,7 @@ def sensitivityMap():
 
     _graphS = Graph()
     _graphS.SetName('_graphS')
-    _graphS.SetTitle('IBDs from 1-core at full power')
+    _graphS.SetTitle('IBDs from %d-core at full power'%(cores))
 
     _graphB = Graph()
     _graphB.SetName('_graphB')
@@ -377,8 +379,11 @@ def sensitivityMap():
                     B = BAC+BRN+BFN
                     SSBB = S/sqrt(S+S+B)
                     #Include 29% other reactor
-                    if site == 'boulby':
+                    if site == 'boulby' and cores ==1 :
                         T3SIGMA = 9*(S+2*(S*1.29+B)/OnOffRatio)/S/S #1.29% other reactor
+                    elif site == 'boulby' and cores ==2 :
+                        S*=2                            #2-cores
+                        T3SIGMA = 9*(S*1.145+B)/S/S #1.29% other reactor
                     else:
                         T3SIGMA = 9*(S+2*(S*0.05+B)/OnOffRatio)/S/S #5% other reactor
 
