@@ -609,7 +609,12 @@ def testEnabledCondition(arguments):
     if float(arguments['--tankDis'])   != defaultValues[14]:
         additionalString += "_Tankboundary_%f" %(float(arguments['--tankDist']))
         additionalCommands +=" --tankDist %f" %(float(arguments['--tankDist']))
-    
+
+
+    if float(arguments['--supernovaFormat'])   != defaultValues[14]:
+        additionalString += "_supernovaFormat_")
+        additionalCommands +=" --supernovaFormat "
+
     if additionalString == "":
         additionalString = "_default"
 
@@ -639,8 +644,7 @@ def mergeNtupleFiles(arguments):
     trees = {}
 
     additionalString,additionalCommands = testEnabledCondition(arguments)
-    if additionalString == "":
-        additionalString = "_default"
+
 
     pathFinal = "ntuple_root_files%s/merged_ntuple_watchman" %(additionalString)
     
