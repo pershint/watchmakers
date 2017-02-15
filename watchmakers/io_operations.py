@@ -611,7 +611,7 @@ def testEnabledCondition(arguments):
         additionalCommands +=" --tankDist %f" %(float(arguments['--tankDist']))
 
 
-    if float(arguments['--supernovaFormat'])   != defaultValues[14]:
+    if int(arguments['--supernovaFormat']):
         additionalString += "_supernovaFormat_"
         additionalCommands +=" --supernovaFormat "
 
