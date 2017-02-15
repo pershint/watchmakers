@@ -445,12 +445,14 @@ export G4NEUTRONHP_USE_ONLY_PHOTONEVAPORATION=1\n
 
             line2 = "watch --extractNtup -N 600 -P %s -L %s \n" %(ii,loc[j])
             line3 = "watch --extractNtup -N 600 -P %s -L %s -g 0.65\n" %(ii,loc[j])
-            line4 = "watch --extractNtup -N 600 -P %s -L %s -g 0.65 -T 12\n" %(ii,loc[j])
-            line5 = "watch --extractNtup -N 600 -P %s -L %s -T 12\n" %(ii,loc[j])
+            line4 = "watch --extractNtup -N 600 -P %s -L %s -g 0.65 -T 8\n" %(ii,loc[j])
+            line5 = "watch --extractNtup -N 600 -P %s -L %s -T 8\n" %(ii,loc[j])
             line6 = "watch --extractNtup -N 600 -P %s -L %s -g 0.65 -T 10\n" %(ii,loc[j])
             line7 = "watch --extractNtup -N 600 -P %s -L %s -T 10\n" %(ii,loc[j])
-            line8 = "watch --extractNtup -N 600 -P %s -L %s -g 0.65 -T 14\n" %(ii,loc[j])
-            line9 = "watch --extractNtup -N 600 -P %s -L %s -T 14\n" %(ii,loc[j])
+            line8 = "watch --extractNtup -N 600 -P %s -L %s -g 0.65 -T 12\n" %(ii,loc[j])
+            line9 = "watch --extractNtup -N 600 -P %s -L %s -T 12\n" %(ii,loc[j])
+            line10 = "watch --extractNtup -N 600 -P %s -L %s -g 0.65 -T 14\n" %(ii,loc[j])
+            line11 = "watch --extractNtup -N 600 -P %s -L %s -T 14\n" %(ii,loc[j])
 
 
             outfile = open('jobs/sub_jobs__%d_2'%(cnt),"wb")
@@ -461,55 +463,57 @@ export G4NEUTRONHP_USE_ONLY_PHOTONEVAPORATION=1\n
 
             outfile = open('jobs/sub_jobs__%d_3'%(cnt),"wb")
             outF2.writelines('msub jobs/sub_jobs__%d_3\n'%(cnt))
-
             outfile.writelines(line1)
             outfile.writelines(line3)
             outfile.close
+            
             outfile = open('jobs/sub_jobs__%d_4'%(cnt),"wb")
             outF2.writelines('msub jobs/sub_jobs__%d_4\n'%(cnt))
-
             outfile.writelines(line1)
             outfile.writelines(line4)
             outfile.close
 
             outfile = open('jobs/sub_jobs__%d_5'%(cnt),"wb")
             outF2.writelines('msub jobs/sub_jobs__%d_5\n'%(cnt))
-
             outfile.writelines(line1)
             outfile.writelines(line5)
             outfile.close
 
             outfile = open('jobs/sub_jobs__%d_6'%(cnt),"wb")
             outF2.writelines('msub jobs/sub_jobs__%d_6\n'%(cnt))
-
             outfile.writelines(line1)
             outfile.writelines(line6)
             outfile.close
 
             outfile = open('jobs/sub_jobs__%d_7'%(cnt),"wb")
             outF2.writelines('msub jobs/sub_jobs__%d_7\n'%(cnt))
-
             outfile.writelines(line1)
             outfile.writelines(line7)
             outfile.close
 
             outfile = open('jobs/sub_jobs__%d_8'%(cnt),"wb")
             outF2.writelines('msub jobs/sub_jobs__%d_8\n'%(cnt))
-
             outfile.writelines(line1)
             outfile.writelines(line8)
             outfile.close
 
             outfile = open('jobs/sub_jobs__%d_9'%(cnt),"wb")
             outF2.writelines('msub jobs/sub_jobs__%d_9\n'%(cnt))
-
             outfile.writelines(line1)
             outfile.writelines(line9)
             outfile.close
 
-
+            outfile = open('jobs/sub_jobs__%d_10'%(cnt),"wb")
+            outF2.writelines('msub jobs/sub_jobs__%d_10\n'%(cnt))
+            outfile.writelines(line1)
+            outfile.writelines(line10)
             outfile.close
 
+            outfile = open('jobs/sub_jobs__%d_11'%(cnt),"wb")
+            outF2.writelines('msub jobs/sub_jobs__%d_11\n'%(cnt))
+            outfile.writelines(line1)
+            outfile.writelines(line11)
+            outfile.close
 
             cnt+=1
     outF2.close
@@ -609,7 +613,6 @@ def testEnabledCondition(arguments):
     if float(arguments['--tankDis'])   != defaultValues[14]:
         additionalString += "_Tankboundary_%f" %(float(arguments['--tankDist']))
         additionalCommands +=" --tankDist %f" %(float(arguments['--tankDist']))
-
 
     if int(arguments['--supernovaFormat']):
         additionalString += "_supernovaFormat"
