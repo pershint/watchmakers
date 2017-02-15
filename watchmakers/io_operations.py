@@ -612,7 +612,7 @@ def testEnabledCondition(arguments):
 
 
     if float(arguments['--supernovaFormat'])   != defaultValues[14]:
-        additionalString += "_supernovaFormat_")
+        additionalString += "_supernovaFormat_"
         additionalCommands +=" --supernovaFormat "
 
     if additionalString == "":
