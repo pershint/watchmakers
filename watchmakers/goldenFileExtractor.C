@@ -35,7 +35,7 @@ int goldenFileExtractor(const char *file, double nhit_min =3., double goodness_m
     }else{
         f_out = new TFile(outfile,"Recreate");
     }
-        
+    
     RAT::DS::Root *rds = new RAT::DS::Root();
     tree->SetBranchAddress("ds", &rds);
     int nEvents = tree->GetEntries();
@@ -104,7 +104,7 @@ int goldenFileExtractor(const char *file, double nhit_min =3., double goodness_m
     data->Branch("inner_dist",&inner_dist,"inner_dist/D");
     data->Branch("inner_time",&inner_time,"inner_time/D");
     data->Branch("inner_dist_fv",&inner_dist_fv,"inner_dist_fv/D");
-//    data->Branch("inner_time_fv",&inner_time_fv,"inner_time_fv/D");    //    data->Branch("old_FV",&old_FV,"old_FV/I");
+    //    data->Branch("inner_time_fv",&inner_time_fv,"inner_time_fv/D");    //    data->Branch("old_FV",&old_FV,"old_FV/I");
     data->Branch("tot_FV",&tot_FV,"tot_FV/I");
     data->Branch("consecutive_FV",&consecutive_FV,"consecutive_FV/I");
     vector <double> subeventInfo;
@@ -164,178 +164,179 @@ int goldenFileExtractor(const char *file, double nhit_min =3., double goodness_m
             n9          = 0;
             data->Fill();
             
-        }
-        
-        for (int k = 0; k<subevents; k++) {
-            RAT::DS::EV *ev         = rds->GetEV(k);
-            qTmp                    = ev->Nhits();
-            RAT::DS::BonsaiFit *pb  = ev->GetBonsaiFit();
-            goodness                = pb->GetGoodness();
-            dirGoodness             = pb->GetDirGoodness();
-            posReco                 = pb->GetPosition();
-            totNHIT                 = pb->GetIDHit();
-            totPE                   = pb->GetIDCharge();
-            dirReco                 = pb->GetDirection();
-            n9                      = pb->GetN9();
-            newX                    = posReco.X();
-            newY                    = posReco.Y();
-            newZ                    = posReco.Z();
-            dirX                    = dirReco.X();
-            dirY                    = dirReco.Y();
-            dirZ                    = dirReco.Z();
+        }else{
             
-            timeTmp = timeTmp1 = 0;
-            timeTmp = ev->GetCalibratedTriggerTime(); // 0 for first subevent, detlta for all others
-            
-            if (n9 > nhit_min && goodness > goodness_min && dirGoodness > goodness_dir) {
-                cnt                  +=1;
-                cnt_all              +=1;
+            for (int k = 0; k<subevents; k++) {
+                RAT::DS::EV *ev         = rds->GetEV(k);
+                qTmp                    = ev->Nhits();
+                RAT::DS::BonsaiFit *pb  = ev->GetBonsaiFit();
+                goodness                = pb->GetGoodness();
+                dirGoodness             = pb->GetDirGoodness();
+                posReco                 = pb->GetPosition();
+                totNHIT                 = pb->GetIDHit();
+                totPE                   = pb->GetIDCharge();
+                dirReco                 = pb->GetDirection();
+                n9                      = pb->GetN9();
+                newX                    = posReco.X();
+                newY                    = posReco.Y();
+                newZ                    = posReco.Z();
+                dirX                    = dirReco.X();
+                dirY                    = dirReco.Y();
+                dirZ                    = dirReco.Z();
                 
+                timeTmp = timeTmp1 = 0;
+                timeTmp = ev->GetCalibratedTriggerTime(); // 0 for first subevent, detlta for all others
                 
-                r = sqrt(pow(posReco.X(),2)+ pow(posReco.Y(),2))/1000.;
-                z = posReco.Z()/1000.;
-                FindVolume(r,z,FV,GSV,IV,EV,OV,fidBound,pmtBound,tankBound);
-                if (FV==1) {
-                    tot_FV+=1;
-                    consecutive_FV+=1;
-                    inner_dist_fv =sqrt(pow(posReco.X()-oldFVX,2)+ pow(posReco.Y()-oldFVY,2)+pow(posReco.Z()-oldFVZ,2))/1000.;
-                    oldFVX = posReco.X();
-                    oldFVY = posReco.Y();
-                    oldFVZ = posReco.Z();
-//                    cout << inner_dist_fv << endl;
-
+                if (n9 > nhit_min && goodness > goodness_min && dirGoodness > goodness_dir) {
+                    cnt                  +=1;
+                    cnt_all              +=1;
                     
-                }else{
-                    consecutive_FV=0;
-                    inner_dist_fv = 0.;
-                }
-                
-                
-                //                printf("%d %f\n",cnt,timeTmp);
-                if (cnt ==1) {
-                    inner_dist = sqrt(pow(newX-oldX,2)+ pow(newY-oldY,2) + pow(newZ-oldZ,2))/1000.;
-                    if (timeTmp>0) {
-                        inner_time = findNextTime(rate); // Find a random time
+                    r = sqrt(pow(posReco.X(),2)+ pow(posReco.Y(),2))/1000.;
+                    z = posReco.Z()/1000.;
+                    FindVolume(r,z,FV,GSV,IV,EV,OV,fidBound,pmtBound,tankBound);
+                    if (FV==1) {
+                        tot_FV+=1;
+                        consecutive_FV+=1;
+                        inner_dist_fv =sqrt(pow(posReco.X()-oldFVX,2)+ pow(posReco.Y()-oldFVY,2)+pow(posReco.Z()-oldFVZ,2))/1000.;
+                        oldFVX = posReco.X();
+                        oldFVY = posReco.Y();
+                        oldFVZ = posReco.Z();
+                        //                    cout << inner_dist_fv << endl;
+                        
+                        
                     }else{
-                        inner_time = -timeTmp; // To accomodate strange rat-pac backward time convention for Chains
+                        consecutive_FV=0;
+                        inner_dist_fv = 0.;
                     }
-                    oldX = newX;
-                    oldY = newY;
-                    oldZ = newZ;
                     
-                    timeTmp1        = timeTmp;
-                    subeventInfo.push_back(cnt);                //0 sub_ev
-                    subeventInfo.push_back(inner_time);         //1 time difference
-                    subeventInfo.push_back(inner_dist);         //2 distance
-                    if (timeDiff < timeWindow_ns && inner_dist < maxDistance) {
-                        //                        eventInfo[cnt-2][3] = 1 ; // Issue with this if no event in middle
-                        subeventInfo.push_back(1);              //3a is a candidate for accidentals
-                    }else{
-                        subeventInfo.push_back(0);              //3b is not a candidate
-                    }                    subeventInfo.push_back(totNHIT);            //4 Record nhit
-                    subeventInfo.push_back(totPE);              //5 record photoelectrons
-                    subeventInfo.push_back(FV);                 //6 is in Fiducial Volume
-                    subeventInfo.push_back(GSV);                //7 is in GammaShield volume
-                    subeventInfo.push_back(IV);                 //8 is in InnerVolume
-                    subeventInfo.push_back(EV);                 //9 is in EntireVolume
-                    subeventInfo.push_back(OV);                 //10 is in outerVolume
-                    subeventInfo.push_back(goodness);           //11 bonsai position goodness
-                    subeventInfo.push_back(dirGoodness);        //12 bonsai direction goodness
-                    subeventInfo.push_back(old_FV);             //13 Previous event was in FV
-                    subeventInfo.push_back(r);                  //14 Reconstructed radius
-                    subeventInfo.push_back(z);                  //15 reconstruced z position
-                    subeventInfo.push_back(newX);               //16 New x coordinate
-                    subeventInfo.push_back(newY);               //17 New y coordinate
-                    subeventInfo.push_back(newZ);               //18 New z coordinate
-                    subeventInfo.push_back(dirX);               //19 New x direction
-                    subeventInfo.push_back(dirY);               //20 New y direction
-                    subeventInfo.push_back(dirZ);               //21 New z direction
-                    subeventInfo.push_back(cnt_all);            //22 All sub-ev
-                    subeventInfo.push_back(n9);                 //23 hit in 9 nanosecond
                     
-                    eventInfo.push_back(subeventInfo);
-                    
-                    subeventInfo.resize(0);
-                    
-                }else if(cnt>1){
-                    inner_dist = sqrt(pow(newX-oldX,2)+ pow(newY-oldY,2) + pow(newZ-oldZ,2))/1000.;
-                    oldX = newX;
-                    oldY = newY;
-                    oldZ = newZ;
-                    
-                    timeDiff   = timeTmp-timeTmp1;
-                    timeTmp1        = timeTmp;
-                    subeventInfo.push_back(cnt);                //0 sub_ev
-                    subeventInfo.push_back(abs(timeDiff));      //1 time difference
-                    subeventInfo.push_back(inner_dist);         //2 distance
-                    if (timeDiff < timeWindow_ns && inner_dist < maxDistance) {
-                        //                        eventInfo[cnt-2][3] = 1 ; // Issue with this if no event in middle
-                        subeventInfo.push_back(1);              //3a is a candidate
-                        if(eventInfo[cnt-2][13] == 1){
-                            old_FV = 1;
+                    //                printf("%d %f\n",cnt,timeTmp);
+                    if (cnt ==1) {
+                        inner_dist = sqrt(pow(newX-oldX,2)+ pow(newY-oldY,2) + pow(newZ-oldZ,2))/1000.;
+                        if (timeTmp>0) {
+                            inner_time = findNextTime(rate); // Find a random time
                         }else{
-                            old_FV = 0;
+                            inner_time = -timeTmp; // To accomodate strange rat-pac backward time convention for Chains
                         }
-                    }else{
-                        subeventInfo.push_back(0);              //3b is not a candidate
+                        oldX = newX;
+                        oldY = newY;
+                        oldZ = newZ;
+                        
+                        timeTmp1        = timeTmp;
+                        subeventInfo.push_back(cnt);                //0 sub_ev
+                        subeventInfo.push_back(inner_time);         //1 time difference
+                        subeventInfo.push_back(inner_dist);         //2 distance
+                        if (timeDiff < timeWindow_ns && inner_dist < maxDistance) {
+                            //                        eventInfo[cnt-2][3] = 1 ; // Issue with this if no event in middle
+                            subeventInfo.push_back(1);              //3a is a candidate for accidentals
+                        }else{
+                            subeventInfo.push_back(0);              //3b is not a candidate
+                        }                    subeventInfo.push_back(totNHIT);            //4 Record nhit
+                        subeventInfo.push_back(totPE);              //5 record photoelectrons
+                        subeventInfo.push_back(FV);                 //6 is in Fiducial Volume
+                        subeventInfo.push_back(GSV);                //7 is in GammaShield volume
+                        subeventInfo.push_back(IV);                 //8 is in InnerVolume
+                        subeventInfo.push_back(EV);                 //9 is in EntireVolume
+                        subeventInfo.push_back(OV);                 //10 is in outerVolume
+                        subeventInfo.push_back(goodness);           //11 bonsai position goodness
+                        subeventInfo.push_back(dirGoodness);        //12 bonsai direction goodness
+                        subeventInfo.push_back(old_FV);             //13 Previous event was in FV
+                        subeventInfo.push_back(r);                  //14 Reconstructed radius
+                        subeventInfo.push_back(z);                  //15 reconstruced z position
+                        subeventInfo.push_back(newX);               //16 New x coordinate
+                        subeventInfo.push_back(newY);               //17 New y coordinate
+                        subeventInfo.push_back(newZ);               //18 New z coordinate
+                        subeventInfo.push_back(dirX);               //19 New x direction
+                        subeventInfo.push_back(dirY);               //20 New y direction
+                        subeventInfo.push_back(dirZ);               //21 New z direction
+                        subeventInfo.push_back(cnt_all);            //22 All sub-ev
+                        subeventInfo.push_back(n9);                 //23 hit in 9 nanosecond
+                        
+                        eventInfo.push_back(subeventInfo);
+                        
+                        subeventInfo.resize(0);
+                        
+                    }else if(cnt>1){
+                        inner_dist = sqrt(pow(newX-oldX,2)+ pow(newY-oldY,2) + pow(newZ-oldZ,2))/1000.;
+                        oldX = newX;
+                        oldY = newY;
+                        oldZ = newZ;
+                        
+                        timeDiff   = timeTmp-timeTmp1;
+                        timeTmp1        = timeTmp;
+                        subeventInfo.push_back(cnt);                //0 sub_ev
+                        subeventInfo.push_back(abs(timeDiff));      //1 time difference
+                        subeventInfo.push_back(inner_dist);         //2 distance
+                        if (timeDiff < timeWindow_ns && inner_dist < maxDistance) {
+                            //                        eventInfo[cnt-2][3] = 1 ; // Issue with this if no event in middle
+                            subeventInfo.push_back(1);              //3a is a candidate
+                            if(eventInfo[cnt-2][13] == 1){
+                                old_FV = 1;
+                            }else{
+                                old_FV = 0;
+                            }
+                        }else{
+                            subeventInfo.push_back(0);              //3b is not a candidate
+                        }
+                        subeventInfo.push_back(totNHIT);            //4 Record nhit
+                        subeventInfo.push_back(totPE);              //5 record photoelectrons
+                        subeventInfo.push_back(FV);                 //6 is in Fiducial Volume
+                        subeventInfo.push_back(GSV);                //7 is in GammaShield volume
+                        subeventInfo.push_back(IV);                 //8 is in InnerVolume
+                        subeventInfo.push_back(EV);                 //9 is in EntireVolume
+                        subeventInfo.push_back(OV);                 //10 is in outerVolume
+                        subeventInfo.push_back(goodness);           //11 bonsai position goodness
+                        subeventInfo.push_back(dirGoodness);        //12 bonsai direction goodness
+                        subeventInfo.push_back(old_FV);             //13 Previous event was in FV
+                        subeventInfo.push_back(r);                  //14 Reconstructed radius
+                        subeventInfo.push_back(z);                  //15 reconstruced z position
+                        subeventInfo.push_back(newX);               //16 New x coordinate
+                        subeventInfo.push_back(newY);               //17 New y coordinate
+                        subeventInfo.push_back(newZ);               //18 New z coordinate
+                        subeventInfo.push_back(dirX);               //19 New x direction
+                        subeventInfo.push_back(dirY);               //20 New y direction
+                        subeventInfo.push_back(dirZ);               //21 New z direction
+                        subeventInfo.push_back(cnt_all);            //22 All sub-ev
+                        subeventInfo.push_back(n9);                 //23 hit in 9 nanosecond
+                        
+                        eventInfo.push_back(subeventInfo);
+                        subeventInfo.resize(0);
+                        
                     }
-                    subeventInfo.push_back(totNHIT);            //4 Record nhit
-                    subeventInfo.push_back(totPE);              //5 record photoelectrons
-                    subeventInfo.push_back(FV);                 //6 is in Fiducial Volume
-                    subeventInfo.push_back(GSV);                //7 is in GammaShield volume
-                    subeventInfo.push_back(IV);                 //8 is in InnerVolume
-                    subeventInfo.push_back(EV);                 //9 is in EntireVolume
-                    subeventInfo.push_back(OV);                 //10 is in outerVolume
-                    subeventInfo.push_back(goodness);           //11 bonsai position goodness
-                    subeventInfo.push_back(dirGoodness);        //12 bonsai direction goodness
-                    subeventInfo.push_back(old_FV);             //13 Previous event was in FV
-                    subeventInfo.push_back(r);                  //14 Reconstructed radius
-                    subeventInfo.push_back(z);                  //15 reconstruced z position
-                    subeventInfo.push_back(newX);               //16 New x coordinate
-                    subeventInfo.push_back(newY);               //17 New y coordinate
-                    subeventInfo.push_back(newZ);               //18 New z coordinate
-                    subeventInfo.push_back(dirX);               //19 New x direction
-                    subeventInfo.push_back(dirY);               //20 New y direction
-                    subeventInfo.push_back(dirZ);               //21 New z direction
-                    subeventInfo.push_back(cnt_all);            //22 All sub-ev
+                }else{
+                    cnt_all     +=1;
+                    subeventInfo.push_back(0);                      //0 sub_ev
+                    subeventInfo.push_back(0.0);                   //1 time difference
+                    subeventInfo.push_back(0.0);                   //2 distance
+                    subeventInfo.push_back(0);                      //3 is a candidate
+                    subeventInfo.push_back(totNHIT);                //4 Record nhit
+                    subeventInfo.push_back(totPE);                  //5 record photoelectrons
+                    subeventInfo.push_back(0);                     //6 is in Fiducial Volume
+                    
+                    subeventInfo.push_back(0);                    //7 is in GammaShield volume
+                    subeventInfo.push_back(0);                     //8 is in InnerVolume
+                    subeventInfo.push_back(0);                     //9 is in EntireVolume
+                    subeventInfo.push_back(0);                     //10 is in outerVolume
+                    subeventInfo.push_back(goodness);               //11 bonsai position goodness
+                    subeventInfo.push_back(dirGoodness);            //12 bonsai direction goodness
+                    subeventInfo.push_back(old_FV);                 //13 Previous event was in FV
+                    subeventInfo.push_back(0);                      //14 Reconstructed radius
+                    subeventInfo.push_back(0);                      //15 reconstruced z position
+                    subeventInfo.push_back(0);                   //16 New x coordinate
+                    subeventInfo.push_back(0);                   //17 New y coordinate
+                    subeventInfo.push_back(0);                   //18 New z coordinate
+                    subeventInfo.push_back(0);                   //19 New x direction
+                    subeventInfo.push_back(0);                   //20 New y direction
+                    subeventInfo.push_back(0);                   //21 New z direction
+                    subeventInfo.push_back(cnt_all);              //22 All sub-ev
                     subeventInfo.push_back(n9);                 //23 hit in 9 nanosecond
                     
                     eventInfo.push_back(subeventInfo);
                     subeventInfo.resize(0);
                     
                 }
-            }else{
-                cnt_all     +=1;
-                subeventInfo.push_back(0);                      //0 sub_ev
-                subeventInfo.push_back(0.0);                   //1 time difference
-                subeventInfo.push_back(0.0);                   //2 distance
-                subeventInfo.push_back(0);                      //3 is a candidate
-                subeventInfo.push_back(totNHIT);                //4 Record nhit
-                subeventInfo.push_back(totPE);                  //5 record photoelectrons
-                subeventInfo.push_back(0);                     //6 is in Fiducial Volume
-                
-                subeventInfo.push_back(0);                    //7 is in GammaShield volume
-                subeventInfo.push_back(0);                     //8 is in InnerVolume
-                subeventInfo.push_back(0);                     //9 is in EntireVolume
-                subeventInfo.push_back(0);                     //10 is in outerVolume
-                subeventInfo.push_back(goodness);               //11 bonsai position goodness
-                subeventInfo.push_back(dirGoodness);            //12 bonsai direction goodness
-                subeventInfo.push_back(old_FV);                 //13 Previous event was in FV
-                subeventInfo.push_back(0);                      //14 Reconstructed radius
-                subeventInfo.push_back(0);                      //15 reconstruced z position
-                subeventInfo.push_back(0);                   //16 New x coordinate
-                subeventInfo.push_back(0);                   //17 New y coordinate
-                subeventInfo.push_back(0);                   //18 New z coordinate
-                subeventInfo.push_back(0);                   //19 New x direction
-                subeventInfo.push_back(0);                   //20 New y direction
-                subeventInfo.push_back(0);                   //21 New z direction
-                subeventInfo.push_back(cnt_all);              //22 All sub-ev
-                subeventInfo.push_back(n9);                 //23 hit in 9 nanosecond
-                
-                eventInfo.push_back(subeventInfo);
-                subeventInfo.resize(0);
-                
             }
+            
         }
         
         for (unsigned long evt_idx = 0; evt_idx < eventInfo.size();evt_idx++) {
