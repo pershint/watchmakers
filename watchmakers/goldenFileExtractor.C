@@ -319,15 +319,15 @@ int goldenFileExtractor(const char *file, double nhit_min =3., double goodness_m
                     subeventInfo.push_back(0);                     //10 is in outerVolume
                     subeventInfo.push_back(goodness);               //11 bonsai position goodness
                     subeventInfo.push_back(dirGoodness);            //12 bonsai direction goodness
-                    subeventInfo.push_back(old_FV);                 //13 Previous event was in FV
-                    subeventInfo.push_back(0);                      //14 Reconstructed radius
-                    subeventInfo.push_back(0);                      //15 reconstruced z position
-                    subeventInfo.push_back(0);                   //16 New x coordinate
-                    subeventInfo.push_back(0);                   //17 New y coordinate
-                    subeventInfo.push_back(0);                   //18 New z coordinate
-                    subeventInfo.push_back(0);                   //19 New x direction
-                    subeventInfo.push_back(0);                   //20 New y direction
-                    subeventInfo.push_back(0);                   //21 New z direction
+                    subeventInfo.push_back(0);                 //13 Previous event was in FV
+                    subeventInfo.push_back(-100000);                      //14 Reconstructed radius
+                    subeventInfo.push_back(-100000);                      //15 reconstruced z position
+                    subeventInfo.push_back(newX);                   //16 New x coordinate
+                    subeventInfo.push_back(newY);                   //17 New y coordinate
+                    subeventInfo.push_back(newZ);                   //18 New z coordinate
+                    subeventInfo.push_back(dirX);                   //19 New x direction
+                    subeventInfo.push_back(dirY);                   //20 New y direction
+                    subeventInfo.push_back(dirZ);                   //21 New z direction
                     subeventInfo.push_back(cnt_all);              //22 All sub-ev
                     subeventInfo.push_back(n9);                 //23 hit in 9 nanosecond
                     
