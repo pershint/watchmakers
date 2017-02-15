@@ -10,6 +10,11 @@ from watchmakers.read import *
 
 if __name__ == "__main__":
     
+    print docstring
+    
+    if arguments["--commands"]:
+        print docstring
+    
     if arguments['-D']:
         deleteAllWorkDirectories()
 

@@ -75,6 +75,7 @@ docstring = """
     --OnOff=<_OOratio>  Ratio of reactor on to reactor off [Default: %d]
     --cores=<_cores>    Number of cores to discover [Default: 1]
     --supernovaFormat   Record supernova files instead of golden files
+    --commands          Print options
 
 
     """ % (defaultValues[0],defaultValues[1],defaultValues[3],defaultValues[4],\

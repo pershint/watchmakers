@@ -161,6 +161,7 @@ int goldenFileExtractor(const char *file, double nhit_min =3., double goodness_m
             posReco     = TVector3(0.,0.,0.);
             dirReco     = TVector3(0.,0.,0.);
             cnt_1       = 0;
+            n9          = 0;
             data->Fill();
             
         }
