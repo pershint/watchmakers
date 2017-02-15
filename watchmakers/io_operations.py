@@ -707,7 +707,7 @@ def extractNtuple(arguments):
     goodness     = float(arguments['-g'])
     dirGoodness  = float(arguments['-G'])
     minNHIT      = float(arguments['-T'])
-    file         = arguments["-f"]
+    fIn          = arguments["-f"]
     fidV         = float(arguments["--fv"])
     pmtV         = float(arguments["--psup"])
     tankV        = float(arguments["--tankDis"])
