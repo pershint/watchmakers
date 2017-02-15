@@ -612,7 +612,7 @@ def testEnabledCondition(arguments):
 
 
     if int(arguments['--supernovaFormat']):
-        additionalString += "_supernovaFormat_"
+        additionalString += "_supernovaFormat"
         additionalCommands +=" --supernovaFormat "
 
     if additionalString == "":
