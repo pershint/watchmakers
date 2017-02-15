@@ -186,13 +186,14 @@ int goldenFileExtractor(const char *file, double nhit_min =3., double goodness_m
                 
                 timeTmp = timeTmp1 = 0;
                 timeTmp = ev->GetCalibratedTriggerTime(); // 0 for first subevent, detlta for all others
+
+                r = sqrt(pow(posReco.X(),2)+ pow(posReco.Y(),2))/1000.;
+                z = posReco.Z()/1000.;
                 
                 if (n9 > nhit_min && goodness > goodness_min && dirGoodness > goodness_dir) {
                     cnt                  +=1;
                     cnt_all              +=1;
                     
-                    r = sqrt(pow(posReco.X(),2)+ pow(posReco.Y(),2))/1000.;
-                    z = posReco.Z()/1000.;
                     FindVolume(r,z,FV,GSV,IV,EV,OV,fidBound,pmtBound,tankBound);
                     if (FV==1) {
                         tot_FV+=1;
@@ -313,15 +314,15 @@ int goldenFileExtractor(const char *file, double nhit_min =3., double goodness_m
                     subeventInfo.push_back(totPE);                  //5 record photoelectrons
                     subeventInfo.push_back(0);                     //6 is in Fiducial Volume
                     
-                    subeventInfo.push_back(0);                    //7 is in GammaShield volume
+                    subeventInfo.push_back(0);                      //7 is in GammaShield volume
                     subeventInfo.push_back(0);                     //8 is in InnerVolume
                     subeventInfo.push_back(0);                     //9 is in EntireVolume
                     subeventInfo.push_back(0);                     //10 is in outerVolume
                     subeventInfo.push_back(goodness);               //11 bonsai position goodness
                     subeventInfo.push_back(dirGoodness);            //12 bonsai direction goodness
-                    subeventInfo.push_back(0);                 //13 Previous event was in FV
-                    subeventInfo.push_back(-100000);                      //14 Reconstructed radius
-                    subeventInfo.push_back(-100000);                      //15 reconstruced z position
+                    subeventInfo.push_back(0);                      //13 Previous event was in FV
+                    subeventInfo.push_back(r);                      //14 Reconstructed radius
+                    subeventInfo.push_back(z);                      //15 reconstruced z position
                     subeventInfo.push_back(newX);                   //16 New x coordinate
                     subeventInfo.push_back(newY);                   //17 New y coordinate
                     subeventInfo.push_back(newZ);                   //18 New z coordinate
