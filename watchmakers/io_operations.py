@@ -284,9 +284,9 @@ def generateMacros(N,e):
 
 def generateJobs(N,arguments):
     d,iso,loc,coverage,coveragePCT = loadSimulationParameters()
-    
-    '''Find wheter the jobs folder exist: if no create, if yes clean and recreate'''
-    directory = 'jobs'
+    case = arguments["-j"]
+    '''Find wheter the jobs folder exist: if not create, if yes clean and recreate'''
+    directory = 'jobs_case%s'%(case)
     if not os.path.exists(directory):
         os.makedirs(directory)
     else:
@@ -295,7 +295,7 @@ def generateJobs(N,arguments):
 
     for ii in loc:
         for idx,cover in enumerate(coverage):
-            directory = "jobs/%s/%s" %(ii,cover)
+            directory = "jobs_case%s/%s/%s" %(case,ii,cover)
             if not os.path.exists(directory):
                 os.makedirs(directory)
             else:
@@ -310,10 +310,6 @@ def generateJobs(N,arguments):
         rmtree(directory)
         os.makedirs(directory)
 
-#    directory = 'root_files'
-#    if not os.path.exists(directory):
-#        os.makedirs(directory)
-
     for j in range(len(iso)):
         for ii in d["%s"%(iso[int(j)])]:
             for idx,cover in enumerate(coverage):
@@ -321,11 +317,6 @@ def generateJobs(N,arguments):
                 if not os.path.exists(directory):
                     os.makedirs(directory)
 
-
-#
-#    directory = 'ntuple_root_files'
-#    if not os.path.exists(directory):
-#        os.makedirs(directory)
 
     for j in range(len(iso)):
         for ii in d["%s"%(iso[int(j)])]:
@@ -356,6 +347,8 @@ def generateJobs(N,arguments):
     if not os.path.exists(dst):
         os.symlink(src,dst)
 
+    job = 'jobs_case%s'%(case)
+
     job_list = '''#!/bin/sh
 '''
 
@@ -364,7 +357,7 @@ def generateJobs(N,arguments):
             models  = d["%s" %(iso[j])]
             for index in range(N):
                 line,case = jobString(cover,j,index,models,arguments)
-                stringFile = "jobs/%s/%s/jobs%s_%s_%s_%d_case%d.sh" %(loc[j],cover,cover,\
+                stringFile = "%s/%s/%s/jobs%s_%s_%s_%d_case%d.sh" %(job,loc[j],cover,cover,\
                                                             "%s"%(iso[int(j)]),loc[j],index,case)
                 if index == 0:
                     job_list+= '(msub ' + stringFile +') || ./'+ stringFile + '\n'
@@ -372,19 +365,19 @@ def generateJobs(N,arguments):
                 outfile = open(stringFile,"wb")
                 outfile.writelines(line)
                 if index < N-1:
-                    stringFile1 = "(msub jobs/%s/%s/jobs%s_%s_%s_%d_case%d.sh || ./jobs/%s/%s/jobs%s_%s_%s_%d_case%d.sh)" %(loc[j],cover,cover,\
-                                                                                                 "%s"%(iso[int(j)]),loc[j],index+1,case,loc[j],cover,cover,\
+                    stringFile1 = "(msub %s/%s/%s/jobs%s_%s_%s_%d_case%d.sh || ./%s/%s/%s/jobs%s_%s_%s_%d_case%d.sh)" %(job,loc[j],cover,cover,\
+                                                                                                 "%s"%(iso[int(j)]),loc[j],index+1,case,job,loc[j],cover,cover,\
                                                                                                  "%s"%(iso[int(j)]),loc[j],index+1,case)
                     outfile.writelines(stringFile1)
                 outfile.close
                 os.chmod(stringFile,S_IRWXU)
 
 
-    outfile = open('sub_jobs',"wb")
+    outfile = open('sub_jobs_case%s'%(case),"wb")
     outfile.writelines(job_list)
     outfile.close
-    os.chmod('sub_jobs',S_IRWXG)
-    os.chmod('sub_jobs',S_IRWXU)
+    os.chmod('sub_jobs_case%s'%(case),S_IRWXG)
+    os.chmod('sub_jobs_case%s'%(case),S_IRWXU)
     return 0
 
 
@@ -742,11 +735,8 @@ def extractNtupleALL(arguments):
 
     superNova    = arguments["--supernovaFormat"]
 
-
     additionalString,additionalCommands = testEnabledCondition(arguments)
-    
-    if additionalString == "":
-        additionalString = "_default"
+
     
     for j in range(len(iso)):
         for ii in d["%s"%(iso[int(j)])]:
@@ -779,10 +769,16 @@ def extractNtupleALL(arguments):
                 if os.path.isfile(fIn) and not os.path.isfile(fOut):
                     print fIn, " -> ", fOut
                     if not superNova:
-                        goldenFileExtractor(fIn,minNHIT,goodness,dirGoodness,timemask,\
+                        try:
+                            goldenFileExtractor(fIn,minNHIT,goodness,dirGoodness,timemask,\
                                             rate,distancemask,fidV,pmtV,tankV,fOut)
+                        except:
+                            print "Error.."
                     else:
-                        supernovaAnalysis(fIn,fOut)
+                        try:
+                            supernovaAnalysis(fIn,fOut)
+                        except:
+                            print "Error.."
 
 
     if (arguments["-P"] and not arguments["-L"]) or (arguments["-L"] and not arguments["-P"]):
@@ -799,10 +795,16 @@ def extractNtupleALL(arguments):
                         if os.path.isfile(fIn) and not os.path.isfile(fOut):
                             print fIn, " -> ", fOut
                             if not superNova:
-                                goldenFileExtractor(fIn,minNHIT,goodness,dirGoodness,timemask,\
+                                try:
+                                    goldenFileExtractor(fIn,minNHIT,goodness,dirGoodness,timemask,\
                                                     rate,distancemask,fidV,pmtV,tankV,fOut)
+                                except:
+                                    print "Error.."
                             else:
-                                supernovaAnalysis(fIn,fOut)
+                                try:
+                                    supernovaAnalysis(fIn,fOut)
+                                except:
+                                    print "Error.."
 
 
 
