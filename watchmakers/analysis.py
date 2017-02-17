@@ -6,8 +6,7 @@ def fillHistograms(inFile,a1,t1,h,cover,ii,locj,covPCT):
     nbins, xbins, ybins = logx_logy_array()
     
     additionalString,additionalCommands = testEnabledCondition(arguments)
-    if additionalString == "":
-        additionalString = "_default"
+    
     fiducialVolume = float(arguments["--fv"])
     pmtDist         = float(arguments["--psup"])
 #    print "Fiducial volume is ", fiducialVolume

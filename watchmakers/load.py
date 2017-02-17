@@ -32,7 +32,7 @@ try:
 except:
     print "Could not load in root_numpy or rootpy, they are required to run this module."
 
-defaultValues  = [3,2500,2805.,1,'merged_ntuple_watchman','null', \
+defaultValues  = [1,3,2500,2805.,'merged_ntuple_watchman','null', \
                   'processed_watchman.root',10.,2.0,100.0,6,\
                   0.65,0.1,5.42,6.4,8.0,'day',\
                   'boulby',1.0]
@@ -45,12 +45,13 @@ docstring = """
     Options:
     -D                  Delete all current photocoverage directory.
 
-    -m                  generate macro files
+    -j=<jobType>        Create submision scripts (1,2,4:rat-pac files|case 2,3,>3 ntuplefiles) [default %d]
+                        >3 option will generate a nutple_root_files_flags folder for results
+    -m                  Also generate macro files
     -N=<N>              Number of MC script that were run [Default: %d]
     -e=<runBeamEntry>   Number of entries per macro (U/Th event x5) [Default: %d]
     --depth=<depthD>    Depth of detector (for fast neutron spectra) [Default: %f]
     
-    -j=<jobType>        Create submision scripts (1,2,4:rat-pac files|case 2,3,>5 ntuplefiles) [default %d]
     
     -n                  generate ntuple from single rat-pac root files
     --extractNtup       generate ntuple from all rat-pac root files
