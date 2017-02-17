@@ -303,7 +303,7 @@ def generateJobs(N,arguments):
                 os.makedirs(directory)
 
     '''Find wheter the jobs folder exist: if no create, if yes clean and recreate'''
-    directory = 'log'
+    directory = 'log_case%s'%(case)
     if not os.path.exists(directory):
         os.makedirs(directory)
     else:
@@ -328,7 +328,7 @@ def generateJobs(N,arguments):
     for j in range(len(iso)):
         for ii in d["%s"%(iso[int(j)])]:
             for idx,cover in enumerate(coverage):
-                directory = "log/%s/%s" %(ii,cover)
+                directory = "log_case%s/%s/%s" %(case,ii,cover)
                 if not os.path.exists(directory):
                     os.makedirs(directory)
 
