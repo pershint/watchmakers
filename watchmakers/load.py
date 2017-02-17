@@ -32,9 +32,9 @@ try:
 except:
     print "Could not load in root_numpy or rootpy, they are required to run this module."
 
-defaultValues  = [3,2500,0,'merged_ntuple_watchman','null', \
-                  'processed_watchman.root',10.,2.0,100.0,6.0,\
-                  0.1,0.1,5.42,6.4,8.0,2805.,'day',\
+defaultValues  = [3,2500,2805.,1,'merged_ntuple_watchman','null', \
+                  'processed_watchman.root',10.,2.0,100.0,6,\
+                  0.65,0.1,5.42,6.4,8.0,'day',\
                   'boulby',1.0]
 
 docstring = """
@@ -43,42 +43,50 @@ docstring = """
     Arguments:
     
     Options:
+    -D                  Delete all current photocoverage directory.
+
     -m                  generate macro files
     -N=<N>              Number of MC script that were run [Default: %d]
     -e=<runBeamEntry>   Number of entries per macro (U/Th event x5) [Default: %d]
-    -j=<jobType>        Create submision scripts and macros [default 1]
-    -f=<ifile>          Input file [Default: %s]
-    --ntupleout=<outN>  Name of ntuple out [Default: %s]
+    --depth=<depthD>    Depth of detector (for fast neutron spectra) [Default: %f]
+    
+    -j=<jobType>        Create submision scripts (1,2,4:rat-pac files|case 2,3,>5 ntuplefiles) [default %d]
+    
     -n                  generate ntuple from single rat-pac root files
     --extractNtup       generate ntuple from all rat-pac root files
+    -f=<ifile>          Input file [Default: %s]
+    --ntupleout=<outN>  Name of ntuple out [Default: %s]
     -o=<outputfile>     Efficiency output file [Default: %s]
-    -M                  Merge result files
-    -a                  Do the analysis on the merged file
+    --supernovaFormat   Record supernova files instead of golden files
     -r=<rate>           rate of accidentals in hz [Default: %f]
     -d=<distance>       Maximal distance between two events (m) [Default: %f]
     -t=<time>           Maximal time between two events (micro) [Default: %f]
-    -T=<tubes>          Minimal number of tubes hit [Default: %f]
+    -T=<tubes>          Minimal number of tubes hit [Default: %d]
     -g=<goodness>       Bonsai position goodness parameter [Default: %f]
     -G=<Goodness>       Bonsai direction goodness parameter [Default: %f]
+    
     -P=<proc>           Pick a single physics process to analyis/merge (used for ntup)
     -L=<loc>            Pick a single physics location to analyis/merge (used for ntup)
-    -C                  Pick a single coverage to analyse
-    -R                  Read analyisis result
-    -D                  Delete all current photocoverage directory.
+    -C=<cov>            Pick a single coverage to analyse
+
+    --customJob         Custom job for photocoverage 02-2017
+
+    -M                  Merge result files
+    
+    -a                  Do the analysis on the merged file
+    
     --fv=<fidV>         Fiducial Volome [Default: %f]
     --psup=<psupV>      Distance to PMT support, assuming right cylinder [Default: %f]
     --tankDis=<tankV>   Distance to tank wall, assuming right cylinder [Default: %f]
-    --depth=<depthD>    Depth of detector [Default: %f]
-    --customJob         Custom job for photocoverage 02-2017
+    
+    -R                  Read analyisis result
+
     --timeScale=<_ts>   Integration period (sec,day,month,year) [Default: %s]
     --site=<_site>      Site of the experiment (boulby,fairport) [Default: %s]
     --OnOff=<_OOratio>  Ratio of reactor on to reactor off [Default: %d]
     --cores=<_cores>    Number of cores to discover [Default: 1]
-    --supernovaFormat   Record supernova files instead of golden files
-    --commands          Print options
-
-
-    """ % (defaultValues[0],defaultValues[1],defaultValues[3],defaultValues[4],\
+    
+    """ % (defaultValues[0],defaultValues[1],defaultValues[2],defaultValues[3],defaultValues[4],\
            defaultValues[5],defaultValues[6],defaultValues[7],defaultValues[8],\
            defaultValues[9],defaultValues[10],defaultValues[11],defaultValues[12],\
            defaultValues[13],defaultValues[14],defaultValues[15],defaultValues[16],\

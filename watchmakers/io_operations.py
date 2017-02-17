@@ -165,8 +165,8 @@ def jobString(percentage,j,runs,models,arguments):
 #MSUB -A adg         # sets bank account
 #MSUB -l nodes=1:ppn=1,walltime=23:59:59,partition=borax  # uses 1 node
 #MSUB -q pbatch         #pool
-#MSUB -o %s/log/wmpc_%s_%s_%d.log
-#MSUB -e %s/log/wmpc_%s_%s_%d.err
+#MSUB -o %s/log_case%s/wmpc_%s_%s_%d.log
+#MSUB -e %s/log_case%s/wmpc_%s_%s_%d.err
 #MSUB -d %s  # directory to run from
 #MSUB -V
 #MSUB                     # no more psub commands
@@ -178,15 +178,15 @@ source %s/env.sh
 source %s/env_wm.sh
 export G4NEUTRONHP_USE_ONLY_PHOTONEVAPORATION=1\n
 """ %(percentage,location,runs,\
-directory,percentage,location,runs,\
-directory,percentage,location,runs,\
+case,directory,percentage,location,runs,\
+case,directory,percentage,location,runs,\
 directory,\
 rootDir,g4Dir,g4Dir,ratDir,watchmakersDir)
 
     for mods in models:
         if location == "FN":
             line1 += "export PHYSLIST=%s\n" %(mods)
-        if case == 1 or case == 2 or case ==4:
+        if case == 1 or case == 2 or case == 4:
             _log = "log_case%s/%s/%s/rat.%s_%s_%s_%d.log" %(case,mods,percentage,percentage,mods,location,runs)
             _mac = "%s/macro/%s/%s/run%s_%s_%d.mac" %(directory,mods,percentage,mods,location,runs)
             line1 += "%s -l %s %s\n" %(software,_log,_mac)
@@ -198,7 +198,8 @@ rootDir,g4Dir,g4Dir,ratDir,watchmakersDir)
 
             else:
                 line1 += "watch -n -f %s\n" %(fileN)
-        if case == 4 or case ==5 :
+        ## If greater than 3, place files in a directory named after non-default flags
+        if case > 3:
             fileN = "root_files/%s/%s/watchman_%s_%s_%s_%d.root" %(mods,percentage,mods,percentage,location,runs)
             if additionalString != "":
                 fileNO = "ntuple_root_files%s/%s/%s/watchman_%s_%s_%s%s_%d.root" %(additionalString,mods,percentage,mods,percentage,location,additionalString,runs)
@@ -538,41 +539,41 @@ def testEnabledCondition(arguments):
     additionalString      = ""
     additionalCommands    = ""
     
-    if float(arguments['-r'])          != defaultValues[6]:
+    if float(arguments['-r'])          != defaultValues[7]:
         additionalString += "_rate_%f" %(float(arguments['-r']))
         additionalCommands += " -r %f " %(float(arguments['-r']))
     
-    if float(arguments['-d'])          != defaultValues[7]:
+    if float(arguments['-d'])          != defaultValues[8]:
         additionalString += "_deltaR_%f" %(float(arguments['-d']))
         additionalCommands += " -d %f" %(float(arguments['-d']))
     
-    if float(arguments['-t'])          != defaultValues[8]:
+    if float(arguments['-t'])          != defaultValues[9]:
         additionalString += "_deltaT_%f" %(float(arguments['-t']))
         additionalCommands +=  " -t %f" %(float(arguments['-t']))
     
-    if float(arguments['-T'])            != (defaultValues[9]):
+    if float(arguments['-T'])            != (defaultValues[10]):
         additionalString += "_n9Min_%d" %(int(arguments['-T']))
         additionalCommands += " -T %d" %(int(arguments['-T']))
     
-    if float(arguments['-g'])          != defaultValues[10]:
+    if float(arguments['-g'])          != defaultValues[11]:
         additionalString += "_posGood_%f" %(float(arguments['-g']))
         additionalCommands += " -g %f" %(float(arguments['-g']))
     
-    if float(arguments['-G'])          != defaultValues[11]:
+    if float(arguments['-G'])          != defaultValues[12]:
         additionalString += "_dirGood_%f" %(float(arguments['-G']))
         additionalCommands += " -G %f" %(float(arguments['-G']))
     
-    if float(arguments['--fv'])        !=  defaultValues[12]:
+    if float(arguments['--fv'])        !=  defaultValues[13]:
         additionalString += "_FVboundary_%f" %(float(arguments['--fv']))
         additionalCommands +=  "--fv %f" %(float(arguments['--fv']))
     
-    if float(arguments['--psup'])      != defaultValues[13]:
+    if float(arguments['--psup'])      != defaultValues[14]:
         additionalString += "_PMTboundary_%f" %(float(arguments['--psup']))
         additionalCommands += "--psup %f" %(float(arguments['--psup']))
     
-    if float(arguments['--tankDis'])   != defaultValues[14]:
-        additionalString += "_Tankboundary_%f" %(float(arguments['--tankDist']))
-        additionalCommands +=" --tankDist %f" %(float(arguments['--tankDist']))
+    if float(arguments['--tankDis'])   != defaultValues[15]:
+        additionalString += "_Tankboundary_%f" %(float(arguments['--tankDis']))
+        additionalCommands +=" --tankDis %f" %(float(arguments['--tankDis']))
 
     if int(arguments['--supernovaFormat']):
         additionalString += "_supernovaFormat"
