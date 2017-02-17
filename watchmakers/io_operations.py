@@ -156,54 +156,9 @@ def jobString(percentage,j,runs,models,arguments):
     
     goodness     = float(arguments['-g'])
     case = int(arguments['-j'])
-#    print defaultValues
 
     additionalString,additionalCommands = testEnabledCondition(arguments)
-#
-#    additionalString      = ""
-#    additionalCommands    = ""
-#
-#    if float(arguments['-r'])          != defaultValues[6]:
-#        additionalString += "_rate_%f" %(float(arguments['-r']))
-#        additionalCommands += " -r %f " %(float(arguments['-r']))
-#    
-#    if float(arguments['-d'])          != defaultValues[7]:
-#        additionalString += "_deltaR_%f" %(float(arguments['-d']))
-#        additionalCommands += " -d %f" %(float(arguments['-d']))
-#    
-#    if float(arguments['-t'])          != defaultValues[8]:
-#        additionalString += "_deltaT_%f" %(float(arguments['-t']))
-#        additionalCommands +=  " -t %f" %(float(arguments['-t']))
-#
-#    if float(arguments['-T'])            != (defaultValues[9]):
-#        additionalString += "_nhitMin_%d" %(int(arguments['-T']))
-#        additionalCommands += " -T %d" %(int(arguments['-T']))
-#
-#    if float(arguments['-g'])          != defaultValues[10]:
-#        additionalString += "_posGood_%f" %(float(arguments['-g']))
-#        additionalCommands += " -g %f" %(float(arguments['-g']))
-#
-#    if float(arguments['-G'])          != defaultValues[11]:
-#        additionalString += "_dirGood_%f" %(float(arguments['-G']))
-#        additionalCommands += " -G %f" %(float(arguments['-G']))
-#
-#    if float(arguments['--fv'])        !=  defaultValues[12]:
-#        additionalString += "_FVboundary_%f" %(float(arguments['--fv']))
-#        additionalCommands +=  "--fv %f" %(float(arguments['--fv']))
-#
-#    if float(arguments['--psup'])      != defaultValues[13]:
-#        additionalString += "_PMTboundary_%f" %(float(arguments['--psup']))
-#        additionalCommands += "--psup %f" %(float(arguments['--psup']))
-#
-#    if float(arguments['--tankDis'])   != defaultValues[14]:
-#        additionalString += "_Tankboundary_%f" %(float(arguments['--tankDist']))
-#        additionalCommands +=" --tankDist %f" %(float(arguments['--tankDist']))
-#
-#
-#    if additionalString != "":
-#        print additionalString
-#        print additionalCommands
-#        print type(additionalCommands)
+
 
     line1 = """#!/bin/sh
 #MSUB -N WM_%s_%s_%d    #name of job
@@ -232,7 +187,7 @@ rootDir,g4Dir,g4Dir,ratDir,watchmakersDir)
         if location == "FN":
             line1 += "export PHYSLIST=%s\n" %(mods)
         if case == 1 or case == 2 or case ==4:
-            _log = "log/%s/%s/rat.%s_%s_%s_%d.log" %(mods,percentage,percentage,mods,location,runs)
+            _log = "log_case%s/%s/%s/rat.%s_%s_%s_%d.log" %(case,mods,percentage,percentage,mods,location,runs)
             _mac = "%s/macro/%s/%s/run%s_%s_%d.mac" %(directory,mods,percentage,mods,location,runs)
             line1 += "%s -l %s %s\n" %(software,_log,_mac)
         if case == 2 or case == 3:
@@ -246,7 +201,7 @@ rootDir,g4Dir,g4Dir,ratDir,watchmakersDir)
         if case == 4 or case ==5 :
             fileN = "root_files/%s/%s/watchman_%s_%s_%s_%d.root" %(mods,percentage,mods,percentage,location,runs)
             if additionalString != "":
-                fileNO = "ntuple_root_files/%s/%s/watchman_%s_%s_%s%s_%d.root" %(mods,percentage,mods,percentage,location,additionalString,runs)
+                fileNO = "ntuple_root_files%s/%s/%s/watchman_%s_%s_%s%s_%d.root" %(additionalString,mods,percentage,mods,percentage,location,additionalString,runs)
                 line1 += "watch -n %s -f %s --ntupleout %s\n" %(additionalCommands,fileN,fileNO)
 
     return line1,case
@@ -285,7 +240,11 @@ def generateMacros(N,e):
 def generateJobs(N,arguments):
     d,iso,loc,coverage,coveragePCT = loadSimulationParameters()
     case = arguments["-j"]
+    additionalString,additionalCommands = testEnabledCondition(arguments)
+
     '''Find wheter the jobs folder exist: if not create, if yes clean and recreate'''
+    
+    
     directory = 'jobs_case%s'%(case)
     if not os.path.exists(directory):
         os.makedirs(directory)
@@ -322,6 +281,14 @@ def generateJobs(N,arguments):
         for ii in d["%s"%(iso[int(j)])]:
             for idx,cover in enumerate(coverage):
                 directory = "ntuple_root_files/%s/%s" %(ii,cover)
+                if not os.path.exists(directory):
+                    os.makedirs(directory)
+
+
+    for j in range(len(iso)):
+        for ii in d["%s"%(iso[int(j)])]:
+            for idx,cover in enumerate(coverage):
+                directory = "ntuple_root_files%s/%s/%s" %(additionalString,ii,cover)
                 if not os.path.exists(directory):
                     os.makedirs(directory)
 
@@ -713,10 +680,16 @@ def extractNtuple(arguments):
     print file
     d,iso,loc,coverage,coveragePCT = loadSimulationParameters()
     if not superNova:
-        goldenFileExtractor(fIn,minNHIT,goodness,dirGoodness,timemask,\
+        try:
+            goldenFileExtractor(fIn,minNHIT,goodness,dirGoodness,timemask,\
                             rate,distancemask,fidV,pmtV,tankV,outF)
+        except:
+            print "Error.."
     else:
-        supernovaAnalysis(fIn,outF)
+        try:
+            supernovaAnalysis(fIn,outF)
+        except:
+            print "Error.."
 
 def extractNtupleALL(arguments):
     d,iso,loc,coverage,coveragePCT = loadSimulationParameters()
