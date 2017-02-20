@@ -178,8 +178,8 @@ source %s/env.sh
 source %s/env_wm.sh
 export G4NEUTRONHP_USE_ONLY_PHOTONEVAPORATION=1\n
 """ %(percentage,location,runs,\
-case,directory,percentage,location,runs,\
-case,directory,percentage,location,runs,\
+directory,case,percentage,location,runs,\
+directory,case,percentage,location,runs,\
 directory,\
 rootDir,g4Dir,g4Dir,ratDir,watchmakersDir)
 
