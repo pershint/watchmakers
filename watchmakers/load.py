@@ -52,13 +52,13 @@ docstring = """
     -e=<runBeamEntry>   Number of entries per macro (U/Th event x5) [Default: %d]
     --depth=<depthD>    Depth of detector (for fast neutron spectra) [Default: %f]
     
-    
     -n                  generate ntuple from single rat-pac root files
     --extractNtup       generate ntuple from all rat-pac root files
     -f=<ifile>          Input file [Default: %s]
     --ntupleout=<outN>  Name of ntuple out [Default: %s]
     -o=<outputfile>     Efficiency output file [Default: %s]
     --supernovaFormat   Record supernova files instead of golden files
+    
     -r=<rate>           rate of accidentals in hz [Default: %f]
     -d=<distance>       Maximal distance between two events (m) [Default: %f]
     -t=<time>           Maximal time between two events (micro) [Default: %f]
@@ -72,14 +72,14 @@ docstring = """
 
     --customJob         Custom job for photocoverage 02-2017
 
-    -M                  Merge result files
-    
-    -a                  Do the analysis on the merged file
-    
     --fv=<fidV>         Fiducial Volome [Default: %f]
     --psup=<psupV>      Distance to PMT support, assuming right cylinder [Default: %f]
     --tankDis=<tankV>   Distance to tank wall, assuming right cylinder [Default: %f]
     
+    -M                  Merge result files
+    
+    -a                  Do the analysis on the merged file
+
     -R                  Read analyisis result
 
     --timeScale=<_ts>   Integration period (sec,day,month,year) [Default: %s]
