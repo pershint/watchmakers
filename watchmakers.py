@@ -12,6 +12,7 @@ if __name__ == "__main__":
     
     print docstring
     print arguments
+    print ""
     
     if arguments['-D']:
         deleteAllWorkDirectories()

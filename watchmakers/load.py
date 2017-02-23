@@ -35,7 +35,7 @@ except:
 defaultValues  = [1,3,2500,2805.,'merged_ntuple_watchman','null', \
                   'processed_watchman.root',10.,2.0,100.0,6,\
                   0.65,0.1,5.42,6.4,8.0,'day',\
-                  'boulby',1.0]
+                  'boulby',1.0,0.043,0.133]
 
 docstring = """
     Usage: watchmakers.py [options]
@@ -87,11 +87,17 @@ docstring = """
     --OnOff=<_OOratio>  Ratio of reactor on to reactor off [Default: %d]
     --cores=<_cores>    Number of cores to discover [Default: 1]
     
+    --U238_PPM=<_Uppm>   Concentration of U-238 in glass [Default: %f]
+    --Th232_PPM=<_Thppm> Concentration of Th-232 in glass [Default: %f]
+    --detectMedia=<_dM>  Detector media (doped_water,...)
+    --collectionEff=<CE> Collection efficiency (e.g.: 0.85,0.67,0.475)
+    --pmtModel=<_PMTM>   PMT Model (r7081pe)
+    
     """ % (defaultValues[0],defaultValues[1],defaultValues[2],defaultValues[3],defaultValues[4],\
            defaultValues[5],defaultValues[6],defaultValues[7],defaultValues[8],\
            defaultValues[9],defaultValues[10],defaultValues[11],defaultValues[12],\
            defaultValues[13],defaultValues[14],defaultValues[15],defaultValues[16],\
-           defaultValues[17],defaultValues[18])
+           defaultValues[17],defaultValues[18],defaultValues[19],defaultValues[20])
 
 try:
     import docopt
@@ -198,28 +204,44 @@ def loadAnalysisParameters(timeScale='day'):
     inta        = ['si','so','eo','ei']
 
     #Add the U-238 chain
+    M_U238      = 3.953e-25
+    Lambda_U238 = 4.916e-18
+    PPM_U238    = float(arguments["--U238_PPM"])
+    ActivityU238= Lambda_U238*PPM_U238/M_U238/1e6
     proc        = ['234Pa','214Pb','214Bi','210Bi','210Tl']
     loca        = ['PMT',  'PMT',  'PMT',  'PMT',  'PMT']
     acc         = ['acc',  'acc',  'acc',  'acc',  'acc']
     br          = [1.0,     1.0,    1.0,   1.0 ,   0.002]
+#    decayCnst   = [2.9e-5,  4.31e-4,  5.81e-4,   1.601e-6 , 0.00909]
     site        = ['',      '',     '',     '',     '']
     arr         = empty(5)
-    arr[:]      = 0.993
+    arr[:]      = ActivityU238
     Activity    = arr
+    
+    
     #Add the Th-232 chain
+    M_Th232      = 3.853145e-25 #kg
+    Lambda_Th232 = 1.57e-18 #1/s
+    PPM_Th232    = float(arguments["--Th232_PPM"])
+    ActivityTh232 = Lambda_Th232*PPM_Th232/M_Th232/1e6
+#    print ActivityU238,ActivityTh232
     proc        +=['232Th','228Ac','212Pb','212Bi','208Tl']
     loca        +=['PMT'  ,'PMT',   'PMT', 'PMT',  'PMT'  ]
     acc         +=['acc'  ,'acc',   'acc', 'acc',  'acc'  ]
     br          += [1.0,     1.0,    1.0,   1.0 ,   1.0]
+#    decayCnst   += [1.57e-18,3.3e-5,1.8096e-5, 1.908e-4, 0.003784]
     site        += ['',      '',     '',     '',     '']
     arr         = empty(5)
-    arr[:]      = 0.124
+    arr[:]      = ActivityTh232
     Activity    = append(   Activity,arr)
+
     #Add the Rn-222 chain
+    N_Rn222     = 2e-3 # Bq/m3
     proc        +=['214Pb','214Bi','210Bi','210Tl']
     loca        +=['FV',   'FV',   'FV',   'FV']
     acc         +=['acc',  'acc',  'acc',   'acc']
     br          += [1.0,   1.0,   1.0,     0.002]
+#    decayCnst   += [ 4.31e-4,  5.81e-4,   1.601e-6 , 0.00909]
     site        += ['',     '',     '',     '']
     arr = empty(4)
     arr[:]      = 6.4

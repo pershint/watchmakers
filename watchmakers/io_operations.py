@@ -19,6 +19,8 @@ def macroGenerator(percentage,isotope,location,runs,events):
     
     covPCT = {'10pct':0.1,'15pct':0.15,'20pct':0.2,\
     '25pct':0.25,'30pct':0.30,'35pct':0.35,'40pct':0.40}
+    additionalString,additionalCommands,additionalMacStr,additionalMacOpt = testEnabledCondition(arguments)
+
 
     #Part of the macro that is the same for all jobs
     dir = os.getcwd()
@@ -34,7 +36,7 @@ def macroGenerator(percentage,isotope,location,runs,events):
 /rat/db/set DETECTOR experiment "Watchman"
 /rat/db/set DETECTOR detector_factory "Watchman"
 /rat/db/set WATCHMAN_PARAMS photocathode_coverage %4.2f
-
+%s
 
 /run/initialize
 
@@ -48,10 +50,10 @@ def macroGenerator(percentage,isotope,location,runs,events):
 
 # Use IO.default_output_filename
 /rat/proclast outroot
-/rat/procset file "%s/root_files/%s/%s/watchman_%s_%s_%s_%d.root"
+/rat/procset file "%s/root_files%s/%s/%s/watchman_%s_%s_%s_%d.root"
 #END EVENT LOOP
 
-''' %(covPCT[percentage],dir,isotope,percentage,isotope,percentage,location,runs)
+''' %(covPCT[percentage],additionalMacOpt,dir,additionalMacStr,isotope,percentage,isotope,percentage,location,runs)
     
     
     #Part of macro that varies with the various conditions
@@ -157,16 +159,16 @@ def jobString(percentage,j,runs,models,arguments):
     goodness     = float(arguments['-g'])
     case = int(arguments['-j'])
 
-    additionalString,additionalCommands = testEnabledCondition(arguments)
+    additionalString,additionalCommands,additionalMacStr,additionalMacOpt = testEnabledCondition(arguments)
 
 
     line1 = """#!/bin/sh
-#MSUB -N WM_%s_%s_%d    #name of job
+#MSUB -N WM_%s_%s_%d_%s    #name of job
 #MSUB -A adg         # sets bank account
 #MSUB -l nodes=1:ppn=1,walltime=23:59:59,partition=borax  # uses 1 node
 #MSUB -q pbatch         #pool
-#MSUB -o %s/log_case%s/wmpc_%s_%s_%d.log
-#MSUB -e %s/log_case%s/wmpc_%s_%s_%d.err
+#MSUB -o %s/log_case%s%s/wmpc_%s_%s_%d.log
+#MSUB -e %s/log_case%s%s/wmpc_%s_%s_%d.err
 #MSUB -d %s  # directory to run from
 #MSUB -V
 #MSUB                     # no more psub commands
@@ -177,9 +179,9 @@ source %s/geant4make.sh
 source %s/env.sh
 source %s/env_wm.sh
 export G4NEUTRONHP_USE_ONLY_PHOTONEVAPORATION=1\n
-""" %(percentage,location,runs,\
-directory,case,percentage,location,runs,\
-directory,case,percentage,location,runs,\
+""" %(percentage,location,runs,additionalMacStr,\
+directory,case,additionalMacStr,percentage,location,runs,\
+directory,case,additionalMacStr,percentage,location,runs,\
 directory,\
 rootDir,g4Dir,g4Dir,ratDir,watchmakersDir)
 
@@ -187,11 +189,11 @@ rootDir,g4Dir,g4Dir,ratDir,watchmakersDir)
         if location == "FN":
             line1 += "export PHYSLIST=%s\n" %(mods)
         if case == 1 or case == 2 or case == 4:
-            _log = "log_case%s/%s/%s/rat.%s_%s_%s_%d.log" %(case,mods,percentage,percentage,mods,location,runs)
-            _mac = "%s/macro/%s/%s/run%s_%s_%d.mac" %(directory,mods,percentage,mods,location,runs)
+            _log = "log_case%s%s/%s/%s/rat.%s_%s_%s_%d.log" %(case,additionalMacStr,mods,percentage,percentage,mods,location,runs)
+            _mac = "%s/macro%s/%s/%s/run%s_%s_%d.mac" %(directory,additionalMacStr,mods,percentage,mods,location,runs)
             line1 += "%s -l %s %s\n" %(software,_log,_mac)
         if case == 2 or case == 3:
-            fileN = "root_files/%s/%s/watchman_%s_%s_%s_%d.root" %(mods,percentage,mods,percentage,location,runs)
+            fileN = "root_files%s/%s/%s/watchman_%s_%s_%s_%d.root" %(additionalMacStr,mods,percentage,mods,percentage,location,runs)
             if additionalString != "":
                 fileNO = "ntuple_root_files/%s/%s/watchman_%s_%s_%s%s_%d.root" %(mods,percentage,mods,percentage,location,additionalString,runs)
                 line1 += "watch -n %s -f %s --ntupleout %s\n" %(additionalCommands,fileN,fileNO)
@@ -200,7 +202,7 @@ rootDir,g4Dir,g4Dir,ratDir,watchmakersDir)
                 line1 += "watch -n -f %s\n" %(fileN)
         ## If greater than 3, place files in a directory named after non-default flags
         if case > 3:
-            fileN = "root_files/%s/%s/watchman_%s_%s_%s_%d.root" %(mods,percentage,mods,percentage,location,runs)
+            fileN = "root_files%s/%s/%s/watchman_%s_%s_%s_%d.root" %(additionalString,mods,percentage,mods,percentage,location,runs)
             if additionalString != "":
                 fileNO = "ntuple_root_files%s/%s/%s/watchman_%s_%s_%s%s_%d.root" %(additionalString,mods,percentage,mods,percentage,location,additionalString,runs)
                 line1 += "watch -n %s -f %s --ntupleout %s\n" %(additionalCommands,fileN,fileNO)
@@ -211,13 +213,16 @@ rootDir,g4Dir,g4Dir,ratDir,watchmakersDir)
 
 def generateMacros(N,e):
     d,iso,loc,coverage,coveragePCT = loadSimulationParameters()
+    additionalString,additionalCommands,additionalMacStr,additionalMacOpt = testEnabledCondition(arguments)
+    print additionalMacOpt
 #    N = int(arguments['-N'])
     print N,e
     ##Clean or create macro directories
     for j in range(len(iso)):
         for ii in d["%s"%(iso[int(j)])]:
             for idx,cover in enumerate(coverage):
-                dir = "macro/%s/%s" %(ii,cover)
+                dir = "macro%s/%s/%s" %(additionalMacStr,ii,cover)
+#                print dir
                 testCreateDirectory(dir)
 #    for idx,cover in enumerate(coverage):
 #        dir = "%s" %(cover)
@@ -228,7 +233,7 @@ def generateMacros(N,e):
             for idx,cover in enumerate(coverage):
                 for val in range(N):
                     line = macroGenerator(cover,ii,loc[j],val,e )
-                    dir = "macro/%s/%s" %(ii,cover)
+                    dir = "macro%s/%s/%s" %(additionalMacStr,ii,cover)
 
                     outfile = open("%s/run%s_%s_%d.mac" %(dir,ii,\
                     loc[j],val),"wb")
@@ -241,12 +246,12 @@ def generateMacros(N,e):
 def generateJobs(N,arguments):
     d,iso,loc,coverage,coveragePCT = loadSimulationParameters()
     case = arguments["-j"]
-    additionalString,additionalCommands = testEnabledCondition(arguments)
+    additionalString,additionalCommands,additionalMacStr,additionalMacOpt = testEnabledCondition(arguments)
 
     '''Find wheter the jobs folder exist: if not create, if yes clean and recreate'''
     
     
-    directory = 'jobs_case%s'%(case)
+    directory = 'jobs_case%s%s'%(case,additionalMacStr)
     if not os.path.exists(directory):
         os.makedirs(directory)
     else:
@@ -255,7 +260,7 @@ def generateJobs(N,arguments):
 
     for ii in loc:
         for idx,cover in enumerate(coverage):
-            directory = "jobs_case%s/%s/%s" %(case,ii,cover)
+            directory = "jobs_case%s%s/%s/%s" %(case,additionalMacStr,ii,cover)
             if not os.path.exists(directory):
                 os.makedirs(directory)
             else:
@@ -263,7 +268,7 @@ def generateJobs(N,arguments):
                 os.makedirs(directory)
 
     '''Find wheter the jobs folder exist: if no create, if yes clean and recreate'''
-    directory = 'log_case%s'%(case)
+    directory = 'log_case%s%s'%(case,additionalMacStr)
     if not os.path.exists(directory):
         os.makedirs(directory)
     else:
@@ -273,7 +278,7 @@ def generateJobs(N,arguments):
     for j in range(len(iso)):
         for ii in d["%s"%(iso[int(j)])]:
             for idx,cover in enumerate(coverage):
-                directory = "root_files/%s/%s" %(ii,cover)
+                directory = "root_files%s/%s/%s" %(additionalMacStr,ii,cover)
                 if not os.path.exists(directory):
                     os.makedirs(directory)
 
@@ -296,7 +301,7 @@ def generateJobs(N,arguments):
     for j in range(len(iso)):
         for ii in d["%s"%(iso[int(j)])]:
             for idx,cover in enumerate(coverage):
-                directory = "log_case%s/%s/%s" %(case,ii,cover)
+                directory = "log_case%s%s/%s/%s" %(case,additionalMacStr,ii,cover)
                 if not os.path.exists(directory):
                     os.makedirs(directory)
 
@@ -315,7 +320,7 @@ def generateJobs(N,arguments):
     if not os.path.exists(dst):
         os.symlink(src,dst)
 
-    job = 'jobs_case%s'%(case)
+    job = 'jobs_case%s%s'%(case,additionalMacStr)
 
     job_list = '''#!/bin/sh
 '''
@@ -341,11 +346,11 @@ def generateJobs(N,arguments):
                 os.chmod(stringFile,S_IRWXU)
 
 
-    outfile = open('sub_jobs_case%s'%(case),"wb")
+    outfile = open('sub_jobs_case%s%s'%(case,additionalMacStr),"wb")
     outfile.writelines(job_list)
     outfile.close
-    os.chmod('sub_jobs_case%s'%(case),S_IRWXG)
-    os.chmod('sub_jobs_case%s'%(case),S_IRWXU)
+    os.chmod('sub_jobs_case%s%s'%(case,additionalMacStr),S_IRWXG)
+    os.chmod('sub_jobs_case%s%s'%(case,additionalMacStr),S_IRWXU)
     return 0
 
 
@@ -516,14 +521,15 @@ def mergeFiles():
     # Load internal requirements
     d,iso,loc,coverage,coveragePCT = loadSimulationParameters()
     trees = {}
-    pathFinal = "root_files/merged_ntuple_watchman"
+    additionalString,additionalCommands,additionalMacStr,additionalMacOpt = testEnabledCondition(arguments)
+    pathFinal = "root_files%s/merged_ntuple_watchman" % (additionalMacStr)
     for j in range(len(iso)):
         for ii in d["%s"%(iso[int(j)])]:
             for idx,cover in enumerate(coverage):
                 t_name  = "data_%s_%s_%s"%(ii,cover,loc[j])
                 trees[t_name] = TChain("data")
                 
-                s = "ntuple_root_files/%s/%s/watchman_%s_%s_%s_*.root" %(ii,cover,ii,cover,loc[j])
+                s = "ntuple_root_files%s/%s/%s/watchman_%s_%s_%s_*.root" %(additionalMacStr,ii,cover,ii,cover,loc[j])
                 sw = "%s_%s_%s_%s.root"%(pathFinal,ii,cover,loc[j])
             
                 print "Writing ", sw,"from",s
@@ -539,6 +545,30 @@ def testEnabledCondition(arguments):
     additionalString      = ""
     additionalCommands    = ""
     
+    additionalMacStr = ""
+    additionalMacOpt = ""
+
+# Commands required for root_file
+
+    if (arguments['--detectMedia']):
+        additionalMacOpt += "/rat/db/set GEO[detector] material \"%s\"\n" %(arguments['--detectMedia'])
+        additionalMacStr += "_detectorMedia_%s" %(arguments['--detectMedia'])
+        additionalString += "_detectorMedia_%s" %(arguments['--detectMedia'])
+
+    if (arguments['--collectionEff']):
+        additionalMacOpt += "/rat/db/set GEO[inner_pmts] efficiency_correction %f\n" %(float(arguments['--collectionEff']))
+        additionalMacStr += "_collectionEfficiency_%f" %(float(arguments['--collectionEff']))
+        additionalString += "_collectionEfficiency_%f" %(float(arguments['--collectionEff']))
+
+
+    if (arguments['--pmtModel']):
+        additionalMacOpt += "/rat/db/set GEO[inner_pmts] pmt_model \"%s\"\n" %((arguments['--pmtModel']))
+        additionalMacStr += "_pmtModel_%s" %((arguments['--pmtModel']))
+        additionalString += "_pmtModel_%s" %((arguments['--pmtModel']))
+
+
+
+    #Analysis strings, usually shows up in ntuple processing
     if float(arguments['-r'])          != defaultValues[7]:
         additionalString += "_rate_%f" %(float(arguments['-r']))
         additionalCommands += " -r %f " %(float(arguments['-r']))
@@ -582,14 +612,16 @@ def testEnabledCondition(arguments):
     if additionalString == "":
         additionalString = "_default"
 
-    return  additionalString,additionalCommands
+
+
+    return  additionalString,additionalCommands,additionalMacStr,additionalMacOpt
 
 
 
 
 
 def writeResultsToFile(s,g,h):
-    additionalString,additionalCommands = testEnabledCondition(arguments)
+    additionalString,additionalCommands,additionalMacStr,additionalMacOpt = testEnabledCondition(arguments)
     _str = "ntuple_root_files%s/%s" %(additionalString,s)
     d,iso,loc,coverage,coveragePCT = loadSimulationParameters()
     f_root = TFile(_str,"recreate")
@@ -607,7 +639,7 @@ def mergeNtupleFiles(arguments):
     d,iso,loc,coverage,coveragePCT = loadSimulationParameters()
     trees = {}
 
-    additionalString,additionalCommands = testEnabledCondition(arguments)
+    additionalString,additionalCommands,additionalMacStr,additionalMacOpt = testEnabledCondition(arguments)
 
 
     pathFinal = "ntuple_root_files%s/merged_ntuple_watchman" %(additionalString)
@@ -709,7 +741,7 @@ def extractNtupleALL(arguments):
 
     superNova    = arguments["--supernovaFormat"]
 
-    additionalString,additionalCommands = testEnabledCondition(arguments)
+    additionalString,additionalCommands,additionalMacStr,additionalMacOpt = testEnabledCondition(arguments)
 
     
     for j in range(len(iso)):
@@ -738,7 +770,7 @@ def extractNtupleALL(arguments):
         locj    = arguments["-L"]
         for idx,cover in enumerate(coverage):
             for run in range(N):
-                fIn =  "root_files/%s/%s/watchman_%s_%s_%s_%d.root" %(ii,cover,ii,cover,locj,run)
+                fIn =  "root_files%s/%s/%s/watchman_%s_%s_%s_%d.root" %(additionalMacStr,ii,cover,ii,cover,locj,run)
                 fOut = "ntuple_root_files%s/%s/%s/watchman_%s_%s_%s_%d.root" %(additionalString,ii,cover,ii,cover,locj,run)
                 if os.path.isfile(fIn) and not os.path.isfile(fOut):
                     print fIn, " -> ", fOut
@@ -764,7 +796,7 @@ def extractNtupleALL(arguments):
             for ii in d["%s"%(iso[int(j)])]:
                 for idx,cover in enumerate(coverage):
                     for run in range(N):
-                        fIn =  "root_files/%s/%s/watchman_%s_%s_%s_%d.root" %(ii,cover,ii,cover,loc[j],run)
+                        fIn =  "root_files%s/%s/%s/watchman_%s_%s_%s_%d.root" %(additionalMacStr,ii,cover,ii,cover,loc[j],run)
                         fOut = "ntuple_root_files%s/%s/%s/watchman_%s_%s_%s_%d.root" %(additionalString,ii,cover,ii,cover,loc[j],run)
                         if os.path.isfile(fIn) and not os.path.isfile(fOut):
                             print fIn, " -> ", fOut
