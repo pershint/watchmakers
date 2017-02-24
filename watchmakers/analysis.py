@@ -5,7 +5,7 @@ def fillHistograms(inFile,a1,t1,h,cover,ii,locj,covPCT):
     # Obtain logarithmic binnings
     nbins, xbins, ybins = logx_logy_array()
     
-    additionalString,additionalCommands = testEnabledCondition(arguments)
+    additionalString,additionalCommands,additionalMacStr,additionalMacOpt = testEnabledCondition(arguments)
     
     fiducialVolume = float(arguments["--fv"])
     pmtDist         = float(arguments["--psup"])
