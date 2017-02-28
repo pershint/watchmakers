@@ -418,7 +418,7 @@ def extractHistogramWitCorrectRate():
                         recoFVstring    = "(sqrt(pow(posReco.X(),2) + pow(posReco.Y(),2))<%f*1000. && sqrt(pow(posReco.Z(),2))<%f*1000.)"%(fiducialVolume,fiducialVolume)
                         trueFVstring    = "(sqrt(pow(posTruth.X(),2) + pow(posTruth.Y(),2))<%f*1000. && sqrt(pow(posTruth.Z(),2))<%f*1000.)"%(fiducialVolume,fiducialVolume)
                         posGood        = "(pos_goodness>%f)" %(float(arguments["-g"]))
-                        peGood = "(pe>%f)" %(float(arguments["-T"]))
+                        peGood = "(pe>%f)" %(float(arguments["--minPE"]))
                         tt = t.Draw("pe>>h(2000,0,200)","sub_ev_cnt == sub_ev","goff")
                         
                         er = float(rates["%s_%s"%(ii,locj)])
