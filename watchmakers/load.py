@@ -65,6 +65,7 @@ docstring = """
     -d=<distance>       Maximal distance between two events (m) [Default: %f]
     -t=<time>           Maximal time between two events (micro) [Default: %f]
     -T=<tubes>          Minimal number of tubes hit [Default: %d]
+    --minPE=<_MPE>      Minimal number of photoelectron [Default: 10.]
     -g=<goodness>       Bonsai position goodness parameter [Default: %f]
     -G=<Goodness>       Bonsai direction goodness parameter [Default: %f]
     
