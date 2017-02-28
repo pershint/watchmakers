@@ -346,7 +346,11 @@ def extractHistogramWitCorrectRate():
     mass        = parameters[10]
     pc_num      = parameters[12]
     pc_val      = parameters[13]
+    timeS       = parameters[8]
+    timeRedux     = float(arguments["-t"]) # cut is in microsecond
+    timeRedux     *=1e-6/timeS
     print "The rates of events per %s are"%(timeScale),rates
+    print "The cuts are : time window %4.3e %s" %(timeRedux,timeScale)
 #    print "Fiducial volume is ", fiducialVolume
     #Read-in file
     
@@ -365,13 +369,13 @@ def extractHistogramWitCorrectRate():
                 g[string] = TGraph()
                 g[string].SetName(string)
                 string  = "ei_%s_%s_1_abs" %(ii,locj)
-                g[string] = Graph()
+                g[string] = TGraph()
                 g[string].SetName(string)
                 string  = "so_%s_%s_1_abs" %(ii,locj)
-                g[string] = Graph()
+                g[string] = TGraph()
                 g[string].SetName(string)
                 string  = "eo_%s_%s_1_abs" %(ii,locj)
-                g[string] = Graph()
+                g[string] = TGraph()
                 g[string].SetName(string)
                 
                 
@@ -379,13 +383,13 @@ def extractHistogramWitCorrectRate():
                 g[string] = TGraph()
                 g[string].SetName(string)
                 string  = "ei_%s_%s_singlesRate" %(ii,locj)
-                g[string] = Graph()
+                g[string] = TGraph()
                 g[string].SetName(string)
                 string  = "so_%s_%s_singlesRate" %(ii,locj)
-                g[string] = Graph()
+                g[string] = TGraph()
                 g[string].SetName(string)
                 string  = "eo_%s_%s_singlesRate" %(ii,locj)
-                g[string] = Graph()
+                g[string] = TGraph()
                 g[string].SetName(string)
                 
                 
@@ -397,6 +401,10 @@ def extractHistogramWitCorrectRate():
                 g[string] = TGraph()
                 g[string].SetName(string)
                 cntG    = 0
+                
+                string  = "eisi_%s_%s_singlesRate_ProxCut_TimeCut" %(ii,locj)
+                g[string] = TGraph()
+                g[string].SetName(string)
                 
                 for idx,cover in enumerate(coverage):
                     covPCT  = coveragePCT[cover]
@@ -414,9 +422,11 @@ def extractHistogramWitCorrectRate():
                         tt = t.Draw("pe>>h(2000,0,200)","sub_ev_cnt == sub_ev","goff")
                         
                         er = float(rates["%s_%s"%(ii,locj)])
+                        
                         if locj == 'PMT':
                             print "adjusting rate for pmt %4.3e %s^{-1}, pmt mass %4.2f, number of PMTs %d : %4.3e %s^{-1}"%(er,timeScale,mass,pc_num["%s"%(cover)],er*pc_num["%s"%(cover)]*mass,timeScale)
                             er*=pc_num["%s"%(cover)]*mass
+                        print 'Total event rate pre-detection efficiency is ',er, ' per ', timeScale
                         
                         s_dl        = "%s_pe_%s_%s_%s_%d"%('ei',cover,ii,locj,1)
                         h[s_dl]     = TH1D(s_dl,s_dl,2000,0,200)
@@ -446,7 +456,10 @@ def extractHistogramWitCorrectRate():
                         print "(%7s %7s %7s %7s ) %8s |            (%9s %9s %9s %9s)" %('ei','si','so','eo','mc events','ei','si','so','eo')
                         print "(%7d %7d %7d %7d ) %8d  | efficiency (%4.3e %4.3e %4.3e %4.3e)" %(ei,si,so,eo, tt,ei/float(tt),si/float(tt),so/float(tt),eo/float(tt))
                         print "(%7d %7d %7d %7d ) %8d  | event rate (%4.3e %4.3e %4.3e %4.3e) per %s" % (ei,si,so,eo, tt,ei/float(tt)*er,si/float(tt)*er,so/float(tt)*er,eo/float(tt)*er,timeScale)
-                        
+                        if locj == 'PMT' or locj == 'FV':
+                            print "(%7d %7d %7d %7d ) %8d  | event rate (%4.3e %4.3e %4.3e %4.3e) per %s (after time redux)" % (ei,si,so,eo, tt,timeRedux*power(ei/float(tt)*er,2),timeRedux*power(si/float(tt)*er,2),timeRedux*power(so/float(tt)*er,2),timeRedux*power(eo/float(tt)*er,2),timeScale)
+
+
                         g["si_%s_%s_1_abs" %(ii,locj)].SetPoint(cntG,pc_val["%s"%(cover)],si/float(tt))
                         g["ei_%s_%s_1_abs" %(ii,locj)].SetPoint(cntG,pc_val["%s"%(cover)],ei/float(tt))
                         g["so_%s_%s_1_abs" %(ii,locj)].SetPoint(cntG,pc_val["%s"%(cover)],so/float(tt))
@@ -524,6 +537,11 @@ def extractHistogramWitCorrectRate():
                         g["eisi_%s_%s_abs_ProxCut" %(ii,locj)].SetPoint(cntG,pc_val["%s"%(cover)],cntEISI/float(tt))
                         g["eisi_%s_%s_abs_ProxCut" %(ii,locj)].GetXaxis().SetTitle('PMT coverage')
                         g["eisi_%s_%s_abs_ProxCut" %(ii,locj)].GetYaxis().SetTitle('efficiency')
+                        
+                        if locj == 'PMT' or locj == 'FV':
+                            print "(------- %7d  ------  ------ ) %8d  | event rate (--------- %4.3e --------- ---------) per %s (after time redux and prox)" % (si, tt,timeRedux*power(cntEISI/float(tt)*er,2),timeScale)
+                        
+                        
                         cntG+=1
                         
                         h[s_dl2].Scale(1./tt)
@@ -865,7 +883,7 @@ def extractHistogramWitCorrectRate():
         except:
             print "Could not read file ",s
 
-    print ""
+    print "\n\n\nThe following file has been created for your convenience: ",_str,"\n\n"
 #        f.Close()
 
 
