@@ -12,6 +12,7 @@ if __name__ == "__main__":
     
     print docstring
     print arguments
+    print defaultValues
     print ""
     
     if arguments['-D']:
@@ -32,10 +33,13 @@ if __name__ == "__main__":
     if arguments['-M']:
         mergeNtupleFiles(arguments)
 
-    if arguments['-a']:
+    if arguments['-A']:
         g,h = {},{}
         g,h = runAnalysisProcess(arguments["-f"],g,h)
         writeResultsToFile(arguments["-o"],g,h)
+
+    if arguments['-a']:
+        extractHistogramWitCorrectRate()
 
     if arguments['-R']:
 #        site = 'boulby'

@@ -567,41 +567,42 @@ def testEnabledCondition(arguments):
         additionalString += "_pmtModel_%s" %((arguments['--pmtModel']))
 
 
-
+    baseValue = 7
     #Analysis strings, usually shows up in ntuple processing
-    if float(arguments['-r'])          != defaultValues[7]:
+    print defaultValues[baseValue+1]
+    if float(arguments['-r'])          != defaultValues[baseValue+1]:
         additionalString += "_rate_%f" %(float(arguments['-r']))
         additionalCommands += " -r %f " %(float(arguments['-r']))
     
-    if float(arguments['-d'])          != defaultValues[8]:
+    if float(arguments['-d'])          != defaultValues[baseValue+2]:
         additionalString += "_deltaR_%f" %(float(arguments['-d']))
         additionalCommands += " -d %f" %(float(arguments['-d']))
     
-    if float(arguments['-t'])          != defaultValues[9]:
+    if float(arguments['-t'])          != defaultValues[baseValue+3]:
         additionalString += "_deltaT_%f" %(float(arguments['-t']))
         additionalCommands +=  " -t %f" %(float(arguments['-t']))
     
-    if float(arguments['-T'])            != (defaultValues[10]):
+    if float(arguments['-T'])            != (defaultValues[baseValue+4]):
         additionalString += "_n9Min_%d" %(int(arguments['-T']))
         additionalCommands += " -T %d" %(int(arguments['-T']))
     
-    if float(arguments['-g'])          != defaultValues[11]:
+    if float(arguments['-g'])          != defaultValues[baseValue+5]:
         additionalString += "_posGood_%f" %(float(arguments['-g']))
         additionalCommands += " -g %f" %(float(arguments['-g']))
     
-    if float(arguments['-G'])          != defaultValues[12]:
+    if float(arguments['-G'])          != defaultValues[baseValue+6]:
         additionalString += "_dirGood_%f" %(float(arguments['-G']))
         additionalCommands += " -G %f" %(float(arguments['-G']))
     
-    if float(arguments['--fv'])        !=  defaultValues[13]:
+    if float(arguments['--fv'])        !=  defaultValues[baseValue+7]:
         additionalString += "_FVboundary_%f" %(float(arguments['--fv']))
         additionalCommands +=  "--fv %f" %(float(arguments['--fv']))
     
-    if float(arguments['--psup'])      != defaultValues[14]:
+    if float(arguments['--psup'])      != defaultValues[baseValue+8]:
         additionalString += "_PMTboundary_%f" %(float(arguments['--psup']))
         additionalCommands += "--psup %f" %(float(arguments['--psup']))
     
-    if float(arguments['--tankDis'])   != defaultValues[15]:
+    if float(arguments['--tankDis'])   != defaultValues[baseValue+9]:
         additionalString += "_Tankboundary_%f" %(float(arguments['--tankDis']))
         additionalCommands +=" --tankDis %f" %(float(arguments['--tankDis']))
 

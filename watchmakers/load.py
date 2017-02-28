@@ -15,12 +15,13 @@ import warnings
 
 import numpy as np
 from numpy import array as npa
-from numpy import power,absolute,logical_and,column_stack,zeros,empty,append,sqrt,absolute
+from numpy import power,absolute,logical_and,column_stack,zeros,empty,append,sqrt,absolute,recarray
 
 from math import pow,exp,log10
+gStyle.SetOptStat(1112211)
 
 try:
-    from root_numpy import root2rec
+    from root_numpy import root2rec,array2tree,array2root,tree2array
     from rootpy.plotting import Canvas,Hist,Hist2D,Graph
     from rootpy.plotting.style import set_style
     from rootpy.io import root_open
@@ -32,10 +33,10 @@ try:
 except:
     print "Could not load in root_numpy or rootpy, they are required to run this module."
 
-defaultValues  = [1,3,2500,2805.,'merged_ntuple_watchman','null', \
-                  'processed_watchman.root',10.,2.0,100.0,6,\
+defaultValues  = [1,3,2500,2805.,'merged_ntuple_watchman','merged_ntuple_watchman','null', \
+                  'processed_watchman.root',10.,2.0, 100.0, 6,\
                   0.65,0.1,5.42,6.4,8.0,'day',\
-                  'boulby',1.0,0.043,0.133]
+                  'boulby', 1.0, 0.043, 0.133]
 
 docstring = """
     Usage: watchmakers.py [options]
@@ -55,6 +56,7 @@ docstring = """
     -n                  generate ntuple from single rat-pac root files
     --extractNtup       generate ntuple from all rat-pac root files
     -f=<ifile>          Input file [Default: %s]
+    --ft=<ifile2>        Input file type [Default: %s]
     --ntupleout=<outN>  Name of ntuple out [Default: %s]
     -o=<outputfile>     Efficiency output file [Default: %s]
     --supernovaFormat   Record supernova files instead of golden files
@@ -79,6 +81,7 @@ docstring = """
     -M                  Merge result files
     
     -a                  Do the analysis on the merged file
+    -A                  Do the analysis on the merged file
 
     -R                  Read analyisis result
 
@@ -87,8 +90,10 @@ docstring = """
     --OnOff=<_OOratio>  Ratio of reactor on to reactor off [Default: %d]
     --cores=<_cores>    Number of cores to discover [Default: 1]
     
-    --U238_PPM=<_Uppm>   Concentration of U-238 in glass [Default: %f]
-    --Th232_PPM=<_Thppm> Concentration of Th-232 in glass [Default: %f]
+    --U238_PPM=<_Uppm>  Concentration of U-238 in glass [Default: %f]
+    --Th232_PPM=<_Thp>  Concentration of Th-232 in glass [Default: %f]
+    --Rn222=<_Rn>       Radon activity in water [Default: 6.4]
+    
     --detectMedia=<_dM>  Detector media (doped_water,...)
     --collectionEff=<CE> Collection efficiency (e.g.: 0.85,0.67,0.475)
     --pmtModel=<_PMTM>   PMT Model (r7081pe)
@@ -97,7 +102,8 @@ docstring = """
            defaultValues[5],defaultValues[6],defaultValues[7],defaultValues[8],\
            defaultValues[9],defaultValues[10],defaultValues[11],defaultValues[12],\
            defaultValues[13],defaultValues[14],defaultValues[15],defaultValues[16],\
-           defaultValues[17],defaultValues[18],defaultValues[19],defaultValues[20])
+           defaultValues[17],defaultValues[18],defaultValues[19],defaultValues[20],\
+           defaultValues[21])
 
 try:
     import docopt
@@ -202,20 +208,30 @@ def loadAnalysisParameters(timeScale='day'):
     fairportIBDRate = 7583.*TNU
 
     inta        = ['si','so','eo','ei']
+    
+    dAct        = {}
 
     #Add the U-238 chain
     M_U238      = 3.953e-25
     Lambda_U238 = 4.916e-18
     PPM_U238    = float(arguments["--U238_PPM"])
     ActivityU238= Lambda_U238*PPM_U238/M_U238/1e6
-    proc        = ['234Pa','214Pb','214Bi','210Bi','210Tl']
-    loca        = ['PMT',  'PMT',  'PMT',  'PMT',  'PMT']
-    acc         = ['acc',  'acc',  'acc',  'acc',  'acc']
-    br          = [1.0,     1.0,    1.0,   1.0 ,   0.002]
+    _proc       = ['238U','234Pa','214Pb','214Bi','210Bi','210Tl']
+    _loca       = ['PMT','PMT',  'PMT',  'PMT',  'PMT',  'PMT']
+    acc         = ['acc','acc',  'acc',  'acc',  'acc',  'acc']
+    _br         = [1.0,1.0,     1.0,    1.0,   1.0 ,   0.002]
+    _site        = ['','',      '',     '',     '',     '']
+
+    proc        = _proc
+    loca        = _loca
+    br          = _br
+    site        = _site
 #    decayCnst   = [2.9e-5,  4.31e-4,  5.81e-4,   1.601e-6 , 0.00909]
-    site        = ['',      '',     '',     '',     '']
     arr         = empty(5)
     arr[:]      = ActivityU238
+    for index,ele in enumerate(_proc):
+        dAct["%s_%s"%(ele,_loca[index])] = ActivityU238*_br[index]*timeS
+    
     Activity    = arr
     
     
@@ -225,69 +241,116 @@ def loadAnalysisParameters(timeScale='day'):
     PPM_Th232    = float(arguments["--Th232_PPM"])
     ActivityTh232 = Lambda_Th232*PPM_Th232/M_Th232/1e6
 #    print ActivityU238,ActivityTh232
-    proc        +=['232Th','228Ac','212Pb','212Bi','208Tl']
-    loca        +=['PMT'  ,'PMT',   'PMT', 'PMT',  'PMT'  ]
-    acc         +=['acc'  ,'acc',   'acc', 'acc',  'acc'  ]
-    br          += [1.0,     1.0,    1.0,   1.0 ,   1.0]
+
+    _proc        =['232Th','228Ac','212Pb','212Bi','208Tl']
+    _loca        =['PMT'  ,'PMT',   'PMT', 'PMT',  'PMT'  ]
+    acc          +=['acc'  ,'acc',   'acc', 'acc',  'acc'  ]
+    _br          = [1.0,     1.0,    1.0,   1.0 ,   1.0]
 #    decayCnst   += [1.57e-18,3.3e-5,1.8096e-5, 1.908e-4, 0.003784]
-    site        += ['',      '',     '',     '',     '']
+    _site        = ['',      '',     '',     '',     '']
     arr         = empty(5)
     arr[:]      = ActivityTh232
     Activity    = append(   Activity,arr)
+    
+    proc        += _proc
+    loca        += _loca
+    br          += _br
+    site        +=_site
+    for index,ele in enumerate(_proc):
+        dAct["%s_%s"%(ele,_loca[index])] = ActivityTh232*_br[index]*timeS
+
+    
 
     #Add the Rn-222 chain
     N_Rn222     = 2e-3 # Bq/m3
-    proc        +=['214Pb','214Bi','210Bi','210Tl']
-    loca        +=['FV',   'FV',   'FV',   'FV']
-    acc         +=['acc',  'acc',  'acc',   'acc']
-    br          += [1.0,   1.0,   1.0,     0.002]
+    ActivityRn222     = float(arguments["--Rn222"])
+    _proc       =['222Rn','214Pb','214Bi','210Bi','210Tl']
+    _loca       =['FV', 'FV',   'FV',   'FV',   'FV']
+    acc         +=['acc','acc',  'acc',  'acc',   'acc']
+
+    _br         = [1.0, 1.0,   1.0,   1.0,     0.002]
 #    decayCnst   += [ 4.31e-4,  5.81e-4,   1.601e-6 , 0.00909]
-    site        += ['',     '',     '',     '']
+    _site        = ['', '',     '',     '',     '']
     arr = empty(4)
     arr[:]      = 6.4
     Activity    = append(   Activity,arr)
+    proc        += _proc
+    loca        += _loca
+    br          += _br
+    site        += _site
+    for index,ele in enumerate(_proc):
+        dAct["%s_%s"%(ele,_loca[index])] = ActivityRn222*_br[index]*timeS
+
 
 
     #Add the neutrino signal
-    proc        +=['imb','imb','boulby','boulby']
-    loca        +=['S','S',     'S',  'S']
+    _proc        =['imb','imb','boulby','boulby']
+    _loca        =['S','S',     'S',  'S']
     acc         +=['di', 'corr', 'di', 'corr']
-    br          += [1.0,  1.0, 1.0 , 1.0]
+    _br          = [1.0,  1.0, 1.0 , 1.0]
     site        += [''   ,'' , '', '']
     arr         = npa([fairportIBDRate,fairportIBDRate,boulbyIBDRate,boulbyIBDRate])
     Activity    = append(    Activity,arr)
 
+    proc        += _proc
+    loca        += _loca
+    br          += _br
+    for index,ele in enumerate(_proc):
+        dAct["%s_%s"%(ele,_loca[index])] = arr[index]*timeS
+
     # Add the neutron
-    proc        +=['neutron','neutron']
-    loca        +=['N',     'N']
+    _proc        =['neutron','neutron']
+    _loca        =['N',     'N']
     acc         +=['corr',  'corr']
-    br          += [1.0,   1.0]
+    _br          = [1.0,   1.0]
     arr         = npa([fairportIBDRate,boulbyIBDRate])
 #    print "Neutrino activity ",arr*timeS/nKiloTons
     Activity    = append(    Activity,arr)
-    site        += [ '','boulby']
+    _site       = [ '','boulby']
+    site        += _site
+    proc        += _proc
+    loca        += _loca
+    br          += _br
+    for index,ele in enumerate(_proc):
+        dAct["%s_%s%s"%(ele,_loca[index],_site[index])] = arr[index]*timeS
 
     # add a fast neutron at Fairport
-    proc        += ['QGSP_BERT_EMV','QGSP_BERT_EMX','QGSP_BERT','QGSP_BIC',\
+    _proc        = ['QGSP_BERT_EMV','QGSP_BERT_EMX','QGSP_BERT','QGSP_BIC',\
     'QBBC','QBBC_EMZ','FTFP_BERT','QGSP_FTFP_BERT']
-    loca        +=  ['FN','FN','FN','FN','FN','FN','FN','FN']
+    _loca        =  ['FN','FN','FN','FN','FN','FN','FN','FN']
     acc         +=  ['corr','corr','corr','corr','corr','corr','corr','corr']
-    br          +=  [1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0]
+    _br          =  [1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0]
+    _site        =  ['','','','','','','','']
     arr = empty(8)
     arr[:]      = fastNeutrons[0]
     Activity    = append(Activity,arr)
-    site        += ['',      '','',      '','',      '','',      '']
+    proc        += _proc
+    loca        += _loca
+    br          += _br
+    site        += _site
+    for index,ele in enumerate(_proc):
+        dAct["%s_%s%s"%(ele,_loca[index],_site[index])] = arr[index]*timeS
+
+
     # add a fast neutron at Boulby
-    proc        += ['QGSP_BERT_EMV','QGSP_BERT_EMX','QGSP_BERT','QGSP_BIC',\
+    _proc        = ['QGSP_BERT_EMV','QGSP_BERT_EMX','QGSP_BERT','QGSP_BIC',\
     'QBBC','QBBC_EMZ','FTFP_BERT','QGSP_FTFP_BERT']
-    loca        +=  ['FN','FN','FN','FN','FN','FN','FN','FN']
+    _loca        =  ['FN','FN','FN','FN','FN','FN','FN','FN']
     acc         +=  ['corr','corr','corr','corr','corr','corr','corr','corr']
-    br          +=  [1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0]
+    _br          =  [1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0]
     arr = empty(8)
     arr[:]      = fastNeutrons[1]
     Activity    = append(Activity,arr)
-    site        += ['boulby','boulby','boulby','boulby','boulby','boulby',\
+    _site        = ['boulby','boulby','boulby','boulby','boulby','boulby',\
     'boulby','boulby']
+    proc        += _proc
+    loca        += _loca
+    br          += _br
+    site        += _site
+    for index,ele in enumerate(_proc):
+        dAct["%s_%s%s"%(ele,_loca[index],_site[index])] = arr[index]*timeS
+
+
 
 #    # Read in the different radionuclide
 #    proc        +=  ['16006','17006','18006','17007','18007','8002','9003',\
@@ -303,17 +366,22 @@ def loadAnalysisParameters(timeScale='day'):
 #
 
     # Read in the different radionuclide
-    proc        +=  ['9003', '11003']
-    loca        +=  ['RN','RN']
+    _proc        =  ['9003', '11003']
+    _loca        =  ['RN','RN']
     acc         +=  ['di','di']
     #normalised to 9Li from SK
     arr         = npa([1.9,0.01])/1.9
     arr         *= radionuclideRate[0]
     Activity    = append(Activity,arr)
-    br         +=  [0.495,0.927]
-    site        += ['','']
+    _br         =  [0.495,0.927]
+    _site       = ['','']
 
-
+    proc        += _proc
+    loca        += _loca
+    br          += _br
+    site        += _site
+    for index,ele in enumerate(_proc):
+        dAct["%s_%s%s"%(ele,_loca[index],_site[index])] = arr[index]*timeS
 
 #    # Read in the different radionuclide
 #    proc        +=  ['16006','17006','18006','17007','18007','8002','9003',\
@@ -327,19 +395,47 @@ def loadAnalysisParameters(timeScale='day'):
 #    br         +=  [.988,1.0,1.0,0.951,0.143,0.16,0.495,0.927]
 #    site        += ['boulby','boulby','boulby','boulby','boulby','boulby',\
 #    'boulby','boulby']
-#
-#
 
-    proc        +=  ['9003', '11003']
-    loca        +=  ['RN','RN']
+
+
+    _proc        =  ['9003', '11003']
+    _loca        =  ['RN','RN']
     acc         +=  ['di','di']
     #normalised to 9Li from SK
     arr         = npa([1.9,0.01])/1.9
     arr         *= radionuclideRate[1]
     Activity    = append(Activity,arr)
-    br         +=  [0.495,0.927]
-    site        += ['boulby','boulby']
+    _br         =  [0.495,0.927]
+    _site       = ['boulby','boulby']
 
-    return inta,proc,loca,acc,arr,Activity,br,site,timeS,boulbyIBDRate*FVkTonRatio,mass
+
+    proc        += _proc
+    loca        += _loca
+    br          += _br
+    site        += _site
+    for index,ele in enumerate(_proc):
+        dAct["%s_%s%s"%(ele,_loca[index],_site[index])] = arr[index]*timeS
+    
+    _proc        =['IBD','IBD']
+    _loca        =['I',     'I']
+    acc         +=['corr',  'corr']
+    _br          = [1.0,   1.0]
+    arr         = npa([fairportIBDRate,boulbyIBDRate])
+#    print "Neutrino activity ",arr*timeS/nKiloTons
+    Activity    = append(    Activity,arr)
+    _site       = [ '','boulby']
+    site        += _site
+    proc        += _proc
+    loca        += _loca
+    br          += _br
+    for index,ele in enumerate(_proc):
+        dAct["%s_%s%s"%(ele,_loca[index],_site[index])] = arr[index]*timeS
+
+
+    coveNumber    = {'10pct':1432.,   '15pct':2162., '20pct':2824.,  '25pct':3558.,  '30pct':4196., '35pct':4985.,  '40pct':5684.}
+    covePCT       = {'10pct':9.86037, '15pct':14.887,'20pct':19.4453,'25pct':24.994,'30pct':28.8925,'35pct':34.3254,'40pct':39.1385}
+
+
+    return inta,proc,loca,acc,arr,Activity,br,site,timeS,boulbyIBDRate*FVkTonRatio,mass,dAct,coveNumber,covePCT
 
 

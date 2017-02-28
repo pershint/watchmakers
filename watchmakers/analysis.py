@@ -1,7 +1,7 @@
 from load import *
-from io_operations import testEnabledCondition
+from io_operations import testEnabledCondition,writeResultsToFile
 
-def fillHistograms(inFile,a1,t1,h,cover,ii,locj,covPCT):
+def fillHistograms(inFilePrefix,a1,t1,h,cover,ii,locj,covPCT):
     # Obtain logarithmic binnings
     nbins, xbins, ybins = logx_logy_array()
     
@@ -12,7 +12,7 @@ def fillHistograms(inFile,a1,t1,h,cover,ii,locj,covPCT):
 #    print "Fiducial volume is ", fiducialVolume
     #Read-in file
     try:
-        s =  "ntuple_root_files%s/%s_%s_%s_%s.root"%(additionalString,inFile,ii,cover,locj)
+        s =  "ntuple_root_files%s/%s_%s_%s_%s.root"%(additionalString,inFilePrefix,ii,cover,locj)
         print "Reading in ",s 
 #        data = root2array(s)
         t           = root2rec(s)
@@ -319,6 +319,560 @@ def fillHistograms(inFile,a1,t1,h,cover,ii,locj,covPCT):
 #        f.Close()
     return h
 
+
+
+
+
+def extractHistogramWitCorrectRate():
+    
+    g,h = {},{}
+    
+    d,iso,loc,coverage,coveragePCT = loadSimulationParameters()
+
+    # Obtain logarithmic binnings
+    nbins, xbins, ybins = logx_logy_array()
+    
+    additionalString,additionalCommands,additionalMacStr,additionalMacOpt = testEnabledCondition(arguments)
+    
+    boolSUPERNOVA_FORMAT    = arguments["--supernovaFormat"]
+    
+    fiducialVolume          = float(arguments["--fv"])
+    pmtDist                 = float(arguments["--psup"])
+    timeScale               = arguments["--timeScale"]
+    inFilePrefix            = arguments["--ft"]
+    
+    parameters  = loadAnalysisParameters(timeScale)
+    rates       = parameters[11]
+    mass        = parameters[10]
+    pc_num      = parameters[12]
+    pc_val      = parameters[13]
+    print "The rates of events per %s are"%(timeScale),rates
+#    print "Fiducial volume is ", fiducialVolume
+    #Read-in file
+    
+    #inFilePrefix,h,cover,ii,locj,covPCT
+    
+    if boolSUPERNOVA_FORMAT:
+        additionalString,additionalCommands,additionalMacStr,additionalMacOpt = testEnabledCondition(arguments)
+        _str = "ntuple_root_files%s/%s" %(additionalString,arguments["-o"])
+        f_root = TFile(_str,"recreate")
+
+        for j in range(len(iso)):
+            for ii in d["%s"%(iso[int(j)])]:
+                locj    = loc[j]
+
+                string  = "si_%s_%s_1_abs" %(ii,locj)
+                g[string] = TGraph()
+                g[string].SetName(string)
+                string  = "ei_%s_%s_1_abs" %(ii,locj)
+                g[string] = Graph()
+                g[string].SetName(string)
+                string  = "so_%s_%s_1_abs" %(ii,locj)
+                g[string] = Graph()
+                g[string].SetName(string)
+                string  = "eo_%s_%s_1_abs" %(ii,locj)
+                g[string] = Graph()
+                g[string].SetName(string)
+                
+                
+                string  = "si_%s_%s_singlesRate" %(ii,locj)
+                g[string] = TGraph()
+                g[string].SetName(string)
+                string  = "ei_%s_%s_singlesRate" %(ii,locj)
+                g[string] = Graph()
+                g[string].SetName(string)
+                string  = "so_%s_%s_singlesRate" %(ii,locj)
+                g[string] = Graph()
+                g[string].SetName(string)
+                string  = "eo_%s_%s_singlesRate" %(ii,locj)
+                g[string] = Graph()
+                g[string].SetName(string)
+                
+                
+                string  = "eisi_%s_%s_singlesRate_ProxCut" %(ii,locj)
+                g[string] = TGraph()
+                g[string].SetName(string)
+
+                string  = "eisi_%s_%s_abs_ProxCut" %(ii,locj)
+                g[string] = TGraph()
+                g[string].SetName(string)
+                cntG    = 0
+                
+                for idx,cover in enumerate(coverage):
+                    covPCT  = coveragePCT[cover]
+                    try:
+#                        branches = 'pe','nhit','n9','delta_time_s', 'detected_ev','detected_ev_tot','all_ev','all_ev_tot',subevents,event_number,candidate,mc_prim_energy,pos_goodness,posReco,reco_r,reco_z,posTruth,true_r,true_z,dir_goodness,dirReco,dirPrimaryMC,FV,GSV,EV,OV,IV,FV_truth,GSV_truth,EV_truth,OV_truth,IV_truth,inner_dist,inner_time,inner_dist_fv,tot_FV,consecutive_FV')'
+                        s =  "ntuple_root_files%s/%s_%s_%s_%s.root"%(additionalString,inFilePrefix,ii,cover,locj)
+                        print "\nReading in ",s
+
+                        rfile = TFile(s)
+                        t   = rfile.Get('data')
+                        recoFVstring    = "(sqrt(pow(posReco.X(),2) + pow(posReco.Y(),2))<%f*1000. && sqrt(pow(posReco.Z(),2))<%f*1000.)"%(fiducialVolume,fiducialVolume)
+                        trueFVstring    = "(sqrt(pow(posTruth.X(),2) + pow(posTruth.Y(),2))<%f*1000. && sqrt(pow(posTruth.Z(),2))<%f*1000.)"%(fiducialVolume,fiducialVolume)
+                        posGood        = "(pos_goodness>%f)" %(float(arguments["-g"]))
+                        peGood = "(pe>%f)" %(float(arguments["-T"]))
+                        tt = t.Draw("pe>>h(2000,0,200)","sub_ev_cnt == sub_ev","goff")
+                        
+                        er = float(rates["%s_%s"%(ii,locj)])
+                        if locj == 'PMT':
+                            print "adjusting rate for pmt %4.3e %s^{-1}, pmt mass %4.2f, number of PMTs %d : %4.3e %s^{-1}"%(er,timeScale,mass,pc_num["%s"%(cover)],er*pc_num["%s"%(cover)]*mass,timeScale)
+                            er*=pc_num["%s"%(cover)]*mass
+                        
+                        s_dl        = "%s_pe_%s_%s_%s_%d"%('ei',cover,ii,locj,1)
+                        h[s_dl]     = TH1D(s_dl,s_dl,2000,0,200)
+
+                        ei = t.Draw("pe>>hei(2000,0,200)"," %s &&  %s && %s && %s " %(recoFVstring,trueFVstring,posGood,peGood),"goff")
+                        h[s_dl] = t.GetHistogram()
+                        h[s_dl].SetName(s_dl)
+                        h[s_dl].SetXTitle('photoelectrons')
+                        h[s_dl].SetYTitle('counts [%s]^{-1}'%(timeScale))
+                        h[s_dl].Scale(ei/float(tt)*er)
+                        
+                        s_dlsi        = "%s_pe_%s_%s_%s_%d"%('si',cover,ii,locj,1)
+                        h[s_dlsi]     = TH1D(s_dlsi,s_dlsi,2000,0,200)
+                        h[s_dlsi].SetName(s_dl)
+                        si = t.Draw("pe>>hsi(2000,0,200)"," %s && !%s && %s && %s " %(recoFVstring,trueFVstring,posGood,peGood),"goff")
+                        h[s_dlsi] = t.GetHistogram()
+                        h[s_dlsi].SetName(s_dlsi)
+                        h[s_dlsi].SetXTitle('photoelectrons')
+                        h[s_dlsi].SetYTitle('counts [%s]^{-1}'%(timeScale))
+                        h[s_dlsi].Scale(si/float(tt)*er)
+
+
+                        so = t.Draw("pe>>hso(2000,0,200)","!%s &&  %s && %s && %s " %(recoFVstring,trueFVstring,posGood,peGood),"goff")
+                        
+                        eo = t.Draw("pe>>heo(2000,0,200)","!%s && !%s && %s && %s " %(recoFVstring,trueFVstring,posGood,peGood),"goff")
+                        
+                        print "(%7s %7s %7s %7s ) %8s |            (%9s %9s %9s %9s)" %('ei','si','so','eo','mc events','ei','si','so','eo')
+                        print "(%7d %7d %7d %7d ) %8d  | efficiency (%4.3e %4.3e %4.3e %4.3e)" %(ei,si,so,eo, tt,ei/float(tt),si/float(tt),so/float(tt),eo/float(tt))
+                        print "(%7d %7d %7d %7d ) %8d  | event rate (%4.3e %4.3e %4.3e %4.3e) per %s" % (ei,si,so,eo, tt,ei/float(tt)*er,si/float(tt)*er,so/float(tt)*er,eo/float(tt)*er,timeScale)
+                        
+                        g["si_%s_%s_1_abs" %(ii,locj)].SetPoint(cntG,pc_val["%s"%(cover)],si/float(tt))
+                        g["ei_%s_%s_1_abs" %(ii,locj)].SetPoint(cntG,pc_val["%s"%(cover)],ei/float(tt))
+                        g["so_%s_%s_1_abs" %(ii,locj)].SetPoint(cntG,pc_val["%s"%(cover)],so/float(tt))
+                        g["eo_%s_%s_1_abs" %(ii,locj)].SetPoint(cntG,pc_val["%s"%(cover)],eo/float(tt))
+                        g["si_%s_%s_1_abs" %(ii,locj)].GetXaxis().SetTitle('PMT coverage')
+                        g["ei_%s_%s_1_abs" %(ii,locj)].GetXaxis().SetTitle('PMT coverage')
+                        g["so_%s_%s_1_abs" %(ii,locj)].GetXaxis().SetTitle('PMT coverage')
+                        g["eo_%s_%s_1_abs" %(ii,locj)].GetXaxis().SetTitle('PMT coverage')
+                        g["si_%s_%s_1_abs" %(ii,locj)].GetYaxis().SetTitle('efficiency')
+                        g["ei_%s_%s_1_abs" %(ii,locj)].GetYaxis().SetTitle('efficiency')
+                        g["so_%s_%s_1_abs" %(ii,locj)].GetYaxis().SetTitle('efficiency')
+                        g["eo_%s_%s_1_abs" %(ii,locj)].GetYaxis().SetTitle('efficiency')
+                        
+                        g["si_%s_%s_singlesRate" %(ii,locj)].SetPoint(cntG,pc_val["%s"%(cover)],si/float(tt)*er)
+                        g["ei_%s_%s_singlesRate" %(ii,locj)].SetPoint(cntG,pc_val["%s"%(cover)],ei/float(tt)*er)
+                        g["so_%s_%s_singlesRate" %(ii,locj)].SetPoint(cntG,pc_val["%s"%(cover)],so/float(tt)*er)
+                        g["eo_%s_%s_singlesRate" %(ii,locj)].SetPoint(cntG,pc_val["%s"%(cover)],eo/float(tt)*er)
+                        g["si_%s_%s_singlesRate" %(ii,locj)].GetXaxis().SetTitle('PMT coverage')
+                        g["ei_%s_%s_singlesRate" %(ii,locj)].GetXaxis().SetTitle('PMT coverage')
+                        g["so_%s_%s_singlesRate" %(ii,locj)].GetXaxis().SetTitle('PMT coverage')
+                        g["eo_%s_%s_singlesRate" %(ii,locj)].GetXaxis().SetTitle('PMT coverage')
+                        g["si_%s_%s_singlesRate" %(ii,locj)].GetYaxis().SetTitle('counts [%s]^{-1}'%(timeScale))
+                        g["ei_%s_%s_singlesRate" %(ii,locj)].GetYaxis().SetTitle('counts [%s]^{-1}'%(timeScale))
+                        g["so_%s_%s_singlesRate" %(ii,locj)].GetYaxis().SetTitle('counts [%s]^{-1}'%(timeScale))
+                        g["eo_%s_%s_singlesRate" %(ii,locj)].GetYaxis().SetTitle('counts [%s]^{-1}'%(timeScale))
+                        
+                        # See below
+#                        cntG+=1
+
+                        N  = t.Draw("pe:posReco.X():posReco.Y():posReco.Z()"," %s && %s && %s " %(recoFVstring,posGood,peGood),"goff")
+                        pe   = t.GetV1()
+                        x    = t.GetV2()
+                        y    = t.GetV3()
+                        z    = t.GetV4()
+                        
+                        s_dl1        = "%s_dD_%s_%s_%s_%s"%('eisi',cover,ii,locj,'proxCutEfficiency')
+                        h[s_dl1]     = TH1D(s_dl1,s_dl1,5000,0,15)
+                        h[s_dl1].SetName(s_dl1)
+                        h[s_dl1].SetXTitle('distance')
+                        h[s_dl1].SetYTitle('efficiency')
+
+                        s_dl2       ="%s_pep_ped_%s_%s_%s_%s"%('eisi',cover,ii,locj,'proxCutEfficiency')
+                        h[s_dl2]     = TH2D(s_dl2,s_dl2,200,0,200,200,0,200)
+                        h[s_dl2].SetXTitle('prompt energy [pe]')
+                        h[s_dl2].SetYTitle('delayed energy [pe]')
+                        h[s_dl2].SetZTitle('efficiency')
+                        
+
+                        s_dl1b        = "%s_dD_%s_%s_%s_%s"%('eisi',cover,ii,locj,'proxCutRate')
+                        h[s_dl1b]     = TH1D(s_dl1b,s_dl1b,5000,0,15)
+                        h[s_dl1b].SetName(s_dl1b)
+                        h[s_dl1b].SetXTitle('distance')
+                        h[s_dl1b].SetYTitle('event rate [%s]^{-1}'%(timeScale))
+
+                        s_dl2b       ="%s_pep_ped_%s_%s_%s_%s"%('eisi',cover,ii,locj,'proxCutRate')
+                        h[s_dl2b]     = TH2D(s_dl2b,s_dl2b,200,0,200,200,0,200)
+                        h[s_dl2b].SetXTitle('prompt energy [pe]')
+                        h[s_dl2b].SetYTitle('delayed energy [pe]')
+                        h[s_dl2b].SetZTitle('event rate [%s]^{-1}'%(timeScale))
+
+                        cntEISI = 0
+                        for index in range(N-1):
+                            rad = sqrt(power(x[index]-x[index+1],2)+power(y[index]-y[index+1],2)+power(z[index]-z[index+1],2))/1000.
+                            if rad < float(arguments["-d"]):
+                                h[s_dl2].Fill(pe[index],pe[index+1])
+                                h[s_dl1].Fill(sqrt(power(x[index]-x[index+1],2)+power(y[index]-y[index+1],2)+power(z[index]-z[index+1],2))/1000.)
+                                h[s_dl2b].Fill(pe[index],pe[index+1])
+                                h[s_dl1b].Fill(sqrt(power(x[index]-x[index+1],2)+power(y[index]-y[index+1],2)+power(z[index]-z[index+1],2))/1000.)
+                                cntEISI+=1
+
+                        g["eisi_%s_%s_singlesRate_ProxCut" %(ii,locj)].SetPoint(cntG,pc_val["%s"%(cover)],cntEISI/float(tt)*er)
+                        g["eisi_%s_%s_singlesRate_ProxCut" %(ii,locj)].GetXaxis().SetTitle('PMT coverage')
+                        g["eisi_%s_%s_singlesRate_ProxCut" %(ii,locj)].GetYaxis().SetTitle('counts [%s]^{-1}'%(timeScale))
+
+                        g["eisi_%s_%s_abs_ProxCut" %(ii,locj)].SetPoint(cntG,pc_val["%s"%(cover)],cntEISI/float(tt))
+                        g["eisi_%s_%s_abs_ProxCut" %(ii,locj)].GetXaxis().SetTitle('PMT coverage')
+                        g["eisi_%s_%s_abs_ProxCut" %(ii,locj)].GetYaxis().SetTitle('efficiency')
+                        cntG+=1
+                        
+                        h[s_dl2].Scale(1./tt)
+                        h[s_dl1].Scale(1./tt)
+                        h[s_dl2b].Scale(1./tt*er)
+                        h[s_dl1b].Scale(1./tt*er)
+
+                        f_root.cd()
+                        h[s_dl].Write()
+                        h[s_dlsi].Write()
+                        h[s_dl1].Write()
+                        h[s_dl1b].Write()
+                        h[s_dl2].Write()
+                        h[s_dl2b].Write()
+                        if cover == '40pct':
+                            g["si_%s_%s_1_abs" %(ii,locj)].Write()
+                            g["ei_%s_%s_1_abs" %(ii,locj)].Write()
+                            g["so_%s_%s_1_abs" %(ii,locj)].Write()
+                            g["eo_%s_%s_1_abs" %(ii,locj)].Write()
+                            g["si_%s_%s_singlesRate" %(ii,locj)].Write()
+                            g["ei_%s_%s_singlesRate" %(ii,locj)].Write()
+                            g["so_%s_%s_singlesRate" %(ii,locj)].Write()
+                            g["eo_%s_%s_singlesRate" %(ii,locj)].Write()
+                            g["eisi_%s_%s_singlesRate_ProxCut" %(ii,locj)].Write()
+                            g["eisi_%s_%s_abs_ProxCut" %(ii,locj)].Write()
+
+
+                
+#                        t = tree2array(intree)
+#                        print len(t),len(t[0])
+
+
+                    except:
+                        print "Could not read file ",s
+#        writeResultsToFile(arguments["-o"],g,h)
+#        print h
+    if not boolSUPERNOVA_FORMAT:
+        try:
+            s =  "ntuple_root_files%s/%s_%s_%s_%s.root"%(additionalString,inFilePrefix,ii,cover,locj)
+            print "Reading in ",s 
+    #        data = root2array(s)
+            t           = root2rec(s)
+
+            #Apply some analysis
+            r           = npa(t.reco_r<fiducialVolume,dtype=bool)
+            z           = npa(absolute(t.reco_z)<fiducialVolume,dtype=bool)
+            
+            #isFV        = logical_and(r,z,dtype=bool)
+            isFV        = npa(t.FV==1,dtype=bool)
+            notFV       = npa(t.FV!=1,dtype=bool)
+            isFV_t      = npa(t.FV_truth==1,dtype=bool)
+            notFV_t     = npa(t.FV_truth!=1,dtype=bool)
+
+            iCandidate  = npa(t.candidate==1,dtype=bool)
+            totalEvtGen = npa(t.all_ev==t.all_ev_tot,dtype=bool)
+            
+            tot         = float(sum(totalEvtGen))
+            totD        = float(len(t.FV))
+
+            si          = logical_and(isFV,notFV_t,dtype=bool)
+            so          = logical_and(notFV,isFV_t,dtype=bool)
+            ei          = logical_and(isFV,isFV_t,dtype=bool)
+            eo          = logical_and(notFV,notFV_t,dtype=bool)
+
+            ssi         = sum(si)
+            sso         = sum(so)
+            sei         = sum(ei)
+            seo         = sum(eo)
+            print 'MC events generated',tot,', number of MC recorded',len(t.FV)
+            print ssi,sso,sei,seo,', absolute: ', ssi/tot,sso/tot,sei/tot,seo/tot, \
+            'relative',ssi/totD,sso/totD,sei/totD,seo/totD
+
+            #Define set of histograms to fill out
+            for subE in range(5):
+                if subE ==0:
+                    subEv0   = npa(t.candidate==1,dtype=bool)
+                else:
+                    subEv0   = npa(t.detected_ev==subE,dtype=bool)
+                suma = sum(subEv0)
+                if suma:
+                    print 'Sub event ',subE,' : ',suma
+                    totRel = float(suma)
+                    mask = logical_and(subEv0,si,dtype=bool)
+                    if sum(mask):
+                        type = "si"
+                        print subE,type,totRel,'(',sum(mask),')'
+
+                        string = "%s_%s_%s_%d_abs"%(type,ii,locj,subE)
+                        if string in h:
+                            point = h[string].GetN()
+                            h[string].SetPoint(point,covPCT,sum(mask)/tot)
+                        else:
+                            h[string] = Graph()
+                            h[string].SetName(string)
+                            h[string].SetPoint(0,covPCT,sum(mask)/tot)
+                        string = "%s_%s_%s_%d_rel"%(type,ii,locj,subE)
+                        if string in h:
+                            point = h[string].GetN()
+                            h[string].SetPoint(point,covPCT,sum(mask)/totRel)
+                        else:
+                            h[string] = Graph()
+                            h[string].SetName(string)
+                            h[string].SetPoint(0,covPCT,sum(mask)/totRel)
+
+                        anaVar      = t.pe[mask,...]
+                        s_dl        = "%s_pe_%s_%s_%s_%d"%(type,cover,ii,locj,subE)
+                        h[s_dl]     = Hist(5000,0,500,name=s_dl,title=s_dl)
+                        h[s_dl].SetXTitle('photoelectrons')
+                        h[s_dl].SetYTitle('counts [a.u.]')
+                        h[s_dl].fill_array(anaVar)
+
+                        anaVar      = t.nhit[mask,...]
+                        s_dl        ="%s_nhit_%s_%s_%s_%d"%(type,cover,ii,locj,subE)
+                        h[s_dl]     = Hist(5000,0,500,name=s_dl,title=s_dl)
+                        h[s_dl].SetXTitle('photoelectrons')
+                        h[s_dl].SetYTitle('counts [a.u.]')
+                        h[s_dl].fill_array(anaVar)
+
+                        i_d         = t.inner_dist[mask,...]
+                        i_t         = t.inner_time[mask,...]
+                        anaVar      = column_stack((i_d,i_t/1e9))
+                        s_dl       ="%s_dDdT_%s_%s_%s_%d"%(type,cover,ii,locj,subE)
+                        h[s_dl]     = Hist2D(xbins,ybins,name=s_dl,title=s_dl);
+                        h[s_dl].SetXTitle('inter-event distance [m]')
+                        h[s_dl].SetYTitle('inter-event time [s]')
+                        h[s_dl].fill_array(anaVar)
+                        r_r         = t.reco_r[mask,...]
+                        r_z         = t.reco_z[mask,...]
+                        anaVar      = column_stack((power(r_r/pmtDist,2),r_z/pmtDist))
+                        s_dl       = "%s_dRdZ_%s_%s_%s_%d"%(type,cover,ii,locj,subE)
+                        h[s_dl]= Hist2D(100,0,1.6,200,-1.6,1.6,name=s_dl,title=s_dl)
+                        h[s_dl].SetXTitle('(r / R_{pmt})^{2} [unitless]')
+                        h[s_dl].SetYTitle('(z / Z_{pmt}) [unitless]')
+                        h[s_dl].fill_array(anaVar)
+                        t_r         = t.true_r[mask,...]
+                        t_z         = t.true_z[mask,...]
+                        anaVar      = column_stack((power(t_r/pmtDist,2),t_z/pmtDist))
+                        s_dl       = "%s_tRtZ_%s_%s_%s_%d"%(type,cover,ii,locj,subE)
+                        h[s_dl]= Hist2D(100,0,1.6,200,-1.6,1.6,name=s_dl,title=s_dl)
+                        h[s_dl].SetXTitle('(r / R_{pmt})^{2} [unitless]')
+                        h[s_dl].SetYTitle('(z / Z_{pmt}) [unitless]')
+                        h[s_dl].fill_array(anaVar)
+
+
+
+
+                    mask = logical_and(subEv0,so)
+                    if sum(mask):
+
+                        type        = "so"
+                        print subE,type,totRel,'(',sum(mask),')'
+
+                        string = "%s_%s_%s_%d_abs"%(type,ii,locj,subE)
+                        if string in h:
+                            point = h[string].GetN()
+                            h[string].SetPoint(point,covPCT,sum(mask)/tot)
+                        else:
+                            h[string] = Graph()
+                            h[string].SetName(string)
+                            h[string].SetPoint(0,covPCT,sum(mask)/tot)
+                        string = "%s_%s_%s_%d_rel"%(type,ii,locj,subE)
+                        if string in h:
+                            point = h[string].GetN()
+                            h[string].SetPoint(point,covPCT,sum(mask)/totRel)
+                        else:
+                            h[string] = Graph()
+                            h[string].SetName(string)
+                            h[string].SetPoint(0,covPCT,sum(mask)/totRel)
+                        anaVar      = t.pe[mask,...]
+                        s_dl        = "%s_pe_%s_%s_%s_%d"%(type,cover,ii,locj,subE)
+                        h[s_dl]     = Hist(5000,0,500,name=s_dl,title=s_dl)
+                        h[s_dl].SetXTitle('photoelectrons')
+                        h[s_dl].SetYTitle('counts [a.u.]')
+                        h[s_dl].fill_array(anaVar)
+
+                        anaVar      = t.nhit[mask,...]
+                        s_dl        ="%s_nhit_%s_%s_%s_%d"%(type,cover,ii,locj,subE)
+                        h[s_dl]     = Hist(5000,0,500,name=s_dl,title=s_dl)
+                        h[s_dl].SetXTitle('photoelectrons')
+                        h[s_dl].SetYTitle('counts [a.u.]')
+                        h[s_dl].fill_array(anaVar)
+
+
+                        i_d         = t.inner_dist[mask,...]
+                        i_t         = t.inner_time[mask,...]
+                        anaVar      = column_stack((i_d,i_t/1e9))
+                        s_dl        ="%s_dDdT_%s_%s_%s_%d"%(type,cover,ii,locj,subE)
+                        h[s_dl]     = Hist2D(xbins,ybins,name=s_dl,title=s_dl);
+                        h[s_dl].SetXTitle('inter-event distance [m]')
+                        h[s_dl].SetYTitle('inter-event time [s]')
+                        h[s_dl].fill_array(anaVar)
+                        r_r         = t.reco_r[mask,...]
+                        r_z         = t.reco_z[mask,...]
+
+                        anaVar      = column_stack((power(r_r/pmtDist,2),r_z/pmtDist))
+                        s_dl        ="%s_dRdZ_%s_%s_%s_%d"%(type,cover,ii,locj,subE)
+                        h[s_dl]= Hist2D(100,0,1.6,200,-1.6,1.6,name=s_dl,title=s_dl)
+                        h[s_dl].SetXTitle('(r / R_{pmt})^{2} [unitless]')
+                        h[s_dl].SetYTitle('(z / Z_{pmt}) [unitless]')
+                        h[s_dl].fill_array(anaVar)
+                        t_r         = t.true_r[mask,...]
+                        t_z         = t.true_z[mask,...]
+
+                        anaVar      = column_stack((power(t_r/pmtDist,2),t_z/pmtDist))
+                        s_dl       = "%s_tRtZ_%s_%s_%s_%d"%(type,cover,ii,locj,subE)
+                        h[s_dl]= Hist2D(100,0,1.6,200,-1.6,1.6,name=s_dl,title=s_dl)
+                        h[s_dl].SetXTitle('(r / R_{pmt})^{2} [unitless]')
+                        h[s_dl].SetYTitle('(z / Z_{pmt}) [unitless]')
+                        h[s_dl].fill_array(anaVar)
+
+
+                    mask = logical_and(subEv0,ei)
+                    if sum(mask):
+
+                        type        = "ei"
+                        print subE,type,totRel,'(',sum(mask),')'
+
+
+                        string = "%s_%s_%s_%d_abs"%(type,ii,locj,subE)
+                        if string in h:
+                            point = h[string].GetN()
+                            h[string].SetPoint(point,covPCT,sum(mask)/tot)
+                        else:
+                            h[string] = Graph()
+                            h[string].SetName(string)
+                            h[string].SetPoint(0,covPCT,sum(mask)/tot)
+                        string = "%s_%s_%s_%d_rel"%(type,ii,locj,subE)
+                        if string in h:
+                            point = h[string].GetN()
+                            h[string].SetPoint(point,covPCT,sum(mask)/totRel)
+                        else:
+                            h[string] = Graph()
+                            h[string].SetName(string)
+                            h[string].SetPoint(0,covPCT,sum(mask)/totRel)
+                        anaVar      = t.pe[mask,...]
+                        s_dl        = "%s_pe_%s_%s_%s_%d"%(type,cover,ii,locj,subE)
+                        h[s_dl]     = Hist(5000,0,500,name=s_dl,title=s_dl)
+                        h[s_dl].SetXTitle('photoelectrons')
+                        h[s_dl].SetYTitle('counts [a.u.]')
+                        h[s_dl].fill_array(anaVar)
+
+
+                        anaVar      = t.nhit[mask,...]
+                        s_dl= "%s_nhit_%s_%s_%s_%d"%(type,cover,ii,locj,subE)
+                        h[s_dl]     = Hist(5000,0,500,name=s_dl,title=s_dl)
+                        h[s_dl].SetXTitle('photoelectrons')
+                        h[s_dl].SetYTitle('counts [a.u.]')
+                        h[s_dl].fill_array(anaVar)
+
+                        i_d         = t.inner_dist[mask,...]
+                        i_t         = t.inner_time[mask,...]
+                        anaVar      = column_stack((i_d,i_t/1e9))
+                        s_dl= "%s_dDdT_%s_%s_%s_%d"%(type,cover,ii,locj,subE)
+                        h[s_dl]     = Hist2D(xbins,ybins,name=s_dl,title=s_dl);
+                        h[s_dl].SetXTitle('inter-event distance [m]')
+                        h[s_dl].SetYTitle('inter-event time [s]')
+                        h[s_dl].fill_array(anaVar)
+                        r_r         = t.reco_r[mask,...]
+                        r_z         = t.reco_z[mask,...]
+                        anaVar      = column_stack((power(r_r/pmtDist,2),r_z/pmtDist))
+                        s_dl= "%s_dRdZ_%s_%s_%s_%d"%(type,cover,ii,locj,subE)
+                        h[s_dl]= Hist2D(100,0,1.6,200,-1.6,1.6,name=s_dl,title=s_dl)
+                        h[s_dl].SetXTitle('(r / R_{pmt})^{2} [unitless]')
+                        h[s_dl].SetYTitle('(z / Z_{pmt}) [unitless]')
+                        h[s_dl].fill_array(anaVar)
+
+                        t_r         = t.true_r[mask,...]
+                        t_z         = t.true_z[mask,...]
+
+                        anaVar      = column_stack((power(t_r/pmtDist,2),t_z/pmtDist))
+                        s_dl       = "%s_tRtZ_%s_%s_%s_%d"%(type,cover,ii,locj,subE)
+                        h[s_dl]= Hist2D(100,0,1.6,200,-1.6,1.6,name=s_dl,title=s_dl)
+                        h[s_dl].SetXTitle('(r / R_{pmt})^{2} [unitless]')
+                        h[s_dl].SetYTitle('(z / Z_{pmt}) [unitless]')
+                        h[s_dl].fill_array(anaVar)
+
+                    mask = logical_and(subEv0,eo)
+                    if sum(mask):
+
+                        type        = "eo"
+                        print subE,type,totRel,'(',sum(mask),')'
+                        string = "%s_%s_%s_%d_abs"%(type,ii,locj,subE)
+                        if string in h:
+                            point = h[string].GetN()
+                            h[string].SetPoint(point,covPCT,sum(mask)/tot)
+                        else:
+                            h[string] = Graph()
+                            h[string].SetName(string)
+                            h[string].SetPoint(0,covPCT,sum(mask)/tot)
+                        string = "%s_%s_%s_%d_rel"%(type,ii,locj,subE)
+                        if string in h:
+                            point = h[string].GetN()
+                            h[string].SetPoint(point,covPCT,sum(mask)/totRel)
+                        else:
+                            h[string] = Graph()
+                            h[string].SetName(string)
+                            h[string].SetPoint(0,covPCT,sum(mask)/totRel)
+
+                        anaVar      = t.pe[mask,...]
+                        s_dl         = "%s_pe_%s_%s_%s_%d"%(type,cover,ii,locj,subE)
+                        h[s_dl]     = Hist(5000,0,500,name=s_dl,title=s_dl)
+                        h[s_dl].SetXTitle('photoelectrons')
+                        h[s_dl].SetYTitle('counts [a.u.]')
+                        h[s_dl].fill_array(anaVar)
+
+                        anaVar      = t.nhit[mask,...]
+                        s_dl        ="%s_nhit_%s_%s_%s_%d"%(type,cover,ii,locj,subE)
+                        h[s_dl]     = Hist(5000,0,500,name=s_dl,title=s_dl)
+                        h[s_dl].SetXTitle('photoelectrons')
+                        h[s_dl].SetYTitle('counts [a.u.]')
+                        h[s_dl].fill_array(anaVar)
+
+                        i_d         = t.inner_dist[mask,...]
+                        i_t         = t.inner_time[mask,...]
+                        anaVar      = column_stack((i_d,i_t/1e9))
+                        s_dl        ="%s_dDdT_%s_%s_%s_%d"%(type,cover,ii,locj,subE)
+                        h[s_dl]= Hist2D(xbins,ybins,name=s_dl,title=s_dl);
+                        h[s_dl].SetXTitle('inter-event distance [m]')
+                        h[s_dl].SetYTitle('inter-event time [s]')
+                        h[s_dl].fill_array(anaVar)
+                        r_r         = t.reco_r[mask,...]
+                        r_z         = t.reco_z[mask,...]
+                        anaVar      = column_stack((power(r_r/pmtDist,2),r_z/pmtDist))
+                        s_dl       = "%s_dRdZ_%s_%s_%s_%d"%(type,cover,ii,locj,subE)
+                        h[s_dl]= Hist2D(100,0,1.6,200,-1.6,1.6,name=s_dl,title=s_dl)
+                        h[s_dl].SetXTitle('(r / R_{pmt})^{2} [unitless]')
+                        h[s_dl].SetYTitle('(z / Z_{pmt}) [unitless]')
+                        h[s_dl].fill_array(anaVar)
+                        t_r         = t.true_r[mask,...]
+                        t_z         = t.true_z[mask,...]
+                        anaVar      = column_stack((power(t_r/pmtDist,2),t_z/pmtDist))
+                        s_dl       = "%s_tRtZ_%s_%s_%s_%d"%(type,cover,ii,locj,subE)
+                        h[s_dl]= Hist2D(100,0,1.6,200,-1.6,1.6,name=s_dl,title=s_dl)
+                        h[s_dl].SetXTitle('(r / R_{pmt})^{2} [unitless]')
+                        h[s_dl].SetYTitle('(z / Z_{pmt}) [unitless]')
+                        h[s_dl].fill_array(anaVar)
+
+
+        except:
+            print "Could not read file ",s
+
+    print ""
+#        f.Close()
+
+
+    return h
+
+
+
 def logx_logy_array(nbins = 500,xmin = 1e-2,xmax = 30.,ymin = 1e-9,ymax = 1e3):
     #x-axis
     logxmin = log10(xmin)
@@ -351,7 +905,7 @@ def obtainAbsoluteEfficiency(f,timeScale='day',cut = 10.0):
     
 
 
-    inta,proc,loca,acc,arr,Activity,br,site,timeS,boulbyNeutronFV,mass = loadAnalysisParameters(timeScale)
+    inta,proc,loca,acc,arr,Activity,br,site,timeS,boulbyNeutronFV,mass,dAct,cove,covePCT = loadAnalysisParameters(timeScale)
 
 
     x,y         = Double(0.),Double(0.)
