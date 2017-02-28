@@ -569,7 +569,7 @@ def testEnabledCondition(arguments):
 
     baseValue = 7
     #Analysis strings, usually shows up in ntuple processing
-    print defaultValues[baseValue+1]
+#    print defaultValues[baseValue+1]
     if float(arguments['-r'])          != defaultValues[baseValue+1]:
         additionalString += "_rate_%f" %(float(arguments['-r']))
         additionalCommands += " -r %f " %(float(arguments['-r']))
