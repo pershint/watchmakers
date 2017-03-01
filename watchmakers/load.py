@@ -1,5 +1,5 @@
 from ROOT import TRandom3
-from ROOT import TChain,TGraph,TGraphErrors,gSystem,gROOT,TH1D,TH2D,TFile,TCanvas
+from ROOT import TChain,TGraph,TGraphErrors,gSystem,gROOT,TH1D,TH2D,TFile,TCanvas,TF1
 from ROOT import THStack,Double
 from ROOT import kRed,kBlue,kGreen,kCyan,kOrange
 
