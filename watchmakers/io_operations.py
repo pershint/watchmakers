@@ -79,7 +79,7 @@ def macroGenerator(percentage,isotope,location,runs,events):
 /generator/fastneutron/enthresh 10.0
 /generator/fastneutron/sidewalls 1.0
 
-/run/beamOn %d'''%(events,depth)
+/run/beamOn %d'''%(depth,events)
     elif location == 'FNFairport':
         line1 = '''
 /generator/add combo fastneutron:regexfill
