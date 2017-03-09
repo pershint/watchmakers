@@ -6,7 +6,7 @@ from ROOT import kRed,kBlue,kGreen,kCyan,kOrange
 from ROOT import kOrange as kO,kBlue as kB,kGreen as kG
 from ROOT import kMagenta as kM,kAzure as kA,kRed as kR
 from ROOT import TCanvas,TLine, TLatex
-from ROOT import sqrt
+from numpy import sqrt as sqrt
 from ROOT import gStyle,gPad,TPaletteAxis
 import os.path
 from stat import S_IRWXG,S_IRWXU
@@ -114,7 +114,7 @@ except ImportError:
     print 'docopt is not a recognized module, it is required to run this module'
 
 
-gSystem.Load("libRATEvent")
+#gSystem.Load("libRATEvent")
 gSystem.AddIncludePath(" -I$RATROOT/include")
 gROOT.LoadMacro("$WATCHENV/watchmakers/goldenFileExtractor.C")
 from ROOT import goldenFileExtractor
