@@ -98,6 +98,7 @@ docstring = """
     --detectMedia=<_dM>  Detector media (doped_water,...)
     --collectionEff=<CE> Collection efficiency (e.g.: 0.85,0.67,0.475)
     --pmtModel=<_PMTM>   PMT Model (r7081pe)
+    --photocath = <_PC>  PMT photocathode (R7081HQE)
     
     """ % (defaultValues[0],defaultValues[1],defaultValues[2],defaultValues[3],defaultValues[4],\
            defaultValues[5],defaultValues[6],defaultValues[7],defaultValues[8],\
@@ -114,11 +115,9 @@ except ImportError:
     print 'docopt is not a recognized module, it is required to run this module'
 
 
-try:
-	gSystem.AddIncludePath(" -I$RATROOT/include")
-	gSystem.Load("libRATEvent")
-except:
-	print "Was not able to load in RAT libraries. "
+gSystem.Load("$RATROOT/lib/libRATEvent")
+gSystem.AddIncludePath(" -I$RATROOT/include")
+
 		
 gROOT.LoadMacro("$WATCHENV/watchmakers/goldenFileExtractor.C")
 from ROOT import goldenFileExtractor
