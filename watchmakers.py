@@ -12,7 +12,7 @@ if __name__ == "__main__":
     
     print docstring
     print arguments
-    print defaultValues
+#     print defaultValues
     print ""
     
     if arguments['-D']:

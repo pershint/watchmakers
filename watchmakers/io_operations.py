@@ -79,7 +79,7 @@ def macroGenerator(percentage,isotope,location,runs,events):
 /generator/fastneutron/enthresh 10.0
 /generator/fastneutron/sidewalls 1.0
 
-/run/beamOn %d'''%(events,depth)
+/run/beamOn %d'''%(depth,events)
     elif location == 'FNFairport':
         line1 = '''
 /generator/add combo fastneutron:regexfill
@@ -566,7 +566,16 @@ def testEnabledCondition(arguments):
         additionalMacStr += "_pmtModel_%s" %((arguments['--pmtModel']))
         additionalString += "_pmtModel_%s" %((arguments['--pmtModel']))
 
+    if (arguments['--photocath'] and not arguments['--pmtModel']):
+        additionalMacOpt += "/rat/db/set PMT[r7081pe]  photocathode_surface \"photocathode_%s\"\n" %((arguments['--photocath']))
+        additionalMacStr += "_photocathode_%s" %((arguments['--photocath']))
+        additionalString += "_photocathode_%s" %((arguments['--photocath']))
 
+    if (arguments['--photocath'] and arguments['--pmtModel']):
+        additionalMacOpt += "/rat/db/set PMT[%s]  photocathode_surface \"photocathode_%s\"\n" %(arguments['--pmtModel'],arguments['--photocath'])
+        additionalMacStr += "_photocathode_%s" %((arguments['--photocath']))
+        additionalString += "_photocathode_%s" %((arguments['--photocath']))
+        
     baseValue = 7
     #Analysis strings, usually shows up in ntuple processing
 #    print defaultValues[baseValue+1]

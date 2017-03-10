@@ -4,7 +4,7 @@ from watchmakers.load import *
 from watchmakers.analysis import *
 from io_operations import testEnabledCondition
 
-from ROOT import max
+from numpy import max 
 t = arguments['--timeScale']
 
 def drange(start, stop, step):
