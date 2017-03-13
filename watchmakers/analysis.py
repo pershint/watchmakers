@@ -771,25 +771,45 @@ def extractHistogramWitCorrectRate():
                             er*=pc_num["%s"%(cover)]*mass
                         print ' Total event rate pre-detection efficiency is ',er, ' per ', timeScale
 
+                        s_dlT        = "%s_Teff_%s_%s_%s_%d"%('ei',cover,ii,locj,1)
+                        h[s_dlT]     = TH1D(s_dlT,s_dlT,5000,0,500)
+                        ei = t.Draw("pe/%f>>heiT(5000,0,500)"%(pePerMeVDict['%s'%(cover)])," %s &&  %s && %s && %s " %(recoFVstring,trueFVstring,posGood,peGood),"goff")
+                        h[s_dlT] = t.GetHistogram()
+                        h[s_dlT].SetName(s_dlT)
+                        h[s_dlT].SetXTitle('T_{eff} [MeV]')
+                        h[s_dlT].SetYTitle('counts [%s]^{-1}'%(timeScale))
+                        h[s_dlT].Scale(ei/float(tt)*er)
+
+                        s_dlTsi        = "%s_Teff_%s_%s_%s_%d"%('si',cover,ii,locj,1)
+                        h[s_dlTsi]     = TH1D(s_dlTsi,s_dlTsi,5000,0,500)
+                        h[s_dlTsi].SetName(s_dlT)
+                        si = t.Draw("pe/%f>>hsiT(5000,0,500)"%(pePerMeVDict['%s'%(cover)])," %s && !%s && %s && %s " %(recoFVstring,trueFVstring,posGood,peGood),"goff")
+                        h[s_dlTsi] = t.GetHistogram()
+                        h[s_dlTsi].SetName(s_dlTsi)
+                        h[s_dlTsi].SetXTitle('T_{eff} [MeV]')
+                        h[s_dlTsi].SetYTitle('counts [%s]^{-1}'%(timeScale))
+                        h[s_dlTsi].Scale(si/float(tt)*er)
+
+
                         s_dl        = "%s_pe_%s_%s_%s_%d"%('ei',cover,ii,locj,1)
                         h[s_dl]     = TH1D(s_dl,s_dl,5000,0,500)
-
-                        ei = t.Draw("pe/%f>>hei(5000,0,500)"%(pePerMeVDict['%s'%(cover)])," %s &&  %s && %s && %s " %(recoFVstring,trueFVstring,posGood,peGood),"goff")
+                        ei = t.Draw("pe>>hei(5000,0,500)"," %s &&  %s && %s && %s " %(recoFVstring,trueFVstring,posGood,peGood),"goff")
                         h[s_dl] = t.GetHistogram()
                         h[s_dl].SetName(s_dl)
-                        h[s_dl].SetXTitle('T_{eff} [MeV]')
+                        h[s_dl].SetXTitle('photoelectrons')
                         h[s_dl].SetYTitle('counts [%s]^{-1}'%(timeScale))
-                        h[s_dl].Scale(ei/float(tt)*er)
+                        #h[s_dl].Scale(ei/float(tt)*er)
 
-                        s_dlsi        = "%s_pe_%s_%s_%s_%d"%('si',cover,ii,locj,1)
+                        s_dlsi        = "%s_Teff_%s_%s_%s_%d"%('si',cover,ii,locj,1)
                         h[s_dlsi]     = TH1D(s_dlsi,s_dlsi,5000,0,500)
                         h[s_dlsi].SetName(s_dl)
-                        si = t.Draw("pe/%f>>hsi(5000,0,500)"%(pePerMeVDict['%s'%(cover)])," %s && !%s && %s && %s " %(recoFVstring,trueFVstring,posGood,peGood),"goff")
+                        si = t.Draw("pe>>hsiT(5000,0,500)"," %s && !%s && %s && %s " %(recoFVstring,trueFVstring,posGood,peGood),"goff")
                         h[s_dlsi] = t.GetHistogram()
                         h[s_dlsi].SetName(s_dlsi)
-                        h[s_dlsi].SetXTitle('T_{eff} [MeV]')
+                        h[s_dlsi].SetXTitle('photoelectrons')
                         h[s_dlsi].SetYTitle('counts [%s]^{-1}'%(timeScale))
-                        h[s_dlsi].Scale(si/float(tt)*er)
+                        #h[s_dlsi].Scale(si/float(tt)*er)
+
 
 
                         so = t.Draw("pe/%f>>hso(5000,0,500)"%(pePerMeVDict['%s'%(cover)]),"!%s &&  %s && %s && %s " %(recoFVstring,trueFVstring,posGood,peGood),"goff")
@@ -894,6 +914,8 @@ def extractHistogramWitCorrectRate():
                         f_root.cd()
                         h[s_dl].Write()
                         h[s_dlsi].Write()
+                        h[s_dlT].Write()
+                        h[s_dlTsi].Write()
                         h[s_dl1].Write()
                         h[s_dl1b].Write()
                         h[s_dl2].Write()
