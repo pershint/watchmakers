@@ -2,25 +2,25 @@ from load import *
 from io_operations import testEnabledCondition,writeResultsToFile
 
 def fillHistograms(inFilePrefix,a1,t1,h,cover,ii,locj,covPCT):
-    # Obtain logarithmic binnings
+    #   Obtain logarithmic binnings
     nbins, xbins, ybins = logx_logy_array()
-    
+
     additionalString,additionalCommands,additionalMacStr,additionalMacOpt = testEnabledCondition(arguments)
-    
+
     fiducialVolume = float(arguments["--fv"])
     pmtDist         = float(arguments["--psup"])
-#    print "Fiducial volume is ", fiducialVolume
-    #Read-in file
+    #    print "Fiducial volume is ", fiducialVolume
+    #   Read-in file
     try:
         s =  "ntuple_root_files%s/%s_%s_%s_%s.root"%(additionalString,inFilePrefix,ii,cover,locj)
-        print "Reading in ",s 
-#        data = root2array(s)
+        print "Reading in ",s
+        #        data = root2array(s)
         t           = root2rec(s)
 
         #Apply some analysis
         r           = npa(t.reco_r<fiducialVolume,dtype=bool)
         z           = npa(absolute(t.reco_z)<fiducialVolume,dtype=bool)
-        
+
         #isFV        = logical_and(r,z,dtype=bool)
         isFV        = npa(t.FV==1,dtype=bool)
         notFV       = npa(t.FV!=1,dtype=bool)
@@ -29,7 +29,7 @@ def fillHistograms(inFilePrefix,a1,t1,h,cover,ii,locj,covPCT):
 
         iCandidate  = npa(t.candidate==1,dtype=bool)
         totalEvtGen = npa(t.all_ev==t.all_ev_tot,dtype=bool)
-        
+
         tot         = float(sum(totalEvtGen))
         totD        = float(len(t.FV))
 
@@ -316,31 +316,27 @@ def fillHistograms(inFilePrefix,a1,t1,h,cover,ii,locj,covPCT):
         print "Could not read file ",s
 
     print ""
-#        f.Close()
+    #        f.Close()
     return h
 
-
-
-
-
 def extractHistogramWitCorrectRate():
-    
+
     g,h = {},{}
-    
+
     d,iso,loc,coverage,coveragePCT = loadSimulationParameters()
 
     # Obtain logarithmic binnings
     nbins, xbins, ybins = logx_logy_array()
-    
+
     additionalString,additionalCommands,additionalMacStr,additionalMacOpt = testEnabledCondition(arguments)
-    
+
     boolSUPERNOVA_FORMAT    = arguments["--supernovaFormat"]
-    
+
     fiducialVolume          = float(arguments["--fv"])
     pmtDist                 = float(arguments["--psup"])
     timeScale               = arguments["--timeScale"]
     inFilePrefix            = arguments["--ft"]
-    
+
     parameters  = loadAnalysisParameters(timeScale)
     rates       = parameters[11]
     mass        = parameters[10]
@@ -351,11 +347,11 @@ def extractHistogramWitCorrectRate():
     timeRedux     *=1e-6/timeS
     print "The rates of events per %s are"%(timeScale),rates
     print "The cuts are : time window %4.3e %s" %(timeRedux,timeScale)
-#    print "Fiducial volume is ", fiducialVolume
+    #    print "Fiducial volume is ", fiducialVolume
     #Read-in file
-    
+
     #inFilePrefix,h,cover,ii,locj,covPCT
-    
+
     if boolSUPERNOVA_FORMAT:
         additionalString,additionalCommands,additionalMacStr,additionalMacOpt = testEnabledCondition(arguments)
         _str = "ntuple_root_files%s/%s" %(additionalString,arguments["-o"])
@@ -377,8 +373,8 @@ def extractHistogramWitCorrectRate():
                 string  = "eo_%s_%s_1_abs" %(ii,locj)
                 g[string] = TGraph()
                 g[string].SetName(string)
-                
-                
+
+
                 string  = "si_%s_%s_singlesRate" %(ii,locj)
                 g[string] = TGraph()
                 g[string].SetName(string)
@@ -391,8 +387,8 @@ def extractHistogramWitCorrectRate():
                 string  = "eo_%s_%s_singlesRate" %(ii,locj)
                 g[string] = TGraph()
                 g[string].SetName(string)
-                
-                
+
+
                 string  = "eisi_%s_%s_singlesRate_ProxCut" %(ii,locj)
                 g[string] = TGraph()
                 g[string].SetName(string)
@@ -401,15 +397,15 @@ def extractHistogramWitCorrectRate():
                 g[string] = TGraph()
                 g[string].SetName(string)
                 cntG    = 0
-                
+
                 string  = "eisi_%s_%s_singlesRate_ProxCut_TimeCut" %(ii,locj)
                 g[string] = TGraph()
                 g[string].SetName(string)
-                
+
                 for idx,cover in enumerate(coverage):
                     covPCT  = coveragePCT[cover]
                     try:
-#                        branches = 'pe','nhit','n9','delta_time_s', 'detected_ev','detected_ev_tot','all_ev','all_ev_tot',subevents,event_number,candidate,mc_prim_energy,pos_goodness,posReco,reco_r,reco_z,posTruth,true_r,true_z,dir_goodness,dirReco,dirPrimaryMC,FV,GSV,EV,OV,IV,FV_truth,GSV_truth,EV_truth,OV_truth,IV_truth,inner_dist,inner_time,inner_dist_fv,tot_FV,consecutive_FV')'
+                        #                        branches = 'pe','nhit','n9','delta_time_s', 'detected_ev','detected_ev_tot','all_ev','all_ev_tot',subevents,event_number,candidate,mc_prim_energy,pos_goodness,posReco,reco_r,reco_z,posTruth,true_r,true_z,dir_goodness,dirReco,dirPrimaryMC,FV,GSV,EV,OV,IV,FV_truth,GSV_truth,EV_truth,OV_truth,IV_truth,inner_dist,inner_time,inner_dist_fv,tot_FV,consecutive_FV')'
                         s =  "ntuple_root_files%s/%s_%s_%s_%s.root"%(additionalString,inFilePrefix,ii,cover,locj)
                         print "\nReading in ",s
 
@@ -419,29 +415,29 @@ def extractHistogramWitCorrectRate():
                         trueFVstring    = "(sqrt(pow(posTruth.X(),2) + pow(posTruth.Y(),2))<%f*1000. && sqrt(pow(posTruth.Z(),2))<%f*1000.)"%(fiducialVolume,fiducialVolume)
                         posGood        = "(pos_goodness>%f)" %(float(arguments["-g"]))
                         peGood = "(pe>%f)" %(float(arguments["--minPE"]))
-                        tt = t.Draw("pe>>h4(2000,0,200)","sub_ev_cnt == sub_ev","goff")
-                        
+                        tt = t.Draw("pe>>h4(5000,0,500)","sub_ev_cnt == sub_ev","goff")
+
                         er = float(rates["%s_%s"%(ii,locj)])
-                        
+
                         if locj == 'PMT':
                             print "adjusting rate for pmt %4.3e %s^{-1}, pmt mass %4.2f, number of PMTs %d : %4.3e %s^{-1}"%(er,timeScale,mass,pc_num["%s"%(cover)],er*pc_num["%s"%(cover)]*mass,timeScale)
                             er*=pc_num["%s"%(cover)]*mass
                         print 'Total event rate pre-detection efficiency is ',er, ' per ', timeScale
-                        
-                        s_dl        = "%s_pe_%s_%s_%s_%d"%('ei',cover,ii,locj,1)
-                        h[s_dl]     = TH1D(s_dl,s_dl,2000,0,200)
 
-                        ei = t.Draw("pe>>hei(2000,0,200)"," %s &&  %s && %s && %s " %(recoFVstring,trueFVstring,posGood,peGood),"goff")
+                        s_dl        = "%s_pe_%s_%s_%s_%d"%('ei',cover,ii,locj,1)
+                        h[s_dl]     = TH1D(s_dl,s_dl,5000,0,500)
+
+                        ei = t.Draw("pe>>hei(5000,0,500)"," %s &&  %s && %s && %s " %(recoFVstring,trueFVstring,posGood,peGood),"goff")
                         h[s_dl] = t.GetHistogram()
                         h[s_dl].SetName(s_dl)
                         h[s_dl].SetXTitle('photoelectrons')
                         h[s_dl].SetYTitle('counts [%s]^{-1}'%(timeScale))
                         h[s_dl].Scale(ei/float(tt)*er)
-                        
+
                         s_dlsi        = "%s_pe_%s_%s_%s_%d"%('si',cover,ii,locj,1)
-                        h[s_dlsi]     = TH1D(s_dlsi,s_dlsi,2000,0,200)
+                        h[s_dlsi]     = TH1D(s_dlsi,s_dlsi,5000,0,500)
                         h[s_dlsi].SetName(s_dl)
-                        si = t.Draw("pe>>hsi(2000,0,200)"," %s && !%s && %s && %s " %(recoFVstring,trueFVstring,posGood,peGood),"goff")
+                        si = t.Draw("pe>>hsi(5000,0,500)"," %s && !%s && %s && %s " %(recoFVstring,trueFVstring,posGood,peGood),"goff")
                         h[s_dlsi] = t.GetHistogram()
                         h[s_dlsi].SetName(s_dlsi)
                         h[s_dlsi].SetXTitle('photoelectrons')
@@ -449,10 +445,10 @@ def extractHistogramWitCorrectRate():
                         h[s_dlsi].Scale(si/float(tt)*er)
 
 
-                        so = t.Draw("pe>>hso(2000,0,200)","!%s &&  %s && %s && %s " %(recoFVstring,trueFVstring,posGood,peGood),"goff")
-                        
-                        eo = t.Draw("pe>>heo(2000,0,200)","!%s && !%s && %s && %s " %(recoFVstring,trueFVstring,posGood,peGood),"goff")
-                        
+                        so = t.Draw("pe>>hso(5000,0,500)","!%s &&  %s && %s && %s " %(recoFVstring,trueFVstring,posGood,peGood),"goff")
+
+                        eo = t.Draw("pe>>heo(5000,0,500)","!%s && !%s && %s && %s " %(recoFVstring,trueFVstring,posGood,peGood),"goff")
+
                         print "(%7s %7s %7s %7s ) %8s |            (%9s %9s %9s %9s)" %('ei','si','so','eo','mc events','ei','si','so','eo')
                         print "(%7d %7d %7d %7d ) %8d  | efficiency (%4.3e %4.3e %4.3e %4.3e)" %(ei,si,so,eo, tt,ei/float(tt),si/float(tt),so/float(tt),eo/float(tt))
                         print "(%7d %7d %7d %7d ) %8d  | event rate (%4.3e %4.3e %4.3e %4.3e) per %s" % (ei,si,so,eo, tt,ei/float(tt)*er,si/float(tt)*er,so/float(tt)*er,eo/float(tt)*er,timeScale)
@@ -472,7 +468,7 @@ def extractHistogramWitCorrectRate():
                         g["ei_%s_%s_1_abs" %(ii,locj)].GetYaxis().SetTitle('efficiency')
                         g["so_%s_%s_1_abs" %(ii,locj)].GetYaxis().SetTitle('efficiency')
                         g["eo_%s_%s_1_abs" %(ii,locj)].GetYaxis().SetTitle('efficiency')
-                        
+
                         g["si_%s_%s_singlesRate" %(ii,locj)].SetPoint(cntG,pc_val["%s"%(cover)],si/float(tt)*er)
                         g["ei_%s_%s_singlesRate" %(ii,locj)].SetPoint(cntG,pc_val["%s"%(cover)],ei/float(tt)*er)
                         g["so_%s_%s_singlesRate" %(ii,locj)].SetPoint(cntG,pc_val["%s"%(cover)],so/float(tt)*er)
@@ -485,16 +481,16 @@ def extractHistogramWitCorrectRate():
                         g["ei_%s_%s_singlesRate" %(ii,locj)].GetYaxis().SetTitle('counts [%s]^{-1}'%(timeScale))
                         g["so_%s_%s_singlesRate" %(ii,locj)].GetYaxis().SetTitle('counts [%s]^{-1}'%(timeScale))
                         g["eo_%s_%s_singlesRate" %(ii,locj)].GetYaxis().SetTitle('counts [%s]^{-1}'%(timeScale))
-                        
+
                         # See below
-#                        cntG+=1
+                        #                        cntG+=1
 
                         N  = t.Draw("pe:posReco.X():posReco.Y():posReco.Z()"," %s && %s && %s " %(recoFVstring,posGood,peGood),"goff")
                         pe   = t.GetV1()
                         x    = t.GetV2()
                         y    = t.GetV3()
                         z    = t.GetV4()
-                        
+
                         s_dl1        = "%s_dD_%s_%s_%s_%s"%('eisi',cover,ii,locj,'proxCutEfficiency')
                         h[s_dl1]     = TH1D(s_dl1,s_dl1,5000,0,15)
                         h[s_dl1].SetName(s_dl1)
@@ -506,7 +502,7 @@ def extractHistogramWitCorrectRate():
                         h[s_dl2].SetXTitle('prompt energy [pe]')
                         h[s_dl2].SetYTitle('delayed energy [pe]')
                         h[s_dl2].SetZTitle('efficiency')
-                        
+
 
                         s_dl1b        = "%s_dD_%s_%s_%s_%s"%('eisi',cover,ii,locj,'proxCutRate')
                         h[s_dl1b]     = TH1D(s_dl1b,s_dl1b,5000,0,15)
@@ -537,13 +533,13 @@ def extractHistogramWitCorrectRate():
                         g["eisi_%s_%s_abs_ProxCut" %(ii,locj)].SetPoint(cntG,pc_val["%s"%(cover)],cntEISI/float(tt))
                         g["eisi_%s_%s_abs_ProxCut" %(ii,locj)].GetXaxis().SetTitle('PMT coverage')
                         g["eisi_%s_%s_abs_ProxCut" %(ii,locj)].GetYaxis().SetTitle('efficiency')
-                        
+
                         if locj == 'PMT' or locj == 'FV':
                             print "(------- %7d  ------  ------ ) %8d  | event rate (--------- %4.3e --------- ---------) per %s (after time redux and prox)" % (si, tt,timeRedux*power(cntEISI/float(tt)*er,2),timeScale)
-                        
-                        
+
+
                         cntG+=1
-                        
+
                         h[s_dl2].Scale(1./tt)
                         h[s_dl1].Scale(1./tt)
                         h[s_dl2b].Scale(1./tt*er)
@@ -569,26 +565,26 @@ def extractHistogramWitCorrectRate():
                             g["eisi_%s_%s_abs_ProxCut" %(ii,locj)].Write()
 
 
-                
-#                        t = tree2array(intree)
-#                        print len(t),len(t[0])
+
+                            #                        t = tree2array(intree)
+                            #                        print len(t),len(t[0])
 
 
                     except:
                         print "Could not read file ",s
-#        writeResultsToFile(arguments["-o"],g,h)
-#        print h
+                        #        writeResultsToFile(arguments["-o"],g,h)
+                        #        print h
     if not boolSUPERNOVA_FORMAT:
         additionalString,additionalCommands,additionalMacStr,additionalMacOpt = testEnabledCondition(arguments)
         _str = "ntuple_root_files%s/%s" %(additionalString,arguments["-o"])
         f_root = TFile(_str,"recreate")
-        
-        
+
+
         # First find the PE per MeV
         procConsidered = ['boulby','imb']
         locj           = 'S'
         pePerMeVDict    = {}
-        
+
         string  = "pePerMeV_boulby"
         g[string] = TGraph()
         string  = "nhitPerMeV_boulby"
@@ -605,7 +601,7 @@ def extractHistogramWitCorrectRate():
         g[string] = TGraph()
 
         cntF    = 0
-        
+
         for ii in procConsidered:
             for idx,cover in enumerate(coverage):
                 covPCT  = coveragePCT[cover]
@@ -629,13 +625,13 @@ def extractHistogramWitCorrectRate():
                 h[s_nhitPerMeV_eisi].Fit("fPolyFit1","MREQ","",2,6.5)
                 fitRes1 = h[s_nhitPerMeV_eisi].GetFunction("fPolyFit1")
                 print ' nhit results of fit :',fitRes1.GetParameter(0),fitRes1.GetParameter(1)
-                
+
                 if ii == 'boulby':
                     g["nhitPerMeV_boulby"].SetPoint(cntB,pc_val["%s"%(cover)],fitRes1.GetParameter(1))
                     g["nhitPerMeV_boulby"].SetName("nhitPerMeV_boulby")
                     g["nhitPerMeV_boulby"].GetXaxis().SetTitle('PMT coverage')
                     g["nhitPerMeV_boulby"].GetYaxis().SetTitle('pe / MeV')
-                
+
                 if ii == 'imb':
                     g["nhitPerMeV_imb"].SetPoint(cntB,pc_val["%s"%(cover)],fitRes1.GetParameter(1))
                     g["nhitPerMeV_imb"].SetName("nhitPerMeV_imb")
@@ -654,19 +650,19 @@ def extractHistogramWitCorrectRate():
                 fitRes2 = h[s_pePerMeV_eisi].GetFunction("fPolyFit2")
                 print ' pe results of fit :',fitRes2.GetParameter(0),fitRes2.GetParameter(1)
                 pePerMeVDict['%s'%(cover)] = fitRes2.GetParameter(1)
-                
+
                 if ii == 'boulby':
                     g["pePerMeV_boulby"].SetPoint(cntB,pc_val["%s"%(cover)],fitRes2.GetParameter(1))
                     g["pePerMeV_boulby"].SetName("pePerMeV_boulby")
                     g["pePerMeV_boulby"].GetXaxis().SetTitle('PMT coverage')
                     g["pePerMeV_boulby"].GetYaxis().SetTitle('pe / MeV')
-                
+
                 if ii == 'imb':
                     g["pePerMeV_imb"].SetPoint(cntF,pc_val["%s"%(cover)],fitRes2.GetParameter(1))
                     g["pePerMeV_imb"].SetName("pePerMeV_imb")
                     g["pePerMeV_imb"].GetXaxis().SetTitle('PMT coverage')
                     g["pePerMeV_imb"].GetYaxis().SetTitle('pe / MeV')
-                
+
 
                 fPolyFit3  = TF1('fPolyFit3',"[0]+[1]*x",0.0,10.0)
                 fPolyFit3.SetParameters(backgroundNoise,15.)
@@ -677,7 +673,7 @@ def extractHistogramWitCorrectRate():
                 h[s_n9PerMeV_eisi].Fit("fPolyFit3","MREQ","",2,6.5)
                 fitRes3 = h[s_n9PerMeV_eisi].GetFunction("fPolyFit3")
                 print ' n9 results of fit :',fitRes3.GetParameter(0),fitRes3.GetParameter(1)
-                
+
                 if ii == 'boulby':
                     g["n9PerMeV_boulby"].SetPoint(cntB,pc_val["%s"%(cover)],fitRes3.GetParameter(1))
                     g["n9PerMeV_boulby"].SetName("n9PerMeV_boulby")
@@ -724,8 +720,8 @@ def extractHistogramWitCorrectRate():
                 string  = "eo_%s_%s_1_abs" %(ii,locj)
                 g[string] = TGraph()
                 g[string].SetName(string)
-                
-                
+
+
                 string  = "si_%s_%s_singlesRate" %(ii,locj)
                 g[string] = TGraph()
                 g[string].SetName(string)
@@ -738,8 +734,8 @@ def extractHistogramWitCorrectRate():
                 string  = "eo_%s_%s_singlesRate" %(ii,locj)
                 g[string] = TGraph()
                 g[string].SetName(string)
-                
-                
+
+
                 string  = "eisi_%s_%s_singlesRate_ProxCut" %(ii,locj)
                 g[string] = TGraph()
                 g[string].SetName(string)
@@ -748,15 +744,15 @@ def extractHistogramWitCorrectRate():
                 g[string] = TGraph()
                 g[string].SetName(string)
                 cntG    = 0
-                
+
                 string  = "eisi_%s_%s_singlesRate_ProxCut_TimeCut" %(ii,locj)
                 g[string] = TGraph()
                 g[string].SetName(string)
-                
+
                 for idx,cover in enumerate(coverage):
                     covPCT  = coveragePCT[cover]
                     try:
-#                        branches = 'pe','nhit','n9','delta_time_s', 'detected_ev','detected_ev_tot','all_ev','all_ev_tot',subevents,event_number,candidate,mc_prim_energy,pos_goodness,posReco,reco_r,reco_z,posTruth,true_r,true_z,dir_goodness,dirReco,dirPrimaryMC,FV,GSV,EV,OV,IV,FV_truth,GSV_truth,EV_truth,OV_truth,IV_truth,inner_dist,inner_time,inner_dist_fv,tot_FV,consecutive_FV')'
+                        #                        branches = 'pe','nhit','n9','delta_time_s', 'detected_ev','detected_ev_tot','all_ev','all_ev_tot',subevents,event_number,candidate,mc_prim_energy,pos_goodness,posReco,reco_r,reco_z,posTruth,true_r,true_z,dir_goodness,dirReco,dirPrimaryMC,FV,GSV,EV,OV,IV,FV_truth,GSV_truth,EV_truth,OV_truth,IV_truth,inner_dist,inner_time,inner_dist_fv,tot_FV,consecutive_FV')'
                         s =  "ntuple_root_files%s/%s_%s_%s_%s.root"%(additionalString,inFilePrefix,ii,cover,locj)
                         print "\nReading in ",s
 
@@ -767,28 +763,28 @@ def extractHistogramWitCorrectRate():
                         posGood        = "(pos_goodness>%f)" %(float(arguments["-g"]))
                         peGood = "(n9>%f)" %(float(arguments["--minPE"]))
                         tt = t.Draw("pe","all_ev_tot == all_ev","goff")
-                        
+
                         er = float(rates["%s_%s"%(ii,locj)])
-                        
+
                         if locj == 'PMT':
                             print " adjusting rate for pmt %4.3e %s^{-1}, pmt mass %4.2f, number of PMTs %d : %4.3e %s^{-1}"%(er,timeScale,mass,pc_num["%s"%(cover)],er*pc_num["%s"%(cover)]*mass,timeScale)
                             er*=pc_num["%s"%(cover)]*mass
                         print ' Total event rate pre-detection efficiency is ',er, ' per ', timeScale
-                        
-                        s_dl        = "%s_pe_%s_%s_%s_%d"%('ei',cover,ii,locj,1)
-                        h[s_dl]     = TH1D(s_dl,s_dl,2000,0,200)
 
-                        ei = t.Draw("pe/%f>>hei(2000,0,200)"%(pePerMeVDict['%s'%(cover)])," %s &&  %s && %s && %s " %(recoFVstring,trueFVstring,posGood,peGood),"goff")
+                        s_dl        = "%s_pe_%s_%s_%s_%d"%('ei',cover,ii,locj,1)
+                        h[s_dl]     = TH1D(s_dl,s_dl,5000,0,500)
+
+                        ei = t.Draw("pe/%f>>hei(5000,0,500)"%(pePerMeVDict['%s'%(cover)])," %s &&  %s && %s && %s " %(recoFVstring,trueFVstring,posGood,peGood),"goff")
                         h[s_dl] = t.GetHistogram()
                         h[s_dl].SetName(s_dl)
                         h[s_dl].SetXTitle('T_{eff} [MeV]')
                         h[s_dl].SetYTitle('counts [%s]^{-1}'%(timeScale))
                         h[s_dl].Scale(ei/float(tt)*er)
-                        
+
                         s_dlsi        = "%s_pe_%s_%s_%s_%d"%('si',cover,ii,locj,1)
-                        h[s_dlsi]     = TH1D(s_dlsi,s_dlsi,2000,0,200)
+                        h[s_dlsi]     = TH1D(s_dlsi,s_dlsi,5000,0,500)
                         h[s_dlsi].SetName(s_dl)
-                        si = t.Draw("pe/%f>>hsi(2000,0,200)"%(pePerMeVDict['%s'%(cover)])," %s && !%s && %s && %s " %(recoFVstring,trueFVstring,posGood,peGood),"goff")
+                        si = t.Draw("pe/%f>>hsi(5000,0,500)"%(pePerMeVDict['%s'%(cover)])," %s && !%s && %s && %s " %(recoFVstring,trueFVstring,posGood,peGood),"goff")
                         h[s_dlsi] = t.GetHistogram()
                         h[s_dlsi].SetName(s_dlsi)
                         h[s_dlsi].SetXTitle('T_{eff} [MeV]')
@@ -796,9 +792,9 @@ def extractHistogramWitCorrectRate():
                         h[s_dlsi].Scale(si/float(tt)*er)
 
 
-                        so = t.Draw("pe/%f>>hso(2000,0,200)"%(pePerMeVDict['%s'%(cover)]),"!%s &&  %s && %s && %s " %(recoFVstring,trueFVstring,posGood,peGood),"goff")
-                        eo = t.Draw("pe/%f>>heo(2000,0,200)"%(pePerMeVDict['%s'%(cover)]),"!%s && !%s && %s && %s " %(recoFVstring,trueFVstring,posGood,peGood),"goff")
-                        
+                        so = t.Draw("pe/%f>>hso(5000,0,500)"%(pePerMeVDict['%s'%(cover)]),"!%s &&  %s && %s && %s " %(recoFVstring,trueFVstring,posGood,peGood),"goff")
+                        eo = t.Draw("pe/%f>>heo(5000,0,500)"%(pePerMeVDict['%s'%(cover)]),"!%s && !%s && %s && %s " %(recoFVstring,trueFVstring,posGood,peGood),"goff")
+
                         print " (%7s %7s %7s %7s ) %8s |            (%9s %9s %9s %9s)" %('ei','si','so','eo','mc events','ei','si','so','eo')
                         print " (%7d %7d %7d %7d ) %8d  | efficiency (%4.3e %4.3e %4.3e %4.3e)" %(ei,si,so,eo, tt,ei/float(tt),si/float(tt),so/float(tt),eo/float(tt))
                         print " (%7d %7d %7d %7d ) %8d  | event rate (%4.3e %4.3e %4.3e %4.3e) per %s" % (ei,si,so,eo, tt,ei/float(tt)*er,si/float(tt)*er,so/float(tt)*er,eo/float(tt)*er,timeScale)
@@ -818,7 +814,7 @@ def extractHistogramWitCorrectRate():
                         g["ei_%s_%s_1_abs" %(ii,locj)].GetYaxis().SetTitle('efficiency')
                         g["so_%s_%s_1_abs" %(ii,locj)].GetYaxis().SetTitle('efficiency')
                         g["eo_%s_%s_1_abs" %(ii,locj)].GetYaxis().SetTitle('efficiency')
-                        
+
                         g["si_%s_%s_singlesRate" %(ii,locj)].SetPoint(cntG,pc_val["%s"%(cover)],si/float(tt)*er)
                         g["ei_%s_%s_singlesRate" %(ii,locj)].SetPoint(cntG,pc_val["%s"%(cover)],ei/float(tt)*er)
                         g["so_%s_%s_singlesRate" %(ii,locj)].SetPoint(cntG,pc_val["%s"%(cover)],so/float(tt)*er)
@@ -831,16 +827,16 @@ def extractHistogramWitCorrectRate():
                         g["ei_%s_%s_singlesRate" %(ii,locj)].GetYaxis().SetTitle('counts [%s]^{-1}'%(timeScale))
                         g["so_%s_%s_singlesRate" %(ii,locj)].GetYaxis().SetTitle('counts [%s]^{-1}'%(timeScale))
                         g["eo_%s_%s_singlesRate" %(ii,locj)].GetYaxis().SetTitle('counts [%s]^{-1}'%(timeScale))
-                        
+
                         # See below
-#                        cntG+=1
+                        #                        cntG+=1
 
                         N  = t.Draw("pe:posReco.X():posReco.Y():posReco.Z()"," %s && %s && %s " %(recoFVstring,posGood,peGood),"goff")
                         pe   = t.GetV1()
                         x    = t.GetV2()
                         y    = t.GetV3()
                         z    = t.GetV4()
-                        
+
                         s_dl1        = "%s_dD_%s_%s_%s_%s"%('eisi',cover,ii,locj,'proxCutEfficiency')
                         h[s_dl1]     = TH1D(s_dl1,s_dl1,5000,0,15)
                         h[s_dl1].SetName(s_dl1)
@@ -852,7 +848,7 @@ def extractHistogramWitCorrectRate():
                         h[s_dl2].SetXTitle('prompt energy [pe]')
                         h[s_dl2].SetYTitle('delayed energy [pe]')
                         h[s_dl2].SetZTitle('efficiency')
-                        
+
 
                         s_dl1b        = "%s_dD_%s_%s_%s_%s"%('eisi',cover,ii,locj,'proxCutRate')
                         h[s_dl1b]     = TH1D(s_dl1b,s_dl1b,5000,0,15)
@@ -883,13 +879,13 @@ def extractHistogramWitCorrectRate():
                         g["eisi_%s_%s_abs_ProxCut" %(ii,locj)].SetPoint(cntG,pc_val["%s"%(cover)],cntEISI/float(tt))
                         g["eisi_%s_%s_abs_ProxCut" %(ii,locj)].GetXaxis().SetTitle('PMT coverage')
                         g["eisi_%s_%s_abs_ProxCut" %(ii,locj)].GetYaxis().SetTitle('efficiency')
-                        
+
                         if locj == 'PMT' or locj == 'FV':
                             print "(------- %7d  ------  ------ ) %8d  | event rate (--------- %4.3e --------- ---------) per %s (after time redux and prox)" % (si, tt,timeRedux*power(cntEISI/float(tt)*er,2),timeScale)
-                        
-                        
+
+
                         cntG+=1
-                        
+
                         h[s_dl2].Scale(1./tt)
                         h[s_dl1].Scale(1./tt)
                         h[s_dl2b].Scale(1./tt*er)
@@ -915,23 +911,21 @@ def extractHistogramWitCorrectRate():
                             g["eisi_%s_%s_abs_ProxCut" %(ii,locj)].Write()
 
 
-                
-#                        t = tree2array(intree)
-#                        print len(t),len(t[0])
+
+                            #                        t = tree2array(intree)
+                            #                        print len(t),len(t[0])
 
 
                     except:
                         print "Could not read file ",s
-#        writeResultsToFile(arguments["-o"],g,h)
-#        print h
+                        #        writeResultsToFile(arguments["-o"],g,h)
+                        #        print h
 
     print "\n\n\nThe following file has been created for your convenience: ",_str,"\n\n"
-#        f.Close()
+    #        f.Close()
 
 
     return h
-
-
 
 def logx_logy_array(nbins = 500,xmin = 1e-2,xmax = 30.,ymin = 1e-9,ymax = 1e3):
     #x-axis
@@ -951,9 +945,6 @@ def logx_logy_array(nbins = 500,xmin = 1e-2,xmax = 30.,ymin = 1e-9,ymax = 1e3):
         ybins[i] = ymin + pow(10,logymin+i*ybinwidth)
     return nbins,xbins,ybins
 
-
-
-
 def obtainAbsoluteEfficiency(f,timeScale='day',cut = 10.0):
 
     covPCT      = {'9.86037':1432., '14.887':2162.,'19.4453':2824.,'24.994':3558.,'28.8925':4196.,'34.3254':4985.,'39.1385':5684.}
@@ -962,7 +953,7 @@ def obtainAbsoluteEfficiency(f,timeScale='day',cut = 10.0):
 
     f           = TFile(f,'read')
     EG          = {}
-    
+
 
 
     inta,proc,loca,acc,arr,Activity,br,site,timeS,boulbyNeutronFV,mass,dAct,cove,covePCT = loadAnalysisParameters(timeScale)
@@ -988,8 +979,8 @@ def obtainAbsoluteEfficiency(f,timeScale='day',cut = 10.0):
                 if eff>0.00:
                     EG[_strEff].SetPoint(cnter,pct[cc],eff)
                     cnter+=1
-#                    if loca[ii]=="RN":
-#                        print _inta,val,proc[ii],loca[ii],cnter,pct[cc],eff
+                    #                    if loca[ii]=="RN":
+                    #                        print _inta,val,proc[ii],loca[ii],cnter,pct[cc],eff
 
             try:
                 EG[_str1] = f.Get(_str1)
@@ -998,8 +989,8 @@ def obtainAbsoluteEfficiency(f,timeScale='day',cut = 10.0):
                 for i in range(EG[_str1].GetN()):
                     EG[_str1].GetPoint(i,x,y)
                     nY      = y*Activity[ii]*timeS*br[ii]*EG[_strEff].Eval(x)
-#                    if _inta == 'ei' and loca[ii] == 'S':
-#                        print 'A',_str1,_strEff,y,Activity[ii],timeS,br[ii],EG[_strEff].Eval(x),nY
+                    #                    if _inta == 'ei' and loca[ii] == 'S':
+                    #                        print 'A',_str1,_strEff,y,Activity[ii],timeS,br[ii],EG[_strEff].Eval(x),nY
                     if loca[ii] == 'PMT':
                         nY      *= mass*covPCT["%s"%(x)]
                         EG[_scal_str1].SetPoint(i,x,nY)
@@ -1055,8 +1046,6 @@ def obtainAbsoluteEfficiency(f,timeScale='day',cut = 10.0):
         EG[_scal_acc_notFV1].SetPoint(iii,x,nY*distanceEff)
     return EG
 
-
-
 def pickColor(H,_loc,r_c,o_c,b_c,c_c ):
     if _loc=='PMT':
         H.SetLineColor(kOrange+o_c)
@@ -1082,16 +1071,15 @@ def pickColor(H,_loc,r_c,o_c,b_c,c_c ):
         c_c+=1
     return r_c,o_c,b_c,c_c, H
 
-
 def integralCoincidence(R,lowerBound,upperBound):
     low = -exp(-lowerBound) * (1+lowerBound )
     up  = -exp(-upperBound) * (1+upperBound)
     return up - low
 
-
 def histIntegral(s,f,cut):
     H = {}
     H[s] = f.Get(s)
+
     if H[s]!= None:
         a = H[s].Integral(0,int(cut*10))
         N = H[s].Integral(0,5000)
@@ -1099,7 +1087,11 @@ def histIntegral(s,f,cut):
         a = 1.0
         N = 1.0
 
-    return (1.0 - a/N )
+    print s,H[s],a,N
+    if N !=0:
+        return (1.0 - a/N )
+    else:
+        return 0
 
 def runAnalysisProcess(f,g,h):
     d,iso,loc,coverage,coveragePCT = loadSimulationParameters()

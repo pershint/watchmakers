@@ -4,7 +4,7 @@ from watchmakers.load import *
 from watchmakers.analysis import *
 from io_operations import testEnabledCondition
 
-from numpy import max 
+from numpy import max
 t = arguments['--timeScale']
 
 def drange(start, stop, step):
@@ -162,14 +162,14 @@ def siteCanvas(Graphs,site,cut,hist):
 
 
 def sensitivityMap():
-    
-    
-    
+
+
+
     site = arguments["--site"]
     if site != 'boulby':
         site = ''
     # Need to fix this for future running
-    
+
     OnOffRatio = float(arguments["--OnOff"])
     print site,OnOffRatio
 
@@ -230,9 +230,8 @@ def sensitivityMap():
     c1 = TCanvas('c1','c1',1618,1000)
     c1.SetRightMargin(0.53)
     c1.Divide(2,2)
+    additionalString,additionalCommands,additionalMacStr,additionalMacOpt = testEnabledCondition(arguments)
 
-
-    additionalString,additionalCommands = testEnabledCondition(arguments)
     if additionalString == "":
         additionalString = "_default"
 
@@ -252,20 +251,20 @@ def sensitivityMap():
     gStyle.SetOptStat(0)
     gStyle.SetPalette(55)
 
-#    palette=TPaletteAxis(hist.FindObject("palette"))
-#    #palette=histo.FindObject("palette")
-#    palette.SetLabelFont(42)
-#    palette.SetLabelSize(0.030)
-#    palette.SetX1NDC(0.905)
-#    palette.SetX2NDC(0.918)
-#    axis = palette.GetAxis()
-#    axis.SetDecimals(kTRUE)
-#    axis.SetMaxDigits(3)
-#    axis.SetNoExponent(kFALSE)
-#    gPad.Update()
+	   # palette=TPaletteAxis(hist.FindObject("palette"))
+	   # #palette=histo.FindObject("palette")
+	   # palette.SetLabelFont(42)
+	   # palette.SetLabelSize(0.030)
+	   # palette.SetX1NDC(0.905)
+	   # palette.SetX2NDC(0.918)
+	   # axis = palette.GetAxis()
+	   # axis.SetDecimals(kTRUE)
+	   # axis.SetMaxDigits(3)
+	   # axis.SetNoExponent(kFALSE)
+	   # gPad.Update()
 
 
-    fileIN = 'processed_watchman_Feb%s.root' %(additionalString)
+    fileIN = 'processed_watchman_March%s.root' %(additionalString)
 
     print 'Will read in', fileIN
 
@@ -333,8 +332,8 @@ def sensitivityMap():
         _graph.GetYaxis().SetTitle('time [%s]'%(t))
         gPad.SetTicks()
         gPad.SetGridy()
-        
-        
+
+
         c1.cd(3)
         _graphS.Draw('AL')
         y = _graphS.GetYaxis().GetXmax()
