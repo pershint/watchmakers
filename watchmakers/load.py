@@ -6,7 +6,7 @@ from ROOT import kRed,kBlue,kGreen,kCyan,kOrange
 from ROOT import kOrange as kO,kBlue as kB,kGreen as kG
 from ROOT import kMagenta as kM,kAzure as kA,kRed as kR
 from ROOT import TCanvas,TLine, TLatex
-from numpy import sqrt 
+from numpy import sqrt
 from ROOT import gStyle,gPad,TPaletteAxis
 import os.path
 from stat import S_IRWXG,S_IRWXU
@@ -27,22 +27,22 @@ try:
     from rootpy.io import root_open
     #from rootpy.interactive import wait
 
-#    set_style('ATLAS')
+    #    set_style('ATLAS')
 
     warnings.simplefilter("ignore")
 except:
     print "Could not load in root_numpy or rootpy, they are required to run this module."
 
 defaultValues  = [1,3,2500,2805.,'merged_ntuple_watchman','merged_ntuple_watchman','null', \
-                  'processed_watchman.root',10.,2.0, 100.0, 6,\
+                  'processed_watchman.root',10.,2.0, 100.0, 9,\
                   0.65,0.1,5.42,6.4,8.0,'day',\
                   'boulby', 1.0, 0.043, 0.133]
 
 docstring = """
     Usage: watchmakers.py [options]
-    
+
     Arguments:
-    
+
     Options:
     -D                  Delete all current photocoverage directory.
 
@@ -52,7 +52,7 @@ docstring = """
     -N=<N>              Number of MC script that were run [Default: %d]
     -e=<runBeamEntry>   Number of entries per macro (U/Th event x5) [Default: %d]
     --depth=<depthD>    Depth of detector (for fast neutron spectra) [Default: %f]
-    
+
     -n                  generate ntuple from single rat-pac root files
     --extractNtup       generate ntuple from all rat-pac root files
     -f=<ifile>          Input file [Default: %s]
@@ -60,7 +60,7 @@ docstring = """
     --ntupleout=<outN>  Name of ntuple out [Default: %s]
     -o=<outputfile>     Efficiency output file [Default: %s]
     --supernovaFormat   Record supernova files instead of golden files
-    
+
     -r=<rate>           rate of accidentals in hz [Default: %f]
     -d=<distance>       Maximal distance between two events (m) [Default: %f]
     -t=<time>           Maximal time between two events (micro) [Default: %f]
@@ -68,7 +68,7 @@ docstring = """
     --minPE=<_MPE>      Minimal number of photoelectron [Default: 10.]
     -g=<goodness>       Bonsai position goodness parameter [Default: %f]
     -G=<Goodness>       Bonsai direction goodness parameter [Default: %f]
-    
+
     -P=<proc>           Pick a single physics process to analyis/merge (used for ntup)
     -L=<loc>            Pick a single physics location to analyis/merge (used for ntup)
     -C=<cov>            Pick a single coverage to analyse
@@ -78,9 +78,9 @@ docstring = """
     --fv=<fidV>         Fiducial Volome [Default: %f]
     --psup=<psupV>      Distance to PMT support, assuming right cylinder [Default: %f]
     --tankDis=<tankV>   Distance to tank wall, assuming right cylinder [Default: %f]
-    
+
     -M                  Merge result files
-    
+
     -a                  Do the analysis on the merged file
     -A                  Do the analysis on the merged file
 
@@ -90,16 +90,16 @@ docstring = """
     --site=<_site>      Site of the experiment (boulby,fairport) [Default: %s]
     --OnOff=<_OOratio>  Ratio of reactor on to reactor off [Default: %d]
     --cores=<_cores>    Number of cores to discover [Default: 1]
-    
+
     --U238_PPM=<_Uppm>  Concentration of U-238 in glass [Default: %f]
     --Th232_PPM=<_Thp>  Concentration of Th-232 in glass [Default: %f]
     --Rn222=<_Rn>       Radon activity in water [Default: 6.4]
-    
+
     --detectMedia=<_dM>  Detector media (doped_water,...)
     --collectionEff=<CE> Collection efficiency (e.g.: 0.85,0.67,0.475)
     --pmtModel=<_PMTM>   PMT Model (r7081pe)
     --photocath = <_PC>  PMT photocathode (R7081HQE)
-    
+
     """ % (defaultValues[0],defaultValues[1],defaultValues[2],defaultValues[3],defaultValues[4],\
            defaultValues[5],defaultValues[6],defaultValues[7],defaultValues[8],\
            defaultValues[9],defaultValues[10],defaultValues[11],defaultValues[12],\
@@ -118,7 +118,7 @@ except ImportError:
 gSystem.Load("$RATROOT/lib/libRATEvent")
 gSystem.AddIncludePath(" -I$RATROOT/include")
 
-		
+
 gROOT.LoadMacro("$WATCHENV/watchmakers/goldenFileExtractor.C")
 from ROOT import goldenFileExtractor
 
@@ -134,8 +134,8 @@ def loadSimulationParameters():
     d['CHAIN_232Th_NA'] = ['232Th','228Ac','212Pb','212Bi','208Tl']
     d['CHAIN_222Rn_NA'] = ['222Rn','214Pb','214Bi','210Bi','210Tl']
     # Radioisotope that should have beta-Neutron modes, (beta only generated)
-#    A = ['16','17','18','17','18','8','9','11']
-#    Z = ['6','6','6','7','7','2','3','3']
+    #    A = ['16','17','18','17','18','8','9','11']
+    #    Z = ['6','6','6','7','7','2','3','3']
     #Reduced selection
     A = ['9','11']
     Z = ['3','3']
@@ -167,7 +167,7 @@ def loadAnalysisParameters(timeScale='day'):
 
     # Default units are in sec. Conversion factor are below
     timeSec     = 1.0/365./24./3600.
-    
+
     # Number of free proton
     if timeScale == 'sec':
         timeS   = 1.0
@@ -177,7 +177,7 @@ def loadAnalysisParameters(timeScale='day'):
         timeS   = 365.0/12.*24.0*3600.
     if timeScale == 'year':
         timeS   = 365.0*24.0*3600.
-        
+
     #Mass in kilograms
     mass = 2.0
 
@@ -186,8 +186,8 @@ def loadAnalysisParameters(timeScale='day'):
     FreeProtons = 0.6065
     TNU         = FreeProtons* nKiloTons *timeSec
     FVkTonRatio = pow(float(arguments['--fv']),3)/pow(float(arguments['--tankDis']),3)
-    
-    
+
+
     #Fast neutrons conversion
     #Rock mass
     volumeR         = (2.*22.5*23.8*1.0+2.*17*23.8*1.0+2.*22.5*17.*1.0)
@@ -200,19 +200,19 @@ def loadAnalysisParameters(timeScale='day'):
     muonRate        = npa([7.06e-7,4.09e-8]) # mu/cm2/s
     tenMeVRatio     = npa([7.51/34.1,1.11/4.86])
     fastNeutrons    = rockMass*avgMuonNC*avgNFluxMag*muonRate*tenMeVRatio
-    
+
     avgRNYieldRC    = power(avgMuon,0.73)
     skRNRate        = 0.5e-7 # 1/mu/g cm2
     avgMuonSK       = power(219.,0.73)
     skMuFlux        = 1.58e-7 #mu/cm2/sec
     radionuclideRate= (skRNRate*avgRNYieldRC/avgMuonSK)*muonRate*nKiloTons*1e9
-    
-    
+
+
     boulbyIBDRate   = 1120.8*.4/.6 *TNU #//924.48*TNU Taken from website, average corrected
     fairportIBDRate = 7583.*TNU
 
     inta        = ['si','so','eo','ei']
-    
+
     dAct        = {}
 
     #Add the U-238 chain
@@ -230,32 +230,32 @@ def loadAnalysisParameters(timeScale='day'):
     loca        = _loca
     br          = _br
     site        = _site
-#    decayCnst   = [2.9e-5,  4.31e-4,  5.81e-4,   1.601e-6 , 0.00909]
+    #    decayCnst   = [2.9e-5,  4.31e-4,  5.81e-4,   1.601e-6 , 0.00909]
     arr         = empty(5)
     arr[:]      = ActivityU238
     for index,ele in enumerate(_proc):
         dAct["%s_%s"%(ele,_loca[index])] = ActivityU238*_br[index]*timeS
-    
+
     Activity    = arr
-    
-    
+
+
     #Add the Th-232 chain
     M_Th232      = 3.853145e-25 #kg
     Lambda_Th232 = 1.57e-18 #1/s
     PPM_Th232    = float(arguments["--Th232_PPM"])
     ActivityTh232 = Lambda_Th232*PPM_Th232/M_Th232/1e6
-#    print ActivityU238,ActivityTh232
+    #    print ActivityU238,ActivityTh232
 
     _proc        =['232Th','228Ac','212Pb','212Bi','208Tl']
     _loca        =['PMT'  ,'PMT',   'PMT', 'PMT',  'PMT'  ]
     acc          +=['acc'  ,'acc',   'acc', 'acc',  'acc'  ]
     _br          = [1.0,     1.0,    1.0,   1.0 ,   1.0]
-#    decayCnst   += [1.57e-18,3.3e-5,1.8096e-5, 1.908e-4, 0.003784]
+    #    decayCnst   += [1.57e-18,3.3e-5,1.8096e-5, 1.908e-4, 0.003784]
     _site        = ['',      '',     '',     '',     '']
     arr         = empty(5)
     arr[:]      = ActivityTh232
     Activity    = append(   Activity,arr)
-    
+
     proc        += _proc
     loca        += _loca
     br          += _br
@@ -263,7 +263,7 @@ def loadAnalysisParameters(timeScale='day'):
     for index,ele in enumerate(_proc):
         dAct["%s_%s"%(ele,_loca[index])] = ActivityTh232*_br[index]*timeS
 
-    
+
 
     #Add the Rn-222 chain
     N_Rn222     = 2e-3 # Bq/m3
@@ -273,7 +273,7 @@ def loadAnalysisParameters(timeScale='day'):
     acc         +=['acc','acc',  'acc',  'acc',   'acc']
 
     _br         = [1.0, 1.0,   1.0,   1.0,     0.002]
-#    decayCnst   += [ 4.31e-4,  5.81e-4,   1.601e-6 , 0.00909]
+    #    decayCnst   += [ 4.31e-4,  5.81e-4,   1.601e-6 , 0.00909]
     _site        = ['', '',     '',     '',     '']
     arr = empty(4)
     arr[:]      = 6.4
@@ -308,7 +308,7 @@ def loadAnalysisParameters(timeScale='day'):
     acc         +=['corr',  'corr']
     _br          = [1.0,   1.0]
     arr         = npa([fairportIBDRate,boulbyIBDRate])
-#    print "Neutrino activity ",arr*timeS/nKiloTons
+    #    print "Neutrino activity ",arr*timeS/nKiloTons
     Activity    = append(    Activity,arr)
     _site       = [ '','boulby']
     site        += _site
@@ -356,18 +356,18 @@ def loadAnalysisParameters(timeScale='day'):
 
 
 
-#    # Read in the different radionuclide
-#    proc        +=  ['16006','17006','18006','17007','18007','8002','9003',\
-#    '11003']
-#    loca        +=  ['RN','RN','RN','RN','RN','RN','RN','RN']
-#    acc         +=  ['di','di','di','di','di','di','di','di']
-#    #normalised to 9Li from SK
-#    arr         = npa([0.02,0.001,0.001,0.59*0.002,4e-6,0.23,1.9,0.01])/1.9
-#    arr         *= radionuclideRate[0]
-#    Activity    = append(Activity,arr)
-#    br         +=  [.988,1.0,1.0,0.951,0.143,0.16,0.495,0.927]
-#    site        += ['','','','','','','','']
-#
+    #    # Read in the different radionuclide
+    #    proc        +=  ['16006','17006','18006','17007','18007','8002','9003',\
+    #    '11003']
+    #    loca        +=  ['RN','RN','RN','RN','RN','RN','RN','RN']
+    #    acc         +=  ['di','di','di','di','di','di','di','di']
+    #    #normalised to 9Li from SK
+    #    arr         = npa([0.02,0.001,0.001,0.59*0.002,4e-6,0.23,1.9,0.01])/1.9
+    #    arr         *= radionuclideRate[0]
+    #    Activity    = append(Activity,arr)
+    #    br         +=  [.988,1.0,1.0,0.951,0.143,0.16,0.495,0.927]
+    #    site        += ['','','','','','','','']
+    #
 
     # Read in the different radionuclide
     _proc        =  ['9003', '11003']
@@ -387,18 +387,18 @@ def loadAnalysisParameters(timeScale='day'):
     for index,ele in enumerate(_proc):
         dAct["%s_%s%s"%(ele,_loca[index],_site[index])] = arr[index]*timeS
 
-#    # Read in the different radionuclide
-#    proc        +=  ['16006','17006','18006','17007','18007','8002','9003',\
-#    '11003']
-#    loca        +=  ['RN','RN','RN','RN','RN','RN','RN','RN']
-#    acc         +=  ['di','di','di','di','di','di','di','di']
-#    #normalised to 9Li from SK
-#    arr         = npa([ 0.02,0.001,0.001,0.59*0.002,4e-6,0.23,1.9,0.01])/1.9
-#    arr         *= radionuclideRate[1]
-#    Activity    = append(Activity,arr)
-#    br         +=  [.988,1.0,1.0,0.951,0.143,0.16,0.495,0.927]
-#    site        += ['boulby','boulby','boulby','boulby','boulby','boulby',\
-#    'boulby','boulby']
+    #    # Read in the different radionuclide
+    #    proc        +=  ['16006','17006','18006','17007','18007','8002','9003',\
+    #    '11003']
+    #    loca        +=  ['RN','RN','RN','RN','RN','RN','RN','RN']
+    #    acc         +=  ['di','di','di','di','di','di','di','di']
+    #    #normalised to 9Li from SK
+    #    arr         = npa([ 0.02,0.001,0.001,0.59*0.002,4e-6,0.23,1.9,0.01])/1.9
+    #    arr         *= radionuclideRate[1]
+    #    Activity    = append(Activity,arr)
+    #    br         +=  [.988,1.0,1.0,0.951,0.143,0.16,0.495,0.927]
+    #    site        += ['boulby','boulby','boulby','boulby','boulby','boulby',\
+    #    'boulby','boulby']
 
 
 
@@ -419,7 +419,7 @@ def loadAnalysisParameters(timeScale='day'):
     site        += _site
     for index,ele in enumerate(_proc):
         dAct["%s_%s%s"%(ele,_loca[index],_site[index])] = arr[index]*timeS
-    
+
     _proc        =['IBD','IBD']
     _loca        =['I',     'I']
     acc         +=['corr',  'corr']
@@ -441,5 +441,3 @@ def loadAnalysisParameters(timeScale='day'):
 
 
     return inta,proc,loca,acc,arr,Activity,br,site,timeS,boulbyIBDRate*FVkTonRatio,mass,dAct,coveNumber,covePCT
-
-
