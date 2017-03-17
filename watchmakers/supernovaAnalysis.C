@@ -9,22 +9,9 @@
 #include <TFile.h>
 #include <TTree.h>
 
-
-#include <iostream>
-#include <iomanip>
-#include <TROOT.h>
-#include <TFile.h>
-#include <TTree.h>
-#include <TClass.h>
-#include <TH1D.h>
-#include <TH2D.h>
-#include <TVector3.h>
-#include <vector>
-#include <TRandom3.h>
-
-int supernovaAnalysis(const char *file, const char *outfile = "null") {
+void supernovaAnalysis(const char *file, const char *outfile = "null") {
     Double_t reconstructedRadius = 0.0;
-    
+
     TH1D *hPos0FB = new TH1D("hPos0FB","primary event",1000,0.01,10);
     hPos0FB->SetLineColor(4);
     TH1D *hPos1FB = new TH1D("hPos1FB","secondary event",1000,0.01,10);
@@ -87,33 +74,24 @@ int supernovaAnalysis(const char *file, const char *outfile = "null") {
     hNuP->SetXTitle("Cherenkov-inducing particle Energy (MeV)");
     hNuP->SetYTitle("Counts");
     
-    printf("infile: %s\n",file);
-
-//    TFile *f = new TFile(file);
-//    TTree *tree = (TTree*) f->Get("T");
-//    
-////    TFile *f_out = new TFile(Form("ntuple_%s",f->GetName()),"Recreate");
-//    printf("outfile: %s\n",outfile);
-//
-//     TFile *f_out = new TFile(outfile,"Recreate");
-//    //    TNtuple* data = new TNtuple("data","Ntuple for Watchman Reconstruction Studies",
-//    //                                "pe:r_bonsai_true:cosTheta:cosThetaSN:local_time_ns:sub_ev:sub_ev_cnt:interaction");
-//    
-
+    
     TFile *f = new TFile(file);
     TTree *tree = (TTree*) f->Get("T");
-    if (tree==0x0){
-        return -1;
-    }
+    
+    //cout << "f->GetName() is " << f->GetName() << endl;
+    //TFile *f_out = new TFile(Form("ntuple_%s",f->GetName()),"Recreate");
+    //    TNtuple* data = new TNtuple("data","Ntuple for Watchman Reconstruction Studies",
+    //                                "pe:r_bonsai_true:cosTheta:cosThetaSN:local_time_ns:sub_ev:sub_ev_cnt:interaction");
     TFile *f_out;
     printf("outfile: %s\n",outfile);
     if (TString(outfile) == TString("null")) {
-        f_out = new TFile(Form("ntuple_%s",f->GetName()),"Recreate");
+      f_out = new TFile(Form("ntuple_%s",f->GetName()),"Recreate");
     }else{
-        f_out = new TFile(outfile,"Recreate");
+      f_out = new TFile(outfile,"Recreate");
     }
-    
-    
+
+
+
     RAT::DS::Root *rds = new RAT::DS::Root();
     tree->SetBranchAddress("ds", &rds);
     
@@ -141,8 +119,10 @@ int supernovaAnalysis(const char *file, const char *outfile = "null") {
     TTree *data = new TTree("data","supernova events");
     
     TVector3 posTruth,posReco,dirTruth,dirNu,dirReco,dirIBD,pos1,pos2;
+    Double_t n9;
     
     data->Branch("pe",&totPE,"pe/D");
+    data->Branch("n9",&n9,"n9/D");
     data->Branch("r_bonsai_true",&reconstructedRadiusFB,"r_bonsai_true/D");
     data->Branch("cosTheta",&cosTheta,"cosTheta/D");
     data->Branch("cosThetaSN",&cosThetaSN,"cosThetaSN/D");
@@ -215,6 +195,7 @@ int supernovaAnalysis(const char *file, const char *outfile = "null") {
     summary->Branch("phys_evt_ICC_prod_ratio",&ICC_prod_ratio,"phys_evt_ICC_prod_ratio/D");
     summary->Branch("phys_evt_NC_prod_ratio",&NC_prod_ratio,"phys_evt_NC_prod_ratio/D");
     
+    cout << "nEvents is " << nEvents << endl;
     for (int i = 0; i < nEvents; i++) {
         
         //        //printf("###################### event %4d ############################\n",i );
@@ -232,32 +213,15 @@ int supernovaAnalysis(const char *file, const char *outfile = "null") {
         dirNu =  prim->GetMomentum();
         mc_nu_energy = prim->ke;
         hNuE->Fill(mc_nu_energy);
-        
+
         interaction_type = 0.0;
         ES_true = IBD_true = CC_true = ICC_true = NC_true = 0;
-        
-        
-         if(particleCountMC ==2 && mc->GetMCParticle(0)->GetPDGCode()==-11 && mc->GetMCParticle(1)->GetPDGCode()==2112){
-            //            //printf("IBD Interaction      ... ");
-            ibd+=1;
-            IBD_true =1;
-            interaction_type = 2;
-            RAT::DS::MCParticle *prim = mc->GetMCParticle(0);
-            mc_energy = prim->ke;
-            
-            hNuP->Fill(prim->ke);
-            mcmomv_particle = prim->GetMomentum();
-            totMom = sqrt(pow(prim->GetMomentum().X(),2) +pow(prim->GetMomentum().Y(),2) + pow(prim->GetMomentum().Z(),2));
-            dirTruth =  TVector3(prim->GetMomentum().X()/totMom,prim->GetMomentum().Y()/totMom,prim->GetMomentum().Z()/totMom);
-            posTruth = prim->GetPosition();
-            
-            
-            
-        }
-        
-        
-        else if(particleCountMC ==2 && mc->GetMCParticle(0)->GetPDGCode()==11){
-            //            //printf("ES Interaction       ... ");
+	posTruth=prim->GetPosition();
+	totMom = sqrt(pow(prim->GetMomentum().X(),2) +pow(prim->GetMomentum().Y(),2) + pow(prim->GetMomentum().Z(),2));
+	dirTruth =  TVector3(prim->GetMomentum().X()/totMom,prim->GetMomentum().Y()/totMom,prim->GetMomentum().Z()/totMom);
+
+        if(particleCountMC ==2 && mc->GetMCParticle(0)->GetPDGCode()==11){
+	  //            //printf("ES Interaction       ... ");
             es+=1;
             ES_true =1;
             interaction_type = 1;
@@ -268,8 +232,7 @@ int supernovaAnalysis(const char *file, const char *outfile = "null") {
             totMom = sqrt(pow(prim->GetMomentum().X(),2) +pow(prim->GetMomentum().Y(),2) + pow(prim->GetMomentum().Z(),2));
             dirTruth =  TVector3(prim->GetMomentum().X()/totMom,prim->GetMomentum().Y()/totMom,prim->GetMomentum().Z()/totMom);
             posTruth = prim->GetPosition();
-            
-        }
+	}
         else if(particleCountMC ==3 && mc->GetMCParticle(0)->GetPDGCode()==-11 && mc->GetMCParticle(1)->GetPDGCode()==2112){
             //            //printf("IBD Interaction      ... ");
             ibd+=1;
@@ -379,15 +342,37 @@ int supernovaAnalysis(const char *file, const char *outfile = "null") {
             posTruth = prim->GetPosition();
             
         }
-        else{
-            //printf("What is this interaction -> particles %d:(%d, %d, %d) ... \n",particleCountMC, mc->GetMCParticle(0)->GetPDGCode(),mc->GetMCParticle(1)->GetPDGCode(),mc->GetMCParticle(2)->GetPDGCode());
+	//else if (particleCountMC ==3 && mc->GetMCParticle(0)->GetPDGCode()==11 && mc->GetMCParticle(1)->GetPDGCode()==22) {
+	//interaction_type = 9;
+	//RAT::DS::MCParticle *prim = mc->GetMCParticle(0);
+	//mc_energy = prim->ke;
+	//hNuP->Fill(prim->ke);
+	//mcmomv_particle = prim->GetMomentum();
+	//totMom = sqrt(pow(prim->GetMomentum().X(),2) +pow(prim->GetMomentum().Y(),2) + pow(prim->GetMomentum().Z(),2));
+	//dirTruth =  TVector3(prim->GetMomentum().X()/totMom,prim->GetMomentum().Y()/totMom,prim->GetMomentum().Z()/totMom);
+	//posTruth = prim->GetPosition();
+	//printf("particle is %d\n",mc->GetMCParticle(0)->GetPDGCode());
+
+	//}
+	else{
+	  //printf("What is this interaction -> particles %d:(%d, %d, %d) ... \n",particleCountMC, mc->GetMCParticle(0)->GetPDGCode(),mc->GetMCParticle(1)->GetPDGCode(),mc->GetMCParticle(2)->GetPDGCode());
+	    interaction_type = 9;
+	    RAT::DS::MCParticle *prim = mc->GetMCParticle(0);
+	    mc_energy = prim->ke;
+	    hNuP->Fill(prim->ke);
+	    mcmomv_particle = prim->GetMomentum();
+	    totMom = sqrt(pow(prim->GetMomentum().X(),2) +pow(prim->GetMomentum().Y(),2) + pow(prim->GetMomentum().Z(),2));
+	    dirTruth =  TVector3(prim->GetMomentum().X()/totMom,prim->GetMomentum().Y()/totMom,prim->GetMomentum().Z()/totMom);
+	    posTruth = prim->GetPosition();
+	    //printf("particle is %d\n",mc->GetMCParticle(0)->GetPDGCode());
         }
         
 //        RAT::DS::MCParticle *prim = mc->GetMCParticle(0);
         
         //Find out how many subevents:
         subevents = rds->GetEVCount();
-        timeTmp1  = cnt = 0;
+        //cout << "event number " << i << ", posTruth->X() is " << posTruth.X() << ", subevents is " << subevents << endl;
+	timeTmp1  = cnt = 0;
         prev_single =2;
         for (int ii=0; ii<40;ii++) {
             timeDiff[ii] = 0.0;
@@ -395,7 +380,9 @@ int supernovaAnalysis(const char *file, const char *outfile = "null") {
         }
         for (int k = 0; k<subevents; k++) {
             RAT::DS::EV *ev = rds->GetEV(k);
+	    int myPMTCount = ev->GetPMTCount();
             qTmp = ev->GetTotalCharge();
+	    //cout << "qTmp is " << qTmp << ", myPMTCount is " << myPMTCount << endl;
             if (qTmp>12.) {
                 cnt+=1;
                 timeTmp = ev->GetDeltaT(); // Badly name variable by my part.
@@ -437,6 +424,7 @@ int supernovaAnalysis(const char *file, const char *outfile = "null") {
             TVector3 pFitFB = pb->GetPosition();
             goodness = pb->GetGoodness();
             dirGoodness = pb->GetDirGoodness();
+            n9 			= pb->GetN9();
             
             posReco =  pb->GetPosition();
             reconstructedRadiusFB = sqrt(pow(pFitFB.X()-prim->GetPosition().X(),2)+ pow(pFitFB.Y()-prim->GetPosition().Y(),2)+ pow(pFitFB.Z()-prim->GetPosition().Z(),2))/1000.;
@@ -449,7 +437,8 @@ int supernovaAnalysis(const char *file, const char *outfile = "null") {
             cosThetaSN =    (pb->GetDirection()* mcmomv_nu      )/mcmomv_nu.Mag();
             
             dirReco = pb->GetDirection();
-            if (totPE>12) {
+	    //cout << "totPE is " << totPE << endl;
+            if (totPE>/*12*/0.) {
                 
                 subEvNumber = cntLoop+1;
                 _single = single[cntLoop];
@@ -485,7 +474,7 @@ int supernovaAnalysis(const char *file, const char *outfile = "null") {
                 oldZ = pFitFB.Z();
                 
                 data->Fill();
-                
+
                 if(k ==0 && totPE> 12){
                     hPhotoelectron0->Fill(totPE);
                     hPos0FB->Fill(reconstructedRadiusFB);
@@ -517,6 +506,7 @@ int supernovaAnalysis(const char *file, const char *outfile = "null") {
             posReco = TVector3(-10.0,-10.0,-10.0);
             dirReco =  TVector3(-10.0,-10.0,-10.0);
             data->Fill();
+	    //cout << "filled data" << endl;
             
         }
         if (i%500 == 0){
@@ -661,6 +651,6 @@ int supernovaAnalysis(const char *file, const char *outfile = "null") {
     
     
     printf("(ibd,es,cc,icc,nc): (%5.4f, %5.4f, %5.4f, %5.4f, %5.4f)  (tot:%d)\n",ibd/tot,es/tot,cc/tot,icc/tot,nc/tot,tot);
-    return 0;
+    
     
 }

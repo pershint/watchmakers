@@ -9,12 +9,12 @@ from watchmakers.read import *
 ######################## Start of main function ###########################
 
 if __name__ == "__main__":
-    
+
     print docstring
     print arguments
 #     print defaultValues
     print ""
-    
+
     if arguments['-D']:
         deleteAllWorkDirectories()
 
@@ -42,11 +42,11 @@ if __name__ == "__main__":
         extractHistogramWitCorrectRate()
 
     if arguments['-R']:
-#        site = 'boulby'
-#        hBoulby = TH2D('hBoulby','hBoulby',40,0.5,40.5,40,0.5,40.5)
         sensitivityMap()
-#        hBoulby.SaveAs('test.C')
-#        runSensitivity()
+
+
+    if arguments['--sensitivity']:
+        sensitivityMapNew()
 
 
     if arguments['--customJob']:
