@@ -65,9 +65,10 @@ docstring = """
     -d=<distance>       Maximal distance between two events (m) [Default: %f]
     -t=<time>           Maximal time between two events (micro) [Default: %f]
     -T=<tubes>          Minimal number of tubes hit [Default: %d]
-    --minPE=<_MPE>      Minimal number of photoelectron [Default: 1.]
+    --minN9=<_MPE>      Minimal number of photoelectron [Default: 9.]
     -g=<goodness>       Bonsai position goodness parameter [Default: %f]
     -G=<Goodness>       Bonsai direction goodness parameter [Default: %f]
+    --RNRedux=<_RNR>    Reduction due to time/spatial veto arround muons (>0.90)
 
     -P=<proc>           Pick a single physics process to analyis/merge (used for ntup)
     -L=<loc>            Pick a single physics location to analyis/merge (used for ntup)
@@ -79,12 +80,13 @@ docstring = """
     --psup=<psupV>      Distance to PMT support, assuming right cylinder [Default: %f]
     --tankDis=<tankV>   Distance to tank wall, assuming right cylinder [Default: %f]
 
-    -M                  Merge result files
+    -M                  Merge result files from trial ntuples
 
-    -a                  Do the analysis on the merged file
-    -A                  Do the analysis on the merged file
+    -a                  Read merged files and perform analysis
+    -A                  Read merged files and perform analysis
 
-    -R                  Read analyisis result
+    -R                  Read analyzed result and evaluate sensitivity
+    --sensitivity       Read analyzed results and evaluate sensitivity
 
     --timeScale=<_ts>   Integration period (sec,day,month,year) [Default: %s]
     --site=<_site>      Site of the experiment (boulby,fairport) [Default: %s]

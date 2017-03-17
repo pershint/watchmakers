@@ -31,7 +31,7 @@ def fillHistograms(inFilePrefix,a1,t1,h,cover,ii,locj,covPCT):
         totalEvtGen = npa(t.all_ev==t.all_ev_tot,dtype=bool)
 
         tot         = float(sum(totalEvtGen))
-        totD        = float(len(t.FV))
+        totD        = float(len(isFV))
 
         si          = logical_and(isFV,notFV_t,dtype=bool)
         so          = logical_and(notFV,isFV_t,dtype=bool)
@@ -336,6 +336,8 @@ def extractHistogramWitCorrectRate():
     pmtDist                 = float(arguments["--psup"])
     timeScale               = arguments["--timeScale"]
     inFilePrefix            = arguments["--ft"]
+    timeCut                 = float(arguments["-t"])*1e3
+    distCut                 = float(arguments["-d"])
 
     parameters  = loadAnalysisParameters(timeScale)
     rates       = parameters[11]
@@ -414,7 +416,7 @@ def extractHistogramWitCorrectRate():
                         recoFVstring    = "(sqrt(pow(posReco.X(),2) + pow(posReco.Y(),2))<%f*1000. && sqrt(pow(posReco.Z(),2))<%f*1000.)"%(fiducialVolume,fiducialVolume)
                         trueFVstring    = "(sqrt(pow(posTruth.X(),2) + pow(posTruth.Y(),2))<%f*1000. && sqrt(pow(posTruth.Z(),2))<%f*1000.)"%(fiducialVolume,fiducialVolume)
                         posGood        = "(pos_goodness>%f)" %(float(arguments["-g"]))
-                        peGood = "(pe>%f)" %(float(arguments["--minPE"]))
+                        peGood = "(pe>%f)" %(float(arguments["--minN9"]))
                         tt = t.Draw("pe>>h4(5000,0,500)","sub_ev_cnt == sub_ev","goff")
 
                         er = float(rates["%s_%s"%(ii,locj)])
@@ -432,7 +434,7 @@ def extractHistogramWitCorrectRate():
                         h[s_dl].SetName(s_dl)
                         h[s_dl].SetXTitle('photoelectrons')
                         h[s_dl].SetYTitle('counts [%s]^{-1}'%(timeScale))
-                        h[s_dl].Scale(ei/float(tt)*er)
+                        # h[s_dl].Scale(ei/float(tt)*er)
 
                         s_dlsi        = "%s_pe_%s_%s_%s_%d"%('si',cover,ii,locj,1)
                         h[s_dlsi]     = TH1D(s_dlsi,s_dlsi,5000,0,500)
@@ -442,7 +444,7 @@ def extractHistogramWitCorrectRate():
                         h[s_dlsi].SetName(s_dlsi)
                         h[s_dlsi].SetXTitle('photoelectrons')
                         h[s_dlsi].SetYTitle('counts [%s]^{-1}'%(timeScale))
-                        h[s_dlsi].Scale(si/float(tt)*er)
+                        # h[s_dlsi].Scale(si/float(tt)*er)
 
 
                         so = t.Draw("pe>>hso(5000,0,500)","!%s &&  %s && %s && %s " %(recoFVstring,trueFVstring,posGood,peGood),"goff")
@@ -540,10 +542,10 @@ def extractHistogramWitCorrectRate():
 
                         cntG+=1
 
-                        h[s_dl2].Scale(1./tt)
-                        h[s_dl1].Scale(1./tt)
-                        h[s_dl2b].Scale(1./tt*er)
-                        h[s_dl1b].Scale(1./tt*er)
+                        # h[s_dl2].Scale(1./tt)
+                        # h[s_dl1].Scale(1./tt)
+                        # h[s_dl2b].Scale(1./tt*er)
+                        # h[s_dl1b].Scale(1./tt*er)
 
                         f_root.cd()
                         h[s_dl].Write()
@@ -583,7 +585,7 @@ def extractHistogramWitCorrectRate():
         # First find the PE per MeV
         procConsidered = ['boulby','imb']
         locj           = 'S'
-        pePerMeVDict    = {}
+        PEMEV    = {}
 
         string  = "pePerMeV_boulby"
         g[string] = TGraph()
@@ -609,10 +611,10 @@ def extractHistogramWitCorrectRate():
                 print "\nEvaluating pe/MeV in ",s
                 rfile = TFile(s)
                 t   = rfile.Get('data')
+
                 recoFVstring    = "(sqrt(pow(posReco.X(),2) + pow(posReco.Y(),2))<%f*1000. && sqrt(pow(posReco.Z(),2))<%f*1000.)"%(fiducialVolume,fiducialVolume)
                 trueFVstring    = "(sqrt(pow(posTruth.X(),2) + pow(posTruth.Y(),2))<%f*1000. && sqrt(pow(posTruth.Z(),2))<%f*1000.)"%(fiducialVolume,fiducialVolume)
                 posGood        = "(pos_goodness>%f)" %(float(arguments["-g"]))
-
 
                 backgroundNoise = 1.0e3*float(pc_num["%s"%(cover)])*1500.*1e-9
 
@@ -649,7 +651,7 @@ def extractHistogramWitCorrectRate():
                 h[s_pePerMeV_eisi].Fit("fPolyFit2","MREQ","",2,6.5)
                 fitRes2 = h[s_pePerMeV_eisi].GetFunction("fPolyFit2")
                 print ' pe results of fit :',fitRes2.GetParameter(0),fitRes2.GetParameter(1)
-                pePerMeVDict['%s'%(cover)] = fitRes2.GetParameter(1)
+                PEMEV['%s'%(cover)] = fitRes2.GetParameter(1)
 
                 if ii == 'boulby':
                     g["pePerMeV_boulby"].SetPoint(cntB,pc_val["%s"%(cover)],fitRes2.GetParameter(1))
@@ -694,7 +696,7 @@ def extractHistogramWitCorrectRate():
 
 
 
-        print pePerMeVDict
+        print PEMEV
         f_root.cd()
         g["pePerMeV_boulby"].Write()
         g["pePerMeV_imb"].Write()
@@ -751,7 +753,8 @@ def extractHistogramWitCorrectRate():
 
                 for idx,cover in enumerate(coverage):
                     covPCT  = coveragePCT[cover]
-                    try:
+                    # try:
+                    if 1==1:
                         #                        branches = 'pe','nhit','n9','delta_time_s', 'detected_ev','detected_ev_tot','all_ev','all_ev_tot',subevents,event_number,candidate,mc_prim_energy,pos_goodness,posReco,reco_r,reco_z,posTruth,true_r,true_z,dir_goodness,dirReco,dirPrimaryMC,FV,GSV,EV,OV,IV,FV_truth,GSV_truth,EV_truth,OV_truth,IV_truth,inner_dist,inner_time,inner_dist_fv,tot_FV,consecutive_FV')'
                         s =  "ntuple_root_files%s/%s_%s_%s_%s.root"%(additionalString,inFilePrefix,ii,cover,locj)
                         print "\nReading in ",s
@@ -760,8 +763,26 @@ def extractHistogramWitCorrectRate():
                         t   = rfile.Get('data')
                         recoFVstring    = "(sqrt(pow(posReco.X(),2) + pow(posReco.Y(),2))<%f*1000. && sqrt(pow(posReco.Z(),2))<%f*1000.)"%(fiducialVolume,fiducialVolume)
                         trueFVstring    = "(sqrt(pow(posTruth.X(),2) + pow(posTruth.Y(),2))<%f*1000. && sqrt(pow(posTruth.Z(),2))<%f*1000.)"%(fiducialVolume,fiducialVolume)
-                        posGood        = "(pos_goodness>%f)" %(float(arguments["-g"]))
-                        peGood = "(n9>%f)" %(float(arguments["--minPE"]))
+                        posGood        = "(pos_goodness>%f)" %(0.5)
+                        n9Good = "(n9>%f)" %(float(arguments["--minN9"]))
+
+                        eiCond = " %s &&  %s && %s && %s" %(recoFVstring,\
+                        trueFVstring,posGood,n9Good)
+                        siCond = " %s && !%s && %s && %s" %(recoFVstring,\
+                        trueFVstring,posGood,n9Good)
+                        eoCond = "!%s && !%s && %s && %s" %(recoFVstring,\
+                        trueFVstring,posGood,n9Good)
+                        soCond = "!%s &&  %s && %s && %s" %(recoFVstring,\
+                        trueFVstring,posGood,n9Good)
+                        # Add additional condition for correlated MC
+                        multCond  = "&& detected_ev==1 && detected_ev_tot>=2"
+                        multCond  += "&& tot_FV==2"
+
+                        multCondD  = "&& detected_ev==2 && detected_ev_tot>=2"
+                        multCondD += "&& tot_FV==2"
+                        multCondD += "&& inner_time<%f " %(timeCut)
+                        multCondD += "&& inner_dist_fv<%f" %(distCut)
+
                         tt = t.Draw("pe","all_ev_tot == all_ev","goff")
 
                         er = float(rates["%s_%s"%(ii,locj)])
@@ -769,38 +790,94 @@ def extractHistogramWitCorrectRate():
                         if locj == 'PMT':
                             print " adjusting rate for pmt %4.3e %s^{-1}, pmt mass %4.2f, number of PMTs %d : %4.3e %s^{-1}"%(er,timeScale,mass,pc_num["%s"%(cover)],er*pc_num["%s"%(cover)]*mass,timeScale)
                             er*=pc_num["%s"%(cover)]*mass
-                        print ' Total event rate pre-detection efficiency is ',er, ' per ', timeScale
+                        print ' Total event rate pre-detection efficiency is ',\
+er, ' per ', timeScale
 
-                        s_dl        = "%s_pe_%s_%s_%s_%d"%('ei',cover,ii,locj,1)
-                        h[s_dl]     = TH1D(s_dl,s_dl,5000,0,500)
+                        # Evalute pe distribution (used in sensitivity map)
+                        # Fast Neutrons (FN) and Inverse Beta Decay (IBD)
+                        # process have correlated part simulated
+                        if locj == 'FN' or locj == 'I':
+                            s_dl    = "%s_pe_%s_%s_%s_%d"%('ei',cover,ii,locj,1)
+                            # h[s_dl]     = TH1D(s_dl,s_dl,5000,0,500)
+                            drawArg = "pe>>hei(5000,0,500)"
+                            ei1 = t.Draw(drawArg,eiCond,"goff")
+                            ei  = t.Draw(drawArg,eiCond+multCondD,"goff")
+                            eiP = t.Draw(drawArg,eiCond+multCond,"goff")
+                            print locj,ei1,eiP,ei
+                            h[s_dl] = t.GetHistogram()
+                            h[s_dl].SetName(s_dl)
+                            h[s_dl].SetXTitle('photoelectrons')
+                            h[s_dl].SetYTitle('counts for %d MC events'%(tt))
 
-                        ei = t.Draw("pe/%f>>hei(5000,0,500)"%(pePerMeVDict['%s'%(cover)])," %s &&  %s && %s && %s " %(recoFVstring,trueFVstring,posGood,peGood),"goff")
-                        h[s_dl] = t.GetHistogram()
-                        h[s_dl].SetName(s_dl)
-                        h[s_dl].SetXTitle('T_{eff} [MeV]')
-                        h[s_dl].SetYTitle('counts [%s]^{-1}'%(timeScale))
-                        h[s_dl].Scale(ei/float(tt)*er)
+                            s_dlsi  = "%s_pe_%s_%s_%s_%d"%('si',cover,ii,locj,1)
+                            drawArg = "pe>>hsi(5000,0,500)"
+                            si1 = t.Draw(drawArg,siCond,"goff")
+                            si = t.Draw(drawArg,siCond+multCondD,"goff")
+                            siP = t.Draw(drawArg,siCond+multCond,"goff")
+                            print locj,si1,siP,si
+                            h[s_dlsi] = t.GetHistogram()
+                            h[s_dlsi].SetName(s_dlsi)
+                            h[s_dlsi].SetXTitle('photoelectrons')
+                            h[s_dlsi].SetYTitle('counts for %d MC events'%(tt))
+                        else:
+                            s_dl    = "%s_pe_%s_%s_%s_%d"%('ei',cover,ii,locj,1)
+                            # h[s_dl]     = TH1D(s_dl,s_dl,5000,0,500)
+                            drawArg = "pe>>hei(5000,0,500)"
+                            ei = t.Draw(drawArg,eiCond,"goff")
+                            h[s_dl] = t.GetHistogram()
+                            h[s_dl].SetName(s_dl)
+                            h[s_dl].SetXTitle('photoelectrons')
+                            h[s_dl].SetYTitle('counts for %d MC events'%(tt))
 
-                        s_dlsi        = "%s_pe_%s_%s_%s_%d"%('si',cover,ii,locj,1)
-                        h[s_dlsi]     = TH1D(s_dlsi,s_dlsi,5000,0,500)
-                        h[s_dlsi].SetName(s_dl)
-                        si = t.Draw("pe/%f>>hsi(5000,0,500)"%(pePerMeVDict['%s'%(cover)])," %s && !%s && %s && %s " %(recoFVstring,trueFVstring,posGood,peGood),"goff")
-                        h[s_dlsi] = t.GetHistogram()
-                        h[s_dlsi].SetName(s_dlsi)
-                        h[s_dlsi].SetXTitle('T_{eff} [MeV]')
-                        h[s_dlsi].SetYTitle('counts [%s]^{-1}'%(timeScale))
-                        h[s_dlsi].Scale(si/float(tt)*er)
+                            s_dlsi  = "%s_pe_%s_%s_%s_%d"%('si',cover,ii,locj,1)
+                            drawArg = "pe>>hsi(5000,0,500)"
+                            si = t.Draw(drawArg,siCond,"goff")
+                            h[s_dlsi] = t.GetHistogram()
+                            h[s_dlsi].SetName(s_dlsi)
+                            h[s_dlsi].SetXTitle('photoelectrons')
+                            h[s_dlsi].SetYTitle('counts for %d MC events'%(tt))
+                        # Estimate the reconstructed energy from pe/MeV fits
+                        s_dlT     = "%s_Teff_%s_%s_%s_%d"%('ei',cover,ii,locj,1)
+                        # h[s_dlT]     = TH1D(s_dlT,s_dlT,5000,0,500)
+                        drawArg = "pe/%f>>heiT(2000,0,20)"%(PEMEV['%s'%(cover)])
+                        eiT       = t.Draw(drawArg,eiCond,"goff")
+                        h[s_dlT]  = t.GetHistogram()
+                        h[s_dlT].SetName(s_dlT)
+                        h[s_dlT].SetXTitle('T_{eff} [MeV]')
+                        h[s_dlT].SetYTitle('counts [%s]^{-1}'%(timeScale))
+                        h[s_dlT].Scale(ei/float(tt)*er)
 
+                        s_dlTsi   = "%s_Teff_%s_%s_%s_%d"%('si',cover,ii,locj,1)
+                        # h[s_dlTsi]     = TH1D(s_dlTsi,s_dlTsi,5000,0,500)
+                        drawArg = "pe/%f>>hsiT(2000,0,20)"%(PEMEV['%s'%(cover)])
+                        siT         = t.Draw(drawArg,siCond,"goff")
+                        h[s_dlTsi] = t.GetHistogram()
+                        h[s_dlTsi].SetName(s_dlTsi)
+                        h[s_dlTsi].SetXTitle('T_{eff} [MeV]')
+                        h[s_dlTsi].SetYTitle('counts [%s]^{-1}'%(timeScale))
+                        h[s_dlTsi].Scale(si/float(tt)*er)
 
-                        so = t.Draw("pe/%f>>hso(5000,0,500)"%(pePerMeVDict['%s'%(cover)]),"!%s &&  %s && %s && %s " %(recoFVstring,trueFVstring,posGood,peGood),"goff")
-                        eo = t.Draw("pe/%f>>heo(5000,0,500)"%(pePerMeVDict['%s'%(cover)]),"!%s && !%s && %s && %s " %(recoFVstring,trueFVstring,posGood,peGood),"goff")
+                        s_dlso    = "%s_Teff_%s_%s_%s_%d"%('so',cover,ii,locj,1)
+                        drawArg =  "pe/%f>>hso(2000,0,20)"%(PEMEV['%s'%(cover)])
+                        so = t.Draw(drawArg,soCond,"goff")
+                        h[s_dlso] = t.GetHistogram()
+                        h[s_dlso].SetName(s_dlso)
+                        h[s_dlso].SetXTitle('photoelectrons')
+                        h[s_dlso].SetYTitle('counts for %d MC events'%(tt))
+
+                        s_dleo    = "%s_Teff_%s_%s_%s_%d"%('eo',cover,ii,locj,1)
+                        drawArg =  "pe/%f>>heo(2000,0,20)"%(PEMEV['%s'%(cover)])
+                        eo = t.Draw(drawArg,eoCond,"goff")
+                        h[s_dleo] = t.GetHistogram()
+                        h[s_dleo].SetName(s_dleo)
+                        h[s_dleo].SetXTitle('photoelectrons')
+                        h[s_dleo].SetYTitle('counts for %d MC events'%(tt))
 
                         print " (%7s %7s %7s %7s ) %8s |            (%9s %9s %9s %9s)" %('ei','si','so','eo','mc events','ei','si','so','eo')
                         print " (%7d %7d %7d %7d ) %8d  | efficiency (%4.3e %4.3e %4.3e %4.3e)" %(ei,si,so,eo, tt,ei/float(tt),si/float(tt),so/float(tt),eo/float(tt))
                         print " (%7d %7d %7d %7d ) %8d  | event rate (%4.3e %4.3e %4.3e %4.3e) per %s" % (ei,si,so,eo, tt,ei/float(tt)*er,si/float(tt)*er,so/float(tt)*er,eo/float(tt)*er,timeScale)
                         if locj == 'PMT' or locj == 'FV':
                             print " (%7d %7d %7d %7d ) %8d  | event rate (%4.3e %4.3e %4.3e %4.3e) per %s (after time redux)" % (ei,si,so,eo, tt,timeRedux*power(ei/float(tt)*er,2),timeRedux*power(si/float(tt)*er,2),timeRedux*power(so/float(tt)*er,2),timeRedux*power(eo/float(tt)*er,2),timeScale)
-
 
                         g["si_%s_%s_1_abs" %(ii,locj)].SetPoint(cntG,pc_val["%s"%(cover)],si/float(tt))
                         g["ei_%s_%s_1_abs" %(ii,locj)].SetPoint(cntG,pc_val["%s"%(cover)],ei/float(tt))
@@ -831,7 +908,7 @@ def extractHistogramWitCorrectRate():
                         # See below
                         #                        cntG+=1
 
-                        N  = t.Draw("pe:posReco.X():posReco.Y():posReco.Z()"," %s && %s && %s " %(recoFVstring,posGood,peGood),"goff")
+                        N  = t.Draw("pe:posReco.X():posReco.Y():posReco.Z()"," %s && %s && %s " %(recoFVstring,posGood,n9Good),"goff")
                         pe   = t.GetV1()
                         x    = t.GetV2()
                         y    = t.GetV3()
@@ -894,6 +971,8 @@ def extractHistogramWitCorrectRate():
                         f_root.cd()
                         h[s_dl].Write()
                         h[s_dlsi].Write()
+                        h[s_dlT].Write()
+                        h[s_dlTsi].Write()
                         h[s_dl1].Write()
                         h[s_dl1b].Write()
                         h[s_dl2].Write()
@@ -916,7 +995,7 @@ def extractHistogramWitCorrectRate():
                             #                        print len(t),len(t[0])
 
 
-                    except:
+                    # except:
                         print "Could not read file ",s
                         #        writeResultsToFile(arguments["-o"],g,h)
                         #        print h
@@ -957,6 +1036,9 @@ def obtainAbsoluteEfficiency(f,timeScale='day',cut = 10.0):
 
 
     inta,proc,loca,acc,arr,Activity,br,site,timeS,boulbyNeutronFV,mass,dAct,cove,covePCT = loadAnalysisParameters(timeScale)
+    # print boulbyNeutronFV
+    # print 'activity',Activity
+    # print dAct
 
 
     x,y         = Double(0.),Double(0.)
@@ -980,7 +1062,8 @@ def obtainAbsoluteEfficiency(f,timeScale='day',cut = 10.0):
                     EG[_strEff].SetPoint(cnter,pct[cc],eff)
                     cnter+=1
                     #                    if loca[ii]=="RN":
-                    #                        print _inta,val,proc[ii],loca[ii],cnter,pct[cc],eff
+                    # print s,_inta,val,proc[ii],loca[ii],cnter,pct[cc],eff
+                    # print s,cnter,eff
 
             try:
                 EG[_str1] = f.Get(_str1)
@@ -988,14 +1071,19 @@ def obtainAbsoluteEfficiency(f,timeScale='day',cut = 10.0):
 
                 for i in range(EG[_str1].GetN()):
                     EG[_str1].GetPoint(i,x,y)
-                    nY      = y*Activity[ii]*timeS*br[ii]*EG[_strEff].Eval(x)
+                    nY      = y*dAct["%s_%s%s"%(proc[ii],loca[ii],site[ii])]*EG[_strEff].Eval(x)
+                    _act = "%s_%s"%(proc[ii],loca[ii])
+                    # print 'D',_str1,_act,x,y,dAct[_act],nY
+                    # nY1     = y*dAct["%s_%s"%(ii,loca[ii])]
                     #                    if _inta == 'ei' and loca[ii] == 'S':
-                    #                        print 'A',_str1,_strEff,y,Activity[ii],timeS,br[ii],EG[_strEff].Eval(x),nY
+                    # print 'A',_str1,_strEff,y,Activity[ii],timeS,br[ii],EG[_strEff].Eval(x),nY
                     if loca[ii] == 'PMT':
                         nY      *= mass*covPCT["%s"%(x)]
                         EG[_scal_str1].SetPoint(i,x,nY)
+                        # print 'B',nY,i,x,y,covPCT["%s"%(x)]
                     else:
                         EG[_scal_str1].SetPoint(i,x,nY)
+                        # print 'C',nY,x,y
             except:
                 a = 0
 
@@ -1026,6 +1114,7 @@ def obtainAbsoluteEfficiency(f,timeScale='day',cut = 10.0):
                         x   = float(value)
                         aY  = EG['scaled_ei_neutron_Nboulby_1_abs_corr'].Eval(x)
                         oY  = aY/(boulbyNeutronFV*timeS)
+                        # print 'neutron',x,aY, oY, boulbyNeutronFV*timeS
                         nY  = EG[_scal_str1].Eval(float(value))
                         EG[_scal_str1].SetPoint(iii,x,oY*nY)
                     if acc[ii] == 'acc' and _inta != 'si' and _inta != 'ei':
@@ -1077,17 +1166,17 @@ def integralCoincidence(R,lowerBound,upperBound):
     return up - low
 
 def histIntegral(s,f,cut):
-    H = {}
-    H[s] = f.Get(s)
+    # H = {}
+    Hs = f.Get(s)
 
-    if H[s]!= None:
-        a = H[s].Integral(0,int(cut*10))
-        N = H[s].Integral(0,5000)
+    if Hs!= None:
+        a = Hs.Integral(0,int(cut*10))
+        N = Hs.Integral(0,5000)
     else:
         a = 1.0
         N = 1.0
 
-    print s,H[s],a,N
+    # print 'histInt',cut,s,Hs,a,N
     if N !=0:
         return (1.0 - a/N )
     else:
@@ -1100,7 +1189,7 @@ def runAnalysisProcess(f,g,h):
     for j in range(len(iso)):
         for ii in d["%s"%(iso[int(j)])]:
             for idx,cover in enumerate(coverage):
-                print  coverage[idx],coveragePCT[cover],ii,loc[j]
+                # print  coverage[idx],coveragePCT[cover],ii,loc[j]
                 h  = fillHistograms(f,a1,t1,h,cover,ii,loc[j],\
                 float(coveragePCT[cover]))
     return g,h
