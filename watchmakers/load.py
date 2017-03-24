@@ -22,12 +22,11 @@ from math import pow,exp,log10,pi
 gStyle.SetOptStat(1112211)
 
 try:
-    from root_numpy import root2rec,array2tree,array2root,tree2array
+    # from root_numpy import root2rec,array2tree,array2root,tree2array
     from rootpy.plotting import Canvas,Hist,Hist2D,Graph
     from rootpy.plotting.style import set_style
     from rootpy.io import root_open
     #from rootpy.interactive import wait
-
     #    set_style('ATLAS')
 
     warnings.simplefilter("ignore")
