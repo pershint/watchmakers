@@ -15,18 +15,18 @@ import warnings
 
 import numpy as np
 from numpy import array as npa
-from numpy import power,absolute,logical_and,column_stack,zeros,empty,append,sqrt,absolute,recarray
+from numpy import power,absolute,logical_and,column_stack,zeros,empty,append,\
+sqrt,absolute,recarray
 
-from math import pow,exp,log10
+from math import pow,exp,log10,pi
 gStyle.SetOptStat(1112211)
 
 try:
-    from root_numpy import root2rec,array2tree,array2root,tree2array
+    # from root_numpy import root2rec,array2tree,array2root,tree2array
     from rootpy.plotting import Canvas,Hist,Hist2D,Graph
     from rootpy.plotting.style import set_style
     from rootpy.io import root_open
     #from rootpy.interactive import wait
-
     #    set_style('ATLAS')
 
     warnings.simplefilter("ignore")
@@ -92,6 +92,7 @@ docstring = """
     --site=<_site>      Site of the experiment (boulby,fairport) [Default: %s]
     --OnOff=<_OOratio>  Ratio of reactor on to reactor off [Default: %d]
     --cores=<_cores>    Number of cores to discover [Default: 1]
+    --bkgdSys=<_BSys>   Systematic background percentage [Default: 0.2]
 
     --U238_PPM=<_Uppm>  Concentration of U-238 in glass [Default: %f]
     --Th232_PPM=<_Thp>  Concentration of Th-232 in glass [Default: %f]
@@ -224,7 +225,7 @@ def loadAnalysisParameters(timeScale='day'):
     ActivityU238= Lambda_U238*PPM_U238/M_U238/1e6
     _proc       = ['238U','234Pa','214Pb','214Bi','210Bi','210Tl']
     _loca       = ['PMT','PMT',  'PMT',  'PMT',  'PMT',  'PMT']
-    acc         = ['acc','acc',  'acc',  'acc',  'acc',  'acc']
+    acc         = ['chain','acc',  'acc',  'acc',  'acc',  'acc']
     _br         = [1.0,1.0,     1.0,    1.0,   1.0 ,   0.002]
     _site        = ['','',      '',     '',     '',     '']
 
@@ -250,7 +251,7 @@ def loadAnalysisParameters(timeScale='day'):
 
     _proc        =['232Th','228Ac','212Pb','212Bi','208Tl']
     _loca        =['PMT'  ,'PMT',   'PMT', 'PMT',  'PMT'  ]
-    acc          +=['acc'  ,'acc',   'acc', 'acc',  'acc'  ]
+    acc          +=['chain'  ,'acc',   'acc', 'acc',  'acc'  ]
     _br          = [1.0,     1.0,    1.0,   1.0 ,   1.0]
     #    decayCnst   += [1.57e-18,3.3e-5,1.8096e-5, 1.908e-4, 0.003784]
     _site        = ['',      '',     '',     '',     '']
@@ -272,7 +273,7 @@ def loadAnalysisParameters(timeScale='day'):
     ActivityRn222     = float(arguments["--Rn222"])
     _proc       =['222Rn','214Pb','214Bi','210Bi','210Tl']
     _loca       =['FV', 'FV',   'FV',   'FV',   'FV']
-    acc         +=['acc','acc',  'acc',  'acc',   'acc']
+    acc         +=['chain','acc',  'acc',  'acc',   'acc']
 
     _br         = [1.0, 1.0,   1.0,   1.0,     0.002]
     #    decayCnst   += [ 4.31e-4,  5.81e-4,   1.601e-6 , 0.00909]
@@ -438,8 +439,11 @@ def loadAnalysisParameters(timeScale='day'):
         dAct["%s_%s%s"%(ele,_loca[index],_site[index])] = arr[index]*timeS
 
 
-    coveNumber    = {'10pct':1432.,   '15pct':2162., '20pct':2824.,  '25pct':3558.,  '30pct':4196., '35pct':4985.,  '40pct':5684.}
-    covePCT       = {'10pct':9.86037, '15pct':14.887,'20pct':19.4453,'25pct':24.994,'30pct':28.8925,'35pct':34.3254,'40pct':39.1385}
+    coveNumber    = {'10pct':1432.,   '15pct':2162., '20pct':2824.,  \
+    '25pct':3558.,  '30pct':4196., '35pct':4985.,  '40pct':5684.}
+    covePCT       = {'10pct':9.86037, '15pct':14.887,'20pct':19.4453,\
+    '25pct':24.994,'30pct':28.8925,'35pct':34.3254,'40pct':39.1385}
 
 
-    return inta,proc,loca,acc,arr,Activity,br,site,timeS,boulbyIBDRate*FVkTonRatio,mass,dAct,coveNumber,covePCT
+    return inta,proc,loca,acc,arr,Activity,br,site,timeS,\
+    boulbyIBDRate*FVkTonRatio,mass,dAct,coveNumber,covePCT

@@ -493,41 +493,46 @@ def extractHistogramWitCorrectRate():
                         y    = t.GetV3()
                         z    = t.GetV4()
 
-                        s_dl1        = "%s_dD_%s_%s_%s_%s"%('eisi',cover,ii,locj,'proxCutEfficiency')
+                        s_dl1        = "%s_dD_%s_%s_%s_%s"%('eisi',cover,ii,locj,'proxCut')
                         h[s_dl1]     = TH1D(s_dl1,s_dl1,5000,0,15)
                         h[s_dl1].SetName(s_dl1)
                         h[s_dl1].SetXTitle('distance')
                         h[s_dl1].SetYTitle('efficiency')
 
-                        s_dl2       ="%s_pep_ped_%s_%s_%s_%s"%('eisi',cover,ii,locj,'proxCutEfficiency')
+                        s_dl2       ="%s_pep_ped_%s_%s_%s_%s"%('eisi',cover,ii,locj,'proxCut')
                         h[s_dl2]     = TH2D(s_dl2,s_dl2,200,0,200,200,0,200)
                         h[s_dl2].SetXTitle('prompt energy [pe]')
                         h[s_dl2].SetYTitle('delayed energy [pe]')
                         h[s_dl2].SetZTitle('efficiency')
 
 
-                        s_dl1b        = "%s_dD_%s_%s_%s_%s"%('eisi',cover,ii,locj,'proxCutRate')
+                        s_dl1b        = "%s_dD_%s_%s_%s_%s"%('eisi',cover,ii,locj,'noproxCut')
                         h[s_dl1b]     = TH1D(s_dl1b,s_dl1b,5000,0,15)
                         h[s_dl1b].SetName(s_dl1b)
                         h[s_dl1b].SetXTitle('distance')
                         h[s_dl1b].SetYTitle('event rate [%s]^{-1}'%(timeScale))
 
-                        s_dl2b       ="%s_pep_ped_%s_%s_%s_%s"%('eisi',cover,ii,locj,'proxCutRate')
+                        s_dl2b       ="%s_pep_ped_%s_%s_%s_%s"%('eisi',cover,ii,locj,'noproxCut')
                         h[s_dl2b]     = TH2D(s_dl2b,s_dl2b,200,0,200,200,0,200)
                         h[s_dl2b].SetXTitle('prompt energy [pe]')
                         h[s_dl2b].SetYTitle('delayed energy [pe]')
                         h[s_dl2b].SetZTitle('event rate [%s]^{-1}'%(timeScale))
 
-                        cntEISI = 0
+                        cntEISI    = 0.
+                        cntAcc  = 0.
                         for index in range(N-1):
-                            rad = sqrt(power(x[index]-x[index+1],2)+power(y[index]-y[index+1],2)+power(z[index]-z[index+1],2))/1000.
-                            if rad < float(arguments["-d"]):
-                                h[s_dl2].Fill(pe[index],pe[index+1])
-                                h[s_dl1].Fill(sqrt(power(x[index]-x[index+1],2)+power(y[index]-y[index+1],2)+power(z[index]-z[index+1],2))/1000.)
-                                h[s_dl2b].Fill(pe[index],pe[index+1])
-                                h[s_dl1b].Fill(sqrt(power(x[index]-x[index+1],2)+power(y[index]-y[index+1],2)+power(z[index]-z[index+1],2))/1000.)
+                            _rad = sqrt(power(x[index]-x[index+1],2)+power(y[index]-y[index+1],2)+power(z[index]-z[index+1],2))/1000.
+                            _pe0 = pe[index]
+                            _pe1 = pe[index+1]
+                            if _rad < float(arguments["-d"]):
+                                h[s_dl2].Fill(_pe0,_pe1)
+                                h[s_dl1].Fill(_rad)
                                 cntEISI+=1
-
+                            h[s_dl2b].Fill(_pe0,_pe1)
+                            h[s_dl1b].Fill(_rad)
+                            cntAcc+=1.
+                        if cntAcc !=0:
+                            print 'Cut effieciency ',cntEISI,cntAcc,cntEISI/cntAcc
                         g["eisi_%s_%s_singlesRate_ProxCut" %(ii,locj)].SetPoint(cntG,pc_val["%s"%(cover)],cntEISI/float(tt)*er)
                         g["eisi_%s_%s_singlesRate_ProxCut" %(ii,locj)].GetXaxis().SetTitle('PMT coverage')
                         g["eisi_%s_%s_singlesRate_ProxCut" %(ii,locj)].GetYaxis().SetTitle('counts [%s]^{-1}'%(timeScale))
@@ -753,8 +758,8 @@ def extractHistogramWitCorrectRate():
 
                 for idx,cover in enumerate(coverage):
                     covPCT  = coveragePCT[cover]
-                    # try:
-                    if 1==1:
+                    try:
+                    # if 1==1:
                         #                        branches = 'pe','nhit','n9','delta_time_s', 'detected_ev','detected_ev_tot','all_ev','all_ev_tot',subevents,event_number,candidate,mc_prim_energy,pos_goodness,posReco,reco_r,reco_z,posTruth,true_r,true_z,dir_goodness,dirReco,dirPrimaryMC,FV,GSV,EV,OV,IV,FV_truth,GSV_truth,EV_truth,OV_truth,IV_truth,inner_dist,inner_time,inner_dist_fv,tot_FV,consecutive_FV')'
                         s =  "ntuple_root_files%s/%s_%s_%s_%s.root"%(additionalString,inFilePrefix,ii,cover,locj)
                         print "\nReading in ",s
@@ -799,7 +804,7 @@ er, ' per ', timeScale
                         if locj == 'FN' or locj == 'I':
                             s_dl    = "%s_pe_%s_%s_%s_%d"%('ei',cover,ii,locj,1)
                             # h[s_dl]     = TH1D(s_dl,s_dl,5000,0,500)
-                            drawArg = "pe>>hei(5000,0,500)"
+                            drawArg = "n9>>hei(5000,0,500)"
                             ei1 = t.Draw(drawArg,eiCond,"goff")
                             ei  = t.Draw(drawArg,eiCond+multCondD,"goff")
                             eiP = t.Draw(drawArg,eiCond+multCond,"goff")
@@ -810,7 +815,7 @@ er, ' per ', timeScale
                             h[s_dl].SetYTitle('counts for %d MC events'%(tt))
 
                             s_dlsi  = "%s_pe_%s_%s_%s_%d"%('si',cover,ii,locj,1)
-                            drawArg = "pe>>hsi(5000,0,500)"
+                            drawArg = "n9>>hsi(5000,0,500)"
                             si1 = t.Draw(drawArg,siCond,"goff")
                             si = t.Draw(drawArg,siCond+multCondD,"goff")
                             siP = t.Draw(drawArg,siCond+multCond,"goff")
@@ -822,7 +827,7 @@ er, ' per ', timeScale
                         else:
                             s_dl    = "%s_pe_%s_%s_%s_%d"%('ei',cover,ii,locj,1)
                             # h[s_dl]     = TH1D(s_dl,s_dl,5000,0,500)
-                            drawArg = "pe>>hei(5000,0,500)"
+                            drawArg = "n9>>hei(5000,0,500)"
                             ei = t.Draw(drawArg,eiCond,"goff")
                             h[s_dl] = t.GetHistogram()
                             h[s_dl].SetName(s_dl)
@@ -830,7 +835,7 @@ er, ' per ', timeScale
                             h[s_dl].SetYTitle('counts for %d MC events'%(tt))
 
                             s_dlsi  = "%s_pe_%s_%s_%s_%d"%('si',cover,ii,locj,1)
-                            drawArg = "pe>>hsi(5000,0,500)"
+                            drawArg = "n9>>hsi(5000,0,500)"
                             si = t.Draw(drawArg,siCond,"goff")
                             h[s_dlsi] = t.GetHistogram()
                             h[s_dlsi].SetName(s_dlsi)
@@ -939,16 +944,21 @@ er, ' per ', timeScale
                         h[s_dl2b].SetYTitle('delayed energy [pe]')
                         h[s_dl2b].SetZTitle('event rate [%s]^{-1}'%(timeScale))
 
-                        cntEISI = 0
+                        cntEISI    = 0.
+                        cntAcc  = 0.
                         for index in range(N-1):
-                            rad = sqrt(power(x[index]-x[index+1],2)+power(y[index]-y[index+1],2)+power(z[index]-z[index+1],2))/1000.
-                            if rad < float(arguments["-d"]):
-                                h[s_dl2].Fill(pe[index],pe[index+1])
-                                h[s_dl1].Fill(sqrt(power(x[index]-x[index+1],2)+power(y[index]-y[index+1],2)+power(z[index]-z[index+1],2))/1000.)
-                                h[s_dl2b].Fill(pe[index],pe[index+1])
-                                h[s_dl1b].Fill(sqrt(power(x[index]-x[index+1],2)+power(y[index]-y[index+1],2)+power(z[index]-z[index+1],2))/1000.)
+                            _rad = sqrt(power(x[index]-x[index+1],2)+power(y[index]-y[index+1],2)+power(z[index]-z[index+1],2))/1000.
+                            _pe0 = pe[index]
+                            _pe1 = pe[index+1]
+                            if _rad < float(arguments["-d"]):
+                                h[s_dl2].Fill(_pe0,_pe1)
+                                h[s_dl1].Fill(_rad)
                                 cntEISI+=1
-
+                            h[s_dl2b].Fill(_pe0,_pe1)
+                            h[s_dl1b].Fill(_rad)
+                            cntAcc+=1.
+                        if cntAcc !=0:
+                            print 'Cut effieciency ',cntEISI,cntAcc,cntEISI/cntAcc
                         g["eisi_%s_%s_singlesRate_ProxCut" %(ii,locj)].SetPoint(cntG,pc_val["%s"%(cover)],cntEISI/float(tt)*er)
                         g["eisi_%s_%s_singlesRate_ProxCut" %(ii,locj)].GetXaxis().SetTitle('PMT coverage')
                         g["eisi_%s_%s_singlesRate_ProxCut" %(ii,locj)].GetYaxis().SetTitle('counts [%s]^{-1}'%(timeScale))
@@ -995,7 +1005,7 @@ er, ' per ', timeScale
                             #                        print len(t),len(t[0])
 
 
-                    # except:
+                    except:
                         print "Could not read file ",s
                         #        writeResultsToFile(arguments["-o"],g,h)
                         #        print h
@@ -1125,8 +1135,10 @@ def obtainAbsoluteEfficiency(f,timeScale='day',cut = 10.0):
                 except:
                     a = 1
 
-
-    distanceEff = 0.004
+    #DistanceEff was taken from watchmanDetector.pdf (0.004)
+    # New values are estimated from watch -a results
+    distanceEff = 0.025
+    dT = float(arguments["-t"])*1e-6 # Change microsecond to rate
     for iii,value in enumerate(pct):
         x   = float(value)
         oY  = EG[_scal_acc].Eval(x)
