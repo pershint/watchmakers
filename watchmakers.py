@@ -38,7 +38,7 @@ if __name__ == "__main__":
         g,h = runAnalysisProcess(arguments["-f"],g,h)
         writeResultsToFile(arguments["-o"],g,h)
 
-    if arguments['-a']:
+    if arguments['-a'] or arguments["--efficiency"]:
         extractHistogramWitCorrectRate()
 
     if arguments['-R']:
