@@ -466,24 +466,25 @@ def sensitivityMapNew():
         _size,_T3 = findScaledVolume(S_tmp,BAC_tmp+BFN_tmp,BRN_tmp,1.0)
         # _sOff,_T3sOff = findEquivalentStandoff(S_tmp,BAC_tmp+BFN_tmp,BRN_tmp,_signal_Eff)
 
-        graphCnt = 0
-        sigmaLvl = 2
-        # for _detectSize in drange(1.,50.,1.):
-        #     _sOff,_sRate,_sRatePostEff = findEquivalentStandoff(S_tmp,\
-        #     BAC_tmp+BFN_tmp,BRN_tmp,_signal_Eff,0.,6,_detectSize,sigmaLvl)
-        #     graphDict["%dpct"%(PC)].SetPoint(graphCnt,_sOff,_detectSize)
-        #     #Do the 10% systematics
-        #     _sOff,_sRate,_sRatePostEff = findEquivalentStandoff(S_tmp,\
-        #     BAC_tmp+BFN_tmp,BRN_tmp,_signal_Eff,0.1,6,_detectSize,sigmaLvl)
-        #     graphDict["%dpct_sys10"%(PC)].SetPoint(graphCnt,_sOff,_detectSize)
-        #     #Do the 20% systematics
-        #     _sOff,_sRate,_sRatePostEff = findEquivalentStandoff(S_tmp,\
-        #     BAC_tmp+BFN_tmp,BRN_tmp,_signal_Eff,0.2,6,_detectSize,sigmaLvl)
-        #     graphDict["%dpct_sys20"%(PC)].SetPoint(graphCnt,_sOff,_detectSize)
-        #
-        #
-        #
-        #     graphCnt+=1
+        if arguments["--40MWth"]:
+            graphCnt = 0
+            sigmaLvl = float(arguments["--40MWthSig"])
+            for _detectSize in drange(1.,50.,1.):
+                _sOff,_sRate,_sRatePostEff = findEquivalentStandoff(S_tmp,\
+                BAC_tmp+BFN_tmp,BRN_tmp,_signal_Eff,0.,6,_detectSize,sigmaLvl)
+                graphDict["%dpct"%(PC)].SetPoint(graphCnt,_sOff,_detectSize)
+                #Do the 10% systematics
+                _sOff,_sRate,_sRatePostEff = findEquivalentStandoff(S_tmp,\
+                BAC_tmp+BFN_tmp,BRN_tmp,_signal_Eff,0.5,6,_detectSize,sigmaLvl)
+                graphDict["%dpct_sys10"%(PC)].SetPoint(graphCnt,_sOff,_detectSize)
+                #Do the 20% systematics
+                _sOff,_sRate,_sRatePostEff = findEquivalentStandoff(S_tmp,\
+                BAC_tmp+BFN_tmp,BRN_tmp,_signal_Eff,0.1,6,_detectSize,sigmaLvl)
+                graphDict["%dpct_sys20"%(PC)].SetPoint(graphCnt,_sOff,_detectSize)
+
+
+
+                graphCnt+=1
 
 
         _graphSIZE.SetPoint(gCnt,PC,_size)
@@ -568,18 +569,18 @@ def sensitivityMapNew():
     _graphSIZE.GetXaxis().SetTitle('photocoverage [%]')
     _graphSIZE.GetYaxis().SetTitle('Detector FV size [kton]')
     c4.Update()
-
-    # _pc = ['10','15','20','25','30','35','40']
-    # _Canvas = {}
-    # for pc in _pc:
-    #     _Canvas["c%s"%(pc)] = TCanvas("c%s"%(pc),"c%s"%(pc),1618,1000)
-    #     _Canvas["c%s"%(pc)].Divide(1,1)
-    #     graphDict["%spct"%(pc)].Draw('ALP')
-    #     graphDict["%spct_sys10"%(pc)].Draw('LPsame')
-    #     graphDict["%spct_sys20"%(pc)].Draw('LPsame')
-    #     _Canvas["c%s"%(pc)].Update()
-    #     _Canvas["c%s"%(pc)].SaveAs('results/Canvas%s.gif'%(pc))
-    #     _Canvas["c%s"%(pc)].SaveAs('results/Canvas%s.C'%(pc))
+    if arguments["--40MWth"]:
+        _pc = ['10','15','20','25','30','35','40']
+        _Canvas = {}
+        for pc in _pc:
+            _Canvas["c%s"%(pc)] = TCanvas("c%s"%(pc),"c%s"%(pc),1618,1000)
+            _Canvas["c%s"%(pc)].Divide(1,1)
+            graphDict["%spct"%(pc)].Draw('ALP')
+            graphDict["%spct_sys10"%(pc)].Draw('LPsame')
+            graphDict["%spct_sys20"%(pc)].Draw('LPsame')
+            _Canvas["c%s"%(pc)].Update()
+            _Canvas["c%s"%(pc)].SaveAs('results/Canvas%s.gif'%(pc))
+            _Canvas["c%s"%(pc)].SaveAs('results/Canvas%s.C'%(pc))
 
 
     analysisString =""

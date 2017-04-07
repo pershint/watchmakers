@@ -68,7 +68,7 @@ docstring = """
     --minN9=<_MPE>      Minimal number of photoelectron [Default: 9.]
     -g=<goodness>       Bonsai position goodness parameter [Default: %f]
     -G=<Goodness>       Bonsai direction goodness parameter [Default: %f]
-    --RNRedux=<_RNR>    Reduction due to time/spatial veto arround muons (>0.90)
+    --RNRedux=<_RNR>    Reduction due to time/spatial veto arround (>0.90) [Default: 0.9]
 
     -P=<proc>           Pick a single physics process to analyis/merge (used for ntup)
     -L=<loc>            Pick a single physics location to analyis/merge (used for ntup)
@@ -93,6 +93,8 @@ docstring = """
     --OnOff=<_OOratio>  Ratio of reactor on to reactor off [Default: %d]
     --cores=<_cores>    Number of cores to discover [Default: 1]
     --bkgdSys=<_BSys>   Systematic background percentage [Default: 0.2]
+    --40MWth            Option to sensitivity to do case scenarios
+    --40MWthSig=<_SL>   Sigma discovery [Default: 3.0]
 
     --U238_PPM=<_Uppm>  Concentration of U-238 in glass [Default: %f]
     --Th232_PPM=<_Thp>  Concentration of Th-232 in glass [Default: %f]
@@ -101,7 +103,7 @@ docstring = """
     --detectMedia=<_dM>  Detector media (doped_water,...)
     --collectionEff=<CE> Collection efficiency (e.g.: 0.85,0.67,0.475)
     --pmtModel=<_PMTM>   PMT Model (r7081pe)
-    --photocath = <_PC>  PMT photocathode (R7081HQE)
+    --photocath =<_PC>  PMT photocathode (R7081HQE)
 
     """ % (defaultValues[0],defaultValues[1],defaultValues[2],defaultValues[3],defaultValues[4],\
            defaultValues[5],defaultValues[6],defaultValues[7],defaultValues[8],\
