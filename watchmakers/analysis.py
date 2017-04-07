@@ -574,7 +574,7 @@ def extractHistogramWitCorrectRate():
                         multCondD += "&& inner_dist_fv<%f" %(distCut)
                         totEvtStr  = "all_ev_tot == all_ev"
                     if boolSUPERNOVA_FORMAT:
-                        multCond   = "&& sub_ev ==1 && sub_ev_cn >=2"
+                        multCond   = "&& sub_ev ==1 && sub_ev_cnt >=2"
                         multCond  += "&& !single"
                         multCondD  = "&& sub_ev==2 && sub_ev>=2"
                         multCondD += "&& !single"
