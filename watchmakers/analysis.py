@@ -398,7 +398,11 @@ def extractHistogramWitCorrectRate():
             fPolyFit1  = TF1('fPolyFit1',"[0]+[1]*x",0.0,10.0)
             fPolyFit1.SetParameters(backgroundNoise,15.)
             s_nhitPerMeV_eisi        = "%s_nhitPerMeV_%s_%s_%s_%d"%('si',cover,ii,locj,1)
-            t.Draw("nhit:mc_prim_energy>>h%s(100,0,10,200,0,200)"%(s_nhitPerMeV_eisi),"%s && %s "%(recoFVstring,posGood),"goff")
+            if boolSUPERNOVA_FORMAT:
+                t.Draw("nhit:mc_nu_energy>>h%s(100,0,10,200,0,200)"%(s_nhitPerMeV_eisi),"%s && %s "%(recoFVstring,posGood),"goff")
+            if not boolSUPERNOVA_FORMAT:
+                t.Draw("nhit:mc_prim_energy>>h%s(100,0,10,200,0,200)"%(s_nhitPerMeV_eisi),"%s && %s "%(recoFVstring,posGood),"goff")
+
             h1 = t.GetHistogram()
             h[s_nhitPerMeV_eisi] = h1.ProfileX()
             h[s_nhitPerMeV_eisi].Fit("fPolyFit1","MREQ","",2,6.5)
