@@ -399,7 +399,7 @@ def extractHistogramWitCorrectRate():
             fPolyFit1.SetParameters(backgroundNoise,15.)
             s_nhitPerMeV_eisi        = "%s_nhitPerMeV_%s_%s_%s_%d"%('si',cover,ii,locj,1)
             if boolSUPERNOVA_FORMAT:
-                t.Draw("nhit:mc_nu_energy>>h%s(100,0,10,200,0,200)"%(s_nhitPerMeV_eisi),"%s && %s "%(recoFVstring,posGood),"goff")
+                t.Draw("nhit:mc_energy>>h%s(100,0,10,200,0,200)"%(s_nhitPerMeV_eisi),"%s && %s "%(recoFVstring,posGood),"goff")
             if not boolSUPERNOVA_FORMAT:
                 t.Draw("nhit:mc_prim_energy>>h%s(100,0,10,200,0,200)"%(s_nhitPerMeV_eisi),"%s && %s "%(recoFVstring,posGood),"goff")
 
@@ -426,7 +426,11 @@ def extractHistogramWitCorrectRate():
             fPolyFit2  = TF1('fPolyFit2',"[0]+[1]*x",0.0,10.0)
             fPolyFit2.SetParameters(backgroundNoise,15.)
             s_pePerMeV_eisi        = "%s_pePerMeV_%s_%s_%s_%d"%('si',cover,ii,locj,1)
-            t.Draw("pe:mc_prim_energy>>h%s(100,0,10,200,0,200)"%(s_pePerMeV_eisi),"%s && %s "%(recoFVstring,posGood),"goff")
+            if boolSUPERNOVA_FORMAT:
+                t.Draw("pe:mc_energy>>h%s(100,0,10,200,0,200)"%(s_pePerMeV_eisi),"%s && %s "%(recoFVstring,posGood),"goff")
+            if not boolSUPERNOVA_FORMAT:
+                t.Draw("pe:mc_prim_energy>>h%s(100,0,10,200,0,200)"%(s_pePerMeV_eisi),"%s && %s "%(recoFVstring,posGood),"goff")
+
             h1 = t.GetHistogram()
             h[s_pePerMeV_eisi] = h1.ProfileX()
             h[s_pePerMeV_eisi].Fit("fPolyFit2","MREQ","",2,6.5)
@@ -450,7 +454,12 @@ def extractHistogramWitCorrectRate():
             fPolyFit3  = TF1('fPolyFit3',"[0]+[1]*x",0.0,10.0)
             fPolyFit3.SetParameters(backgroundNoise,15.)
             s_n9PerMeV_eisi        = "%s_pePerMeV_%s_%s_%s_%d"%('si',cover,ii,locj,1)
-            t.Draw("n9:mc_prim_energy>>h%s(100,0,10,200,0,200)"%(s_n9PerMeV_eisi),"%s && %s"%(recoFVstring,posGood),"goff")
+            if boolSUPERNOVA_FORMAT:
+                t.Draw("n9:mc_energy>>h%s(100,0,10,200,0,200)"%(s_n9PerMeV_eisi),"%s && %s"%(recoFVstring,posGood),"goff")
+            if not boolSUPERNOVA_FORMAT:
+                t.Draw("n9:mc_prim_energy>>h%s(100,0,10,200,0,200)"%(s_n9PerMeV_eisi),"%s && %s"%(recoFVstring,posGood),"goff")
+
+
             h1 = t.GetHistogram()
             h[s_n9PerMeV_eisi] = h1.ProfileX()
             h[s_n9PerMeV_eisi].Fit("fPolyFit3","MREQ","",2,6.5)
