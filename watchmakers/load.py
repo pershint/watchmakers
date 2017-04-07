@@ -82,7 +82,7 @@ docstring = """
 
     -M                  Merge result files from trial ntuples
 
-    -a --efficiency     Read merged files and perform analysis
+    --efficiency     Read merged files and perform analysis
     -A                  Read merged files and perform analysis
 
     -R                  Read analyzed result and evaluate sensitivity
