@@ -576,7 +576,7 @@ def extractHistogramWitCorrectRate():
                     if boolSUPERNOVA_FORMAT:
                         multCond   = "&& sub_ev ==1 && sub_ev_cn >=2"
                         multCond  += "&& !single"
-                        multCondD  = "&& detected_ev==2 && detected_ev_tot>=2"
+                        multCondD  = "&& sub_ev==2 && sub_ev>=2"
                         multCondD += "&& !single"
                         multCondD += "&& local_time_ns<%f " %(timeCut)
                         # multCondD += "&& inner_dist_fv<%f" %(distCut) No such value
