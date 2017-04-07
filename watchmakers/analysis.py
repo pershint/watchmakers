@@ -453,7 +453,7 @@ def extractHistogramWitCorrectRate():
 
             fPolyFit3  = TF1('fPolyFit3',"[0]+[1]*x",0.0,10.0)
             fPolyFit3.SetParameters(backgroundNoise,15.)
-            s_n9PerMeV_eisi        = "%s_pePerMeV_%s_%s_%s_%d"%('si',cover,ii,locj,1)
+            s_n9PerMeV_eisi        = "%s_n9PerMeV_%s_%s_%s_%d"%('si',cover,ii,locj,1)
             if boolSUPERNOVA_FORMAT:
                 t.Draw("n9:mc_energy>>h%s(100,0,10,200,0,200)"%(s_n9PerMeV_eisi),"%s && %s"%(recoFVstring,posGood),"goff")
             if not boolSUPERNOVA_FORMAT:
