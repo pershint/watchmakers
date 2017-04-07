@@ -589,7 +589,7 @@ def extractHistogramWitCorrectRate():
                     if locj == 'PMT':
                         print " adjusting rate for pmt %4.3e %s^{-1}, pmt mass %4.2f, number of PMTs %d : %4.3e %s^{-1}"%(er,timeScale,mass,pc_num["%s"%(cover)],er*pc_num["%s"%(cover)]*mass,timeScale)
                         er*=pc_num["%s"%(cover)]*mass
-                    print ' Total event rate pre-detection efficiency is ',\
+                    print ' Total raw event rate is ',\
                     er, ' per ', timeScale
 
                     # Evalute pe distribution (used in sensitivity map)
