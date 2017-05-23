@@ -19,7 +19,7 @@ TRandom3 randNum;
 
 //#include <libRATEvent.h>
 
-int goldenFileExtractor(const char *file, double nhit_min =3., double goodness_min = 0.1, double goodness_dir = 0.1, double timeWindow_ns = 100000, double rate = 10.0, double maxDistance = 2.0, double fidBound = 5.4, double pmtBound = 6.4, double tankBound = 8.0000, const char *outfile = "null") {
+int goldenFileExtractor(const char *file, const char *outfile = "null", double nhit_min =3., double goodness_min = 0.1, double goodness_dir = 0.1, double timeWindow_ns = 100000, double rate = 10.0, double maxDistance = 2.0, double fidBound = 5.4, double pmtBound = 6.4, double tankBound = 8.0000) {
 
     // Define the incoming out outgoing Trees
     TFile *f = new TFile(file);
