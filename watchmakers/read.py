@@ -4,6 +4,8 @@ from watchmakers.load import *
 from watchmakers.analysis import *
 from io_operations import testEnabledCondition
 import watchmakers.NeutrinoOscillation as nuOsc
+from decimal import *
+setcontext(ExtendedContext)
 
 from numpy import max
 t = arguments['--timeScale']
@@ -204,7 +206,7 @@ def sensitivityMapNew():
     if t == 'year':
         timeAdjustment = 1./365.
 
-    maxTime = 400.*timeAdjustment
+    maxTime = 14400.*timeAdjustment
 
     proc        = []
     loca        = []
@@ -356,9 +358,10 @@ def sensitivityMapNew():
         BFN_tmp           = 0.0
         BRN_tmp           = 0.0
         BAC_tmp           = 0.0
+        BRS_tmp           = 0.0
         SoverS_B        = 0.
         SoverS_B_sys20  = 0.
-        T3SIGMA_MIN     = 16000
+        T3SIGMA_MIN     = 16000000
         cut_tmp     = 0.
 
         c1.cd(1)
@@ -442,7 +445,8 @@ def sensitivityMapNew():
                         nuRate = imbRate
 
                     if  T3SIGMA < maxTime:
-                        print "%3d %3d %10.4f %10.4f %10.4f %10.4f %10.4f %10.4f %10.4f %10.4f %10.4f" %(PC,cut,S,S/nuRate,BAC,BRN,BFN,BRS,B,SSBB,T3SIGMA)
+                        # print "%3d %3d %10.4f %10.4f %10.4f %10.4f %10.4f %10.4f %10.4f %10.4f %10.4f" %(PC,cut,S,S/nuRate,BAC,BRN,BFN,BRS,B,SSBB,T3SIGMA)
+                        print "%3d %3d %10.4e %10.4f %10.4e %10.4e %10.4e %10.4e %10.4e" %(PC,cut,S,S/nuRate,BAC,BRN,BFN,BRS,B)
                         hist.Fill(PC,cut,T3SIGMA)
                     if  T3SIGMA >= maxTime:
                         hist.Fill(PC,cut,maxTime)
@@ -463,31 +467,30 @@ def sensitivityMapNew():
         _graphBRN.SetPoint(gCnt,PC,BRN_tmp)
         _graphBAC.SetPoint(gCnt,PC,BAC_tmp)
         _graphBRS.SetPoint(gCnt,PC,BRS_tmp)
-        _size,_T3 = findScaledVolume(S_tmp,BAC_tmp+BFN_tmp,BRN_tmp,1.0)
+
         # _sOff,_T3sOff = findEquivalentStandoff(S_tmp,BAC_tmp+BFN_tmp,BRN_tmp,_signal_Eff)
 
         if arguments["--40MWth"]:
+            _size,_T3 = findScaledVolume(S_tmp,BAC_tmp+BFN_tmp,BRN_tmp,1.0)
             graphCnt = 0
             sigmaLvl = float(arguments["--40MWthSig"])
-            for _detectSize in drange(1.,50.,1.):
-                _sOff,_sRate,_sRatePostEff = findEquivalentStandoff(S_tmp,\
-                BAC_tmp+BFN_tmp,BRN_tmp,_signal_Eff,0.,6,_detectSize,sigmaLvl)
-                graphDict["%dpct"%(PC)].SetPoint(graphCnt,_sOff,_detectSize)
-                #Do the 10% systematics
-                _sOff,_sRate,_sRatePostEff = findEquivalentStandoff(S_tmp,\
-                BAC_tmp+BFN_tmp,BRN_tmp,_signal_Eff,0.5,6,_detectSize,sigmaLvl)
-                graphDict["%dpct_sys10"%(PC)].SetPoint(graphCnt,_sOff,_detectSize)
-                #Do the 20% systematics
-                _sOff,_sRate,_sRatePostEff = findEquivalentStandoff(S_tmp,\
-                BAC_tmp+BFN_tmp,BRN_tmp,_signal_Eff,0.1,6,_detectSize,sigmaLvl)
-                graphDict["%dpct_sys20"%(PC)].SetPoint(graphCnt,_sOff,_detectSize)
+            if 1==1:#PC == 40:
+                for _detectSize in drange(1.,50.,1.):
+                    _sOff,_sRate,_sRatePostEff = findEquivalentStandoff(S_tmp,\
+                    BAC_tmp+BFN_tmp,BRN_tmp,_signal_Eff,0.,6,_detectSize,sigmaLvl)
+                    graphDict["%dpct"%(PC)].SetPoint(graphCnt,_sOff,_detectSize)
+                    #Do the 10% systematics
+                    _sOff,_sRate,_sRatePostEff = findEquivalentStandoff(S_tmp,\
+                    BAC_tmp+BFN_tmp,BRN_tmp,_signal_Eff,0.05,6,_detectSize,sigmaLvl)
+                    graphDict["%dpct_sys10"%(PC)].SetPoint(graphCnt,_sOff,_detectSize)
+                    #Do the 20% systematics
+                    _sOff,_sRate,_sRatePostEff = findEquivalentStandoff(S_tmp,\
+                    BAC_tmp+BFN_tmp,BRN_tmp,_signal_Eff,0.1,6,_detectSize,sigmaLvl)
+                    graphDict["%dpct_sys20"%(PC)].SetPoint(graphCnt,_sOff,_detectSize)
+                    graphCnt+=1
 
 
-
-                graphCnt+=1
-
-
-        _graphSIZE.SetPoint(gCnt,PC,_size)
+            _graphSIZE.SetPoint(gCnt,PC,_size)
         # print PC,_size,_T3,_sOff,_T3sOff
 
         gCnt+=1
@@ -571,6 +574,7 @@ def sensitivityMapNew():
     c4.Update()
     if arguments["--40MWth"]:
         _pc = ['10','15','20','25','30','35','40']
+        _pc = ['40']
         _Canvas = {}
         for pc in _pc:
             _Canvas["c%s"%(pc)] = TCanvas("c%s"%(pc),"c%s"%(pc),1618,1000)
@@ -639,7 +643,10 @@ def findScaledVolume(S,B_Surface,B_Volume,OnOffRatio = 1.0):
         _S      = S * _volume
         _B      = B_Surface * _surf + B_Volume * _volume
         SSBB   = _S/sqrt(_B + (_S + _B)/OnOffRatio)
+
         T3SIGMA = 9.*(_B +(_S+_B)/OnOffRatio)/_S/_S
+        # except:
+        #     print 'Could not'
         # print "%3d %10.2f %10.2f %10.2f %10.2f"%(size, SSBB, T3SIGMA,_S,_B)
         if T3SIGMA < 3.00001:
             break

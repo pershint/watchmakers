@@ -724,8 +724,8 @@ def extractNtuple(arguments):
     d,iso,loc,coverage,coveragePCT = loadSimulationParameters()
     if not superNova:
         try:
-            goldenFileExtractor(fIn,minNHIT,goodness,dirGoodness,timemask,\
-                            rate,distancemask,fidV,pmtV,tankV,outF)
+            goldenFileExtractor(fIn,outF,minNHIT,goodness,dirGoodness,timemask,\
+                            rate,distancemask,fidV,pmtV,tankV)
         except:
             print "Error.."
     else:
@@ -786,8 +786,8 @@ def extractNtupleALL(arguments):
                     print fIn, " -> ", fOut
                     if not superNova:
                         try:
-                            goldenFileExtractor(fIn,minNHIT,goodness,dirGoodness,timemask,\
-                                            rate,distancemask,fidV,pmtV,tankV,fOut)
+                            goldenFileExtractor(fIn,fOut,minNHIT,goodness,dirGoodness,timemask,\
+                                            rate,distancemask,fidV,pmtV,tankV)
                         except:
                             print "Error.."
                     else:
@@ -812,8 +812,8 @@ def extractNtupleALL(arguments):
                             print fIn, " -> ", fOut
                             if not superNova:
                                 try:
-                                    goldenFileExtractor(fIn,minNHIT,goodness,dirGoodness,timemask,\
-                                                    rate,distancemask,fidV,pmtV,tankV,fOut)
+                                    goldenFileExtractor(fIn,fOut,minNHIT,goodness,dirGoodness,timemask,\
+                                                    rate,distancemask,fidV,pmtV,tankV)
                                 except:
                                     print "Error.."
                             else:
