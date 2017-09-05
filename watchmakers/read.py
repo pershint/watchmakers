@@ -445,8 +445,8 @@ def sensitivityMapNew():
                         nuRate = imbRate
 
                     if  T3SIGMA < maxTime:
-                        # print "%3d %3d %10.4f %10.4f %10.4f %10.4f %10.4f %10.4f %10.4f %10.4f %10.4f" %(PC,cut,S,S/nuRate,BAC,BRN,BFN,BRS,B,SSBB,T3SIGMA)
-                        print "%3d %3d %10.4e %10.4f %10.4e %10.4e %10.4e %10.4e %10.4e" %(PC,cut,S,S/nuRate,BAC,BRN,BFN,BRS,B)
+                        print "%3d %3d %10.4f %10.4f %10.4f %10.4f %10.4f %10.4f %10.4f %10.4f %10.4f" %(PC,cut,S,S/nuRate,BAC,BRN,BFN,BRS,B,SSBB,T3SIGMA)
+                        # print "%3d %3d %10.4e %10.4f %10.4e %10.4e %10.4e %10.4e %10.4e" %(PC,cut,S,S/nuRate,BAC,BRN,BFN,BRS,B)
                         hist.Fill(PC,cut,T3SIGMA)
                     if  T3SIGMA >= maxTime:
                         hist.Fill(PC,cut,maxTime)
