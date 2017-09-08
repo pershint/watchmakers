@@ -560,6 +560,29 @@ def testEnabledCondition(arguments):
         additionalMacStr += "_collectionEfficiency_%f" %(float(arguments['--collectionEff']))
         additionalString += "_collectionEfficiency_%f" %(float(arguments['--collectionEff']))
 
+    if (arguments['--tankRadius']):
+        additionalMacOpt += "/rat/db/set GEO[tank] r_max %f\n" %(float(arguments['--tankRadius']))
+        additionalMacOpt += "/rat/db/set GEO[detector] r_max %f\n" %(float(arguments['--tankRadius'])-1.5875)
+        additionalMacOpt += "/rat/db/set GEO[shield] detector_size_r %f\n" %(float(arguments['--tankRadius'])*2)
+        additionalMacStr += "_tankRadius_%f" %(float(arguments['--tankRadius']))
+        additionalString += "_tankRadius_%f" %(float(arguments['--tankRadius']))
+
+    if (arguments['--halfHeight']):
+        additionalMacOpt += "/rat/db/set GEO[tank] size_z %f\n" %(float(arguments['--halfHeight']))
+        additionalMacOpt += "/rat/db/set GEO[shield] detector_size_z %f\n" %(float(arguments['--halfHeight'])*2)
+        additionalMacOpt += "/rat/db/set GEO[detector] size_z %f\n" %(float(arguments['--halfHeight'])-1.5875)
+        additionalMacOpt += "/rat/db/set GEO[cables] size_z %f\n" %(float(arguments['--halfHeight'])-1.5875)
+        additionalMacStr += "_halfHeight_%f" %(float(arguments['--halfHeight']))
+        additionalString += "_halfHeight_%f" %(float(arguments['--halfHeight']))
+
+    if (arguments['--shieldThick']):
+        additionalMacOpt += "/rat/db/set GEO[shield] shield_thickness %f\n" %(float(arguments['--shieldThick']))
+        additionalMacStr += "_shieldThickness_%f" %(float(arguments['--shieldThick']))
+        additionalString += "_shieldThickness_%f" %(float(arguments['--shieldThick']))
+
+    if (arguments['--fidThick'] and arguments['--shieldThick'] and arguments['--halfHeight'] and arguments['--tankRadius']):
+        additionalMacOpt += "/rat/db/set GEO[fiducial] r_max %f\n" %(((float(arguments['--tankRadius']))-1.5875)-((float(arguments['--shieldThick']))+(float(arguments['--fidThick']))))
+        additionalMacOpt += "/rat/db/set GEO[fiducial] size_z %f\n" %(((float(arguments['--halfHeight']))-1.5875)-((float(arguments['--shieldThick']))+(float(arguments['--fidThick']))))
 
     if (arguments['--pmtModel']):
         additionalMacOpt += "/rat/db/set GEO[inner_pmts] pmt_model \"%s\"\n" %((arguments['--pmtModel']))

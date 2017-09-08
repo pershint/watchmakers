@@ -82,7 +82,7 @@ docstring = """
 
     -M                  Merge result files from trial ntuples
 
-    --efficiency     Read merged files and perform analysis
+    --efficiency        Read merged files and perform analysis
     -A                  Read merged files and perform analysis
 
     -R                  Read analyzed result and evaluate sensitivity
@@ -102,6 +102,11 @@ docstring = """
 
     --detectMedia=<_dM>  Detector media (doped_water,...)
     --collectionEff=<CE> Collection efficiency (e.g.: 0.85,0.67,0.475)
+    --tankRadius=<TR>   Total radius of tank (mm)
+    --halfHeight=<HH>    Half height of tank (mm)
+    --shieldThick=<ST>   Distance in to PMT structure (mm)
+    --fidThick=<FT>      Distance from PMT structure to fiducial volume (mm)
+
     --pmtModel=<_PMTM>   PMT Model (r7081pe)
     --photocath =<_PC>  PMT photocathode (R7081HQE)
 
