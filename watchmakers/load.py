@@ -33,10 +33,10 @@ try:
 except:
     print "Could not load in root_numpy or rootpy, they are required to run this module."
 
-defaultValues  = [1,3,2500,2805.,'merged_ntuple_watchman','merged_ntuple_watchman','null', \
-                  'processed_watchman.root',10.,2.0, 100.0, 9,\
-                  0.65,0.1,5.42,6.4,8.0,'day',\
-                  'boulby', 1.0, 0.043, 0.133]
+defaultValues  = [1,3,2500,2805.,'merged_ntuple_watchman',\
+'merged_ntuple_watchman','null', 'processed_watchman.root',\
+10.,2.0, 100.0, 9, 0.65,0.1,5.42,6.4,8.0,8000.0,8000.0,1600.0,1.5875,\
+'day','boulby', 1.0, 0.043, 0.133]
 
 docstring = """
     Usage: watchmakers.py [options]
@@ -46,7 +46,7 @@ docstring = """
     Options:
     -D                  Delete all current photocoverage directory.
 
-    -j=<jobType>        Create submision scripts (1,2,4:rat-pac files|case 2,3,>3 ntuplefiles) [default %d]
+    -j=<jobType>        Create submision scripts (1,2,4:rat-pac files|case >3 ntuplefiles) [default %d]
                         >3 option will generate a nutple_root_files_flags folder for results
     -m                  Also generate macro files
     -N=<N>              Number of MC script that were run [Default: %d]
@@ -80,6 +80,11 @@ docstring = """
     --psup=<psupV>      IGNORE Distance to PMT support, assuming right cylinder [Default: %f]
     --tankDis=<tankV>   IGNORE Distance to tank wall, assuming right cylinder [Default: %f]
 
+    --tankRadius=<TR>   Total radius of tank (mm) [Default: %f]
+    --halfHeight=<HH>   Half height of tank (mm) [Default: %f]
+    --shieldThick=<ST>  Steel->PMT distance (mm) [Default: %f]
+    --steelThick=<StT>  Steel Thickness (mm)     [Default: %f]
+
     -M                  Merge result files from trial ntuples
 
     --efficiency        Read merged files and perform analysis
@@ -102,10 +107,6 @@ docstring = """
 
     --detectMedia=<_dM>  Detector media (doped_water,...)
     --collectionEff=<CE> Collection efficiency (e.g.: 0.85,0.67,0.475)
-    --tankRadius=<TR>   Total radius of tank (mm) [Default: 8000.]
-    --halfHeight=<HH>    Half height of tank (mm) [Default: 8000.]
-    --shieldThick=<ST>   Steel->PMT distance (mm) [Default: 1600]
-    --fidThick=<FT>      PMT->Fiducial distance (mm) [Default: 1600]
 
     --pmtModel=<_PMTM>   PMT Model (r7081pe)
     --photocath =<_PC>  PMT photocathode (R7081HQE)
@@ -115,7 +116,7 @@ docstring = """
            defaultValues[9],defaultValues[10],defaultValues[11],defaultValues[12],\
            defaultValues[13],defaultValues[14],defaultValues[15],defaultValues[16],\
            defaultValues[17],defaultValues[18],defaultValues[19],defaultValues[20],\
-           defaultValues[21])
+           defaultValues[21],defaultValues[22],defaultValues[23],defaultValues[24],defaultValues[25])
 
 try:
     import docopt
@@ -132,9 +133,9 @@ gSystem.AddIncludePath(" -I$RATROOT/include")
 gROOT.LoadMacro("$WATCHENV/watchmakers/goldenFileExtractor.C")
 from ROOT import goldenFileExtractor
 
-
-gROOT.LoadMacro("$WATCHENV/watchmakers/supernovaAnalysis.C")
-from ROOT import supernovaAnalysis
+# This is deprecated
+# gROOT.LoadMacro("$WATCHENV/watchmakers/supernovaAnalysis.C")
+# from ROOT import supernovaAnalysis
 
 def loadSimulationParameters():
     #Chain and subsequent isotopes

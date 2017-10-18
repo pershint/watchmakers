@@ -16,7 +16,7 @@ def deleteDirectory(directory):
 
 
 def macroGenerator(percentage,isotope,location,runs,events):
-    
+
     covPCT = {'10pct':0.1,'15pct':0.15,'20pct':0.2,\
     '25pct':0.25,'30pct':0.30,'35pct':0.35,'40pct':0.40}
     additionalString,additionalCommands,additionalMacStr,additionalMacOpt = testEnabledCondition(arguments)
@@ -28,7 +28,7 @@ def macroGenerator(percentage,isotope,location,runs,events):
 #    print arguments["--depth"]
 
     depth = float(arguments["--depth"])
-    
+
     header = '''
 /glg4debug/glg4param omit_muon_processes  0.0
 /glg4debug/glg4param omit_hadronic_processes  0.0
@@ -54,8 +54,8 @@ def macroGenerator(percentage,isotope,location,runs,events):
 #END EVENT LOOP
 
 ''' %(covPCT[percentage],additionalMacOpt,dir,additionalMacStr,isotope,percentage,isotope,percentage,location,runs)
-    
-    
+
+
     #Part of macro that varies with the various conditions
     if location == 'PMT':
         line1 = '''
@@ -149,13 +149,13 @@ def jobString(percentage,j,runs,models,arguments):
     rootDir     = os.environ['ROOTSYS']
     g4Dir       =  os.environ['G4INSTALL']
     watchmakersDir = os.environ['WATCHENV']
-    
+
     software    = "%s/bin/rat" %(ratDir)
     d,iso,loc,coverage,coveragePCT = loadSimulationParameters()
-    
+
     ele =  d["%s"%(iso[j])]
     location = loc[j]
-    
+
     goodness     = float(arguments['-g'])
     case = int(arguments['-j'])
 
@@ -192,14 +192,14 @@ rootDir,g4Dir,g4Dir,ratDir,watchmakersDir)
             _log = "log_case%s%s/%s/%s/rat.%s_%s_%s_%d.log" %(case,additionalMacStr,mods,percentage,percentage,mods,location,runs)
             _mac = "%s/macro%s/%s/%s/run%s_%s_%d.mac" %(directory,additionalMacStr,mods,percentage,mods,location,runs)
             line1 += "%s -l %s %s\n" %(software,_log,_mac)
-        if case == 2 or case == 3:
-            fileN = "root_files%s/%s/%s/watchman_%s_%s_%s_%d.root" %(additionalMacStr,mods,percentage,mods,percentage,location,runs)
-            if additionalString != "":
-                fileNO = "ntuple_root_files/%s/%s/watchman_%s_%s_%s%s_%d.root" %(mods,percentage,mods,percentage,location,additionalString,runs)
-                line1 += "watch -n %s -f %s --ntupleout %s\n" %(additionalCommands,fileN,fileNO)
-
-            else:
-                line1 += "watch -n -f %s\n" %(fileN)
+        # if case == 2 or case == 3:
+        #     fileN = "root_files%s/%s/%s/watchman_%s_%s_%s_%d.root" %(additionalMacStr,mods,percentage,mods,percentage,location,runs)
+        #     if additionalString != "":
+        #         fileNO = "ntuple_root_files/%s/%s/watchman_%s_%s_%s%s_%d.root" %(mods,percentage,mods,percentage,location,additionalString,runs)
+        #         line1 += "watch -n %s -f %s --ntupleout %s\n" %(additionalCommands,fileN,fileNO)
+        #
+        #     else:
+        #         line1 += "watch -n -f %s\n" %(fileN)
         ## If greater than 3, place files in a directory named after non-default flags
         if case > 3:
             fileN = "root_files%s/%s/%s/watchman_%s_%s_%s_%d.root" %(additionalString,mods,percentage,mods,percentage,location,runs)
@@ -249,8 +249,8 @@ def generateJobs(N,arguments):
     additionalString,additionalCommands,additionalMacStr,additionalMacOpt = testEnabledCondition(arguments)
 
     '''Find wheter the jobs folder exist: if not create, if yes clean and recreate'''
-    
-    
+
+
     directory = 'jobs_case%s%s'%(case,additionalMacStr)
     if not os.path.exists(directory):
         os.makedirs(directory)
@@ -282,14 +282,14 @@ def generateJobs(N,arguments):
                 if not os.path.exists(directory):
                     os.makedirs(directory)
 
-
-    for j in range(len(iso)):
-        for ii in d["%s"%(iso[int(j)])]:
-            for idx,cover in enumerate(coverage):
-                directory = "ntuple_root_files/%s/%s" %(ii,cover)
-                if not os.path.exists(directory):
-                    os.makedirs(directory)
-
+    #
+    # for j in range(len(iso)):
+    #     for ii in d["%s"%(iso[int(j)])]:
+    #         for idx,cover in enumerate(coverage):
+    #             directory = "ntuple_root_files/%s/%s" %(ii,cover)
+    #             if not os.path.exists(directory):
+    #                 os.makedirs(directory)
+    #
 
     for j in range(len(iso)):
         for ii in d["%s"%(iso[int(j)])]:
@@ -334,7 +334,7 @@ def generateJobs(N,arguments):
                                                             "%s"%(iso[int(j)]),loc[j],index,case)
                 if index == 0:
                     job_list+= '(msub ' + stringFile +') || ./'+ stringFile + '\n'
-                
+
                 outfile = open(stringFile,"wb")
                 outfile.writelines(line)
                 if index < N-1:
@@ -355,21 +355,21 @@ def generateJobs(N,arguments):
 
 
 def customJob(arguments):
-    
+
     directory   = os.getcwd()
     softDir     = "/usr/gapps/adg/geant4/rat_pac_and_dependency"
     ratDir      = os.environ['RATROOT']
     rootDir     = os.environ['ROOTSYS']
     g4Dir       =  os.environ['G4INSTALL']
     watchmakersDir = os.environ['WATCHENV']
-    
+
     software    = "%s/bin/rat" %(ratDir)
-    
+
 
     ''' Custom job for photocoverage 02-2017 analyis'''
-    
+
     d,iso,loc,coverage,coveragePCT = loadSimulationParameters()
-    
+
     cnt = 0
 
     outF2 = open('sub_cust_job',"wb")
@@ -432,7 +432,7 @@ export G4NEUTRONHP_USE_ONLY_PHOTONEVAPORATION=1\n
             outfile.writelines(line1)
             outfile.writelines(line3)
             outfile.close
-            
+
             outfile = open('jobs/sub_jobs__%d_4'%(cnt),"wb")
             outF2.writelines('msub jobs/sub_jobs__%d_4\n'%(cnt))
             outfile.writelines(line1)
@@ -528,10 +528,10 @@ def mergeFiles():
             for idx,cover in enumerate(coverage):
                 t_name  = "data_%s_%s_%s"%(ii,cover,loc[j])
                 trees[t_name] = TChain("data")
-                
+
                 s = "ntuple_root_files%s/%s/%s/watchman_%s_%s_%s_*.root" %(additionalMacStr,ii,cover,ii,cover,loc[j])
                 sw = "%s_%s_%s_%s.root"%(pathFinal,ii,cover,loc[j])
-            
+
                 print "Writing ", sw,"from",s
                 trees[t_name].Add(s)
                 print "Number of entries ",trees[t_name].GetEntries()
@@ -544,7 +544,7 @@ def testEnabledCondition(arguments):
 
     additionalString      = ""
     additionalCommands    = ""
-    
+
     additionalMacStr = ""
     additionalMacOpt = ""
 
@@ -560,25 +560,7 @@ def testEnabledCondition(arguments):
         additionalMacStr += "_collectionEfficiency_%f" %(float(arguments['--collectionEff']))
         additionalString += "_collectionEfficiency_%f" %(float(arguments['--collectionEff']))
 
-    if (arguments['--tankRadius']):
-        additionalMacOpt += "/rat/db/set GEO[tank] r_max %f\n" %(float(arguments['--tankRadius']))
-        additionalMacOpt += "/rat/db/set GEO[detector] r_max %f\n" %(float(arguments['--tankRadius'])-1.5875)
-        additionalMacOpt += "/rat/db/set GEO[shield] detector_size_d %f\n" %(float(arguments['--tankRadius'])*2)
-        additionalMacStr += "_tankRadius_%f" %(float(arguments['--tankRadius']))
-        additionalString += "_tankRadius_%f" %(float(arguments['--tankRadius']))
 
-    if (arguments['--halfHeight']):
-        additionalMacOpt += "/rat/db/set GEO[tank] size_z %f\n" %(float(arguments['--halfHeight']))
-        additionalMacOpt += "/rat/db/set GEO[shield] detector_size_z %f\n" %(float(arguments['--halfHeight'])*2)
-        additionalMacOpt += "/rat/db/set GEO[detector] size_z %f\n" %(float(arguments['--halfHeight'])-1.5875)
-        additionalMacOpt += "/rat/db/set GEO[cables] size_z %f\n" %(float(arguments['--halfHeight'])-1.5875)
-        additionalMacStr += "_halfHeight_%f" %(float(arguments['--halfHeight']))
-        additionalString += "_halfHeight_%f" %(float(arguments['--halfHeight']))
-
-    if (arguments['--shieldThick']):
-        additionalMacOpt += "/rat/db/set GEO[shield] shield_thickness %f\n" %(float(arguments['--shieldThick']))
-        additionalMacStr += "_shieldThickness_%f" %(float(arguments['--shieldThick']))
-        additionalString += "_shieldThickness_%f" %(float(arguments['--shieldThick']))
 
 #    if (arguments['--fidThick'] and arguments['--shieldThick'] and arguments['--halfHeight'] and arguments['--tankRadius']):
 #        additionalMacOpt += "/rat/db/set GEO[fiducial] r_max %f\n" %(((float(arguments['--tankRadius']))-1.5875)-((float(arguments['--shieldThick']))+(float(arguments['--fidThick']))))
@@ -598,45 +580,72 @@ def testEnabledCondition(arguments):
         additionalMacOpt += "/rat/db/set PMT[%s]  photocathode_surface \"photocathode_%s\"\n" %(arguments['--pmtModel'],arguments['--photocath'])
         additionalMacStr += "_photocathode_%s" %((arguments['--photocath']))
         additionalString += "_photocathode_%s" %((arguments['--photocath']))
-        
+
     baseValue = 7
     #Analysis strings, usually shows up in ntuple processing
 #    print defaultValues[baseValue+1]
     if float(arguments['-r'])          != defaultValues[baseValue+1]:
         additionalString += "_rate_%f" %(float(arguments['-r']))
         additionalCommands += " -r %f " %(float(arguments['-r']))
-    
+
     if float(arguments['-d'])          != defaultValues[baseValue+2]:
         additionalString += "_deltaR_%f" %(float(arguments['-d']))
         additionalCommands += " -d %f" %(float(arguments['-d']))
-    
+
     if float(arguments['-t'])          != defaultValues[baseValue+3]:
         additionalString += "_deltaT_%f" %(float(arguments['-t']))
         additionalCommands +=  " -t %f" %(float(arguments['-t']))
-    
+
     if float(arguments['-T'])            != (defaultValues[baseValue+4]):
         additionalString += "_n9Min_%d" %(int(arguments['-T']))
         additionalCommands += " -T %d" %(int(arguments['-T']))
-    
+
     if float(arguments['-g'])          != defaultValues[baseValue+5]:
         additionalString += "_posGood_%f" %(float(arguments['-g']))
         additionalCommands += " -g %f" %(float(arguments['-g']))
-    
+
     if float(arguments['-G'])          != defaultValues[baseValue+6]:
         additionalString += "_dirGood_%f" %(float(arguments['-G']))
         additionalCommands += " -G %f" %(float(arguments['-G']))
-    
+
     if float(arguments['--fv'])        !=  defaultValues[baseValue+7]:
         additionalString += "_FVboundary_%f" %(float(arguments['--fv']))
         additionalCommands +=  "--fv %f" %(float(arguments['--fv']))
-    
+
     if float(arguments['--psup'])      != defaultValues[baseValue+8]:
         additionalString += "_PMTboundary_%f" %(float(arguments['--psup']))
         additionalCommands += "--psup %f" %(float(arguments['--psup']))
-    
+
     if float(arguments['--tankDis'])   != defaultValues[baseValue+9]:
         additionalString += "_Tankboundary_%f" %(float(arguments['--tankDis']))
         additionalCommands +=" --tankDis %f" %(float(arguments['--tankDis']))
+
+
+
+    if float(arguments['--tankRadius']) != defaultValues[baseValue+10]:
+        additionalMacOpt += "/rat/db/set GEO[tank] r_max %f\n" %(float(arguments['--tankRadius']))
+        additionalMacOpt += "/rat/db/set GEO[detector] r_max %f\n" %(float(arguments['--tankRadius'])-1.5875)
+        additionalMacOpt += "/rat/db/set GEO[shield] detector_size_d %f\n" %(float(arguments['--tankRadius'])*2)
+        additionalMacStr += "_tankRadius_%f" %(float(arguments['--tankRadius']))
+        additionalString += "_tankRadius_%f" %(float(arguments['--tankRadius']))
+
+    if float(arguments['--halfHeight'])!= defaultValues[baseValue+11]:
+        additionalMacOpt += "/rat/db/set GEO[tank] size_z %f\n" %(float(arguments['--halfHeight']))
+        additionalMacOpt += "/rat/db/set GEO[shield] detector_size_z %f\n" %(float(arguments['--halfHeight'])*2)
+        additionalMacOpt += "/rat/db/set GEO[detector] size_z %f\n" %(float(arguments['--halfHeight'])-1.5875)
+        additionalMacOpt += "/rat/db/set GEO[cables] size_z %f\n" %(float(arguments['--halfHeight'])-1.5875)
+        additionalMacStr += "_halfHeight_%f" %(float(arguments['--halfHeight']))
+        additionalString += "_halfHeight_%f" %(float(arguments['--halfHeight']))
+
+    if float(arguments['--shieldThick'])!= defaultValues[baseValue+12]:
+        additionalMacOpt += "/rat/db/set GEO[shield] shield_thickness %f\n" %(float(arguments['--shieldThick']))
+        additionalMacStr += "_shieldThickness_%f" %(float(arguments['--shieldThick']))
+        additionalString += "_shieldThickness_%f" %(float(arguments['--shieldThick']))
+
+    if float(arguments['--steelThick'])!= defaultValues[baseValue+13]:
+        additionalMacOpt += "/rat/db/set GEO[shield] steel_thickness %f\n" %(float(arguments['--steelThick']))
+        additionalMacStr += "_steelThickness_%f" %(float(arguments['--steelThick']))
+        additionalString += "_steelThickness_%f" %(float(arguments['--steelThick']))
 
     if int(arguments['--supernovaFormat']):
         additionalString += "_supernovaFormat"
@@ -676,7 +685,7 @@ def mergeNtupleFiles(arguments):
 
 
     pathFinal = "ntuple_root_files%s/merged_ntuple_watchman" %(additionalString)
-    
+
     if arguments["-P"] and arguments["-L"]:
         ii      = arguments["-P"]
         locj    = arguments["-L"]
@@ -684,10 +693,10 @@ def mergeNtupleFiles(arguments):
             t_name  = "data_%s_%s_%s"%(ii,cover,locj)
             try:
                 trees[t_name] = TChain("data")
-                
+
                 s = "ntuple_root_files%s/%s/%s/watchman_%s_%s_%s_*.root" %(additionalString,ii,cover,ii,cover,locj)
                 sw = "%s_%s_%s_%s.root"%(pathFinal,ii,cover,locj)
-            
+
                 print "Writing ", sw,"from",s
                 trees[t_name].Add(s)
                 print "Number of entries ",trees[t_name].GetEntries()
@@ -698,7 +707,7 @@ def mergeNtupleFiles(arguments):
 
     if (arguments["-P"] and not arguments["-L"]) or (arguments["-L"] and not arguments["-P"]):
         print "arguments -L and -P must be used at the same time, for now"
-    
+
 
     if (not arguments["-P"] and not arguments["-L"]):
         for j in range(len(iso)):
@@ -707,10 +716,10 @@ def mergeNtupleFiles(arguments):
                     t_name  = "data_%s_%s_%s"%(ii,cover,loc[j])
                     try:
                         trees[t_name] = TChain("data")
-                        
+
                         s = "ntuple_root_files%s/%s/%s/watchman_%s_%s_%s_*.root" %(additionalString,ii,cover,ii,cover,loc[j])
                         sw = "%s_%s_%s_%s.root"%(pathFinal,ii,cover,loc[j])
-                    
+
                         print "Writing ", sw,"from",s
                         trees[t_name].Add(s)
                         print "Number of entries ",trees[t_name].GetEntries()
@@ -742,7 +751,7 @@ def extractNtuple(arguments):
     tankV        = float(arguments["--tankDis"])
     outF         = arguments["--ntupleout"]
     superNova    = arguments["--supernovaFormat"]
-    
+
     print file
     d,iso,loc,coverage,coveragePCT = loadSimulationParameters()
     if not superNova:
@@ -776,14 +785,14 @@ def extractNtupleALL(arguments):
 
     additionalString,additionalCommands,additionalMacStr,additionalMacOpt = testEnabledCondition(arguments)
 
-    
+
     for j in range(len(iso)):
         for ii in d["%s"%(iso[int(j)])]:
             for idx,cover in enumerate(coverage):
                 directory = "ntuple_root_files%s/%s/%s" %(additionalString,ii,cover)
                 if not os.path.exists(directory):
                     os.makedirs(directory)
-    
+
 
 
 #    for j in range(len(iso)):
@@ -822,7 +831,7 @@ def extractNtupleALL(arguments):
 
     if (arguments["-P"] and not arguments["-L"]) or (arguments["-L"] and not arguments["-P"]):
         print "arguments -L and -P must be used at the same time, for now"
-    
+
 
     if (not arguments["-P"] and not arguments["-L"]):
         for j in range(len(iso)):
@@ -844,6 +853,3 @@ def extractNtupleALL(arguments):
                                     supernovaAnalysis(fIn,fOut)
                                 except:
                                     print "Error.."
-
-
-
