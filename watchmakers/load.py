@@ -76,9 +76,9 @@ docstring = """
 
     --customJob         Custom job for photocoverage 02-2017
 
-    --fv=<fidV>         Fiducial Volome [Default: %f]
-    --psup=<psupV>      Distance to PMT support, assuming right cylinder [Default: %f]
-    --tankDis=<tankV>   Distance to tank wall, assuming right cylinder [Default: %f]
+    --fv=<fidV>         IGNORE Fiducial Volome [Default: %f]
+    --psup=<psupV>      IGNORE Distance to PMT support, assuming right cylinder [Default: %f]
+    --tankDis=<tankV>   IGNORE Distance to tank wall, assuming right cylinder [Default: %f]
 
     -M                  Merge result files from trial ntuples
 
@@ -102,10 +102,10 @@ docstring = """
 
     --detectMedia=<_dM>  Detector media (doped_water,...)
     --collectionEff=<CE> Collection efficiency (e.g.: 0.85,0.67,0.475)
-    --tankRadius=<TR>   Total radius of tank (mm)
-    --halfHeight=<HH>    Half height of tank (mm)
-    --shieldThick=<ST>   Distance in to PMT structure (mm)
-    --fidThick=<FT>      Distance from PMT structure to fiducial volume (mm)
+    --tankRadius=<TR>   Total radius of tank (mm) [Default: 8000.]
+    --halfHeight=<HH>    Half height of tank (mm) [Default: 8000.]
+    --shieldThick=<ST>   Steel->PMT distance (mm) [Default: 1600]
+    --fidThick=<FT>      PMT->Fiducial distance (mm) [Default: 1600]
 
     --pmtModel=<_PMTM>   PMT Model (r7081pe)
     --photocath =<_PC>  PMT photocathode (R7081HQE)
@@ -195,8 +195,12 @@ def loadAnalysisParameters(timeScale='day'):
     nKiloTons   = 3.22
     FreeProtons = 0.6065
     TNU         = FreeProtons* nKiloTons *timeSec
-    FVkTonRatio = pow(float(arguments['--fv']),3)/pow(float(arguments['--tankDis']),3)
-
+    #FVkTonRatio = pow(float(arguments['--fv']),3)/pow(float(arguments['--tankDis']),3)
+    fidRadius = ((float(arguments['--tankRadius']))-1.5875)-((float(arguments['--shieldThick']))+(float(arguments['--fidThick'])))
+    fidVolume = pow((fidRadius),2)*float(arguments["--halfHeight"])
+    tankVolume = (pow((float(arguments["--tankRadius"])),2))*(2*float(arguments["--halfHeight"]))
+    FVkTonRatio = fidVolume/tankVolume
+    #print "Change in load.py"
 
     #Fast neutrons conversion
     #Rock mass
@@ -230,12 +234,17 @@ def loadAnalysisParameters(timeScale='day'):
     Lambda_U238 = 4.916e-18
     PPM_U238    = float(arguments["--U238_PPM"])
     ActivityU238= Lambda_U238*PPM_U238/M_U238/1e6
-    _proc       = ['238U','234Pa','214Pb','214Bi','210Bi','210Tl']
-    _loca       = ['PMT','PMT',  'PMT',  'PMT',  'PMT',  'PMT']
-    acc         = ['chain','acc',  'acc',  'acc',  'acc',  'acc']
-    _br         = [1.0,1.0,     1.0,    1.0,   1.0 ,   0.002]
-    _site        = ['','',      '',     '',     '',     '']
-
+#    _proc       = ['238U','234Pa','214Pb','214Bi','210Bi','210Tl']
+#    _loca       = ['PMT','PMT',  'PMT',  'PMT',  'PMT',  'PMT']
+#    acc         = ['chain','acc',  'acc',  'acc',  'acc',  'acc']
+#    _br         = [1.0,1.0,     1.0,    1.0,   1.0 ,   0.002]
+#    _site        = ['','',      '',     '',     '',     '']
+#Changed for Tamzin, as we do not use 238U chain, but it's component
+    _proc       = ['234Pa','214Pb','214Bi','210Bi','210Tl']
+    _loca       = ['PMT',  'PMT',  'PMT',  'PMT',  'PMT']
+    acc         = ['acc',  'acc',  'acc',  'acc',  'acc']
+    _br         = [1.0,     1.0,    1.0,   1.0 ,   0.002]
+    _site        = ['',      '',     '',     '',     '']
     proc        = _proc
     loca        = _loca
     br          = _br
@@ -255,14 +264,21 @@ def loadAnalysisParameters(timeScale='day'):
     PPM_Th232    = float(arguments["--Th232_PPM"])
     ActivityTh232 = Lambda_Th232*PPM_Th232/M_Th232/1e6
     #    print ActivityU238,ActivityTh232
-
-    _proc        =['232Th','228Ac','212Pb','212Bi','208Tl']
-    _loca        =['PMT'  ,'PMT',   'PMT', 'PMT',  'PMT'  ]
-    acc          +=['chain'  ,'acc',   'acc', 'acc',  'acc'  ]
-    _br          = [1.0,     1.0,    1.0,   1.0 ,   1.0]
+#Changed for Tamzin, as we do not use 238U chain, but it's component
+#    _proc        =['232Th','228Ac','212Pb','212Bi','208Tl']
+#    _loca        =['PMT'  ,'PMT',   'PMT', 'PMT',  'PMT'  ]
+#    acc          +=['chain'  ,'acc',   'acc', 'acc',  'acc'  ]
+#    _br          = [1.0,     1.0,    1.0,   1.0 ,   1.0]
     #    decayCnst   += [1.57e-18,3.3e-5,1.8096e-5, 1.908e-4, 0.003784]
     _site        = ['',      '',     '',     '',     '']
-    arr         = empty(5)
+    _proc        =['228Ac','212Pb','212Bi','208Tl']
+    _loca        =['PMT',   'PMT', 'PMT',  'PMT'  ]
+    acc          +=['acc',   'acc', 'acc',  'acc'  ]
+    _br          = [ 1.0,    1.0,   1.0 ,   1.0]
+    #    decayCnst   += [1.57e-18,3.3e-5,1.8096e-5, 1.908e-4, 0.003784]
+    _site        = ['',     '',     '',     '']
+
+    arr         = empty(4)
     arr[:]      = ActivityTh232
     Activity    = append(   Activity,arr)
 
@@ -278,13 +294,20 @@ def loadAnalysisParameters(timeScale='day'):
     #Add the Rn-222 chain
     N_Rn222     = 2e-3 # Bq/m3
     ActivityRn222     = float(arguments["--Rn222"])
-    _proc       =['222Rn','214Pb','214Bi','210Bi','210Tl']
-    _loca       =['FV', 'FV',   'FV',   'FV',   'FV']
-    acc         +=['chain','acc',  'acc',  'acc',   'acc']
+#    _proc       =['222Rn','214Pb','214Bi','210Bi','210Tl']
+#    _loca       =['FV', 'FV',   'FV',   'FV',   'FV']
+#    acc         +=['chain','acc',  'acc',  'acc',   'acc']
+#    _br         = [1.0, 1.0,   1.0,   1.0,     0.002]
+    #    decayCnst   += [ 4.31e-4,  5.81e-4,   1.601e-6 , 0.00909]
+#    _site        = ['', '',     '',     '',     '']
 
-    _br         = [1.0, 1.0,   1.0,   1.0,     0.002]
+    _proc       =['214Pb','214Bi','210Bi','210Tl']
+    _loca       =['FV',   'FV',   'FV',   'FV']
+    acc         +=['acc',  'acc',  'acc',   'acc']
+    _br         = [1.0,   1.0,   1.0,     0.002]
     #    decayCnst   += [ 4.31e-4,  5.81e-4,   1.601e-6 , 0.00909]
     _site        = ['', '',     '',     '',     '']
+
     arr = empty(4)
     arr[:]      = 6.4
     Activity    = append(   Activity,arr)

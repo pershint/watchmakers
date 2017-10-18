@@ -7,8 +7,15 @@ def fillHistograms(inFilePrefix,a1,t1,h,cover,ii,locj,covPCT):
 
     additionalString,additionalCommands,additionalMacStr,additionalMacOpt = testEnabledCondition(arguments)
 
-    fiducialVolume = float(arguments["--fv"])
-    pmtDist         = float(arguments["--psup"])
+    #fiducialVolume = float(arguments["--fv"])
+    #pmtDist         = float(arguments["--psup"])
+    pmtDist = (float(arguments["--halfHeight"]))-(float(arguments["--shieldThick"]))
+    fiducialHalfHeight=(((float(arguments['--halfHeight']))-1.5875)-((float(arguments['--shieldThick']))+(float(arguments['--fidThick']))))
+    fiducialRadius=(((float(arguments['--tankRadius']))-1.5875)-((float(arguments['--shieldThick']))+(float(arguments['--fidThick']))))
+    print "First change in analysis.py"
+
+
+
     #    print "Fiducial volume is ", fiducialVolume
     #   Read-in file
     try:
@@ -18,8 +25,8 @@ def fillHistograms(inFilePrefix,a1,t1,h,cover,ii,locj,covPCT):
         t           = root2rec(s)
 
         #Apply some analysis
-        r           = npa(t.reco_r<fiducialVolume,dtype=bool)
-        z           = npa(absolute(t.reco_z)<fiducialVolume,dtype=bool)
+        r           = npa(t.reco_r<fiducialRadius,dtype=bool)
+        z           = npa(absolute(t.reco_z)<fiducialHalfHeight,dtype=bool)
 
         #isFV        = logical_and(r,z,dtype=bool)
         isFV        = npa(t.FV==1,dtype=bool)
@@ -332,8 +339,12 @@ def extractHistogramWitCorrectRate():
 
     boolSUPERNOVA_FORMAT    = arguments["--supernovaFormat"]
 
-    fiducialVolume          = float(arguments["--fv"])
-    pmtDist                 = float(arguments["--psup"])
+    #fiducialVolume          = float(arguments["--fv"])
+    fiducialHalfHeight=(((float(arguments['--halfHeight']))-1.5875)-((float(arguments['--shieldThick']))+(float(arguments['--fidThick']))))
+    fiducialRadius=(((float(arguments['--tankRadius']))-1.5875)-((float(arguments['--shieldThick']))+(float(arguments['--fidThick']))))
+    print "Second change in analysis.py"
+    #pmtDist                 = float(arguments["--psup"])
+    pmtDist = (float(arguments["--halfHeight"]))-(float(arguments["--shieldThick"]))
     timeScale               = arguments["--timeScale"]
     inFilePrefix            = arguments["--ft"]
     timeCut                 = float(arguments["-t"])*1e3
@@ -389,8 +400,8 @@ def extractHistogramWitCorrectRate():
             rfile = TFile(s)
             t   = rfile.Get('data')
 
-            recoFVstring    = "(sqrt(pow(posReco.X(),2) + pow(posReco.Y(),2))<%f*1000. && sqrt(pow(posReco.Z(),2))<%f*1000.)"%(fiducialVolume,fiducialVolume)
-            trueFVstring    = "(sqrt(pow(posTruth.X(),2) + pow(posTruth.Y(),2))<%f*1000. && sqrt(pow(posTruth.Z(),2))<%f*1000.)"%(fiducialVolume,fiducialVolume)
+            recoFVstring    = "(sqrt(pow(posReco.X(),2) + pow(posReco.Y(),2))<%f*1000. && sqrt(pow(posReco.Z(),2))<%f*1000.)"%(fiducialRadius,fiducialHalfHeight)
+            trueFVstring    = "(sqrt(pow(posTruth.X(),2) + pow(posTruth.Y(),2))<%f*1000. && sqrt(pow(posTruth.Z(),2))<%f*1000.)"%(fiducialRadius,fiducialHalfHeight)
             posGood        = "(pos_goodness>%f)" %(float(arguments["-g"]))
 
             backgroundNoise = 1.0e3*float(pc_num["%s"%(cover)])*1500.*1e-9
@@ -551,8 +562,8 @@ def extractHistogramWitCorrectRate():
 
                     rfile = TFile(s)
                     t   = rfile.Get('data')
-                    recoFVstring    = "(sqrt(pow(posReco.X(),2) + pow(posReco.Y(),2))<%f*1000. && sqrt(pow(posReco.Z(),2))<%f*1000.)"%(fiducialVolume,fiducialVolume)
-                    trueFVstring    = "(sqrt(pow(posTruth.X(),2) + pow(posTruth.Y(),2))<%f*1000. && sqrt(pow(posTruth.Z(),2))<%f*1000.)"%(fiducialVolume,fiducialVolume)
+                    recoFVstring    = "(sqrt(pow(posReco.X(),2) + pow(posReco.Y(),2))<%f*1000. && sqrt(pow(posReco.Z(),2))<%f*1000.)"%(fiducialRadius,fiducialHalfHeight)
+                    trueFVstring    = "(sqrt(pow(posTruth.X(),2) + pow(posTruth.Y(),2))<%f*1000. && sqrt(pow(posTruth.Z(),2))<%f*1000.)"%(fiducialRadius,fiducialHalfHeight)
                     posGood        = "(pos_goodness>%f)" %(0.5)
                     n9Good = "(n9>%f)" %(float(arguments["--minN9"]))
 
@@ -1536,9 +1547,9 @@ def obtainAbsoluteEfficiency(f,timeScale='day',cut = 10.0):
 
 
     inta,proc,loca,acc,arr,Activity,br,site,timeS,boulbyNeutronFV,mass,dAct,cove,covePCT = loadAnalysisParameters(timeScale)
-    # print boulbyNeutronFV
-    # print 'activity',Activity
-    # print dAct
+    #print boulbyNeutronFV
+    #print 'activity',Activity
+    #print dAct
 
 
     x,y         = Double(0.),Double(0.)
@@ -1550,7 +1561,6 @@ def obtainAbsoluteEfficiency(f,timeScale='day',cut = 10.0):
             loca[ii],site[ii],acc[ii])
             _strEff             = "eff_%s_%s_%s%s_1_abs" %(_inta,proc[ii],\
             loca[ii],site[ii])
-
             EG[_strEff]         = Graph()
             cnter = 0
             EG[_strEff].SetPoint(cnter,0.,0.)
@@ -1564,8 +1574,9 @@ def obtainAbsoluteEfficiency(f,timeScale='day',cut = 10.0):
                     #                    if loca[ii]=="RN":
                     # print s,_inta,val,proc[ii],loca[ii],cnter,pct[cc],eff
                     # print s,cnter,eff
-
-            try:
+	    if 1==1:
+ #           try:
+ #		print _str1
                 EG[_str1] = f.Get(_str1)
                 EG[_scal_str1] = EG[_str1].Clone()
 
@@ -1584,8 +1595,9 @@ def obtainAbsoluteEfficiency(f,timeScale='day',cut = 10.0):
                     else:
                         EG[_scal_str1].SetPoint(i,x,nY)
                         # print 'C',nY,x,y
-            except:
-                a = 0
+  #          except:
+#                a = 0
+#		print 'Did not succeed'
 
     _scal_acc,_scal_acc_notFV,_scal_acc1,_scal_acc_notFV1 ="scaled_accidental",\
     "scaled_accidental_notFV","cut_accidental","all_cut_accidental"

@@ -413,6 +413,8 @@ def sensitivityMapNew():
                 _str = 'scaled_%s_%s_%s_1_abs_%s' %(type[i],proc[i],loca[i],acc[i])
                 if scale[i] > 0.:
                     if loca[i] == 'FN%s'%(site):
+			#print BFN, _str
+			#print Graphs
                         BFN += Graphs[_str].Eval(PC)*scale[i]
                         # print 'BFN',BFN,Graphs[_str].Eval(PC),scale[i]
                     elif loca[i] == 'RN%s'%(site):

@@ -1,0 +1,3 @@
+# Remove pyc,root files
+*.pyc
+*.root

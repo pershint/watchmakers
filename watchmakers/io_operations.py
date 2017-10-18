@@ -563,7 +563,7 @@ def testEnabledCondition(arguments):
     if (arguments['--tankRadius']):
         additionalMacOpt += "/rat/db/set GEO[tank] r_max %f\n" %(float(arguments['--tankRadius']))
         additionalMacOpt += "/rat/db/set GEO[detector] r_max %f\n" %(float(arguments['--tankRadius'])-1.5875)
-        additionalMacOpt += "/rat/db/set GEO[shield] detector_size_r %f\n" %(float(arguments['--tankRadius'])*2)
+        additionalMacOpt += "/rat/db/set GEO[shield] detector_size_d %f\n" %(float(arguments['--tankRadius'])*2)
         additionalMacStr += "_tankRadius_%f" %(float(arguments['--tankRadius']))
         additionalString += "_tankRadius_%f" %(float(arguments['--tankRadius']))
 
@@ -580,9 +580,9 @@ def testEnabledCondition(arguments):
         additionalMacStr += "_shieldThickness_%f" %(float(arguments['--shieldThick']))
         additionalString += "_shieldThickness_%f" %(float(arguments['--shieldThick']))
 
-    if (arguments['--fidThick'] and arguments['--shieldThick'] and arguments['--halfHeight'] and arguments['--tankRadius']):
-        additionalMacOpt += "/rat/db/set GEO[fiducial] r_max %f\n" %(((float(arguments['--tankRadius']))-1.5875)-((float(arguments['--shieldThick']))+(float(arguments['--fidThick']))))
-        additionalMacOpt += "/rat/db/set GEO[fiducial] size_z %f\n" %(((float(arguments['--halfHeight']))-1.5875)-((float(arguments['--shieldThick']))+(float(arguments['--fidThick']))))
+#    if (arguments['--fidThick'] and arguments['--shieldThick'] and arguments['--halfHeight'] and arguments['--tankRadius']):
+#        additionalMacOpt += "/rat/db/set GEO[fiducial] r_max %f\n" %(((float(arguments['--tankRadius']))-1.5875)-((float(arguments['--shieldThick']))+(float(arguments['--fidThick']))))
+#        additionalMacOpt += "/rat/db/set GEO[fiducial] size_z %f\n" %(((float(arguments['--halfHeight']))-1.5875)-((float(arguments['--shieldThick']))+(float(arguments['--fidThick']))))
 
     if (arguments['--pmtModel']):
         additionalMacOpt += "/rat/db/set GEO[inner_pmts] pmt_model \"%s\"\n" %((arguments['--pmtModel']))
