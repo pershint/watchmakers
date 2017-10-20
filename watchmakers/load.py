@@ -35,7 +35,7 @@ except:
 
 defaultValues  = [1,3,2500,2805.,'merged_ntuple_watchman',\
 'merged_ntuple_watchman','null', 'processed_watchman.root',\
-10.,2.0, 100.0, 9, 0.65,0.1,5.42,6.4,8.0,8000.0,8000.0,1600.0,1.5875,\
+10.,2.0, 100.0, 9, 0.65,0.1,5.42,6.4,8.0,8000.0,8000.0,1600.0,1.5875,1000.,\
 'day','boulby', 1.0, 0.043, 0.133]
 
 docstring = """
@@ -84,6 +84,7 @@ docstring = """
     --halfHeight=<HH>   Half height of tank (mm) [Default: %f]
     --shieldThick=<ST>  Steel->PMT distance (mm) [Default: %f]
     --steelThick=<StT>  Steel Thickness (mm)     [Default: %f]
+    --fidThick=<fT>     Fiducial volume-> PMT Thickness (mm) [Default: %f]
 
     -M                  Merge result files from trial ntuples
 
@@ -116,7 +117,8 @@ docstring = """
            defaultValues[9],defaultValues[10],defaultValues[11],defaultValues[12],\
            defaultValues[13],defaultValues[14],defaultValues[15],defaultValues[16],\
            defaultValues[17],defaultValues[18],defaultValues[19],defaultValues[20],\
-           defaultValues[21],defaultValues[22],defaultValues[23],defaultValues[24],defaultValues[25])
+           defaultValues[21],defaultValues[22],defaultValues[23],defaultValues[24],\
+           defaultValues[25],defaultValues[26])
 
 try:
     import docopt
@@ -141,9 +143,14 @@ def loadSimulationParameters():
     #Chain and subsequent isotopes
     d = {}
     # Water and PMT contamination
-    d['CHAIN_238U_NA'] =['238U','234Pa','214Pb','214Bi','210Bi','210Tl']
-    d['CHAIN_232Th_NA'] = ['232Th','228Ac','212Pb','212Bi','208Tl']
-    d['CHAIN_222Rn_NA'] = ['222Rn','214Pb','214Bi','210Bi','210Tl']
+    # d['CHAIN_238U_NA'] =['238U','234Pa','214Pb','214Bi','210Bi','210Tl']
+    # d['CHAIN_232Th_NA'] = ['232Th','228Ac','212Pb','212Bi','208Tl']
+    # d['CHAIN_222Rn_NA'] = ['222Rn','214Pb','214Bi','210Bi','210Tl']
+
+    d['CHAIN_238U_NA'] =['234Pa','214Pb','214Bi','210Bi','210Tl']
+    d['CHAIN_232Th_NA'] = ['228Ac','212Pb','212Bi','208Tl']
+    d['CHAIN_222Rn_NA'] = ['214Pb','214Bi','210Bi','210Tl']
+
     # Radioisotope that should have beta-Neutron modes, (beta only generated)
     #    A = ['16','17','18','17','18','8','9','11']
     #    Z = ['6','6','6','7','7','2','3','3']
@@ -197,15 +204,24 @@ def loadAnalysisParameters(timeScale='day'):
     FreeProtons = 0.6065
     TNU         = FreeProtons* nKiloTons *timeSec
     #FVkTonRatio = pow(float(arguments['--fv']),3)/pow(float(arguments['--tankDis']),3)
-    fidRadius = ((float(arguments['--tankRadius']))-1.5875)-((float(arguments['--shieldThick']))+(float(arguments['--fidThick'])))
-    fidVolume = pow((fidRadius),2)*float(arguments["--halfHeight"])
-    tankVolume = (pow((float(arguments["--tankRadius"])),2))*(2*float(arguments["--halfHeight"]))
+
+    ### This had been changed by M.B. from Tamzin implementation
+    fidRadius = float(arguments['--tankRadius'])-float(arguments['--steelThick'])-float(arguments['--shieldThick'])-float(arguments['--fidThick'])
+    fidHeight = float(arguments['--halfHeight'])-float(arguments['--steelThick'])-float(arguments['--shieldThick'])-float(arguments['--fidThick'])
+
+    tankRadius  = float(arguments["--tankRadius"])-float(arguments['--steelThick'])
+    tankHeight  = float(arguments["--tankRadius"])-float(arguments['--steelThick'])
+
+    fidVolume  = pow(fidRadius,2)*(2.*fidHeight)
+    tankVolume = pow(tankRadius,2)*(2.*tankHeight)
     FVkTonRatio = fidVolume/tankVolume
     #print "Change in load.py"
 
     #Fast neutrons conversion
     #Rock mass
-    volumeR         = (2.*22.5*23.8*1.0+2.*17*23.8*1.0+2.*22.5*17.*1.0)
+    # Original Estimate
+    # volumeR         = (2.*22.5*23.8*1.0+2.*17*23.8*1.0+2.*22.5*17.*1.0)
+    volumeR         = power(24.,3) - power(20.,3) # Rock cavern (24m x 24m x 24m) - (20m x 20m x 20m)
     density         = 2.39 #from McGrath
     rockMass        = volumeR*power(100.,3)*density
     #Mass of rock evalyated

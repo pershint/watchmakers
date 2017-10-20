@@ -621,7 +621,6 @@ def testEnabledCondition(arguments):
         additionalCommands +=" --tankDis %f" %(float(arguments['--tankDis']))
 
 
-
     if float(arguments['--tankRadius']) != defaultValues[baseValue+10]:
         additionalMacOpt += "/rat/db/set GEO[tank] r_max %f\n" %(float(arguments['--tankRadius']))
         additionalMacOpt += "/rat/db/set GEO[detector] r_max %f\n" %(float(arguments['--tankRadius'])-1.5875)
@@ -646,6 +645,12 @@ def testEnabledCondition(arguments):
         additionalMacOpt += "/rat/db/set GEO[shield] steel_thickness %f\n" %(float(arguments['--steelThick']))
         additionalMacStr += "_steelThickness_%f" %(float(arguments['--steelThick']))
         additionalString += "_steelThickness_%f" %(float(arguments['--steelThick']))
+
+    if float(arguments['--fidThick'])!= defaultValues[baseValue+14]:
+        additionalString += "_fidThickness_%f" %(float(arguments['--fidThick']))
+        additionalCommands +=" --fidThick %f" %(float(arguments['--fidThick']))
+
+
 
     if int(arguments['--supernovaFormat']):
         additionalString += "_supernovaFormat"

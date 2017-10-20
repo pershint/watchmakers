@@ -9,9 +9,11 @@ def fillHistograms(inFilePrefix,a1,t1,h,cover,ii,locj,covPCT):
 
     #fiducialVolume = float(arguments["--fv"])
     #pmtDist         = float(arguments["--psup"])
-    pmtDist = (float(arguments["--halfHeight"]))-(float(arguments["--shieldThick"]))
-    fiducialHalfHeight=(((float(arguments['--halfHeight']))-1.5875)-((float(arguments['--shieldThick']))+(float(arguments['--fidThick']))))
-    fiducialRadius=(((float(arguments['--tankRadius']))-1.5875)-((float(arguments['--shieldThick']))+(float(arguments['--fidThick']))))
+    # pmtDist = (float(arguments["--halfHeight"]))-(float(arguments["--shieldThick"]))
+    pmtDist  = float(arguments["--tankRadius"])-float(arguments['--steelThick'])-float(arguments["--shieldThick"])
+    pmtDistZ = float(arguments["--halfHeight"])-float(arguments['--steelThick'])-float(arguments["--shieldThick"])
+    fiducialHalfHeight = float(arguments['--halfHeight'])-float(arguments['--steelThick'])-float(arguments['--shieldThick'])-float(arguments['--fidThick'])
+    fiducialRadius     = float(arguments['--tankRadius'])-float(arguments['--steelThick'])-float(arguments['--shieldThick'])-float(arguments['--fidThick'])
     print "First change in analysis.py"
 
 
@@ -109,7 +111,7 @@ def fillHistograms(inFilePrefix,a1,t1,h,cover,ii,locj,covPCT):
                     h[s_dl].fill_array(anaVar)
                     r_r         = t.reco_r[mask,...]
                     r_z         = t.reco_z[mask,...]
-                    anaVar      = column_stack((power(r_r/pmtDist,2),r_z/pmtDist))
+                    anaVar      = column_stack((power(r_r/pmtDist,2),r_z/pmtDistZ))
                     s_dl       = "%s_dRdZ_%s_%s_%s_%d"%(type,cover,ii,locj,subE)
                     h[s_dl]= Hist2D(100,0,1.6,200,-1.6,1.6,name=s_dl,title=s_dl)
                     h[s_dl].SetXTitle('(r / R_{pmt})^{2} [unitless]')
@@ -117,7 +119,7 @@ def fillHistograms(inFilePrefix,a1,t1,h,cover,ii,locj,covPCT):
                     h[s_dl].fill_array(anaVar)
                     t_r         = t.true_r[mask,...]
                     t_z         = t.true_z[mask,...]
-                    anaVar      = column_stack((power(t_r/pmtDist,2),t_z/pmtDist))
+                    anaVar      = column_stack((power(t_r/pmtDist,2),t_z/pmtDistZ))
                     s_dl       = "%s_tRtZ_%s_%s_%s_%d"%(type,cover,ii,locj,subE)
                     h[s_dl]= Hist2D(100,0,1.6,200,-1.6,1.6,name=s_dl,title=s_dl)
                     h[s_dl].SetXTitle('(r / R_{pmt})^{2} [unitless]')
@@ -175,7 +177,7 @@ def fillHistograms(inFilePrefix,a1,t1,h,cover,ii,locj,covPCT):
                     r_r         = t.reco_r[mask,...]
                     r_z         = t.reco_z[mask,...]
 
-                    anaVar      = column_stack((power(r_r/pmtDist,2),r_z/pmtDist))
+                    anaVar      = column_stack((power(r_r/pmtDist,2),r_z/pmtDistZ))
                     s_dl        ="%s_dRdZ_%s_%s_%s_%d"%(type,cover,ii,locj,subE)
                     h[s_dl]= Hist2D(100,0,1.6,200,-1.6,1.6,name=s_dl,title=s_dl)
                     h[s_dl].SetXTitle('(r / R_{pmt})^{2} [unitless]')
@@ -184,7 +186,7 @@ def fillHistograms(inFilePrefix,a1,t1,h,cover,ii,locj,covPCT):
                     t_r         = t.true_r[mask,...]
                     t_z         = t.true_z[mask,...]
 
-                    anaVar      = column_stack((power(t_r/pmtDist,2),t_z/pmtDist))
+                    anaVar      = column_stack((power(t_r/pmtDist,2),t_z/pmtDistZ))
                     s_dl       = "%s_tRtZ_%s_%s_%s_%d"%(type,cover,ii,locj,subE)
                     h[s_dl]= Hist2D(100,0,1.6,200,-1.6,1.6,name=s_dl,title=s_dl)
                     h[s_dl].SetXTitle('(r / R_{pmt})^{2} [unitless]')
@@ -240,7 +242,7 @@ def fillHistograms(inFilePrefix,a1,t1,h,cover,ii,locj,covPCT):
                     h[s_dl].fill_array(anaVar)
                     r_r         = t.reco_r[mask,...]
                     r_z         = t.reco_z[mask,...]
-                    anaVar      = column_stack((power(r_r/pmtDist,2),r_z/pmtDist))
+                    anaVar      = column_stack((power(r_r/pmtDist,2),r_z/pmtDistZ))
                     s_dl= "%s_dRdZ_%s_%s_%s_%d"%(type,cover,ii,locj,subE)
                     h[s_dl]= Hist2D(100,0,1.6,200,-1.6,1.6,name=s_dl,title=s_dl)
                     h[s_dl].SetXTitle('(r / R_{pmt})^{2} [unitless]')
@@ -250,7 +252,7 @@ def fillHistograms(inFilePrefix,a1,t1,h,cover,ii,locj,covPCT):
                     t_r         = t.true_r[mask,...]
                     t_z         = t.true_z[mask,...]
 
-                    anaVar      = column_stack((power(t_r/pmtDist,2),t_z/pmtDist))
+                    anaVar      = column_stack((power(t_r/pmtDist,2),t_z/pmtDistZ))
                     s_dl       = "%s_tRtZ_%s_%s_%s_%d"%(type,cover,ii,locj,subE)
                     h[s_dl]= Hist2D(100,0,1.6,200,-1.6,1.6,name=s_dl,title=s_dl)
                     h[s_dl].SetXTitle('(r / R_{pmt})^{2} [unitless]')
@@ -303,7 +305,7 @@ def fillHistograms(inFilePrefix,a1,t1,h,cover,ii,locj,covPCT):
                     h[s_dl].fill_array(anaVar)
                     r_r         = t.reco_r[mask,...]
                     r_z         = t.reco_z[mask,...]
-                    anaVar      = column_stack((power(r_r/pmtDist,2),r_z/pmtDist))
+                    anaVar      = column_stack((power(r_r/pmtDist,2),r_z/pmtDistZ))
                     s_dl       = "%s_dRdZ_%s_%s_%s_%d"%(type,cover,ii,locj,subE)
                     h[s_dl]= Hist2D(100,0,1.6,200,-1.6,1.6,name=s_dl,title=s_dl)
                     h[s_dl].SetXTitle('(r / R_{pmt})^{2} [unitless]')
@@ -311,7 +313,7 @@ def fillHistograms(inFilePrefix,a1,t1,h,cover,ii,locj,covPCT):
                     h[s_dl].fill_array(anaVar)
                     t_r         = t.true_r[mask,...]
                     t_z         = t.true_z[mask,...]
-                    anaVar      = column_stack((power(t_r/pmtDist,2),t_z/pmtDist))
+                    anaVar      = column_stack((power(t_r/pmtDist,2),t_z/pmtDistZ))
                     s_dl       = "%s_tRtZ_%s_%s_%s_%d"%(type,cover,ii,locj,subE)
                     h[s_dl]= Hist2D(100,0,1.6,200,-1.6,1.6,name=s_dl,title=s_dl)
                     h[s_dl].SetXTitle('(r / R_{pmt})^{2} [unitless]')
@@ -340,11 +342,12 @@ def extractHistogramWitCorrectRate():
     boolSUPERNOVA_FORMAT    = arguments["--supernovaFormat"]
 
     #fiducialVolume          = float(arguments["--fv"])
-    fiducialHalfHeight=(((float(arguments['--halfHeight']))-1.5875)-((float(arguments['--shieldThick']))+(float(arguments['--fidThick']))))
-    fiducialRadius=(((float(arguments['--tankRadius']))-1.5875)-((float(arguments['--shieldThick']))+(float(arguments['--fidThick']))))
+    fiducialHalfHeight=(((float(arguments['--halfHeight']))-(float(arguments['--steelThick'])))-((float(arguments['--shieldThick']))-(float(arguments['--fidThick']))))
+    fiducialRadius    =(((float(arguments['--tankRadius']))-(float(arguments['--steelThick'])))-((float(arguments['--shieldThick']))-(float(arguments['--fidThick']))))
     print "Second change in analysis.py"
     #pmtDist                 = float(arguments["--psup"])
-    pmtDist = (float(arguments["--halfHeight"]))-(float(arguments["--shieldThick"]))
+    pmtDist  = (float(arguments["--tankRadius"]))-(float(arguments['--steelThick']))-(float(arguments["--shieldThick"]))
+    pmtDistZ = (float(arguments["--halfHeight"]))-(float(arguments['--steelThick']))-(float(arguments["--shieldThick"]))
     timeScale               = arguments["--timeScale"]
     inFilePrefix            = arguments["--ft"]
     timeCut                 = float(arguments["-t"])*1e3
