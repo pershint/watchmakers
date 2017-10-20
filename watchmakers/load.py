@@ -221,7 +221,7 @@ def loadAnalysisParameters(timeScale='day'):
     #Rock mass
     # Original Estimate
     # volumeR         = (2.*22.5*23.8*1.0+2.*17*23.8*1.0+2.*22.5*17.*1.0)
-    volumeR         = power(24.,3) - power(20.,3) # Rock cavern (24m x 24m x 24m) - (20m x 20m x 20m)
+    volumeR         = power(22.,3) - power(20.,3) # Rock cavern (22m x 22m x 22m) - (20m x 20m x 20m)
     density         = 2.39 #from McGrath
     rockMass        = volumeR*power(100.,3)*density
     #Mass of rock evalyated
