@@ -151,7 +151,7 @@ def jobString(percentage,j,runs,models,arguments):
     watchmakersDir = os.environ['WATCHENV']
     try:
         sheffield   = os.environ['SHEFFIELD']
-        print 'Running on sheffield cluster'
+        # print 'Running on sheffield cluster'
     except:
         # print 'Not running on sheffield cluster'
         sheffield =  0
