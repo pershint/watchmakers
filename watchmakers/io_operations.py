@@ -206,7 +206,7 @@ directory,case,additionalMacStr,percentage,location,runs,\
 directory,\
 rootDir,g4Dir,g4Dir,ratDir,watchmakersDir)
     if sheffield:
-        line1 += 'export SHEFFIELD=1'
+        line1 += 'export SHEFFIELD=1\n'
 
     for mods in models:
         if location == "FN":
