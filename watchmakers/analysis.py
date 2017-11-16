@@ -342,12 +342,15 @@ def extractHistogramWitCorrectRate():
     boolSUPERNOVA_FORMAT    = arguments["--supernovaFormat"]
 
     #fiducialVolume          = float(arguments["--fv"])
-    fiducialHalfHeight=(((float(arguments['--halfHeight']))-(float(arguments['--steelThick'])))-((float(arguments['--shieldThick']))-(float(arguments['--fidThick']))))
-    fiducialRadius    =(((float(arguments['--tankRadius']))-(float(arguments['--steelThick'])))-((float(arguments['--shieldThick']))-(float(arguments['--fidThick']))))
+    fiducialHalfHeight= float(arguments['--halfHeight'])- float(arguments['--steelThick'])- float(arguments['--shieldThick'])- float(arguments['--fidThick'])
+    fiducialRadius    = float(arguments['--tankRadius'])- float(arguments['--steelThick'])- float(arguments['--shieldThick'])- float(arguments['--fidThick'])
     print "Second change in analysis.py",fiducialHalfHeight,fiducialRadius
+
     #pmtDist                 = float(arguments["--psup"])
-    pmtDist  = (float(arguments["--tankRadius"]))-(float(arguments['--steelThick']))-(float(arguments["--shieldThick"]))
-    pmtDistZ = (float(arguments["--halfHeight"]))-(float(arguments['--steelThick']))-(float(arguments["--shieldThick"]))
+    pmtDist  = float(arguments["--tankRadius"])-float(arguments['--steelThick'])-float(arguments["--shieldThick"])
+    pmtDistZ = float(arguments["--halfHeight"])-float(arguments['--steelThick'])-float(arguments["--shieldThick"])
+    print "Second change in analysis.py",fiducialHalfHeight,fiducialRadius,pmtDist,pmtDistZ
+
     timeScale               = arguments["--timeScale"]
     inFilePrefix            = arguments["--ft"]
     timeCut                 = float(arguments["-t"])*1e3
@@ -403,8 +406,8 @@ def extractHistogramWitCorrectRate():
             rfile = TFile(s)
             t   = rfile.Get('data')
 
-            recoFVstring    = "(sqrt(pow(posReco.X(),2) + pow(posReco.Y(),2))<%f*1000. && sqrt(pow(posReco.Z(),2))<%f*1000.)"%(fiducialRadius,fiducialHalfHeight)
-            trueFVstring    = "(sqrt(pow(posTruth.X(),2) + pow(posTruth.Y(),2))<%f*1000. && sqrt(pow(posTruth.Z(),2))<%f*1000.)"%(fiducialRadius,fiducialHalfHeight)
+            recoFVstring    = "(sqrt(pow(posReco.X(),2) + pow(posReco.Y(),2))<%f && sqrt(pow(posReco.Z(),2))<%f)"%(fiducialRadius,fiducialHalfHeight)
+            trueFVstring    = "(sqrt(pow(posTruth.X(),2) + pow(posTruth.Y(),2))<%f && sqrt(pow(posTruth.Z(),2))<%f)"%(fiducialRadius,fiducialHalfHeight)
             posGood        = "(pos_goodness>%f)" %(float(arguments["-g"]))
 
             backgroundNoise = 1.0e3*float(pc_num["%s"%(cover)])*1500.*1e-9
@@ -565,8 +568,9 @@ def extractHistogramWitCorrectRate():
 
                     rfile = TFile(s)
                     t   = rfile.Get('data')
-                    recoFVstring    = "(sqrt(pow(posReco.X(),2) + pow(posReco.Y(),2))<%f*1000. && sqrt(pow(posReco.Z(),2))<%f*1000.)"%(fiducialRadius,fiducialHalfHeight)
-                    trueFVstring    = "(sqrt(pow(posTruth.X(),2) + pow(posTruth.Y(),2))<%f*1000. && sqrt(pow(posTruth.Z(),2))<%f*1000.)"%(fiducialRadius,fiducialHalfHeight)
+
+                    recoFVstring    = "(sqrt(pow(posReco.X(),2) + pow(posReco.Y(),2))<%f && sqrt(pow(posReco.Z(),2))<%f)"%(fiducialRadius,fiducialHalfHeight)
+                    trueFVstring    = "(sqrt(pow(posTruth.X(),2) + pow(posTruth.Y(),2))<%f && sqrt(pow(posTruth.Z(),2))<%f)"%(fiducialRadius,fiducialHalfHeight)
                     posGood        = "(pos_goodness>%f)" %(0.5)
                     n9Good = "(n9>%f)" %(float(arguments["--minN9"]))
 
@@ -578,6 +582,7 @@ def extractHistogramWitCorrectRate():
                     trueFVstring,posGood,n9Good)
                     soCond = "!%s &&  %s && %s && %s" %(recoFVstring,\
                     trueFVstring,posGood,n9Good)
+                    print eiCond,siCond
                     # Add additional condition for correlated MC
                     if not boolSUPERNOVA_FORMAT:
                         multCond  = "&& detected_ev==1 && detected_ev_tot>=2"
@@ -917,8 +922,8 @@ def extractHistogramWitCorrectRate():
 #
 #                         rfile = TFile(s)
 #                         t   = rfile.Get('data')
-#                         recoFVstring    = "(sqrt(pow(posReco.X(),2) + pow(posReco.Y(),2))<%f*1000. && sqrt(pow(posReco.Z(),2))<%f*1000.)"%(fiducialVolume,fiducialVolume)
-#                         trueFVstring    = "(sqrt(pow(posTruth.X(),2) + pow(posTruth.Y(),2))<%f*1000. && sqrt(pow(posTruth.Z(),2))<%f*1000.)"%(fiducialVolume,fiducialVolume)
+#                         recoFVstring    = "(sqrt(pow(posReco.X(),2) + pow(posReco.Y(),2))<%f && sqrt(pow(posReco.Z(),2))<%f)"%(fiducialVolume,fiducialVolume)
+#                         trueFVstring    = "(sqrt(pow(posTruth.X(),2) + pow(posTruth.Y(),2))<%f && sqrt(pow(posTruth.Z(),2))<%f)"%(fiducialVolume,fiducialVolume)
 #                         posGood        = "(pos_goodness>%f)" %(float(arguments["-g"]))
 #                         peGood = "(pe>%f)" %(float(arguments["--minN9"]))
 #                         tt = t.Draw("pe>>h4(5000,0,500)","sub_ev_cnt == sub_ev","goff")
@@ -1121,8 +1126,8 @@ def extractHistogramWitCorrectRate():
 #                 rfile = TFile(s)
 #                 t   = rfile.Get('data')
 #
-#                 recoFVstring    = "(sqrt(pow(posReco.X(),2) + pow(posReco.Y(),2))<%f*1000. && sqrt(pow(posReco.Z(),2))<%f*1000.)"%(fiducialVolume,fiducialVolume)
-#                 trueFVstring    = "(sqrt(pow(posTruth.X(),2) + pow(posTruth.Y(),2))<%f*1000. && sqrt(pow(posTruth.Z(),2))<%f*1000.)"%(fiducialVolume,fiducialVolume)
+#                 recoFVstring    = "(sqrt(pow(posReco.X(),2) + pow(posReco.Y(),2))<%f && sqrt(pow(posReco.Z(),2))<%f)"%(fiducialVolume,fiducialVolume)
+#                 trueFVstring    = "(sqrt(pow(posTruth.X(),2) + pow(posTruth.Y(),2))<%f && sqrt(pow(posTruth.Z(),2))<%f)"%(fiducialVolume,fiducialVolume)
 #                 posGood        = "(pos_goodness>%f)" %(float(arguments["-g"]))
 #
 #                 backgroundNoise = 1.0e3*float(pc_num["%s"%(cover)])*1500.*1e-9
@@ -1270,8 +1275,8 @@ def extractHistogramWitCorrectRate():
 #
 #                         rfile = TFile(s)
 #                         t   = rfile.Get('data')
-#                         recoFVstring    = "(sqrt(pow(posReco.X(),2) + pow(posReco.Y(),2))<%f*1000. && sqrt(pow(posReco.Z(),2))<%f*1000.)"%(fiducialVolume,fiducialVolume)
-#                         trueFVstring    = "(sqrt(pow(posTruth.X(),2) + pow(posTruth.Y(),2))<%f*1000. && sqrt(pow(posTruth.Z(),2))<%f*1000.)"%(fiducialVolume,fiducialVolume)
+#                         recoFVstring    = "(sqrt(pow(posReco.X(),2) + pow(posReco.Y(),2))<%f && sqrt(pow(posReco.Z(),2))<%f)"%(fiducialVolume,fiducialVolume)
+#                         trueFVstring    = "(sqrt(pow(posTruth.X(),2) + pow(posTruth.Y(),2))<%f && sqrt(pow(posTruth.Z(),2))<%f)"%(fiducialVolume,fiducialVolume)
 #                         posGood        = "(pos_goodness>%f)" %(0.5)
 #                         n9Good = "(n9>%f)" %(float(arguments["--minN9"]))
 #
