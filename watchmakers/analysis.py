@@ -344,7 +344,7 @@ def extractHistogramWitCorrectRate():
     #fiducialVolume          = float(arguments["--fv"])
     fiducialHalfHeight=(((float(arguments['--halfHeight']))-(float(arguments['--steelThick'])))-((float(arguments['--shieldThick']))-(float(arguments['--fidThick']))))
     fiducialRadius    =(((float(arguments['--tankRadius']))-(float(arguments['--steelThick'])))-((float(arguments['--shieldThick']))-(float(arguments['--fidThick']))))
-    print "Second change in analysis.py"
+    print "Second change in analysis.py",fiducialHalfHeight,fiducialRadius
     #pmtDist                 = float(arguments["--psup"])
     pmtDist  = (float(arguments["--tankRadius"]))-(float(arguments['--steelThick']))-(float(arguments["--shieldThick"]))
     pmtDistZ = (float(arguments["--halfHeight"]))-(float(arguments['--steelThick']))-(float(arguments["--shieldThick"]))

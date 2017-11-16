@@ -149,6 +149,12 @@ def jobString(percentage,j,runs,models,arguments):
     rootDir     = os.environ['ROOTSYS']
     g4Dir       =  os.environ['G4INSTALL']
     watchmakersDir = os.environ['WATCHENV']
+    try:
+        sheffield   = os.environ['SHEFFIELD']
+        print 'Running on sheffield cluster'
+    except:
+        # print 'Not running on sheffield cluster'
+        sheffield =  0
 
     software    = "%s/bin/rat" %(ratDir)
     d,iso,loc,coverage,coveragePCT = loadSimulationParameters()
@@ -160,6 +166,21 @@ def jobString(percentage,j,runs,models,arguments):
     case = int(arguments['-j'])
 
     additionalString,additionalCommands,additionalMacStr,additionalMacOpt = testEnabledCondition(arguments)
+
+
+    N            = int(arguments["-N"])
+    rate         = float(arguments["-r"])
+    timemask     = float(arguments['-t'])*1000.0
+    distancemask = float(arguments['-d'])
+    goodness     = float(arguments['-g'])
+    dirGoodness  = float(arguments['-G'])
+    minNHIT      = float(arguments['-T'])
+    fIn          = arguments["-f"]
+    fidV         = float(arguments["--fv"])
+    pmtV         = float(arguments["--psup"])
+    tankV        = float(arguments["--tankDis"])
+    outF         = arguments["--ntupleout"]
+    superNova    = arguments["--supernovaFormat"]
 
 
     line1 = """#!/bin/sh
@@ -192,21 +213,17 @@ rootDir,g4Dir,g4Dir,ratDir,watchmakersDir)
             _log = "log_case%s%s/%s/%s/rat.%s_%s_%s_%d.log" %(case,additionalMacStr,mods,percentage,percentage,mods,location,runs)
             _mac = "%s/macro%s/%s/%s/run%s_%s_%d.mac" %(directory,additionalMacStr,mods,percentage,mods,location,runs)
             line1 += "%s -l %s %s\n" %(software,_log,_mac)
-        # if case == 2 or case == 3:
-        #     fileN = "root_files%s/%s/%s/watchman_%s_%s_%s_%d.root" %(additionalMacStr,mods,percentage,mods,percentage,location,runs)
-        #     if additionalString != "":
-        #         fileNO = "ntuple_root_files/%s/%s/watchman_%s_%s_%s%s_%d.root" %(mods,percentage,mods,percentage,location,additionalString,runs)
-        #         line1 += "watch -n %s -f %s --ntupleout %s\n" %(additionalCommands,fileN,fileNO)
-        #
-        #     else:
-        #         line1 += "watch -n -f %s\n" %(fileN)
-        ## If greater than 3, place files in a directory named after non-default flags
         if case > 3:
             fileN = "root_files%s/%s/%s/watchman_%s_%s_%s_%d.root" %(additionalString,mods,percentage,mods,percentage,location,runs)
             if additionalString != "":
                 fileNO = "ntuple_root_files%s/%s/%s/watchman_%s_%s_%s%s_%d.root" %(additionalString,mods,percentage,mods,percentage,location,additionalString,runs)
-                line1 += "watch -n %s -f %s --ntupleout %s\n" %(additionalCommands,fileN,fileNO)
+                if sheffield:
+                    line1 += "root -b -l -q %s/watchmakers/\'goldenFileExtractor.C(\"%s\",\"%s\",%f,%f,%f,%f,%f,%f,%f,%f,%f\")\'\n" %(watchmakersDir,fileN,fileNO,minNHIT,goodness,dirGoodness,timemask,\
+                                    rate,distancemask,fidV,pmtV,tankV)
+                    ###int goldenFileExtractor(const char *file, const char *outfile = "null", double nhit_min =3., double goodness_min = 0.1, double goodness_dir = 0.1, double timeWindow_ns = 100000, double rate = 10.0, double maxDistance = 2.0, double fidBound = 5.4, double pmtBound = 6.4, double tankBound = 8.0000) {
 
+                else:
+                    line1 += "watch -n %s -f %s --ntupleout %s\n" %(additionalCommands,fileN,fileNO)
     return line1,case
 
 
@@ -362,7 +379,10 @@ def customJob(arguments):
     rootDir     = os.environ['ROOTSYS']
     g4Dir       =  os.environ['G4INSTALL']
     watchmakersDir = os.environ['WATCHENV']
+    sheffield   = os.environ['SHEFFIELD']
 
+    if sheffield:
+        print 'Running on sheffield cluster'
     software    = "%s/bin/rat" %(ratDir)
 
 
