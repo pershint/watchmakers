@@ -205,6 +205,8 @@ directory,case,additionalMacStr,percentage,location,runs,\
 directory,case,additionalMacStr,percentage,location,runs,\
 directory,\
 rootDir,g4Dir,g4Dir,ratDir,watchmakersDir)
+    if sheffield:
+        line1 += 'export SHEFFIELD=1'
 
     for mods in models:
         if location == "FN":
@@ -221,7 +223,6 @@ rootDir,g4Dir,g4Dir,ratDir,watchmakersDir)
                     line1 += "root -b -l -q %s/watchmakers/\'goldenFileExtractor.C(\"%s\",\"%s\",%f,%f,%f,%f,%f,%f,%f,%f,%f\")\'\n" %(watchmakersDir,fileN,fileNO,minNHIT,goodness,dirGoodness,timemask,\
                                     rate,distancemask,fidV,pmtV,tankV)
                     ###int goldenFileExtractor(const char *file, const char *outfile = "null", double nhit_min =3., double goodness_min = 0.1, double goodness_dir = 0.1, double timeWindow_ns = 100000, double rate = 10.0, double maxDistance = 2.0, double fidBound = 5.4, double pmtBound = 6.4, double tankBound = 8.0000) {
-
                 else:
                     line1 += "watch -n %s -f %s --ntupleout %s\n" %(additionalCommands,fileN,fileNO)
     return line1,case
