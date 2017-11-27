@@ -668,7 +668,7 @@ def testEnabledCondition(arguments):
         additionalString += "_steelThickness_%f" %(float(arguments['--steelThick']))
 
     if float(arguments['--fidThick'])!= defaultValues[baseValue+14]:
-        additionalString += "_fidThickness_%f" %(float(arguments['--fidThick']))
+        # additionalString += "_fidThickness_%f" %(float(arguments['--fidThick']))
         additionalCommands +=" --fidThick %f" %(float(arguments['--fidThick']))
 
 
