@@ -10,10 +10,6 @@ setcontext(ExtendedContext)
 from numpy import max
 t = arguments['--timeScale']
 
-fidRadius = float(arguments['--tankRadius'])-float(arguments['--steelThick'])-float(arguments['--shieldThick'])-float(arguments['--fidThick'])
-fidHeight = float(arguments['--halfHeight'])-float(arguments['--steelThick'])-float(arguments['--shieldThick'])-float(arguments['--fidThick'])
-
-
 def drange(start, stop, step):
     rii= start
     while rii<stop:
@@ -176,7 +172,7 @@ def sensitivityMapNew():
     detectorMedium      = 1
     detectorMass        = 1000.
     reactorPower        = 0.04
-    reactorStandoff     = 25.
+    reactorStandoff     = 25.0
     experiment = nuOsc.NeutrinoOscillation(detectorMedium,detectorMass,reactorPower,reactorStandoff)
     preOsc,afterOsc = experiment.FindRate()
     print preOsc,afterOsc
@@ -222,7 +218,7 @@ def sensitivityMapNew():
 
     parameters  = loadAnalysisParameters(t)
     rates       = parameters[11]
-    FVkTonRatio = pow(float(arguments['--']),3)/pow(float(arguments['--tankRadius']),3)
+    FVkTonRatio = pow(float(arguments['--fv']),3)/pow(float(arguments['--tankDis']),3)
     boulbyRate,imbRate = rates["boulby_S"]*FVkTonRatio,rates["imb_S"]*FVkTonRatio
     print 'rates:',imbRate,boulbyRate, ' per ', t
 
@@ -431,8 +427,7 @@ def sensitivityMapNew():
                     #Include 29% other reactor
                     if site == 'boulby' and cores ==1 :
                         BRS    = S*1.29 # 29.% other reactor
-#                        BRS    = 157.7 # Heysham reactor backgrounds: total reactor signal 239.6 - Heysham 4 cores at full power 81.9
-			B      = BAC+BRN+BFN+BRS
+                        B      = BAC+BRN+BFN+BRS
                         SSBB   = S/sqrt(B + (S+B)/OnOffRatio)
                         T3SIGMA = 9.*(B +(S+B)/OnOffRatio)/S/S
                         nuRate = boulbyRate
@@ -645,8 +640,8 @@ def findScaledVolume(S,B_Surface,B_Volume,OnOffRatio = 1.0):
 
     for size in drange(1.,500.,0.5):
         _rad    = pow(size*1000./pi/2.,1./3.)
-        _surf   = pow(_rad,2)/pow(fidRadius,2)
-        _volume = pow(_rad,3)/(pow(fidRadius),2)*fidHeight)
+        _surf   = pow(_rad,2)/pow(float(arguments['--fv']),2)
+        _volume = pow(_rad,3)/pow(float(arguments['--fv']),3)
         _S      = S * _volume
         _B      = B_Surface * _surf + B_Volume * _volume
         SSBB   = _S/sqrt(_B + (_S + _B)/OnOffRatio)
@@ -667,8 +662,8 @@ t = 3.0,detectorMass=1.,N_sigma=3):
 
     # First, find rate on observed signal needed
     _rad    = pow(detectorMass*1000./pi/2.,1./3.)
-    _surf   = pow(_rad,2)/pow(fidRadius,2)
-    _volume = pow(_rad,3)/(pow(fidRadius,2)*fidHeight)
+    _surf   = pow(_rad,2)/pow(float(arguments['--fv']),2)
+    _volume = pow(_rad,3)/pow(float(arguments['--fv']),3)
     _b = B_Surface*_surf + B_Volume*_volume
     _sigma_b*=_b
 
