@@ -176,37 +176,65 @@ def jobString(percentage,j,runs,models,arguments):
     dirGoodness  = float(arguments['-G'])
     minNHIT      = float(arguments['-T'])
     fIn          = arguments["-f"]
-    fidV         = float(arguments["--fv"])
-    pmtV         = float(arguments["--psup"])
-    tankV        = float(arguments["--tankDis"])
+    fidR         = (float(arguments["--tankRadius"])-float(arguments["--shieldThick"])-float(arguments["--steelThick"])-float(arguments["--fidThick"]))/1000.
+    fidZ         = (float(arguments["--halfHeight"])-float(arguments["--shieldThick"])-float(arguments["--steelThick"])-float(arguments["--fidThick"]))/1000.
+    pmtR         = (float(arguments["--tankRadius"])-float(arguments["--steelThick"])-float(arguments["--shieldThick"]))/1000. 
+    pmtZ         = (float(arguments["--halfHeight"])-float(arguments["--steelThick"])-float(arguments["--shieldThick"]))/1000.
+    tankR        = float(arguments["--tankRadius"])/1000.
+    tankZ        = float(arguments["--halfHeight"])/1000.
     outF         = arguments["--ntupleout"]
     superNova    = arguments["--supernovaFormat"]
 
-
-    line1 = """#!/bin/sh
-#MSUB -N WM_%s_%s_%d_%s    #name of job
-#MSUB -A adg         # sets bank account
-#MSUB -l nodes=1:ppn=1,walltime=23:59:59,partition=borax  # uses 1 node
-#MSUB -q pbatch         #pool
-#MSUB -o %s/log_case%s%s/wmpc_%s_%s_%d.log
-#MSUB -e %s/log_case%s%s/wmpc_%s_%s_%d.err
-#MSUB -d %s  # directory to run from
-#MSUB -V
-#MSUB                     # no more psub commands
-
-source %s/bin/thisroot.sh
-source %s/../../../bin/geant4.sh
-source %s/geant4make.sh
-source %s/env.sh
-source %s/env_wm.sh
-export G4NEUTRONHP_USE_ONLY_PHOTONEVAPORATION=1\n
-""" %(percentage,location,runs,additionalMacStr,\
-directory,case,additionalMacStr,percentage,location,runs,\
-directory,case,additionalMacStr,percentage,location,runs,\
-directory,\
-rootDir,g4Dir,g4Dir,ratDir,watchmakersDir)
     if sheffield:
-        line1 += 'export SHEFFIELD=1\n'
+
+        line1 = """#!/bin/sh
+    #MSUB -N WM_%s_%s_%d_%s    #name of job
+    #MSUB -A adg         # sets bank account
+    #MSUB -l nodes=1:ppn=1,walltime=23:59:59,partition=borax  # uses 1 node
+    #MSUB -q pbatch         #pool
+    #MSUB -o %s/log_case%s%s/wmpc_%s_%s_%d.log
+    #MSUB -e %s/log_case%s%s/wmpc_%s_%s_%d.err
+    #MSUB -d %s  # directory to run from
+    #MSUB -V
+    #MSUB                     # no more psub commands
+
+    source %s/bin/thisroot.sh
+    source /usr/local/gcc49/setup.sh
+    source /usr/local/geant4/setup.sh 10.3
+    source %s/geant4make.sh
+    source %s/env.sh
+    source %s/env_wm.sh
+    export G4NEUTRONHP_USE_ONLY_PHOTONEVAPORATION=1
+    export SHEFFIELD=1\n
+    """ %(percentage,location,runs,additionalMacStr,\
+    directory,case,additionalMacStr,percentage,location,runs,\
+    directory,case,additionalMacStr,percentage,location,runs,\
+    directory,\
+    rootDir,g4Dir,ratDir,watchmakersDir)
+
+    else:
+        line1 = """#!/bin/sh
+    #MSUB -N WM_%s_%s_%d_%s    #name of job
+    #MSUB -A adg         # sets bank account
+    #MSUB -l nodes=1:ppn=1,walltime=23:59:59,partition=borax  # uses 1 node
+    #MSUB -q pbatch         #pool
+    #MSUB -o %s/log_case%s%s/wmpc_%s_%s_%d.log
+    #MSUB -e %s/log_case%s%s/wmpc_%s_%s_%d.err
+    #MSUB -d %s  # directory to run from
+    #MSUB -V
+    #MSUB                     # no more psub commands
+
+    source %s/bin/thisroot.sh
+    source %s/../../../bin/geant4.sh
+    source %s/geant4make.sh
+    source %s/env.sh
+    source %s/env_wm.sh
+    export G4NEUTRONHP_USE_ONLY_PHOTONEVAPORATION=1\n
+    """ %(percentage,location,runs,additionalMacStr,\
+    directory,case,additionalMacStr,percentage,location,runs,\
+    directory,case,additionalMacStr,percentage,location,runs,\
+    directory,\
+    rootDir,g4Dir,g4Dir,ratDir,watchmakersDir)
 
     for mods in models:
         if location == "FN":
@@ -220,9 +248,9 @@ rootDir,g4Dir,g4Dir,ratDir,watchmakersDir)
             if additionalString != "":
                 fileNO = "ntuple_root_files%s/%s/%s/watchman_%s_%s_%s%s_%d.root" %(additionalString,mods,percentage,mods,percentage,location,additionalString,runs)
                 if sheffield:
-                    line1 += "root -b -l -q %s/watchmakers/\'goldenFileExtractor.C(\"%s\",\"%s\",%f,%f,%f,%f,%f,%f,%f,%f,%f\")\'\n" %(watchmakersDir,fileN,fileNO,minNHIT,goodness,dirGoodness,timemask,\
-                                    rate,distancemask,fidV,pmtV,tankV)
-                    ###int goldenFileExtractor(const char *file, const char *outfile = "null", double nhit_min =3., double goodness_min = 0.1, double goodness_dir = 0.1, double timeWindow_ns = 100000, double rate = 10.0, double maxDistance = 2.0, double fidBound = 5.4, double pmtBound = 6.4, double tankBound = 8.0000) {
+                    line1 += "root -b -l -q %s/watchmakers/\'goldenFileExtractor.C(\"%s\",\"%s\",%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f\")\'\n" %(watchmakersDir,fileN,fileNO,minNHIT,goodness,dirGoodness,timemask,\
+                                    rate,distancemask,fidR,fidZ,pmtR,pmtZ,tankR,tankZ)
+                    ###int goldenFileExtractor(const char *file, const char *outfile = "null", double nhit_min =3., double goodness_min = 0.1, double goodness_dir = 0.1, double timeWindow_ns = 100000, double rate = 10.0, double maxDistance = 2.0, double fidBoundR = 5.42, double fidBoundZ = 5.42, double pmtBoundR = 6.42, double pmtBoundZ = 6.42, double tankBoundR = 8.02635, double tankBoundZ = 8.02635 ) {
                 else:
                     line1 += "watch -n %s -f %s --ntupleout %s\n" %(additionalCommands,fileN,fileNO)
     return line1,case
@@ -265,6 +293,13 @@ def generateJobs(N,arguments):
     d,iso,loc,coverage,coveragePCT = loadSimulationParameters()
     case = arguments["-j"]
     additionalString,additionalCommands,additionalMacStr,additionalMacOpt = testEnabledCondition(arguments)
+
+    try:
+        sheffield   = os.environ['SHEFFIELD']
+        # print 'Running on sheffield cluster'
+    except:
+        # print 'Not running on sheffield cluster'
+        sheffield =  0
 
     '''Find wheter the jobs folder exist: if not create, if yes clean and recreate'''
 
@@ -350,13 +385,18 @@ def generateJobs(N,arguments):
                 line,case = jobString(cover,j,index,models,arguments)
                 stringFile = "%s/%s/%s/jobs%s_%s_%s_%d_case%d.sh" %(job,loc[j],cover,cover,\
                                                             "%s"%(iso[int(j)]),loc[j],index,case)
-                if index == 0:
-                    job_list+= '(msub ' + stringFile +') || ./'+ stringFile + '\n'
-
-                outfile = open(stringFile,"wb")
-                outfile.writelines(line)
-                if index < N-1:
-                    stringFile1 = "(msub %s/%s/%s/jobs%s_%s_%s_%d_case%d.sh || ./%s/%s/%s/jobs%s_%s_%s_%d_case%d.sh)" %(job,loc[j],cover,cover,\
+		if sheffield:
+                    job_list+= 'condor_qsub -l nodes=1:ppn=1 ' + stringFile + '\n'
+                    outfile = open(stringFile,"wb")
+                    outfile.writelines(line)
+                else:
+		    if index == 0:
+                        job_list+= '(msub ' + stringFile +') || ./'+ stringFile + '\n'
+                    outfile = open(stringFile,"wb")
+                    outfile.writelines(line)
+                    
+                    if index < N-1:
+                        stringFile1 = "(msub %s/%s/%s/jobs%s_%s_%s_%d_case%d.sh || ./%s/%s/%s/jobs%s_%s_%s_%d_case%d.sh)" %(job,loc[j],cover,cover,\
                                                                                                  "%s"%(iso[int(j)]),loc[j],index+1,case,job,loc[j],cover,cover,\
                                                                                                  "%s"%(iso[int(j)]),loc[j],index+1,case)
                     outfile.writelines(stringFile1)
@@ -629,27 +669,14 @@ def testEnabledCondition(arguments):
         additionalString += "_dirGood_%f" %(float(arguments['-G']))
         additionalCommands += " -G %f" %(float(arguments['-G']))
 
-    if float(arguments['--fv'])        !=  defaultValues[baseValue+7]:
-        additionalString += "_FVboundary_%f" %(float(arguments['--fv']))
-        additionalCommands +=  "--fv %f" %(float(arguments['--fv']))
-
-    if float(arguments['--psup'])      != defaultValues[baseValue+8]:
-        additionalString += "_PMTboundary_%f" %(float(arguments['--psup']))
-        additionalCommands += "--psup %f" %(float(arguments['--psup']))
-
-    if float(arguments['--tankDis'])   != defaultValues[baseValue+9]:
-        additionalString += "_Tankboundary_%f" %(float(arguments['--tankDis']))
-        additionalCommands +=" --tankDis %f" %(float(arguments['--tankDis']))
-
-
-    if float(arguments['--tankRadius']) != defaultValues[baseValue+10]:
+    if float(arguments['--tankRadius']) != defaultValues[baseValue+7]:
         additionalMacOpt += "/rat/db/set GEO[tank] r_max %f\n" %(float(arguments['--tankRadius']))
         additionalMacOpt += "/rat/db/set GEO[detector] r_max %f\n" %(float(arguments['--tankRadius'])-1.5875)
         additionalMacOpt += "/rat/db/set GEO[shield] detector_size_d %f\n" %(float(arguments['--tankRadius'])*2)
         additionalMacStr += "_tankRadius_%f" %(float(arguments['--tankRadius']))
         additionalString += "_tankRadius_%f" %(float(arguments['--tankRadius']))
 
-    if float(arguments['--halfHeight'])!= defaultValues[baseValue+11]:
+    if float(arguments['--halfHeight'])!= defaultValues[baseValue+8]:
         additionalMacOpt += "/rat/db/set GEO[tank] size_z %f\n" %(float(arguments['--halfHeight']))
         additionalMacOpt += "/rat/db/set GEO[shield] detector_size_z %f\n" %(float(arguments['--halfHeight'])*2)
         additionalMacOpt += "/rat/db/set GEO[detector] size_z %f\n" %(float(arguments['--halfHeight'])-1.5875)
@@ -657,18 +684,18 @@ def testEnabledCondition(arguments):
         additionalMacStr += "_halfHeight_%f" %(float(arguments['--halfHeight']))
         additionalString += "_halfHeight_%f" %(float(arguments['--halfHeight']))
 
-    if float(arguments['--shieldThick'])!= defaultValues[baseValue+12]:
+    if float(arguments['--shieldThick'])!= defaultValues[baseValue+9]:
         additionalMacOpt += "/rat/db/set GEO[shield] shield_thickness %f\n" %(float(arguments['--shieldThick']))
         additionalMacStr += "_shieldThickness_%f" %(float(arguments['--shieldThick']))
         additionalString += "_shieldThickness_%f" %(float(arguments['--shieldThick']))
 
-    if float(arguments['--steelThick'])!= defaultValues[baseValue+13]:
+    if float(arguments['--steelThick'])!= defaultValues[baseValue+10]:
         additionalMacOpt += "/rat/db/set GEO[shield] steel_thickness %f\n" %(float(arguments['--steelThick']))
         additionalMacStr += "_steelThickness_%f" %(float(arguments['--steelThick']))
         additionalString += "_steelThickness_%f" %(float(arguments['--steelThick']))
 
-    if float(arguments['--fidThick'])!= defaultValues[baseValue+14]:
-        # additionalString += "_fidThickness_%f" %(float(arguments['--fidThick']))
+    if float(arguments['--fidThick'])!= defaultValues[baseValue+11]:
+       # additionalString += "_fidThickness_%f" %(float(arguments['--fidThick']))
         additionalCommands +=" --fidThick %f" %(float(arguments['--fidThick']))
 
 
@@ -680,7 +707,8 @@ def testEnabledCondition(arguments):
     if additionalString == "":
         additionalString = "_default"
 
-
+    if additionalMacStr =="":
+        additionalMacStr = "_default"
 
     return  additionalString,additionalCommands,additionalMacStr,additionalMacOpt
 
@@ -772,9 +800,12 @@ def extractNtuple(arguments):
     dirGoodness  = float(arguments['-G'])
     minNHIT      = float(arguments['-T'])
     fIn          = arguments["-f"]
-    fidV         = float(arguments["--fv"])
-    pmtV         = float(arguments["--psup"])
-    tankV        = float(arguments["--tankDis"])
+    fidR         = (float(arguments["--tankRadius"])-float(arguments["--shieldThick"])-float(arguments["--steelThick"])-float(arguments["--fidThick"]))/1000.
+    fidZ         = (float(arguments["--halfHeight"])-float(arguments["--shieldThick"])-float(arguments["--steelThick"])-float(arguments["--fidThick"]))/1000.
+    pmtR         = (float(arguments["--tankRadius"])-float(arguments["--steelThick"])-float(arguments["--shieldThick"]))/1000. 
+    pmtZ         = (float(arguments["--halfHeight"])-float(arguments["--steelThick"])-float(arguments["--shieldThick"]))/1000.
+    tankR        = float(arguments["--tankRadius"])/1000.
+    tankZ        = float(arguments["--halfHeight"])/1000.
     outF         = arguments["--ntupleout"]
     superNova    = arguments["--supernovaFormat"]
 
@@ -783,7 +814,7 @@ def extractNtuple(arguments):
     if not superNova:
         try:
             goldenFileExtractor(fIn,outF,minNHIT,goodness,dirGoodness,timemask,\
-                            rate,distancemask,fidV,pmtV,tankV)
+                            rate,distancemask,fidR,fidZ,pmtR,pmtZ,tankR,tankZ)
         except:
             print "Error.."
     else:
@@ -803,9 +834,12 @@ def extractNtupleALL(arguments):
     goodness     = float(arguments['-g'])
     dirGoodness  = float(arguments['-G'])
     minNHIT      = float(arguments['-T'])
-    fidV         = float(arguments["--fv"])
-    pmtV         = float(arguments["--psup"])
-    tankV        = float(arguments["--tankDis"])
+    fidR         = (float(arguments["--tankRadius"])-float(arguments["--shieldThick"])-float(arguments["--steelThick"])-float(arguments["--fidThick"]))/1000.
+    fidZ         = (float(arguments["--halfHeight"])-float(arguments["--shieldThick"])-float(arguments["--steelThick"])-float(arguments["--fidThick"]))/1000.
+    pmtR         = (float(arguments["--tankRadius"])-float(arguments["--steelThick"])-float(arguments["--shieldThick"]))/1000. 
+    pmtZ         = (float(arguments["--halfHeight"])-float(arguments["--steelThick"])-float(arguments["--shieldThick"]))/1000.
+    tankR        = float(arguments["--tankRadius"])/1000.
+    tankZ        = float(arguments["--halfHeight"])/1000.
 
     superNova    = arguments["--supernovaFormat"]
 
@@ -829,7 +863,7 @@ def extractNtupleALL(arguments):
 #                        fOut = "ntuple_root_files%s/%s/%s/watchman_%s_%s_%s_%d.root" %(additionalString,ii,cover,ii,cover,loc[j],run)
 #                        print fIn, " -> ", fOut
 #                        goldenFileExtractor(fIn,minNHIT,goodness,dirGoodness,timemask,\
-#                                                rate,distancemask,fidV,pmtV,tankV,fOut)
+#                                                rate,distancemask,fidR,fidZ,pmtR,pmtZ,tankR,tankZ,fOut)
 
 
 
@@ -845,7 +879,7 @@ def extractNtupleALL(arguments):
                     if not superNova:
                         try:
                             goldenFileExtractor(fIn,fOut,minNHIT,goodness,dirGoodness,timemask,\
-                                            rate,distancemask,fidV,pmtV,tankV)
+                                            rate,distancemask,fidR,fidZ,pmtR,pmtZ,tankR,tankZ)
                         except:
                             print "Error.."
                     else:
@@ -871,7 +905,7 @@ def extractNtupleALL(arguments):
                             if not superNova:
                                 try:
                                     goldenFileExtractor(fIn,fOut,minNHIT,goodness,dirGoodness,timemask,\
-                                                    rate,distancemask,fidV,pmtV,tankV)
+                                                    rate,distancemask,fidR,fidZ,pmtR,pmtZ,tankR,tankZ)
                                 except:
                                     print "Error.."
                             else:
