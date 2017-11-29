@@ -12,7 +12,8 @@ t = arguments['--timeScale']
 
 fidRadius = float(arguments['--tankRadius'])-float(arguments['--steelThick'])-float(arguments['--shieldThick'])-float(arguments['--fidThick'])
 fidHeight = float(arguments['--halfHeight'])-float(arguments['--steelThick'])-float(arguments['--shieldThick'])-float(arguments['--fidThick'])
-
+detectorRadius  = float(arguments['--tankRadius'])-float(arguments['--steelThick'])
+detectorHeight  = float(arguments['--halfHeight'])-float(arguments['--steelThick'])
 
 def drange(start, stop, step):
     rii= start
@@ -222,7 +223,7 @@ def sensitivityMapNew():
 
     parameters  = loadAnalysisParameters(t)
     rates       = parameters[11]
-    FVkTonRatio = pow(float(arguments['--']),3)/pow(float(arguments['--tankRadius']),3)
+    FVkTonRatio = (pow(fidRadius,2)*fidHeight)/(pow(detectorRadius,2)*detectorHeight)
     boulbyRate,imbRate = rates["boulby_S"]*FVkTonRatio,rates["imb_S"]*FVkTonRatio
     print 'rates:',imbRate,boulbyRate, ' per ', t
 
