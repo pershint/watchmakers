@@ -195,10 +195,10 @@ def loadPMTInfo():
     for _b in b:
         d.append(float(_b.split()[4])*100.)
 
-    print '\nExtracting from log files number of PMTs and photocoverage'
-    print cmd
-    print 'Number of PMTs      ', c
-    print 'Actual photocoverage', d
+    # print '\nExtracting from log files number of PMTs and photocoverage'
+    # print cmd
+    # print 'Number of PMTs      ', c
+    # print 'Actual photocoverage', d
     return c,d
 
 
@@ -527,6 +527,6 @@ def loadAnalysisParameters(timeScale='day'):
     return inta,proc,loca,acc,arr,Activity,br,site,timeS,\
     boulbyIBDRate*FVkTonRatio,mass,dAct,coveNumber,covePCT,pctTubes,pct
 
-    # 
+    #
     # return inta,proc,loca,acc,arr,Activity,br,site,timeS,\
     # boulbyIBDRate*FVkTonRatio,mass,dAct,coveNumber,covePCT
