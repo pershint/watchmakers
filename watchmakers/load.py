@@ -514,7 +514,19 @@ def loadAnalysisParameters(timeScale='day'):
     covePCT       = {'10pct':pmt[1][0], '15pct':pmt[1][1],'20pct':pmt[1][2],\
     '25pct':pmt[1][3],'30pct':pmt[1][4],'35pct':pmt[1][5],'40pct':pmt[1][6]}
 
+    pctTubes   = {"%s"%(pmt[1][0]):pmt[0][0],"%s"%(pmt[1][1]):pmt[0][1],\
+    "%s"%(pmt[1][2]):pmt[0][2],"%s"%(pmt[1][3]):pmt[0][3],\
+    "%s"%(pmt[1][4]):pmt[0][4],"%s"%(pmt[1][5]):pmt[0][5],\
+    "%s"%(pmt[1][6]):pmt[0][6]}
+
+    pct = npa([ float(pmt[1][0]),float(pmt[1][1]),float(pmt[1][2]),\
+    float(pmt[1][3]),float(pmt[1][4]),float(pmt[1][5]),\
+    float(pmt[1][6]) ])
+
 
     return inta,proc,loca,acc,arr,Activity,br,site,timeS,\
-    boulbyIBDRate*FVkTonRatio,mass,dAct,coveNumber,covePCT
+    boulbyIBDRate*FVkTonRatio,mass,dAct,coveNumber,covePCT,pctTubes,pct
 
+    # 
+    # return inta,proc,loca,acc,arr,Activity,br,site,timeS,\
+    # boulbyIBDRate*FVkTonRatio,mass,dAct,coveNumber,covePCT
