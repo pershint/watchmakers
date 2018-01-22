@@ -777,6 +777,7 @@ def performPass1(arguments):
     additionalMacStr    = testCond[2]
     additionalMacOpt    = testCond[3]
 
+    codes = {}
 
     ##Create new pass1 directories
     for j in range(len(iso)):
@@ -785,7 +786,7 @@ def performPass1(arguments):
                 dir = "pass1_root_files%s/%s/%s" %(additionalString,ii,cover)
                 testCreateDirectoryIfNotExist(dir)
 
-
+    print rates
     for j in range(len(iso)):
         for ii in d["%s"%(iso[int(j)])]:
             for idx,cover in enumerate(coverage):
