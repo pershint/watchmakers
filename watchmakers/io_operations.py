@@ -777,8 +777,8 @@ def performPass1(arguments):
     additionalMacStr    = testCond[2]
     additionalMacOpt    = testCond[3]
 
-    codes = {}
-
+    codes = {'234Pa':910234,'214Pb':820214,'214Bi':830214,'210Bi':830210,'210Tl':820210,\
+    '228Ac':890228,'212Pb':820212,'212Bi':830212,'208Tl':810208}
     ##Create new pass1 directories
     for j in range(len(iso)):
         for ii in d["%s"%(iso[int(j)])]:
@@ -800,6 +800,12 @@ def performPass1(arguments):
                     if 'PMT' in _f:
                         _rate = rates["%s_%s"%(ii,'PMT')]
                         _rate*=pc_num["%s"%(cover)]*mass
-                    if 'FV' in _f:
+                        _c = codes["%s"%(ii)]
+                        _c += 10000000000
+                    elif 'FV' in _f:
                         _rate = rates["%s_%s"%(ii,'FV')]
-                    print "root -b -q $WATCHENV/watchmakers/\'pass1Trigger.C(\"%s\",%f,%d,\"%s\")\'" %(dir_root+_f,_rate,20001,dir_p1+_f)
+                        _c = codes["%s"%(ii)]
+                        _c += 20000000000
+                    else:
+                        _c = 404
+                    print "root -b -q $WATCHENV/watchmakers/\'pass1Trigger.C(\"%s\",%f,%d,\"%s\")\'" %(dir_root+_f,_rate,_c,dir_p1+_f)
