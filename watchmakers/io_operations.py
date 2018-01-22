@@ -792,13 +792,16 @@ def performPass1(arguments):
 
     # print rates
     # er = float(rates["%s_%s"%(ii,locj)])
+    outfile = open("pass1Job_%s.sh" %(additionalString),"wb")
+
     for j in range(len(iso)):
         for ii in d["%s"%(iso[int(j)])]:
             for idx,cover in enumerate(coverage):
 
-                print ""
+
                 dir_root = "root_files%s/%s/%s/" %(additionalMacStr,ii,cover)
                 dir_p1 = "pass1_root_files%s/%s/%s/" %(additionalString,ii,cover)
+                print "Processing ", dir_root
                 onlyfiles = [f for f in listdir(dir_root) if isfile(join(dir_root, f))]
                 for _f in onlyfiles:
                     if 'PMT' in _f:
@@ -828,4 +831,6 @@ def performPass1(arguments):
                         _c += 60000000000
                     else:
                         _c = 404
-                    print "root -b -q $WATCHENV/watchmakers/\'pass1Trigger.C(\"%s\",%f,%d,\"%s\")\'" %(dir_root+_f,_rate,_c,dir_p1+_f)
+                    line = "root -b -q $WATCHENV/watchmakers/\'pass1Trigger.C(\"%s\",%f,%d,\"%s\")\'" %(dir_root+_f,_rate,_c,dir_p1+_f)
+                    outfile.writelines(line)
+    outfile.close
