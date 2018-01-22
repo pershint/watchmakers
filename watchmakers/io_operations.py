@@ -15,6 +15,9 @@ def deleteDirectory(directory):
     if os.path.exists(directory):
         rmtree(directory)
 
+def testCreateDirectoryIfNotExist(directory):
+    if not os.path.exists(directory):
+        os.makedirs(directory)
 
 def macroGenerator(percentage,isotope,location,runs,events):
 
@@ -330,15 +333,6 @@ def generateJobs(N,arguments):
                 if not os.path.exists(directory):
                     os.makedirs(directory)
 
-    #
-    # for j in range(len(iso)):
-    #     for ii in d["%s"%(iso[int(j)])]:
-    #         for idx,cover in enumerate(coverage):
-    #             directory = "ntuple_root_files/%s/%s" %(ii,cover)
-    #             if not os.path.exists(directory):
-    #                 os.makedirs(directory)
-    #
-
     for j in range(len(iso)):
         for ii in d["%s"%(iso[int(j)])]:
             for idx,cover in enumerate(coverage):
@@ -352,7 +346,6 @@ def generateJobs(N,arguments):
                 directory = "log_case%s%s/%s/%s" %(case,additionalMacStr,ii,cover)
                 if not os.path.exists(directory):
                     os.makedirs(directory)
-
 
     '''Make sure that the softlink are correct for Bonsai input'''
 
@@ -370,8 +363,7 @@ def generateJobs(N,arguments):
 
     job = 'jobs_case%s%s'%(case,additionalMacStr)
 
-    job_list = '''#!/bin/sh
-'''
+    job_list = '''#!/bin/sh\n'''
 
     for j in range(len(iso)):
         for idx,cover in enumerate(coverage):
@@ -405,134 +397,6 @@ def generateJobs(N,arguments):
     os.chmod('sub_jobs_case%s%s'%(case,additionalMacStr),S_IRWXG)
     os.chmod('sub_jobs_case%s%s'%(case,additionalMacStr),S_IRWXU)
     return 0
-
-
-def customJob(arguments):
-
-    directory   = os.getcwd()
-    softDir     = "/usr/gapps/adg/geant4/rat_pac_and_dependency"
-    ratDir      = os.environ['RATROOT']
-    rootDir     = os.environ['ROOTSYS']
-    g4Dir       =  os.environ['G4INSTALL']
-    watchmakersDir = os.environ['WATCHENV']
-    sheffield   = os.environ['SHEFFIELD']
-
-    if sheffield:
-        print 'Running on sheffield cluster'
-    software    = "%s/bin/rat" %(ratDir)
-
-
-    ''' Custom job for photocoverage 02-2017 analyis'''
-
-    d,iso,loc,coverage,coveragePCT = loadSimulationParameters()
-
-    cnt = 0
-
-    outF2 = open('sub_cust_job',"wb")
-    outF2.writelines('#!/bin/sh\n')
-
-
-    for j in range(len(iso)):
-        for ii in d["%s"%(iso[int(j)])]:
-            line1 = """#!/bin/sh
-#MSUB -N WM_%s_%s    #name of job
-#MSUB -A adg         # sets bank account
-#MSUB -l nodes=1:ppn=1,walltime=23:59:59,partition=borax  # uses 1 node
-#MSUB -q pbatch         #pool
-#MSUB -o %s/log/CJwmpc_%s_%s.log
-#MSUB -e %s/log/CJwmpc_%s_%s.err
-#MSUB -d %s  # directory to run from
-#MSUB -V
-#MSUB                     # no more psub commands
-
-source %s/bin/thisroot.sh
-source %s/../../../bin/geant4.sh
-source %s/geant4make.sh
-source %s/env.sh
-source %s/env_wm.sh
-export G4NEUTRONHP_USE_ONLY_PHOTONEVAPORATION=1\n
-""" %(ii,loc[j],\
-                      directory,ii,loc[j],\
-                      directory,ii,loc[j],\
-                      directory,\
-                      rootDir,g4Dir,g4Dir,ratDir,watchmakersDir)
-
-
-            line2 = "watch --extractNtup -N 600 -P %s -L %s \n" %(ii,loc[j])
-            line3 = "watch --extractNtup -N 600 -P %s -L %s -g 0.65\n" %(ii,loc[j])
-            line4 = "watch --extractNtup -N 600 -P %s -L %s -g 0.65 -T 8\n" %(ii,loc[j])
-            line5 = "watch --extractNtup -N 600 -P %s -L %s -T 8\n" %(ii,loc[j])
-            line6 = "watch --extractNtup -N 600 -P %s -L %s -g 0.65 -T 10\n" %(ii,loc[j])
-            line7 = "watch --extractNtup -N 600 -P %s -L %s -T 10\n" %(ii,loc[j])
-            line8 = "watch --extractNtup -N 600 -P %s -L %s -g 0.65 -T 12\n" %(ii,loc[j])
-            line9 = "watch --extractNtup -N 600 -P %s -L %s -T 12\n" %(ii,loc[j])
-            line10 = "watch --extractNtup -N 600 -P %s -L %s -g 0.65 -T 14\n" %(ii,loc[j])
-            line11 = "watch --extractNtup -N 600 -P %s -L %s -T 14\n" %(ii,loc[j])
-
-
-            outfile = open('jobs/sub_jobs__%d_2'%(cnt),"wb")
-            outF2.writelines('msub jobs/sub_jobs__%d_2\n'%(cnt))
-            outfile.writelines(line1)
-            outfile.writelines(line2)
-            outfile.close
-
-            outfile = open('jobs/sub_jobs__%d_3'%(cnt),"wb")
-            outF2.writelines('msub jobs/sub_jobs__%d_3\n'%(cnt))
-            outfile.writelines(line1)
-            outfile.writelines(line3)
-            outfile.close
-
-            outfile = open('jobs/sub_jobs__%d_4'%(cnt),"wb")
-            outF2.writelines('msub jobs/sub_jobs__%d_4\n'%(cnt))
-            outfile.writelines(line1)
-            outfile.writelines(line4)
-            outfile.close
-
-            outfile = open('jobs/sub_jobs__%d_5'%(cnt),"wb")
-            outF2.writelines('msub jobs/sub_jobs__%d_5\n'%(cnt))
-            outfile.writelines(line1)
-            outfile.writelines(line5)
-            outfile.close
-
-            outfile = open('jobs/sub_jobs__%d_6'%(cnt),"wb")
-            outF2.writelines('msub jobs/sub_jobs__%d_6\n'%(cnt))
-            outfile.writelines(line1)
-            outfile.writelines(line6)
-            outfile.close
-
-            outfile = open('jobs/sub_jobs__%d_7'%(cnt),"wb")
-            outF2.writelines('msub jobs/sub_jobs__%d_7\n'%(cnt))
-            outfile.writelines(line1)
-            outfile.writelines(line7)
-            outfile.close
-
-            outfile = open('jobs/sub_jobs__%d_8'%(cnt),"wb")
-            outF2.writelines('msub jobs/sub_jobs__%d_8\n'%(cnt))
-            outfile.writelines(line1)
-            outfile.writelines(line8)
-            outfile.close
-
-            outfile = open('jobs/sub_jobs__%d_9'%(cnt),"wb")
-            outF2.writelines('msub jobs/sub_jobs__%d_9\n'%(cnt))
-            outfile.writelines(line1)
-            outfile.writelines(line9)
-            outfile.close
-
-            outfile = open('jobs/sub_jobs__%d_10'%(cnt),"wb")
-            outF2.writelines('msub jobs/sub_jobs__%d_10\n'%(cnt))
-            outfile.writelines(line1)
-            outfile.writelines(line10)
-            outfile.close
-
-            outfile = open('jobs/sub_jobs__%d_11'%(cnt),"wb")
-            outF2.writelines('msub jobs/sub_jobs__%d_11\n'%(cnt))
-            outfile.writelines(line1)
-            outfile.writelines(line11)
-            outfile.close
-
-            cnt+=1
-    outF2.close
-
 
 
 def deleteAllWorkDirectories():
@@ -779,11 +643,11 @@ def extractNtuple(arguments):
     tankR        = float(arguments["--tankRadius"])/1000.
     tankZ        = float(arguments["--halfHeight"])/1000.
     outF         = arguments["--ntupleout"]
-    superNova    = arguments["--supernovaFormat"]
+    pass1Trigger = arguments["--pass1Trigger"]
 
     print file
     d,iso,loc,coverage,coveragePCT = loadSimulationParameters()
-    if not superNova:
+    if not pass1Trigger:
         try:
             goldenFileExtractor(fIn,outF,minNHIT,goodness,dirGoodness,timemask,\
                             rate,distancemask,fidR,fidZ,pmtR,pmtZ,tankR,tankZ)
@@ -791,7 +655,7 @@ def extractNtuple(arguments):
             print "Error.."
     else:
         try:
-            supernovaAnalysis(fIn,outF)
+            pass1Trigger(fIn,outF)
         except:
             print "Error.."
 
@@ -873,3 +737,26 @@ def extractNtupleALL(arguments):
                                     supernovaAnalysis(fIn,fOut)
                                 except:
                                     print "Error.."
+
+
+def performPass1(arguments):
+    # Perform Pass1 : Apply pass1 algorythm to the rootfiles generated by rat-pac
+    # and save results in appropriate folders.
+    simParam    = loadSimulationParameters()
+    d           = simParam[0]
+    iso         = simParam[1]
+    loc         = simParam[2]
+    coverage    = simParam[3]
+
+    testCond            = testEnabledCondition(arguments)
+    additionalString    = testCond[0]
+    additionalCommands  = testCond[1]
+    additionalMacStr    = testCond[2]
+    additionalMacOpt    = testCond[3]
+
+    ##Clean or create pass1 directories
+    for j in range(len(iso)):
+        for ii in d["%s"%(iso[int(j)])]:
+            for idx,cover in enumerate(coverage):
+                dir = "pass1%s/%s/%s" %(additionalMacStr,ii,cover)
+                testCreateDirectoryIfNotExist(dir)

@@ -47,5 +47,8 @@ if __name__ == "__main__":
     if arguments['--customJob']:
         customJob(arguments)
 
+    if arguments['--pass1Trigger']:
+        performPass1(arguments)
+
 
 ######################## Waba Luba Dub Dub!! ###########################
