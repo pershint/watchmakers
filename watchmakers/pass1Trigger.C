@@ -58,8 +58,8 @@ double tankBoundR = 8.02635,double tankBoundZ = 8.02635,const char *outfile = "n
     TFile *f_out;
     printf("outfile: %s\n",outfile);
     if (TString(outfile) == TString("null")) {
-        outfile = Form("triggered_%s",f->GetName());
-        f_out = new TFile(Form("triggered_%s",f->GetName()),"Recreate");
+        outfile = Form("pass1_%s",f->GetName());
+        f_out = new TFile(Form("pass1_%s",f->GetName()),"Recreate");
     }else{
         f_out = new TFile(outfile,"Recreate");
     }
