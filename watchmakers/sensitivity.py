@@ -165,10 +165,6 @@ def siteCanvas(Graphs,site,cut,hist):
     return hist
 
 
-def sensitivityMap():
-    # Historical, not currently in use
-    a =1
-
 
 def sensitivityMapNew():
 
