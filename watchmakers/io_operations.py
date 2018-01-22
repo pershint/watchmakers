@@ -1,6 +1,8 @@
 from load import *
 
-
+# The purpose of this class is to handle the input/ouput operations of
+# WATCHMAKERS (WM). This include creating directories and files for the different
+# operations of WM, such as creating macros, jobs and so forth.
 
 def testCreateDirectory(directory):
     if not os.path.exists(directory):
@@ -12,7 +14,6 @@ def testCreateDirectory(directory):
 def deleteDirectory(directory):
     if os.path.exists(directory):
         rmtree(directory)
-#
 
 
 def macroGenerator(percentage,isotope,location,runs,events):
@@ -20,7 +21,6 @@ def macroGenerator(percentage,isotope,location,runs,events):
     covPCT = {'10pct':0.1,'15pct':0.15,'20pct':0.2,\
     '25pct':0.25,'30pct':0.30,'35pct':0.35,'40pct':0.40}
     additionalString,additionalCommands,additionalMacStr,additionalMacOpt = testEnabledCondition(arguments)
-
 
     #Part of the macro that is the same for all jobs
     dir = os.getcwd()
@@ -178,7 +178,7 @@ def jobString(percentage,j,runs,models,arguments):
     fIn          = arguments["-f"]
     fidR         = (float(arguments["--tankRadius"])-float(arguments["--shieldThick"])-float(arguments["--steelThick"])-float(arguments["--fidThick"]))/1000.
     fidZ         = (float(arguments["--halfHeight"])-float(arguments["--shieldThick"])-float(arguments["--steelThick"])-float(arguments["--fidThick"]))/1000.
-    pmtR         = (float(arguments["--tankRadius"])-float(arguments["--steelThick"])-float(arguments["--shieldThick"]))/1000. 
+    pmtR         = (float(arguments["--tankRadius"])-float(arguments["--steelThick"])-float(arguments["--shieldThick"]))/1000.
     pmtZ         = (float(arguments["--halfHeight"])-float(arguments["--steelThick"])-float(arguments["--shieldThick"]))/1000.
     tankR        = float(arguments["--tankRadius"])/1000.
     tankZ        = float(arguments["--halfHeight"])/1000.
@@ -261,18 +261,13 @@ def generateMacros(N,e):
     d,iso,loc,coverage,coveragePCT = loadSimulationParameters()
     additionalString,additionalCommands,additionalMacStr,additionalMacOpt = testEnabledCondition(arguments)
     print additionalMacOpt
-#    N = int(arguments['-N'])
     print N,e
     ##Clean or create macro directories
     for j in range(len(iso)):
         for ii in d["%s"%(iso[int(j)])]:
             for idx,cover in enumerate(coverage):
                 dir = "macro%s/%s/%s" %(additionalMacStr,ii,cover)
-#                print dir
                 testCreateDirectory(dir)
-#    for idx,cover in enumerate(coverage):
-#        dir = "%s" %(cover)
-#        testCreateDirectory(dir)
 
     for j in range(len(iso)):
         for ii in d["%s"%(iso[int(j)])]:
@@ -394,7 +389,7 @@ def generateJobs(N,arguments):
                         job_list+= '(msub ' + stringFile +') || ./'+ stringFile + '\n'
                     outfile = open(stringFile,"wb")
                     outfile.writelines(line)
-                    
+
                     if index < N-1:
                         stringFile1 = "(msub %s/%s/%s/jobs%s_%s_%s_%d_case%d.sh || ./%s/%s/%s/jobs%s_%s_%s_%d_case%d.sh)" %(job,loc[j],cover,cover,\
                                                                                                  "%s"%(iso[int(j)]),loc[j],index+1,case,job,loc[j],cover,cover,\
@@ -461,14 +456,7 @@ export G4NEUTRONHP_USE_ONLY_PHOTONEVAPORATION=1\n
                       directory,ii,loc[j],\
                       directory,\
                       rootDir,g4Dir,g4Dir,ratDir,watchmakersDir)
-#            line2 = "watch --extractNtup -N 600 -P %s -L %s \n" %(ii,loc[j])
-#            line3 = "watch --extractNtup -N 600 -P %s -L %s --fv 4.302\n" %(ii,loc[j])
-#            line4 = "watch --extractNtup -N 600 -P %s -L %s --fv 4.302 -g 0.65\n" %(ii,loc[j])
-#            line5 = "watch --extractNtup -N 600 -P %s -L %s --fv 4.302 -g 0.65 -T 12\n" %(ii,loc[j])
-#            line6 = "watch --extractNtup -N 600 -P %s -L %s --fv 4.302 -T 12\n" %(ii,loc[j])
-#            line7 = "watch --extractNtup -N 600 -P %s -L %s -g 0.65\n" %(ii,loc[j])
-#            line8 = "watch --extractNtup -N 600 -P %s -L %s -g 0.65 -T 12\n" %(ii,loc[j])
-#            line9 = "watch --extractNtup -N 600 -P %s -L %s -T 12\n" %(ii,loc[j])
+
 
             line2 = "watch --extractNtup -N 600 -P %s -L %s \n" %(ii,loc[j])
             line3 = "watch --extractNtup -N 600 -P %s -L %s -g 0.65\n" %(ii,loc[j])
@@ -547,8 +535,6 @@ export G4NEUTRONHP_USE_ONLY_PHOTONEVAPORATION=1\n
 
 
 
-
-
 def deleteAllWorkDirectories():
     d,iso,loc,coverage,coveragePCT = loadSimulationParameters()
 
@@ -573,7 +559,6 @@ def deleteAllWorkDirectories():
 
     if os.path.exists('sub_jobs'):
         os.remove('sub_jobs')
-
 
 
 def mergeFiles():
@@ -601,6 +586,7 @@ def mergeFiles():
     del trees
     return 0
 
+
 def testEnabledCondition(arguments):
 
     additionalString      = ""
@@ -609,7 +595,7 @@ def testEnabledCondition(arguments):
     additionalMacStr = ""
     additionalMacOpt = ""
 
-# Commands required for root_file
+    # Commands required for root_file
 
     if (arguments['--detectMedia']):
         additionalMacOpt += "/rat/db/set GEO[detector] material \"%s\"\n" %(arguments['--detectMedia'])
@@ -620,12 +606,6 @@ def testEnabledCondition(arguments):
         additionalMacOpt += "/rat/db/set GEO[inner_pmts] efficiency_correction %f\n" %(float(arguments['--collectionEff']))
         additionalMacStr += "_collectionEfficiency_%f" %(float(arguments['--collectionEff']))
         additionalString += "_collectionEfficiency_%f" %(float(arguments['--collectionEff']))
-
-
-
-#    if (arguments['--fidThick'] and arguments['--shieldThick'] and arguments['--halfHeight'] and arguments['--tankRadius']):
-#        additionalMacOpt += "/rat/db/set GEO[fiducial] r_max %f\n" %(((float(arguments['--tankRadius']))-1.5875)-((float(arguments['--shieldThick']))+(float(arguments['--fidThick']))))
-#        additionalMacOpt += "/rat/db/set GEO[fiducial] size_z %f\n" %(((float(arguments['--halfHeight']))-1.5875)-((float(arguments['--shieldThick']))+(float(arguments['--fidThick']))))
 
     if (arguments['--pmtModel']):
         additionalMacOpt += "/rat/db/set GEO[inner_pmts] pmt_model \"%s\"\n" %((arguments['--pmtModel']))
@@ -644,7 +624,7 @@ def testEnabledCondition(arguments):
 
     baseValue = 7
     #Analysis strings, usually shows up in ntuple processing
-#    print defaultValues[baseValue+1]
+    #    print defaultValues[baseValue+1]
     if float(arguments['-r'])          != defaultValues[baseValue+1]:
         additionalString += "_rate_%f" %(float(arguments['-r']))
         additionalCommands += " -r %f " %(float(arguments['-r']))
@@ -698,8 +678,6 @@ def testEnabledCondition(arguments):
        # additionalString += "_fidThickness_%f" %(float(arguments['--fidThick']))
         additionalCommands +=" --fidThick %f" %(float(arguments['--fidThick']))
 
-
-
     if int(arguments['--supernovaFormat']):
         additionalString += "_supernovaFormat"
         additionalCommands +=" --supernovaFormat "
@@ -711,9 +689,6 @@ def testEnabledCondition(arguments):
         additionalMacStr = "_default"
 
     return  additionalString,additionalCommands,additionalMacStr,additionalMacOpt
-
-
-
 
 
 def writeResultsToFile(s,g,h):
@@ -787,9 +762,6 @@ def mergeNtupleFiles(arguments):
     return 0
 
 
-
-
-
 def extractNtuple(arguments):
 
     N            = int(arguments["-N"])
@@ -802,7 +774,7 @@ def extractNtuple(arguments):
     fIn          = arguments["-f"]
     fidR         = (float(arguments["--tankRadius"])-float(arguments["--shieldThick"])-float(arguments["--steelThick"])-float(arguments["--fidThick"]))/1000.
     fidZ         = (float(arguments["--halfHeight"])-float(arguments["--shieldThick"])-float(arguments["--steelThick"])-float(arguments["--fidThick"]))/1000.
-    pmtR         = (float(arguments["--tankRadius"])-float(arguments["--steelThick"])-float(arguments["--shieldThick"]))/1000. 
+    pmtR         = (float(arguments["--tankRadius"])-float(arguments["--steelThick"])-float(arguments["--shieldThick"]))/1000.
     pmtZ         = (float(arguments["--halfHeight"])-float(arguments["--steelThick"])-float(arguments["--shieldThick"]))/1000.
     tankR        = float(arguments["--tankRadius"])/1000.
     tankZ        = float(arguments["--halfHeight"])/1000.
@@ -823,6 +795,7 @@ def extractNtuple(arguments):
         except:
             print "Error.."
 
+
 def extractNtupleALL(arguments):
     d,iso,loc,coverage,coveragePCT = loadSimulationParameters()
 
@@ -836,7 +809,7 @@ def extractNtupleALL(arguments):
     minNHIT      = float(arguments['-T'])
     fidR         = (float(arguments["--tankRadius"])-float(arguments["--shieldThick"])-float(arguments["--steelThick"])-float(arguments["--fidThick"]))/1000.
     fidZ         = (float(arguments["--halfHeight"])-float(arguments["--shieldThick"])-float(arguments["--steelThick"])-float(arguments["--fidThick"]))/1000.
-    pmtR         = (float(arguments["--tankRadius"])-float(arguments["--steelThick"])-float(arguments["--shieldThick"]))/1000. 
+    pmtR         = (float(arguments["--tankRadius"])-float(arguments["--steelThick"])-float(arguments["--shieldThick"]))/1000.
     pmtZ         = (float(arguments["--halfHeight"])-float(arguments["--steelThick"])-float(arguments["--shieldThick"]))/1000.
     tankR        = float(arguments["--tankRadius"])/1000.
     tankZ        = float(arguments["--halfHeight"])/1000.
@@ -852,19 +825,6 @@ def extractNtupleALL(arguments):
                 directory = "ntuple_root_files%s/%s/%s" %(additionalString,ii,cover)
                 if not os.path.exists(directory):
                     os.makedirs(directory)
-
-
-
-#    for j in range(len(iso)):
-#            for ii in d["%s"%(iso[int(j)])]:
-#                for idx,cover in enumerate(coverage):
-#                    for run in range(N):
-#                        fIn =  "root_files/%s/%s/watchman_%s_%s_%s_%d.root" %(ii,cover,ii,cover,loc[j],run)
-#                        fOut = "ntuple_root_files%s/%s/%s/watchman_%s_%s_%s_%d.root" %(additionalString,ii,cover,ii,cover,loc[j],run)
-#                        print fIn, " -> ", fOut
-#                        goldenFileExtractor(fIn,minNHIT,goodness,dirGoodness,timemask,\
-#                                                rate,distancemask,fidR,fidZ,pmtR,pmtZ,tankR,tankZ,fOut)
-
 
 
     if arguments["-P"] and arguments["-L"]:

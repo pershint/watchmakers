@@ -61,6 +61,7 @@ docstring = """
     --ntupleout=<outN>  Name of ntuple out [Default: %s]
     -o=<outputfile>     Efficiency output file [Default: %s]
     --supernovaFormat   Record supernova files instead of golden files
+    --pass1Trigger      Process rat-pac files with pass1 triggering 
 
     -r=<rate>           rate of accidentals in hz [Default: %f]
     -d=<distance>       Maximal distance between two events (m) [Default: %f]
@@ -130,6 +131,10 @@ gSystem.AddIncludePath(" -I$RATROOT/include")
 
 gROOT.LoadMacro("$WATCHENV/watchmakers/goldenFileExtractor.C")
 from ROOT import goldenFileExtractor
+
+gROOT.LoadMacro("$WATCHENV/watchmakers/ pass1Trigger.C")
+from ROOT import pass1Trigger
+
 
 # This is deprecated
 # gROOT.LoadMacro("$WATCHENV/watchmakers/supernovaAnalysis.C")
@@ -245,6 +250,7 @@ def loadAnalysisParameters(timeScale='day'):
     # Original Estimate
     # volumeR         = (2.*22.5*23.8*1.0+2.*17*23.8*1.0+2.*22.5*17.*1.0)
     volumeR         = power(2*float(arguments["--tankRadius"])+6,2)*(2*float(arguments["--halfHeight"])+6) - power(2*float(arguments["--tankRadius"])+4,2)*(2*float(arguments["--halfHeight"])+4) # Rock cavern e.g. (22m x 22m x 22m) - (20m x 20m x 20m)
+    volumeR         = power(22.,3)-power(20.,3)# Rock cavern e.g. (22m x 22m x 22m) - (20m x 20m x 20m)
     density         = 2.39 #from McGrath
     rockMass        = volumeR*power(100.,3)*density
     #Mass of rock evalyated
