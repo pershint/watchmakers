@@ -39,7 +39,7 @@ TRandom3 randNum;
 
 //#include <libRATEvent.h>
 
-int pass1Trigger(const char *file, double rate, int code,
+int pass1Trigger(const char *file, double rate, int code,const char *outfile = "null",
 double nhit_min_p = 3., double good_pos_p = 0.1, double good_dir_p = 0.1,
 double pe_p = 5.5, double n9_p = 5, double n9over_nhit_p = 0.008,
 double nhit_min_d = 3., double good_pos_d = 0.222, double good_dir_d = 0.1,
@@ -47,7 +47,7 @@ double pe_d = 28.7, double n9_d = 5, double n9over_nhit_d = 0.187,
 double timeWindow_ns = 100000, double maxDistance = 5.85,
 double fidBoundR = 5.42, double fidBoundZ = 5.42,
 double pmtBoundR = 6.42,double pmtBoundZ = 6.42,
-double tankBoundR = 8.02635,double tankBoundZ = 8.02635,const char *outfile = "null") {
+double tankBoundR = 8.02635,double tankBoundZ = 8.02635) {
 
     // Define the incoming out outgoing Trees
     TFile *f = new TFile(file);
