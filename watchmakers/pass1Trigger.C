@@ -14,22 +14,22 @@
 TRandom3 randNum;
 
 
-// The purpose of this code is to do a first pass analysis on the rat-pac 
+// The purpose of this code is to do a first pass analysis on the rat-pac
 // format data to extract a "triggered" dataset. A timestamp is generated
-// that emulate the data; the process is assumed to be poisson. This code 
-// is applied on each physics process independently, a code to merge all the 
+// that emulate the data; the process is assumed to be poisson. This code
+// is applied on each physics process independently, a code to merge all the
 // timestamps for different physics process will be applied at a later stage.
 //
 // This code requires two input that have no defaults, the rate of events, and
 // a interaction code [PMT(code 2) 214Bi (Z:83 A:214) = 20830214].
 //
-// If the event could have triggered either a prompt or delayed event in 
+// If the event could have triggered either a prompt or delayed event in
 // WATCHMAN, the event is recorded and the associated booleen is set to on.
 // This DOES NOT imply that the events is a prompt or delayed, just that it
 // has the possibility to be one. This step is the reduce the size of the dataset
 // by emulating a trigger condition.
 //
-// Finally, a root file with the PDFs for the different analysis variable is 
+// Finally, a root file with the PDFs for the different analysis variable is
 // generated:
 // 1) non-trigger PDF : all events that left some signature in the detector
 // 2) prompt PDF: distributions for events that pass the prompt trigger requierements
@@ -39,7 +39,7 @@ TRandom3 randNum;
 
 //#include <libRATEvent.h>
 
-int pass1Trigger(const char *file, double rate, int code, const char *outfile = "null",
+int pass1Trigger(const char *file, double rate, int code,
 double nhit_min_p = 3., double good_pos_p = 0.1, double good_dir_p = 0.1,
 double pe_p = 5.5, double n9_p = 5, double n9over_nhit_p = 0.008,
 double nhit_min_d = 3., double good_pos_d = 0.222, double good_dir_d = 0.1,
@@ -47,7 +47,7 @@ double pe_d = 28.7, double n9_d = 5, double n9over_nhit_d = 0.187,
 double timeWindow_ns = 100000, double maxDistance = 5.85,
 double fidBoundR = 5.42, double fidBoundZ = 5.42,
 double pmtBoundR = 6.42,double pmtBoundZ = 6.42,
-double tankBoundR = 8.02635,double tankBoundZ = 8.02635) {
+double tankBoundR = 8.02635,double tankBoundZ = 8.02635,const char *outfile = "null") {
 
     // Define the incoming out outgoing Trees
     TFile *f = new TFile(file);
@@ -71,7 +71,7 @@ double tankBoundR = 8.02635,double tankBoundZ = 8.02635) {
     //Define all the analysis parameters
     Double_t totPE = 0.0,goodness,dirGoodness,timeTmp,n9;
     Double_t newX,newY,newZ,dirX,dirY,dirZ;
-  
+
     Int_t ibd=0,es=0,cc=0,icc=0,nc=0,old_singal,evt;
     Double_t cosTheta,cosThetaSN,cosThetaSNIBD, local_time,local_time_tmp,delta_time,mc_energy;
 
@@ -85,7 +85,7 @@ double tankBoundR = 8.02635,double tankBoundZ = 8.02635) {
     Int_t maybePrompt, maybeDelay;
     Int_t totNHIT = 0,qTmp =0,od_hit=0;
     Int_t particleCountMC;
-    ULong64_t             timestamp; 
+    ULong64_t             timestamp;
     Double_t              x,y,z,u,v,w;
     Double_t              mcX,mcY,mcZ,mcU,mcV,mcW,mcP;
     Double_t              timeLapse;
@@ -119,7 +119,7 @@ double tankBoundR = 8.02635,double tankBoundZ = 8.02635) {
     data->Branch("mcv",&mcV,"mcv/D");
     data->Branch("mcw",&mcW,"mcw/D");
     data->Branch("code",&code,"code/I");
-  
+
     TTree *nodata =  new TTree("nodata","low-energy detector untriggered events");
     nodata->Branch("timestamp",&timestamp,"timestamp/L");
     nodata->Branch("nhit",&qTmp,"nhit/I");
@@ -147,8 +147,8 @@ double tankBoundR = 8.02635,double tankBoundZ = 8.02635) {
 
 
     TTree *runSummary =  new TTree("runSummary","mc run summary");
-    runSummary->Branch("nEvents",&nEvents,"nEvents/I");    
-    Int_t subEventTally[20] = {};   
+    runSummary->Branch("nEvents",&nEvents,"nEvents/I");
+    Int_t subEventTally[20] = {};
     runSummary->Branch("subEventTally",subEventTally,"subEventTally[20]/I");
     runSummary->Branch("rateHZ",&rate,"rateHz/D");
     runSummary->Branch("inputFile",file,"inputFile/C");
@@ -201,7 +201,7 @@ double tankBoundR = 8.02635,double tankBoundZ = 8.02635) {
                 //RAT::DS::BonsaiFit *pb  = ev->GetBonsaiFit();
                 goodness                = -1.;//pb->GetGoodness();
                 dirGoodness             = -1.;//pb->GetDirGoodness();
-                
+
                 totNHIT                 = -1;//pb->GetIDHit();
                 totPE                   = -1.;//pb->GetIDCharge();
                 od_hit                  = -1;//pb->GetODHit();
@@ -241,7 +241,7 @@ double tankBoundR = 8.02635,double tankBoundZ = 8.02635) {
                 dirY                    = dirReco.Y();
                 dirZ                    = dirReco.Z();
 
-                
+
                 timeTmp = ev->GetCalibratedTriggerTime(); // 0 for first subevent, detlta for all others
 		timestamp+=timeTmp;
  		//printf("%d %d %d %d\n",timestamp,timeTmp,timeLapse,k);
