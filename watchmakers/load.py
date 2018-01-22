@@ -61,7 +61,7 @@ docstring = """
     --ntupleout=<outN>  Name of ntuple out [Default: %s]
     -o=<outputfile>     Efficiency output file [Default: %s]
     --supernovaFormat   Record supernova files instead of golden files
-    --pass1Trigger      Process rat-pac files with pass1 triggering 
+    --pass1Trigger      Process rat-pac files with pass1 triggering
 
     -r=<rate>           rate of accidentals in hz [Default: %f]
     -d=<distance>       Maximal distance between two events (m) [Default: %f]
@@ -132,7 +132,7 @@ gSystem.AddIncludePath(" -I$RATROOT/include")
 gROOT.LoadMacro("$WATCHENV/watchmakers/goldenFileExtractor.C")
 from ROOT import goldenFileExtractor
 
-gROOT.LoadMacro("$WATCHENV/watchmakers/ pass1Trigger.C")
+gROOT.LoadMacro("$WATCHENV/watchmakers/pass1Trigger.C")
 from ROOT import pass1Trigger
 
 
