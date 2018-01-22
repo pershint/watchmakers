@@ -791,12 +791,13 @@ def performPass1(arguments):
     for j in range(len(iso)):
         for ii in d["%s"%(iso[int(j)])]:
             for idx,cover in enumerate(coverage):
-                _rate = rates["%s_%s"%(ii,loc[j])]
-                if loc[j] == 'PMT':
-                    _rate*=pc_num["%s"%(cover)]*mass
+
                 print ""
                 dir_root = "root_files%s/%s/%s/" %(additionalMacStr,ii,cover)
                 dir_p1 = "pass1_root_files%s/%s/%s" %(additionalString,ii,cover)
                 onlyfiles = [f for f in listdir(dir_root) if isfile(join(dir_root, f))]
                 for _f in onlyfiles:
+                    _rate = rates["%s_%s"%(ii,loc[j])]
+                    if 'PMT' in _f:
+                        _rate*=pc_num["%s"%(cover)]*mass
                     print "root -b -q $WATCHENV/watchmakers/\'pass1Trigger.C(\"%s\",%f,%d,\"%s\")\'" %(dir_root+_f,_rate,20001,dir_p1+_f)
