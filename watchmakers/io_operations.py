@@ -781,5 +781,13 @@ def performPass1(arguments):
     for j in range(len(iso)):
         for ii in d["%s"%(iso[int(j)])]:
             for idx,cover in enumerate(coverage):
-                dir = "pass1%s/%s/%s" %(additionalString,ii,cover)
+                dir = "pass1_root_files%s/%s/%s" %(additionalString,ii,cover)
                 testCreateDirectoryIfNotExist(dir)
+
+
+    for j in range(len(iso)):
+        for ii in d["%s"%(iso[int(j)])]:
+            for idx,cover in enumerate(coverage):
+                dir_p1 = "pass1_root_files%s/%s/%s" %(additionalString,ii,cover)
+                dir_root = "root_files%s/%s/%s" %(additionalMacStr,ii,cover)
+                print "root \'pass1Trigger.C(\"%s\",\"%s\")\'" %(dir_root,dir_p1)
