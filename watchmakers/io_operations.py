@@ -788,10 +788,10 @@ def performPass1(arguments):
 
     for j in range(len(iso)):
         for ii in d["%s"%(iso[int(j)])]:
-            print ""
             for idx,cover in enumerate(coverage):
-                dir_p1 = "pass1_"
+                print ""
                 dir_root = "root_files%s/%s/%s/" %(additionalMacStr,ii,cover)
+                dir_p1 = "pass1_"+dir_root
                 onlyfiles = [f for f in listdir(dir_root) if isfile(join(dir_root, f))]
                 for _f in onlyfiles:
-                    print "root \'$WATCHENV/watchmakers/pass1Trigger.C(\"%s\",\"%s\")\'" %(_f,dir_p1+_f)
+                    print "root $WATCHENV/watchmakers/\'pass1Trigger.C(\"%s\",\"%s\")\'" %(dir_root+_f,dir_p1+_f)
