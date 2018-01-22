@@ -539,8 +539,21 @@ def testEnabledCondition(arguments):
         additionalString += "_steelThickness_%f" %(float(arguments['--steelThick']))
 
     if float(arguments['--fidThick'])!= defaultValues[baseValue+11]:
-       # additionalString += "_fidThickness_%f" %(float(arguments['--fidThick']))
+        additionalString += "_fidThickness_%f" %(float(arguments['--fidThick']))
         additionalCommands +=" --fidThick %f" %(float(arguments['--fidThick']))
+
+    if float(arguments['--U238_PPM'])!= defaultValues[baseValue+15]:
+        additionalString += "_U238_PPM_%f" %(float(arguments['--U238_PPM']))
+        additionalCommands +=" --U238_PPM %f" %(float(arguments['--U238_PPM']))
+
+    if float(arguments['--Th232_PPM'])!= defaultValues[baseValue+16]:
+        additionalString += "_Th232_PPM_%f" %(float(arguments['--Th232_PPM']))
+        additionalCommands +=" --Th232_PPM %f" %(float(arguments['--Th232_PPM']))
+
+    if float(arguments['--Rn222'])!= defaultValues[baseValue+17]:
+        additionalString += "_Rn222_%f" %(float(arguments['--Rn222']))
+        additionalCommands +=" --Rn222 %f" %(float(arguments['--Rn222']))
+
 
     if int(arguments['--supernovaFormat']):
         additionalString += "_supernovaFormat"
@@ -768,5 +781,5 @@ def performPass1(arguments):
     for j in range(len(iso)):
         for ii in d["%s"%(iso[int(j)])]:
             for idx,cover in enumerate(coverage):
-                dir = "pass1%s/%s/%s" %(additionalMacStr+additionalMacOpt,ii,cover)
+                dir = "pass1%s/%s/%s" %(additionalString,ii,cover)
                 testCreateDirectoryIfNotExist(dir)

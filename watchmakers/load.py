@@ -37,7 +37,7 @@ except:
 defaultValues  = [1,3,2500,2805.,'merged_ntuple_watchman',\
 'merged_ntuple_watchman','null', 'processed_watchman.root',\
 10.,2.0, 100.0, 9, 0.65,0.1,8026.35,8026.35,1600.0,6.35,1000.,\
-'day','boulby', 1.0, 0.043, 0.133]
+'day','boulby', 1.0, 0.043, 0.133,0.002]
 
 docstring = """
     Usage: watchmakers.py [options]
@@ -102,7 +102,7 @@ docstring = """
 
     --U238_PPM=<_Uppm>  Concentration of U-238 in glass [Default: %f]
     --Th232_PPM=<_Thp>  Concentration of Th-232 in glass [Default: %f]
-    --Rn222=<_Rn>       Radon activity in water [Default: 6.4]
+    --Rn222=<_Rn>       Radon activity in water SK 2x10^-3 Bq/m^3 [Default: %f]
 
     --detectMedia=<_dM>  Detector media (doped_water,...)
     --collectionEff=<CE> Collection efficiency (e.g.: 0.85,0.67,0.475)
@@ -115,7 +115,7 @@ docstring = """
            defaultValues[9],defaultValues[10],defaultValues[11],defaultValues[12],\
            defaultValues[13],defaultValues[14],defaultValues[15],defaultValues[16],\
            defaultValues[17],defaultValues[18],defaultValues[19],defaultValues[20],\
-           defaultValues[21],defaultValues[22],defaultValues[23])
+           defaultValues[21],defaultValues[22],defaultValues[23],defaultValues[24])
 
 try:
     import docopt
@@ -338,8 +338,8 @@ def loadAnalysisParameters(timeScale='day'):
 
 
     #Add the Rn-222 chain
-    N_Rn222     = 2e-3 # Bq/m3
-    ActivityRn222     = float(arguments["--Rn222"])
+    # N_Rn222     = 2e-3 # Bq/m3
+    ActivityRn222     = float(arguments["--Rn222"])*nKiloTons*1e3 #required tons, not ktons
 #    _proc       =['222Rn','214Pb','214Bi','210Bi','210Tl']
 #    _loca       =['FV', 'FV',   'FV',   'FV',   'FV']
 #    acc         +=['chain','acc',  'acc',  'acc',   'acc']
@@ -355,7 +355,7 @@ def loadAnalysisParameters(timeScale='day'):
     _site        = ['', '',     '',     '',     '']
 
     arr = empty(4)
-    arr[:]      = 6.4
+    arr[:]      = ActivityRn222
     Activity    = append(   Activity,arr)
     proc        += _proc
     loca        += _loca
