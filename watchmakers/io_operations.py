@@ -793,7 +793,7 @@ def performPass1(arguments):
     # print rates
     # er = float(rates["%s_%s"%(ii,locj)])
     outfile = open("pass1Job_%s.sh" %(additionalString),"wb")
-    outfile.writeline("#!/bin/sh\n")
+    outfile.writelines("#!/bin/sh\n")
     for j in range(len(iso)):
         for ii in d["%s"%(iso[int(j)])]:
             for idx,cover in enumerate(coverage):
