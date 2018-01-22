@@ -793,7 +793,6 @@ def performPass1(arguments):
             for idx,cover in enumerate(coverage):
                 _rate = rates["%s_%s"%(ii,loc[j])]
                 if loc[j] == 'PMT':
-                    print " adjusting rate for pmt %4.3e %s^{-1}, pmt mass %4.2f, number of PMTs %d : %4.3e %s^{-1}"%(er,timeScale,mass,pc_num["%s"%(cover)],er*pc_num["%s"%(cover)]*mass,timeScale)
                     _rate*=pc_num["%s"%(cover)]*mass
                 print ""
                 dir_root = "root_files%s/%s/%s/" %(additionalMacStr,ii,cover)
