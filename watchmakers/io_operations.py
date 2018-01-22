@@ -778,7 +778,11 @@ def performPass1(arguments):
     additionalMacOpt    = testCond[3]
 
     codes = {'234Pa':910234,'214Pb':820214,'214Bi':830214,'210Bi':830210,'210Tl':820210,\
-    '228Ac':890228,'212Pb':820212,'212Bi':830212,'208Tl':810208}
+    '228Ac':890228,'212Pb':820212,'212Bi':830212,'208Tl':810208,\
+    '9003':9003,'11003':11003,\
+    'FTFP_BERT':1,'QBBC':2,'QBBC_EMZ':3,'QGSP_BERT':4,\
+    'QGSP_BERT_EMV':5,'QGSP_BERT_EMX':6,'QGSP_BIC':7,'_QGSP_FTFP_BERT':8,\
+    'boulby':11,'neutron':2112}
     ##Create new pass1 directories
     for j in range(len(iso)):
         for ii in d["%s"%(iso[int(j)])]:
@@ -794,7 +798,7 @@ def performPass1(arguments):
 
                 print ""
                 dir_root = "root_files%s/%s/%s/" %(additionalMacStr,ii,cover)
-                dir_p1 = "pass1_root_files%s/%s/%s" %(additionalString,ii,cover)
+                dir_p1 = "pass1_root_files%s/%s/%s/" %(additionalString,ii,cover)
                 onlyfiles = [f for f in listdir(dir_root) if isfile(join(dir_root, f))]
                 for _f in onlyfiles:
                     if 'PMT' in _f:
@@ -806,6 +810,22 @@ def performPass1(arguments):
                         _rate = rates["%s_%s"%(ii,'FV')]
                         _c = codes["%s"%(ii)]
                         _c += 20000000000
+                    elif 'RN' in _f:
+                        _rate = rates["%s_%s"%(ii,'RN')]
+                        _c = codes["%s"%(ii)]
+                        _c += 30000000000
+                    elif 'FN' in _f:
+                        _rate = rates["%s_%s"%(ii,'FN')]
+                        _c = codes["%s"%(ii)]
+                        _c += 40000000000
+                    elif 'boulby' in _f:
+                        _rate = rates["%s_%s"%('boulby','S')]
+                        _c = codes["%s"%(ii)]
+                        _c += 60000000000
+                    elif 'neutron' in _f:
+                        _rate = rates["%s_%s"%('boulby','S')]
+                        _c = codes["%s"%(ii)]
+                        _c += 60000000000
                     else:
                         _c = 404
                     print "root -b -q $WATCHENV/watchmakers/\'pass1Trigger.C(\"%s\",%f,%d,\"%s\")\'" %(dir_root+_f,_rate,_c,dir_p1+_f)
