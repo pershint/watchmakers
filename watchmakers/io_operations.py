@@ -794,4 +794,4 @@ def performPass1(arguments):
                 dir_p1 = "pass1_"+dir_root
                 onlyfiles = [f for f in listdir(dir_root) if isfile(join(dir_root, f))]
                 for _f in onlyfiles:
-                    print "root -b -q $WATCHENV/watchmakers/\'pass1Trigger.C(\"%s\",%f)\'" %(dir_root+_f,100,20001)
+                    print "root -b -q $WATCHENV/watchmakers/\'pass1Trigger.C(\"%s\",%f,%d)\'" %(dir_root+_f,100.,20001)
