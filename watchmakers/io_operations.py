@@ -862,8 +862,8 @@ def performPass1(arguments):
             #MSUB -A adg         # sets bank account
             #MSUB -l nodes=1:ppn=1,walltime=23:59:59,partition=borax  # uses 1 node
             #MSUB -q pbatch         #pool
-            #MSUB -o pass1_%s_%s_%s.log
-            #MSUB -e pass1_%s_%s_%s.err
+            #MSUB -o log/pass1_%s_%s_%s.log
+            #MSUB -e log/pass1_%s_%s_%s.err
             #MSUB -d %s  # directory to run from
             #MSUB -V
             #MSUB                     # no more psub commands
