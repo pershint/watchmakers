@@ -236,8 +236,8 @@ def loadAnalysisParameters(timeScale='day'):
     tankRadius  = float(arguments["--tankRadius"])-float(arguments['--steelThick'])
     tankHeight  = float(arguments["--halfHeight"])-float(arguments['--steelThick'])
 
-    fidVolume  = pi*pow(fidRadius,2)*(2.*fidHeight)
-    tankVolume = pi*pow(tankRadius,2)*(2.*tankHeight)
+    fidVolume  = pi*pow(fidRadius/1000.,2)*(2.*fidHeight/1000.)
+    tankVolume = pi*pow(tankRadius/1000.,2)*(2.*tankHeight/1000.)
     FVkTonRatio = fidVolume/tankVolume
     #print "Change in load.py"
 
