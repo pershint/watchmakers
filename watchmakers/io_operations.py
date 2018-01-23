@@ -753,7 +753,9 @@ def extractNtupleALL(arguments):
 
 
 def createFileDictionary(arguments):
-
+    # Function created due to slowness of loading directories with multiple
+    # files on the LLNL cluster Borax. This dictionary will be used for
+    # pass2
     from os import listdir
     from os.path import isfile, join
     simParam    = loadSimulationParameters()
@@ -788,8 +790,15 @@ def createFileDictionary(arguments):
                 dictionary["%s"%(dir_root)] = [f for f in listdir(dir_root) if isfile(join(dir_root, f))]
 
     import pickle
-    with open('dictionary.pkl','wb') as f:
+    with open('dictionary%s.pkl'%(additionalMacStr),'wb') as f:
         pickle.dump(dictionary,f,pickle.HIGHEST_PROTOCOL)
+
+def load_obj(arguments):
+    testCond            = testEnabledCondition(arguments)
+    additionalMacOpt    = testCond[3]
+    with open('dictionary%s.pkl'%(additionalMacStr), 'rb') as f:
+        return pickle.load(f)
+
 
 
 def performPass1(arguments):
@@ -830,8 +839,14 @@ def performPass1(arguments):
                 dir = "pass1_root_files%s/%s/%s" %(additionalString,ii,cover)
                 testCreateDirectoryIfNotExist(dir)
 
-    # print rates
-    # er = float(rates["%s_%s"%(ii,locj)])
+
+    try:
+        dictionary = load_obj(arguments)
+    except:
+        print 'Dictionary does not exist, creating it now'
+        createFileDictionary(arguments)
+        dictionary = load_obj(arguments)
+
     outfile = open("JOB_pass1_%s.sh" %(additionalString),"wb")
     outfile.writelines("#!/bin/sh\n")
     for j in range(len(iso)):
@@ -842,7 +857,7 @@ def performPass1(arguments):
                 dir_root = "root_files%s/%s/%s/" %(additionalMacStr,ii,cover)
                 dir_p1 = "pass1_root_files%s/%s/%s/" %(additionalString,ii,cover)
                 print "Finding files in ", dir_root
-                onlyfiles = [f for f in listdir(dir_root) if isfile(join(dir_root, f))]
+                onlyfiles = dictionary["%s"%(dir_root)]
                 for _f in onlyfiles:
                     if 'PMT' in _f:
                         _rate = rates["%s_%s"%(ii,'PMT')]
@@ -874,3 +889,50 @@ def performPass1(arguments):
                     line = "root -b -q $WATCHENV/watchmakers/\'pass1Trigger.C(\"%s\",%f,%d,\"%s\")\'\n" %(dir_root+_f,_rate,_c,dir_p1+_f)
                     outfile.writelines(line)
     outfile.close
+
+
+
+    # print rates
+    # er = float(rates["%s_%s"%(ii,locj)])
+    # outfile = open("JOB_pass1_%s.sh" %(additionalString),"wb")
+    # outfile.writelines("#!/bin/sh\n")
+    # for j in range(len(iso)):
+    #     for ii in d["%s"%(iso[int(j)])]:
+    #         for idx,cover in enumerate(coverage):
+    #
+    #
+    #             dir_root = "root_files%s/%s/%s/" %(additionalMacStr,ii,cover)
+    #             dir_p1 = "pass1_root_files%s/%s/%s/" %(additionalString,ii,cover)
+    #             print "Finding files in ", dir_root
+    #             onlyfiles = [f for f in listdir(dir_root) if isfile(join(dir_root, f))]
+    #             for _f in onlyfiles:
+    #                 if 'PMT' in _f:
+    #                     _rate = rates["%s_%s"%(ii,'PMT')]
+    #                     _rate*=pc_num["%s"%(cover)]*mass
+    #                     _c = int(codes["%s"%(ii)])
+    #                     _c += 100000000
+    #                 elif 'FV' in _f:
+    #                     _rate = rates["%s_%s"%(ii,'FV')]
+    #                     _c = int(codes["%s"%(ii)])
+    #                     _c += 200000000
+    #                 elif 'RN' in _f:
+    #                     _rate = rates["%s_%s"%(ii,'RN')]
+    #                     _c = int(codes["%s"%(ii)])
+    #                     _c += 300000000
+    #                 elif 'FN' in _f:
+    #                     _rate = rates["%s_%s"%(ii,'FN')]/8. # Since we have 8 models, we can take the average
+    #                     _c = int(codes["%s"%(ii)])
+    #                     _c += 400000000
+    #                 elif 'boulby' in _f:
+    #                     _rate = rates["%s_%s"%('boulby','S')]
+    #                     _c = int(codes["%s"%(ii)])
+    #                     _c += 600000000
+    #                 elif 'neutron' in _f:
+    #                     _rate = rates["%s_%s"%('boulby','S')]
+    #                     _c = int(codes["%s"%(ii)])
+    #                     _c += 600000000
+    #                 else:
+    #                     _c = 404
+    #                 line = "root -b -q $WATCHENV/watchmakers/\'pass1Trigger.C(\"%s\",%f,%d,\"%s\")\'\n" %(dir_root+_f,_rate,_c,dir_p1+_f)
+    #                 outfile.writelines(line)
+    # outfile.close
