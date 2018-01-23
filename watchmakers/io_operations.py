@@ -794,6 +794,7 @@ def createFileDictionary(arguments):
         pickle.dump(dictionary,f,pickle.HIGHEST_PROTOCOL)
 
 def load_obj(arguments):
+    import pickle
     testCond            = testEnabledCondition(arguments)
     additionalMacStr    = testCond[2]
     with open('dictionary%s.pkl'%(additionalMacStr), 'rb') as f:
