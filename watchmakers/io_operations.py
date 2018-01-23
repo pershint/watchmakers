@@ -804,6 +804,11 @@ def load_obj(arguments):
 
 def performPass1(arguments):
     rootDir     = os.environ['ROOTSYS']
+    softDir     = "/usr/gapps/adg/geant4/rat_pac_and_dependency"
+    ratDir      = os.environ['RATROOT']
+    rootDir     = os.environ['ROOTSYS']
+    g4Dir       =  os.environ['G4INSTALL']
+    watchmakersDir = os.environ['WATCHENV']
     directory   = os.getcwd()
     from os import listdir
     from os.path import isfile, join
@@ -869,9 +874,13 @@ def performPass1(arguments):
             #MSUB                     # no more psub commands
 
             source %s/bin/thisroot.sh
+            source %s/../../../bin/geant4.sh
+            source %s/geant4make.sh
+            source %s/env.sh
+            source %s/env_wm.sh
             """%(additionalString,ii,cover,\
             additionalString,ii,cover,additionalString,ii,cover,\
-            directory,rootDir))
+            directory,rootDir,g4Dir,g4Dir,ratDir,watchmakersDir))
 
                 dir_root = "root_files%s/%s/%s/" %(additionalMacStr,ii,cover)
                 dir_p1 = "pass1_root_files%s/%s/%s/" %(additionalString,ii,cover)
