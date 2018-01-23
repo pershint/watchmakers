@@ -781,7 +781,7 @@ def performPass1(arguments):
     '228Ac':890228,'212Pb':820212,'212Bi':830212,'208Tl':810208,\
     '9003':9003,'11003':11003,\
     'FTFP_BERT':1,'QBBC':2,'QBBC_EMZ':3,'QGSP_BERT':4,\
-    'QGSP_BERT_EMV':5,'QGSP_BERT_EMX':6,'QGSP_BIC':7,'_QGSP_FTFP_BERT':8,\
+    'QGSP_BERT_EMV':5,'QGSP_BERT_EMX':6,'QGSP_BIC':7,'QGSP_FTFP_BERT':8,\
     'boulby':11,'neutron':2112}
     ##Create new pass1 directories
     for j in range(len(iso)):
@@ -792,7 +792,7 @@ def performPass1(arguments):
 
     # print rates
     # er = float(rates["%s_%s"%(ii,locj)])
-    outfile = open("pass1Job_%s.sh" %(additionalString),"wb")
+    outfile = open("JOB_pass1_%s.sh" %(additionalString),"wb")
     outfile.writelines("#!/bin/sh\n")
     for j in range(len(iso)):
         for ii in d["%s"%(iso[int(j)])]:
@@ -818,7 +818,7 @@ def performPass1(arguments):
                         _c = codes["%s"%(ii)]
                         _c += 30000000000
                     elif 'FN' in _f:
-                        _rate = rates["%s_%s"%(ii,'FN')]
+                        _rate = rates["%s_%s"%(ii,'FN')]/8. # Since we have 8 models, we can take the average
                         _c = codes["%s"%(ii)]
                         _c += 40000000000
                     elif 'boulby' in _f:
