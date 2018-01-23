@@ -62,6 +62,7 @@ docstring = """
     -o=<outputfile>     Efficiency output file [Default: %s]
     --supernovaFormat   Record supernova files instead of golden files
     --pass1Trigger      Process rat-pac files with pass1 triggering
+    --fileDict          Create a dicionary of exisiting files
 
     -r=<rate>           rate of accidentals in hz [Default: %f]
     -d=<distance>       Maximal distance between two events (m) [Default: %f]

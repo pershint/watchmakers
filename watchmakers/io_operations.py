@@ -752,6 +752,46 @@ def extractNtupleALL(arguments):
                                     print "Error.."
 
 
+def createFileDictionary(arguments):
+
+    from os import listdir
+    from os.path import isfile, join
+    simParam    = loadSimulationParameters()
+    d           = simParam[0]
+    iso         = simParam[1]
+    loc         = simParam[2]
+    coverage    = simParam[3]
+
+    parameters  = loadAnalysisParameters(arguments["--timeScale"])
+    rates       = parameters[11]
+    mass        = parameters[10]
+    pc_num      = parameters[12]
+    pc_val      = parameters[13]
+    timeS       = parameters[8]
+
+    testCond            = testEnabledCondition(arguments)
+    additionalString    = testCond[0]
+    additionalCommands  = testCond[1]
+    additionalMacStr    = testCond[2]
+    additionalMacOpt    = testCond[3]
+
+
+    dictionary = {}
+
+    ##Create new pass1 directories
+    for j in range(len(iso)):
+        for ii in d["%s"%(iso[int(j)])]:
+            for idx,cover in enumerate(coverage):
+
+                dir_root = "root_files%s/%s/%s/" %(additionalMacStr,ii,cover)
+                print "Finding files in ", dir_root
+                dictionary["%s"%(dir_root)] = [f for f in listdir(dir_root) if isfile(join(dir_root, f))]
+
+    import pickle
+    with open('dictionary.pkl','wb') as f:
+        pickle.dump(dictionary,f,pickle.HIGHEST_PROTOCOL)
+
+
 def performPass1(arguments):
 
     from os import listdir
@@ -807,28 +847,28 @@ def performPass1(arguments):
                     if 'PMT' in _f:
                         _rate = rates["%s_%s"%(ii,'PMT')]
                         _rate*=pc_num["%s"%(cover)]*mass
-                        _c = codes["%s"%(ii)]
-                        _c += 10000000000
+                        _c = int(codes["%s"%(ii)])
+                        _c += 100000000
                     elif 'FV' in _f:
                         _rate = rates["%s_%s"%(ii,'FV')]
-                        _c = codes["%s"%(ii)]
-                        _c += 20000000000
+                        _c = int(codes["%s"%(ii)])
+                        _c += 200000000
                     elif 'RN' in _f:
                         _rate = rates["%s_%s"%(ii,'RN')]
-                        _c = codes["%s"%(ii)]
-                        _c += 30000000000
+                        _c = int(codes["%s"%(ii)])
+                        _c += 300000000
                     elif 'FN' in _f:
                         _rate = rates["%s_%s"%(ii,'FN')]/8. # Since we have 8 models, we can take the average
-                        _c = codes["%s"%(ii)]
-                        _c += 40000000000
+                        _c = int(codes["%s"%(ii)])
+                        _c += 400000000
                     elif 'boulby' in _f:
                         _rate = rates["%s_%s"%('boulby','S')]
-                        _c = codes["%s"%(ii)]
-                        _c += 60000000000
+                        _c = int(codes["%s"%(ii)])
+                        _c += 600000000
                     elif 'neutron' in _f:
                         _rate = rates["%s_%s"%('boulby','S')]
-                        _c = codes["%s"%(ii)]
-                        _c += 60000000000
+                        _c = int(codes["%s"%(ii)])
+                        _c += 600000000
                     else:
                         _c = 404
                     line = "root -b -q $WATCHENV/watchmakers/\'pass1Trigger.C(\"%s\",%f,%d,\"%s\")\'\n" %(dir_root+_f,_rate,_c,dir_p1+_f)
