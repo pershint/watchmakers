@@ -795,7 +795,7 @@ def createFileDictionary(arguments):
 
 def load_obj(arguments):
     testCond            = testEnabledCondition(arguments)
-    additionalMacOpt    = testCond[3]
+    additionalMacStr    = testCond[2]
     with open('dictionary%s.pkl'%(additionalMacStr), 'rb') as f:
         return pickle.load(f)
 
