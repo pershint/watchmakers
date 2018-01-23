@@ -227,11 +227,7 @@ def loadAnalysisParameters(timeScale='day'):
     #PMT mass in kilograms
     mass = 1.4 # from Hamamatsu tech details
 
-    #Evaluate FV to total detector volume ratio
-    nKiloTons   = 3.22
-    FreeProtons = 0.6065
-    TNU         = FreeProtons* nKiloTons *timeSec
-    #FVkTonRatio = pow(float(arguments['--fv']),3)/pow(float(arguments['--tankDis']),3)
+
 
     ### This had been changed by M.B. from Tamzin implementation
     fidRadius = float(arguments['--tankRadius'])-float(arguments['--steelThick'])-float(arguments['--shieldThick'])-float(arguments['--fidThick'])
@@ -240,10 +236,16 @@ def loadAnalysisParameters(timeScale='day'):
     tankRadius  = float(arguments["--tankRadius"])-float(arguments['--steelThick'])
     tankHeight  = float(arguments["--halfHeight"])-float(arguments['--steelThick'])
 
-    fidVolume  = pow(fidRadius,2)*(2.*fidHeight)
-    tankVolume = pow(tankRadius,2)*(2.*tankHeight)
+    fidVolume  = pi*pow(fidRadius,2)*(2.*fidHeight)
+    tankVolume = pi*pow(tankRadius,2)*(2.*tankHeight)
     FVkTonRatio = fidVolume/tankVolume
     #print "Change in load.py"
+
+    #Evaluate FV to total detector volume ratio
+    nKiloTons   = tankVolume/1000.
+    FreeProtons = 0.6065
+    TNU         = FreeProtons* nKiloTons *timeSec
+    #FVkTonRatio = pow(float(arguments['--fv']),3)/pow(float(arguments['--tankDis']),3)
 
     #Fast neutrons conversion
     #Rock mass
