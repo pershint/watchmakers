@@ -205,7 +205,7 @@ double tankBoundR = 8.02635,double tankBoundZ = 8.02635, int nPMT = -1) {
 
     timeLapse 		    = findNextTime(rate);
     timestamp                   += timeLapse;
-    timestamp_ns                = int(float(timestamp/1e9)-int(timestamp/1e9)*1e9);//For some reason Modulo does not work
+    timestamp_ns                = int((float(timestamp/1.0e9)-int(timestamp/1.0e9))*1.0e9);//For some reason Modulo does not work
     timestamp_s                = int(timestamp/1e9);
     printf("%20d %10d %10d \n",timestamp,timestamp_ns,timestamp_s);
     //Find out how many subevents:
