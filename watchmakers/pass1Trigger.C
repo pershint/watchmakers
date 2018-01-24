@@ -39,14 +39,14 @@ TRandom3 randNum;
 
 //#include <libRATEvent.h>
 
-int pass1Trigger(const char *file, double rate, int code,const char *outfile = "null",
+int pass1Trigger(const char *file, double rate, int code,int nPMT ,const char *outfile = "null",
 double nhit_min_p = 3., double good_pos_p = 0.1, double good_dir_p = 0.1,
 double pe_p = 5.5, double n9_p = 5, double n9over_nhit_p = 0.008,
 double nhit_min_d = 3., double good_pos_d = 0.222, double good_dir_d = 0.1,
 double pe_d = 28.7, double n9_d = 5, double n9over_nhit_d = 0.187,
 double fidBoundR = 5.42, double fidBoundZ = 5.42,
 double pmtBoundR = 6.42,double pmtBoundZ = 6.42,
-double tankBoundR = 8.02635,double tankBoundZ = 8.02635, int nPMT = -1) {
+double tankBoundR = 8.02635,double tankBoundZ = 8.02635) {
 
   // Define the incoming out outgoing Trees
   TFile *f = new TFile(file);
@@ -207,7 +207,7 @@ double tankBoundR = 8.02635,double tankBoundZ = 8.02635, int nPMT = -1) {
     timestamp                   += timeLapse;
     timestamp_ns                = int((float(timestamp/1.0e9)-int(timestamp/1.0e9))*1.0e9);//For some reason Modulo does not work
     timestamp_s                = int(timestamp/1e9);
-    printf("%llu %10d %10d \n",timestamp,timestamp_ns,timestamp_s);
+    // printf("%llu %10d %10d \n",timestamp,timestamp_ns,timestamp_s);
     //Find out how many subevents:
     subevents                   = rds->GetEVCount();
     subEventTally[subevents]+=1;

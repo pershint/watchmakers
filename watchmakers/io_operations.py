@@ -914,7 +914,7 @@ def performPass1(arguments):
                         _c += 600000000
                     else:
                         _c = 404
-                    line = "root -b -q $WATCHENV/watchmakers/\'pass1Trigger.C(\"%s\",%f,%d,\"%s\")\'\n" %(dir_root+_f,_rate,_c,dir_p1+_f)
+                    line = "root -b -q $WATCHENV/watchmakers/\'pass1Trigger.C(\"%s\",%f,%d,%d,\"%s\")\'\n" %(dir_root+_f,_rate,_c,pc_num["%s"%(cover)],dir_p1+_f)
                     outfile2.writelines(line)
                 outfile2.close
     outfile.close
