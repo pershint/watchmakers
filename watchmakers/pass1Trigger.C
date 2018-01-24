@@ -85,6 +85,7 @@ double tankBoundR = 8.02635,double tankBoundZ = 8.02635, int nPMT = -1) {
   Int_t totNHIT = 0,nhits =0,od_hit=0;
   Int_t particleCountMC;
   ULong64_t             timestamp;
+  Int_t                 timestamp_ns,timestamp_s;
   Double_t              x,y,z,u,v,w;
   Double_t              mcX,mcY,mcZ,mcU,mcV,mcW,mcP;
   Double_t              timeLapse;
@@ -94,6 +95,8 @@ double tankBoundR = 8.02635,double tankBoundZ = 8.02635, int nPMT = -1) {
   data->Branch("maybePrompt",&maybePrompt,"maybePrompt/I");
   data->Branch("maybeDelay",&maybeDelay,"maybeDelay/I");
   data->Branch("timestamp",&timestamp,"timestamp/L");
+  data->Branch("timestamp_ns",&timestamp_ns,"timestamp_ns/I");
+  data->Branch("timestamp_s",&timestamp_s,"timestamp_s/I");
 
   data->Branch("nhit",&nhits,"nhit/I");
   data->Branch("id_plus_dr_hit",&totNHIT,"id_plus_dr_hit/I");//Inner detector plus dark rate hits
@@ -121,6 +124,8 @@ double tankBoundR = 8.02635,double tankBoundZ = 8.02635, int nPMT = -1) {
 
   TTree *nodata =  new TTree("nodata","low-energy detector untriggered events");
   nodata->Branch("timestamp",&timestamp,"timestamp/L");
+  nodata->Branch("timestamp_ns",&timestamp_ns,"timestamp_ns/I");
+  nodata->Branch("timestamp_s",&timestamp_s,"timestamp_s/I");
   nodata->Branch("nhit",&nhits,"nhit/I");
   nodata->Branch("id_plus_dr_hit",&totNHIT,"id_plus_dr_hit/I");//Inner detector plus dark rate hits
   nodata->Branch("od_hit",&od_hit,"od_hit/I");//Inner detector plus dark rate hits
@@ -154,6 +159,8 @@ double tankBoundR = 8.02635,double tankBoundZ = 8.02635, int nPMT = -1) {
   runSummary->Branch("outputFile",outfile,"outputFile/C");
   runSummary->Branch("code",&code,"code/I");
   runSummary->Branch("runEndTime",&timestamp,"runEndTime/L");//Record last time stamp of the file
+  runSummary->Branch("runEndTime_ns",&timestamp_ns,"runEndTime_ns/I");//Record last time stamp of the file
+  runSummary->Branch("runEndTime_s",&timestamp_s,"runEndTime_s/I");//Record last time stamp of the file
   runSummary->Branch("potential_prompts",&cnt_p,"potential_prompts/I");
   runSummary->Branch("potential_delayed",&cnt_d,"potential_delayed/I");
   Double_t eff_p,eff_d;
@@ -198,6 +205,8 @@ double tankBoundR = 8.02635,double tankBoundZ = 8.02635, int nPMT = -1) {
 
     timeLapse 		    = findNextTime(rate);
     timestamp                   += timeLapse;
+    timestamp_ns                = timestamp%1e9;
+    timestamp_s                = int(timestamp/1e9);
     //Find out how many subevents:
     subevents                   = rds->GetEVCount();
     subEventTally[subevents]+=1;
