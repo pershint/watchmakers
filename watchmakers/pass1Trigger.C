@@ -207,7 +207,7 @@ double tankBoundR = 8.02635,double tankBoundZ = 8.02635, int nPMT = -1) {
     timestamp                   += timeLapse;
     timestamp_ns                = int((float(timestamp/1.0e9)-int(timestamp/1.0e9))*1.0e9);//For some reason Modulo does not work
     timestamp_s                = int(timestamp/1e9);
-    printf("%20d %10d %10d \n",timestamp,timestamp_ns,timestamp_s);
+    printf("%20l %10d %10d \n",timestamp,timestamp_ns,timestamp_s);
     //Find out how many subevents:
     subevents                   = rds->GetEVCount();
     subEventTally[subevents]+=1;
