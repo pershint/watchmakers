@@ -205,7 +205,7 @@ double tankBoundR = 8.02635,double tankBoundZ = 8.02635, int nPMT = -1) {
 
     timeLapse 		    = findNextTime(rate);
     timestamp                   += timeLapse;
-    timestamp_ns                = timestamp%1e9;
+    timestamp_ns                = int(timestamp%1e9);
     timestamp_s                = int(timestamp/1e9);
     //Find out how many subevents:
     subevents                   = rds->GetEVCount();
