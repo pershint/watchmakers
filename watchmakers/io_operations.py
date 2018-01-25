@@ -779,25 +779,33 @@ def createFileDictionary(arguments,prefix=""):
 
 
     dictionary = {}
-
+    if prefix = "":
+        recordOptions = additionalMacStr
+    else:
+        recordOptions = additionalString
     ##Create new pass1 directories
     for j in range(len(iso)):
         for ii in d["%s"%(iso[int(j)])]:
             for idx,cover in enumerate(coverage):
 
-                dir_root = "%sroot_files%s/%s/%s/" %(prefix,additionalMacStr,ii,cover)
+                dir_root = "%sroot_files%s/%s/%s/" %(prefix,recordOptions,ii,cover)
                 print "Finding files in ", dir_root
                 dictionary["%s"%(dir_root)] = [f for f in listdir(dir_root) if isfile(join(dir_root, f))]
 
     import pickle
-    with open('dictionary%s%s.pkl'%(prefix,additionalMacStr),'wb') as f:
+    with open('dictionary%s%s.pkl'%(prefix,recordOptions),'wb') as f:
         pickle.dump(dictionary,f,pickle.HIGHEST_PROTOCOL)
 
 def load_obj(arguments,prefix=""):
     import pickle
     testCond            = testEnabledCondition(arguments)
+    additionalString    = testCond[0]
     additionalMacStr    = testCond[2]
-    with open('dictionary%s%s.pkl'%(prefix,additionalMacStr), 'rb') as f:
+    if prefix = "":
+        recordOptions = additionalMacStr
+    else:
+        recordOptions = additionalString
+    with open('dictionary%s%s.pkl'%(prefix,recordOptions), 'rb') as f:
         return pickle.load(f)
 
 
