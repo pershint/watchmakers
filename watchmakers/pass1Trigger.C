@@ -40,13 +40,13 @@ TRandom3 randNum;
 //#include <libRATEvent.h>
 
 int pass1Trigger(const char *file, double rate, int code,int nPMT ,const char *outfile = "null",
-double nhit_min_p = 3., double good_pos_p = 0.1, double good_dir_p = 0.1,
-double pe_p = 5.5, double n9_p = 5, double n9over_nhit_p = 0.008,
-double nhit_min_d = 3., double good_pos_d = 0.222, double good_dir_d = 0.1,
-double pe_d = 28.7, double n9_d = 5, double n9over_nhit_d = 0.187,
-double fidBoundR = 5.42, double fidBoundZ = 5.42,
 double pmtBoundR = 6.42,double pmtBoundZ = 6.42,
-double tankBoundR = 8.02635,double tankBoundZ = 8.02635) {
+double tankBoundR = 8.02635,double tankBoundZ = 8.02635,
+double nhit_min_p = 3., double good_pos_p = 0.1, double good_dir_p = 0.1,
+double pe_p = 5.5, double n9_p = 5, double n9over_nhit_p = 0.0001,
+double nhit_min_d = 3., double good_pos_d = 0.222, double good_dir_d = 0.1,
+double pe_d = 28.7, double n9_d = 5, double n9over_nhit_d = 0.0001
+) {
 
   // Define the incoming out outgoing Trees
   TFile *f = new TFile(file);
@@ -87,7 +87,7 @@ double tankBoundR = 8.02635,double tankBoundZ = 8.02635) {
   ULong64_t             timestamp;
   Int_t                 timestamp_ns,timestamp_s;
   Double_t              x,y,z,u,v,w;
-  Double_t              mcX,mcY,mcZ,mcU,mcV,mcW,mcP;
+  Double_t              mcX,mcY,mcZ,mcU,mcV,mcW,mcP,p2ToB,p2W;
   Double_t              timeLapse;
 
   TTree *data = new TTree("data","low-energy detector triggered events");
@@ -121,6 +121,8 @@ double tankBoundR = 8.02635,double tankBoundZ = 8.02635) {
   data->Branch("mcv",&mcV,"mcv/D");
   data->Branch("mcw",&mcW,"mcw/D");
   data->Branch("code",&code,"code/I");
+  data->Branch("p2W",&p2W,"p2W/D");//Proximity to PMT wall
+  data->Branch("p2ToB",&p2ToB,"p2ToB/D");//Proximity to Top or Bottom PMT (closest)
 
   TTree *nodata =  new TTree("nodata","low-energy detector untriggered events");
   nodata->Branch("timestamp",&timestamp,"timestamp/L");
@@ -166,13 +168,23 @@ double tankBoundR = 8.02635,double tankBoundZ = 8.02635) {
   Double_t eff_p,eff_d;
   runSummary->Branch("eff_prompts",&eff_p,"eff_prompts/D");
   runSummary->Branch("eff_delayed",&eff_d,"eff_delayed/D");
-  runSummary->Branch("fidBoundR",&fidBoundR,"fidBoundR/D");
-  runSummary->Branch("fidBoundZ",&fidBoundZ,"fidBoundZ/D");
   runSummary->Branch("pmtBoundR",&pmtBoundR,"pmtBoundR/D");
   runSummary->Branch("pmtBoundZ",&pmtBoundZ,"pmtBoundZ/D");
   runSummary->Branch("tankBoundR",&tankBoundR,"tankBoundR/D");
   runSummary->Branch("tankBoundZ",&tankBoundZ,"tankBoundZ/D");
   runSummary->Branch("nPMT",&nPMT,"nPMT/I");
+  runSummary->Branch("nhit_min_p",&nhit_min_p,"nhit_min_p/D");
+  runSummary->Branch("good_pos_p",&good_pos_p,"good_pos_p/D");
+  runSummary->Branch("good_dir_p",&good_dir_p,"good_dir_p/D");
+  runSummary->Branch("pe_p",&pe_p,"pe_p/D");
+  runSummary->Branch("n9_p",&n9_p,"n9_p/D");
+  runSummary->Branch("n9over_nhit_p",&n9over_nhit_p,"n9over_nhit_p/D");
+  runSummary->Branch("nhit_min_d",&nhit_min_d,"nhit_min_d/D");
+  runSummary->Branch("good_pos_d",&good_pos_d,"good_pos_d/D");
+  runSummary->Branch("good_dir_d",&good_dir_d,"good_dir_d/D");
+  runSummary->Branch("pe_d",&pe_d,"pe_d/D");
+  runSummary->Branch("n9_d",&n9_d,"n9_d/D");
+  runSummary->Branch("n9over_nhit_d",&n9over_nhit_d,"n9over_nhit_d/D");
 
   vector <double> subeventInfo;
   vector<vector <double> > eventInfo;
@@ -265,12 +277,16 @@ double tankBoundR = 8.02635,double tankBoundZ = 8.02635) {
         z = posReco.Z()/1000.;
         */
         // Currentlt saving n9over_nhit_p/d for pass3
-        if ( nhits > nhit_min_p && totPE > pe_p && n9 > n9_p && goodness > good_pos_p && dirGoodness > good_dir_p && newX != -99.999) {
+        if ( nhits > nhit_min_p && totPE > pe_p && n9 > n9_p && goodness > good_pos_p && dirGoodness > good_dir_p && float(n9)/float(nhit)> n9over_nhit_p && newX != -99.999) {
           maybePrompt = 1;
+          p2W = pmtBoundR-sqrt(newX**2+newY**2);
+          p2ToB = pmtBoundZ-sqrt(newZ**2);
           cnt_p+=1;
         }
-        if ( nhits > nhit_min_d && totPE > pe_d && n9 > n9_d && goodness > good_pos_d && dirGoodness > good_dir_d && newX != -99.999) {
+        if ( nhits > nhit_min_d && totPE > pe_d && n9 > n9_d && goodness > good_pos_d && dirGoodness > good_dir_d && float(n9)/float(nhit)> n9over_nhit_d && newX != -99.999) {
           maybeDelay  = 1;
+          p2W = pmtBoundR-sqrt(newX**2+newY**2);
+          p2ToB = pmtBoundZ-sqrt(newZ**2);
           cnt_d+=1;
         }
         if (!maybePrompt && !maybeDelay){

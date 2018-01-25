@@ -841,6 +841,12 @@ def performPass1(arguments):
     additionalMacStr    = testCond[2]
     additionalMacOpt    = testCond[3]
 
+
+    pmtR         = (float(arguments["--tankRadius"])-float(arguments["--steelThick"])-float(arguments["--shieldThick"]))/1000.
+    pmtZ         = (float(arguments["--halfHeight"])-float(arguments["--steelThick"])-float(arguments["--shieldThick"]))/1000.
+    tankR        = (float(arguments["--tankRadius"])-float(arguments["--steelThick"]))/1000.
+    tankZ        = (float(arguments["--halfHeight"])-float(arguments["--steelThick"]))/1000.
+
     codes = {'234Pa':910234,'214Pb':820214,'214Bi':830214,'210Bi':830210,'210Tl':820210,\
     '228Ac':890228,'212Pb':820212,'212Bi':830212,'208Tl':810208,\
     '9003':9003,'11003':11003,\
@@ -922,7 +928,7 @@ def performPass1(arguments):
                         _c += 600000000
                     else:
                         _c = 404
-                    line = "root -b -q $WATCHENV/watchmakers/\'pass1Trigger.C(\"%s\",%f,%d,%d,\"%s\")\'\n" %(dir_root+_f,_rate,_c,pc_num["%s"%(cover)],dir_p1+_f)
+                    line = "root -b -q $WATCHENV/watchmakers/\'pass1Trigger.C(\"%s\",%f,%d,%d,\"%s\",%f,%f,%f,%f)\'\n" %(dir_root+_f,_rate,_c,pc_num["%s"%(cover)],dir_p1+_f,pmtR,pmtZ,tankR,tankZ)
                     outfile2.writelines(line)
                 outfile2.close
     outfile.close
