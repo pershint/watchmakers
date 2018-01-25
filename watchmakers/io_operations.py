@@ -1013,10 +1013,20 @@ def performPass2(arguments):
 
                 print "Will create ",dir_p2+_file
                 onlyfiles = dictionary["%s"%(dir_p1)]
-                first = 1
+                first = 1,firstPMT = 1, firstFV = 1
                 for _f in onlyfiles:
-                    line = "root -b -q $WATCHENV/watchmakers/\'pass2Trigger.C(\"%s\",\"%s\",%d)\'\n" %(dir_p2+_file,dir_p1+_f,first)
-                    first = 0
+                    if 'PMT' in _f or 'FV' in _f:
+                        if 'PMT' in _f:
+                            _file = "watchman_%s_%s.root"%(ii,'PMT')
+                            line = "root -b -q $WATCHENV/watchmakers/\'pass2Trigger.C(\"%s\",\"%s\",%d)\'\n" %(dir_p2+_file,dir_p1+_f,firstPMT)
+                            firstPMT = 0
+                        if 'FV' in _f:
+                            _file = "watchman_%s_%s.root"%(ii,'WV')
+                            line = "root -b -q $WATCHENV/watchmakers/\'pass2Trigger.C(\"%s\",\"%s\",%d)\'\n" %(dir_p2+_file,dir_p1+_f,firstFV)
+                            firstFV = 0
+                    else:
+                        line = "root -b -q $WATCHENV/watchmakers/\'pass2Trigger.C(\"%s\",\"%s\",%d)\'\n" %(dir_p2+_file,dir_p1+_f,first)
+                        first = 0
                     outfile2.writelines(line)
                 outfile2.close
     outfile.close
