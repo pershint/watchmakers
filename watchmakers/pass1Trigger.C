@@ -10,6 +10,7 @@
 #include <TVector3.h>
 #include <vector>
 #include <TRandom3.h>
+#include <TMath.h>
 
 TRandom3 randNum;
 
@@ -87,7 +88,7 @@ double pe_d = 28.7, double n9_d = 5, double n9over_nhit_d = 0.0001
   ULong64_t             timestamp;
   Int_t                 timestamp_ns,timestamp_s;
   Double_t              x,y,z,u,v,w;
-  Double_t              mcX,mcY,mcZ,mcU,mcV,mcW,mcP,p2ToB,p2W;
+  Double_t              mcX,mcY,mcZ,mcU,mcV,mcW,mcP,p2ToB,p2W,closestPMT;
   Double_t              timeLapse;
 
   TTree *data = new TTree("data","low-energy detector triggered events");
@@ -121,8 +122,9 @@ double pe_d = 28.7, double n9_d = 5, double n9over_nhit_d = 0.0001
   data->Branch("mcv",&mcV,"mcv/D");
   data->Branch("mcw",&mcW,"mcw/D");
   data->Branch("code",&code,"code/I");
-  data->Branch("p2W",&p2W,"p2W/D");//Proximity to PMT wall
-  data->Branch("p2ToB",&p2ToB,"p2ToB/D");//Proximity to Top or Bottom PMT (closest)
+  // data->Branch("p2W",&p2W,"p2W/D");//Proximity to PMT wall
+  // data->Branch("p2ToB",&p2ToB,"p2ToB/D");//Proximity to Top or Bottom PMT (closest)
+  data->Branch("closestPMT",&closestPMT,"closestPMT/D");//Proximity to PMT wall
 
   TTree *nodata =  new TTree("nodata","low-energy detector untriggered events");
   nodata->Branch("timestamp",&timestamp,"timestamp/L");
@@ -281,12 +283,14 @@ double pe_d = 28.7, double n9_d = 5, double n9over_nhit_d = 0.0001
           maybePrompt = 1;
           p2W = pmtBoundR-sqrt(newX**2+newY**2);
           p2ToB = pmtBoundZ-sqrt(newZ**2);
+          closestPMT = TMath:Min(p2W,p2ToB);
           cnt_p+=1;
         }
         if ( nhits > nhit_min_d && totPE > pe_d && n9 > n9_d && goodness > good_pos_d && dirGoodness > good_dir_d && float(n9)/float(nhits)> n9over_nhit_d && newX != -99.999) {
           maybeDelay  = 1;
           p2W = pmtBoundR-sqrt(newX**2+newY**2);
           p2ToB = pmtBoundZ-sqrt(newZ**2);
+          closestPMT = TMath:Min(p2W,p2ToB);
           cnt_d+=1;
         }
         if (!maybePrompt && !maybeDelay){
