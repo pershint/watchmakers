@@ -1004,7 +1004,7 @@ def performPass2(arguments):
                 _file = "watchman_%s.root"%(ii)
 
                 print "Will create ",dir_p2+_file
-                onlyfiles = dictionary["%s"%(dir_root)]
+                onlyfiles = dictionary["%s"%(dir_p1)]
                 first = 1
                 for _f in onlyfiles:
                     line = "root -b -q $WATCHENV/watchmakers/\'pass2Trigger.C(\"%s\",\"%s\",%llu)\'\n" %(dir_p1+_f,dir_p2+_file,first)
