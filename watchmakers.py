@@ -50,6 +50,9 @@ if __name__ == "__main__":
     if arguments['--pass1Trigger']:
         performPass1(arguments)
 
+    if arguments['--pass2Trigger']:
+        performPass2(arguments)
+
     if arguments['--fileDict']:
         createFileDictionary(arguments)
 

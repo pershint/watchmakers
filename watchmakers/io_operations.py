@@ -752,7 +752,7 @@ def extractNtupleALL(arguments):
                                     print "Error.."
 
 
-def createFileDictionary(arguments):
+def createFileDictionary(arguments,prefix=""):
     # Function created due to slowness of loading directories with multiple
     # files on the LLNL cluster Borax. This dictionary will be used for
     # pass2
@@ -793,7 +793,7 @@ def createFileDictionary(arguments):
     with open('dictionary%s.pkl'%(additionalMacStr),'wb') as f:
         pickle.dump(dictionary,f,pickle.HIGHEST_PROTOCOL)
 
-def load_obj(arguments):
+def load_obj(arguments,prefix=""):
     import pickle
     testCond            = testEnabledCondition(arguments)
     additionalMacStr    = testCond[2]
@@ -915,6 +915,100 @@ def performPass1(arguments):
                     else:
                         _c = 404
                     line = "root -b -q $WATCHENV/watchmakers/\'pass1Trigger.C(\"%s\",%f,%d,%d,\"%s\")\'\n" %(dir_root+_f,_rate,_c,pc_num["%s"%(cover)],dir_p1+_f)
+                    outfile2.writelines(line)
+                outfile2.close
+    outfile.close
+
+
+
+
+
+
+
+def performPass2(arguments):
+    rootDir     = os.environ['ROOTSYS']
+    softDir     = "/usr/gapps/adg/geant4/rat_pac_and_dependency"
+    ratDir      = os.environ['RATROOT']
+    rootDir     = os.environ['ROOTSYS']
+    g4Dir       =  os.environ['G4INSTALL']
+    watchmakersDir = os.environ['WATCHENV']
+    directory   = os.getcwd()
+    from os import listdir
+    from os.path import isfile, join
+    # Perform Pass2 : Apply pass2 algorythm to the pass1 files
+    # and save results in appropriate folders.
+    simParam    = loadSimulationParameters()
+    d           = simParam[0]
+    iso         = simParam[1]
+    loc         = simParam[2]
+    coverage    = simParam[3]
+
+    parameters  = loadAnalysisParameters(arguments["--timeScale"])
+    rates       = parameters[11]
+    mass        = parameters[10]
+    pc_num      = parameters[12]
+    pc_val      = parameters[13]
+    timeS       = parameters[8]
+
+    testCond            = testEnabledCondition(arguments)
+    additionalString    = testCond[0]
+    additionalCommands  = testCond[1]
+    additionalMacStr    = testCond[2]
+    additionalMacOpt    = testCond[3]
+
+
+    ##Create new pass1 directories
+    for j in range(len(iso)):
+        for ii in d["%s"%(iso[int(j)])]:
+            for idx,cover in enumerate(coverage):
+                dir = "pass2_root_files%s/%s" %(additionalString,cover)
+                testCreateDirectoryIfNotExist(dir)
+
+    try:
+        dictionary = load_obj(arguments,"pass1_")
+    except:
+        print 'Dictionary does not exist, creating it now'
+        createFileDictionary(arguments,"pass1_")
+        dictionary = load_obj(arguments,"pass1_")
+
+    outfile = open("JOB_pass2_%s.sh" %(additionalString),"wb")
+    outfile.writelines("#!/bin/sh\n")
+    for j in range(len(iso)):
+        for ii in d["%s"%(iso[int(j)])]:
+            for idx,cover in enumerate(coverage):
+                _str = "job/JOB_pass1_%s%s%s.sh" %(additionalString,ii,cover)
+                outfile.writelines('msub %s\n'%(_str))
+                outfile2 = open(_str,"wb")
+                outfile2.writelines("""#!/bin/sh
+            #MSUB -N pass2_%s_%s_%s    #name of job
+            #MSUB -A adg         # sets bank account
+            #MSUB -l nodes=1:ppn=1,walltime=23:59:59,partition=borax  # uses 1 node
+            #MSUB -q pbatch         #pool
+            #MSUB -o log/pass2_%s_%s_%s.log
+            #MSUB -e log/pass2_%s_%s_%s.err
+            #MSUB -d %s  # directory to run from
+            #MSUB -V
+            #MSUB                     # no more psub commands
+
+            source %s/bin/thisroot.sh
+            source %s/../../../bin/geant4.sh
+            source %s/geant4make.sh
+            source %s/env.sh
+            source %s/env_wm.sh
+            """%(additionalString,ii,cover,\
+            additionalString,ii,cover,additionalString,ii,cover,\
+            directory,rootDir,g4Dir,g4Dir,ratDir,watchmakersDir))
+
+                dir_p1 = "pass1_root_files%s/%s/%s/" %(additionalString,ii,cover)
+                dir_p2 = "pass2_root_files%s/%s/" %(additionalString,cover)
+                _file = "watchman_%s.root"%(ii)
+
+                print "Will create ",dir_p2+_file
+                onlyfiles = dictionary["%s"%(dir_root)]
+                first = 1
+                for _f in onlyfiles:
+                    line = "root -b -q $WATCHENV/watchmakers/\'pass2Trigger.C(\"%s\",\"%s\",%llu)\'\n" %(dir_p1+_f,dir_p2+_file,first)
+                    first = 0
                     outfile2.writelines(line)
                 outfile2.close
     outfile.close
