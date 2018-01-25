@@ -1013,7 +1013,9 @@ def performPass2(arguments):
 
                 print "Will create ",dir_p2+_file
                 onlyfiles = dictionary["%s"%(dir_p1)]
-                first = 1,firstPMT = 1, firstFV = 1
+                first = 1
+                firstPMT = 1
+                firstFV = 1
                 for _f in onlyfiles:
                     if 'PMT' in _f or 'FV' in _f:
                         if 'PMT' in _f:
