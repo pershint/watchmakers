@@ -984,7 +984,7 @@ def performPass2(arguments):
     for j in range(len(iso)):
         for ii in d["%s"%(iso[int(j)])]:
             for idx,cover in enumerate(coverage):
-                _str = "job/JOB_pass1_%s%s%s.sh" %(additionalString,ii,cover)
+                _str = "job/JOB_pass2_%s%s%s.sh" %(additionalString,ii,cover)
                 outfile.writelines('msub %s\n'%(_str))
                 outfile2 = open(_str,"wb")
                 outfile2.writelines("""#!/bin/sh
