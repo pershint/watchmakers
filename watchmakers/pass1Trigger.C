@@ -277,13 +277,13 @@ double pe_d = 28.7, double n9_d = 5, double n9over_nhit_d = 0.0001
         z = posReco.Z()/1000.;
         */
         // Currentlt saving n9over_nhit_p/d for pass3
-        if ( nhits > nhit_min_p && totPE > pe_p && n9 > n9_p && goodness > good_pos_p && dirGoodness > good_dir_p && float(n9)/float(nhit)> n9over_nhit_p && newX != -99.999) {
+        if ( nhits > nhit_min_p && totPE > pe_p && n9 > n9_p && goodness > good_pos_p && dirGoodness > good_dir_p && float(n9)/float(nhits)> n9over_nhit_p && newX != -99.999) {
           maybePrompt = 1;
           p2W = pmtBoundR-sqrt(newX**2+newY**2);
           p2ToB = pmtBoundZ-sqrt(newZ**2);
           cnt_p+=1;
         }
-        if ( nhits > nhit_min_d && totPE > pe_d && n9 > n9_d && goodness > good_pos_d && dirGoodness > good_dir_d && float(n9)/float(nhit)> n9over_nhit_d && newX != -99.999) {
+        if ( nhits > nhit_min_d && totPE > pe_d && n9 > n9_d && goodness > good_pos_d && dirGoodness > good_dir_d && float(n9)/float(nhits)> n9over_nhit_d && newX != -99.999) {
           maybeDelay  = 1;
           p2W = pmtBoundR-sqrt(newX**2+newY**2);
           p2ToB = pmtBoundZ-sqrt(newZ**2);
