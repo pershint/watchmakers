@@ -283,14 +283,14 @@ double pe_d = 28.7, double n9_d = 5, double n9over_nhit_d = 0.0001
           maybePrompt = 1;
           p2W = pmtBoundR-sqrt(newX**2+newY**2);
           p2ToB = pmtBoundZ-sqrt(newZ**2);
-          closestPMT = TMath:Min(p2W,p2ToB);
+          closestPMT = TMath::Min(p2W,p2ToB);
           cnt_p+=1;
         }
         if ( nhits > nhit_min_d && totPE > pe_d && n9 > n9_d && goodness > good_pos_d && dirGoodness > good_dir_d && float(n9)/float(nhits)> n9over_nhit_d && newX != -99.999) {
           maybeDelay  = 1;
           p2W = pmtBoundR-sqrt(newX**2+newY**2);
           p2ToB = pmtBoundZ-sqrt(newZ**2);
-          closestPMT = TMath:Min(p2W,p2ToB);
+          closestPMT = TMath::Min(p2W,p2ToB);
           cnt_d+=1;
         }
         if (!maybePrompt && !maybeDelay){
