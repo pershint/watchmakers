@@ -779,7 +779,7 @@ def createFileDictionary(arguments,prefix=""):
 
 
     dictionary = {}
-    if prefix = "":
+    if prefix == "":
         recordOptions = additionalMacStr
     else:
         recordOptions = additionalString
@@ -801,7 +801,7 @@ def load_obj(arguments,prefix=""):
     testCond            = testEnabledCondition(arguments)
     additionalString    = testCond[0]
     additionalMacStr    = testCond[2]
-    if prefix = "":
+    if prefix == "":
         recordOptions = additionalMacStr
     else:
         recordOptions = additionalString
