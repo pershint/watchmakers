@@ -1015,7 +1015,7 @@ def performPass2(arguments):
                 onlyfiles = dictionary["%s"%(dir_p1)]
                 first = 1
                 for _f in onlyfiles:
-                    line = "root -b -q $WATCHENV/watchmakers/\'pass2Trigger.C(\"%s\",\"%s\",%llu)\'\n" %(dir_p1+_f,dir_p2+_file,first)
+                    line = "root -b -q $WATCHENV/watchmakers/\'pass2Trigger.C(\"%s\",\"%s\",%llu,%d)\'\n" %(dir_p1+_f,dir_p2+_file,first)
                     first = 0
                     outfile2.writelines(line)
                 outfile2.close
