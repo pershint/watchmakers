@@ -785,19 +785,19 @@ def createFileDictionary(arguments,prefix=""):
         for ii in d["%s"%(iso[int(j)])]:
             for idx,cover in enumerate(coverage):
 
-                dir_root = "root_files%s/%s/%s/" %(additionalMacStr,ii,cover)
+                dir_root = "%sroot_files%s/%s/%s/" %(prefix,additionalMacStr,ii,cover)
                 print "Finding files in ", dir_root
                 dictionary["%s"%(dir_root)] = [f for f in listdir(dir_root) if isfile(join(dir_root, f))]
 
     import pickle
-    with open('dictionary%s.pkl'%(additionalMacStr),'wb') as f:
+    with open('dictionary%s%s.pkl'%(prefix,additionalMacStr),'wb') as f:
         pickle.dump(dictionary,f,pickle.HIGHEST_PROTOCOL)
 
 def load_obj(arguments,prefix=""):
     import pickle
     testCond            = testEnabledCondition(arguments)
     additionalMacStr    = testCond[2]
-    with open('dictionary%s.pkl'%(additionalMacStr), 'rb') as f:
+    with open('dictionary%s%s.pkl'%(prefix,additionalMacStr), 'rb') as f:
         return pickle.load(f)
 
 
