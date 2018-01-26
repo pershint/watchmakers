@@ -192,7 +192,7 @@ def jobString(percentage,j,runs,models,arguments):
 
         line1 = """#!/bin/sh
     #MSUB -N WM_%s_%s_%d_%s    #name of job
-    #MSUB -A adg         # sets bank account
+    #MSUB -A ared         # sets bank account
     #MSUB -l nodes=1:ppn=1,walltime=23:59:59,partition=borax  # uses 1 node
     #MSUB -q pbatch         #pool
     #MSUB -o %s/log_case%s%s/wmpc_%s_%s_%d.log
@@ -218,7 +218,7 @@ def jobString(percentage,j,runs,models,arguments):
     else:
         line1 = """#!/bin/sh
     #MSUB -N WM_%s_%s_%d_%s    #name of job
-    #MSUB -A adg         # sets bank account
+    #MSUB -A ared         # sets bank account
     #MSUB -l nodes=1:ppn=1,walltime=23:59:59,partition=borax  # uses 1 node
     #MSUB -q pbatch         #pool
     #MSUB -o %s/log_case%s%s/wmpc_%s_%s_%d.log
@@ -878,7 +878,7 @@ def performPass1(arguments):
                 outfile2 = open(_str,"wb")
                 outfile2.writelines("""#!/bin/sh
             #MSUB -N pass1_%s_%s_%s    #name of job
-            #MSUB -A adg         # sets bank account
+            #MSUB -A ared         # sets bank account
             #MSUB -l nodes=1:ppn=1,walltime=23:59:59,partition=borax  # uses 1 node
             #MSUB -q pbatch         #pool
             #MSUB -o log/pass1_%s_%s_%s.log
@@ -995,7 +995,7 @@ def performPass2(arguments):
                 outfile2 = open(_str,"wb")
                 outfile2.writelines("""#!/bin/sh
             #MSUB -N pass2_%s_%s_%s    #name of job
-            #MSUB -A adg         # sets bank account
+            #MSUB -A ared         # sets bank account
             #MSUB -l nodes=1:ppn=1,walltime=23:59:59,partition=borax  # uses 1 node
             #MSUB -q pbatch         #pool
             #MSUB -o log/pass2_%s_%s_%s.log
