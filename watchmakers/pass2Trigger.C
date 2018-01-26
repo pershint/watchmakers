@@ -64,7 +64,7 @@ int pass2Trigger(const char *cumulativeFile, const char *addfile,int first = 0) 
   Double_t              timeLapse;
   const char *file,outfile;
   int nPMT;
-  double fidBoundR ,fidBoundZ ,pmtBoundR, pmtBoundZ, tankBoundR ,tankBoundZ;
+  double pmtBoundR, pmtBoundZ, tankBoundR ,tankBoundZ;
   double nhit_min_p,good_pos_p,good_dir_p,pe_p,n9_p,n9over_nhit_p,nhit_min_d,good_pos_d ,good_dir_d,pe_d,n9_d,n9over_nhit_d;
 
 
@@ -144,8 +144,8 @@ int pass2Trigger(const char *cumulativeFile, const char *addfile,int first = 0) 
   runSummaryDaughter->SetBranchAddress("potential_delayed",&cnt_d);//,"potential_delayed/I");
   runSummaryDaughter->SetBranchAddress("eff_prompts",&eff_p);//,"eff_prompts/D");
   runSummaryDaughter->SetBranchAddress("eff_delayed",&eff_d);//,"eff_delayed/D");
-  runSummaryDaughter->SetBranchAddress("fidBoundR",&fidBoundR);//,"fidBoundR/D");
-  runSummaryDaughter->SetBranchAddress("fidBoundZ",&fidBoundZ);//,"fidBoundZ/D");
+  // runSummaryDaughter->SetBranchAddress("fidBoundR",&fidBoundR);//,"fidBoundR/D");
+  // runSummaryDaughter->SetBranchAddress("fidBoundZ",&fidBoundZ);//,"fidBoundZ/D");
   runSummaryDaughter->SetBranchAddress("pmtBoundR",&pmtBoundR);//,"pmtBoundR/D");
   runSummaryDaughter->SetBranchAddress("pmtBoundZ",&pmtBoundZ);//,"pmtBoundZ/D");
   runSummaryDaughter->SetBranchAddress("tankBoundR",&tankBoundR);//,"tankBoundR/D");
@@ -253,8 +253,8 @@ int pass2Trigger(const char *cumulativeFile, const char *addfile,int first = 0) 
     runSummaryParent->SetBranchAddress("potential_delayed",&cnt_d);//,"potential_delayed/I");
     runSummaryParent->SetBranchAddress("eff_prompts",&eff_p);//,"eff_prompts/D");
     runSummaryParent->SetBranchAddress("eff_delayed",&eff_d);//,"eff_delayed/D");
-    runSummaryParent->SetBranchAddress("fidBoundR",&fidBoundR);//,"fidBoundR/D");
-    runSummaryParent->SetBranchAddress("fidBoundZ",&fidBoundZ);//,"fidBoundZ/D");
+    // runSummaryParent->SetBranchAddress("fidBoundR",&fidBoundR);//,"fidBoundR/D");
+    // runSummaryParent->SetBranchAddress("fidBoundZ",&fidBoundZ);//,"fidBoundZ/D");
     runSummaryParent->SetBranchAddress("pmtBoundR",&pmtBoundR);//,"pmtBoundR/D");
     runSummaryParent->SetBranchAddress("pmtBoundZ",&pmtBoundZ);//,"pmtBoundZ/D");
     runSummaryParent->SetBranchAddress("tankBoundR",&tankBoundR);//,"tankBoundR/D");
@@ -280,8 +280,8 @@ int pass2Trigger(const char *cumulativeFile, const char *addfile,int first = 0) 
   runSummary->Branch("potential_delayed",&cnt_d,"potential_delayed/I");
   runSummary->Branch("eff_prompts",&eff_p,"eff_prompts/D");
   runSummary->Branch("eff_delayed",&eff_d,"eff_delayed/D");
-  runSummary->Branch("fidBoundR",&fidBoundR,"fidBoundR/D");
-  runSummary->Branch("fidBoundZ",&fidBoundZ,"fidBoundZ/D");
+  // runSummary->Branch("fidBoundR",&fidBoundR,"fidBoundR/D");
+  // runSummary->Branch("fidBoundZ",&fidBoundZ,"fidBoundZ/D");
   runSummary->Branch("pmtBoundR",&pmtBoundR,"pmtBoundR/D");
   runSummary->Branch("pmtBoundZ",&pmtBoundZ,"pmtBoundZ/D");
   runSummary->Branch("tankBoundR",&tankBoundR,"tankBoundR/D");
