@@ -260,6 +260,21 @@ int pass2Trigger(const char *cumulativeFile, const char *addfile,int first = 0) 
     runSummaryParent->SetBranchAddress("tankBoundR",&tankBoundR);//,"tankBoundR/D");
     runSummaryParent->SetBranchAddress("tankBoundZ",&tankBoundZ);//,"tankBoundZ/D");
     runSummaryParent->SetBranchAddress("nPMT",&nPMT);//,"nPMT/I");
+    runSummaryParent->SetBranchAddress("nhit_min_p",&nhit_min_p);//,,"nhit_min_p/D");
+    runSummaryParent->SetBranchAddress("good_pos_p",&good_pos_p);//,,"good_pos_p/D");
+    runSummaryParent->SetBranchAddress("good_dir_p",&good_dir_p);//,,"good_dir_p/D");
+    runSummaryParent->SetBranchAddress("pe_p",&pe_p);//,,"pe_p/D");
+    runSummaryParent->SetBranchAddress("n9_p",&n9_p);//,,"n9_p/D");
+    runSummaryParent->SetBranchAddress("n9over_nhit_p",&n9over_nhit_p);//,,"n9over_nhit_p/D");
+    runSummaryParent->SetBranchAddress("nhit_min_d",&nhit_min_d);//,,"nhit_min_d/D");
+    runSummaryParent->SetBranchAddress("good_pos_d",&good_pos_d);//,,"good_pos_d/D");
+    runSummaryParent->SetBranchAddress("good_dir_d",&good_dir_d);//,,"good_dir_d/D");
+    runSummaryParent->SetBranchAddress("pe_d",&pe_d);//,,"pe_d/D");
+    runSummaryParent->SetBranchAddress("n9_d",&n9_d);//,,"n9_d/D");
+    runSummaryParent->SetBranchAddress("n9over_nhit_d",&n9over_nhit_d);//,,"n9over_nhit_d/D");
+
+
+
     if (dataParent==0x0||nodataParent==0x0||runSummaryParent==0x0){
       printf("Error in loading pass2 current file.");
       return -1;
@@ -287,6 +302,19 @@ int pass2Trigger(const char *cumulativeFile, const char *addfile,int first = 0) 
   runSummary->Branch("tankBoundR",&tankBoundR,"tankBoundR/D");
   runSummary->Branch("tankBoundZ",&tankBoundZ,"tankBoundZ/D");
   runSummary->Branch("nPMT",&nPMT,"nPMT/I");
+  runSummary->Branch("nhit_min_p",&nhit_min_p,"nhit_min_p/D");
+  runSummary->Branch("good_pos_p",&good_pos_p,"good_pos_p/D");
+  runSummary->Branch("good_dir_p",&good_dir_p,"good_dir_p/D");
+  runSummary->Branch("pe_p",&pe_p,"pe_p/D");
+  runSummary->Branch("n9_p",&n9_p,"n9_p/D");
+  runSummary->Branch("n9over_nhit_p",&n9over_nhit_p,"n9over_nhit_p/D");
+  runSummary->Branch("nhit_min_d",&nhit_min_d,"nhit_min_d/D");
+  runSummary->Branch("good_pos_d",&good_pos_d,"good_pos_d/D");
+  runSummary->Branch("good_dir_d",&good_dir_d,"good_dir_d/D");
+  runSummary->Branch("pe_d",&pe_d,"pe_d/D");
+  runSummary->Branch("n9_d",&n9_d,"n9_d/D");
+  runSummary->Branch("n9over_nhit_d",&n9over_nhit_d,"n9over_nhit_d/D");
+
   TTree *data = new TTree("data","low-energy detector triggered events");
   data->Branch("maybePrompt",&maybePrompt,"maybePrompt/I");
   data->Branch("maybeDelay",&maybeDelay,"maybeDelay/I");
@@ -318,6 +346,7 @@ int pass2Trigger(const char *cumulativeFile, const char *addfile,int first = 0) 
   data->Branch("code",&code,"code/I");
   // data->Branch("timestamp_ns",&timestamp_ns,"timestamp_ns/I");
   // data->Branch("timestamp_s",&timestamp_s,"timestamp_s/I");
+
   TTree *nodata =  new TTree("nodata","low-energy detector untriggered events");
   nodata->Branch("timestamp",&timestamp,"timestamp/L");
   nodata->Branch("timestamp_s",&timestamp_s,"timestamp_s/I");
