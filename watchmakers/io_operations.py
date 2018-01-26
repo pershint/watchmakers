@@ -989,52 +989,53 @@ def performPass2(arguments):
     outfile.writelines("#!/bin/sh\n")
     for j in range(len(iso)):
         for ii in d["%s"%(iso[int(j)])]:
-            for idx,cover in enumerate(coverage):
-                _str = "job/JOB_pass2_%s%s%s.sh" %(additionalString,ii,cover)
-                outfile.writelines('msub %s\n'%(_str))
-                outfile2 = open(_str,"wb")
-                outfile2.writelines("""#!/bin/sh
-            #MSUB -N pass2_%s_%s_%s    #name of job
-            #MSUB -A ared         # sets bank account
-            #MSUB -l nodes=1:ppn=1,walltime=23:59:59,partition=borax  # uses 1 node
-            #MSUB -q pbatch         #pool
-            #MSUB -o log/pass2_%s_%s_%s.log
-            #MSUB -e log/pass2_%s_%s_%s.err
-            #MSUB -d %s  # directory to run from
-            #MSUB -V
-            #MSUB                     # no more psub commands
+            if loc[j]!='FV':## Since it hunts for files in folder, this is redundant
+                for idx,cover in enumerate(coverage):
+                    _str = "job/JOB_pass2_%s%s%s.sh" %(additionalString,ii,cover)
+                    outfile.writelines('msub %s\n'%(_str))
+                    outfile2 = open(_str,"wb")
+                    outfile2.writelines("""#!/bin/sh
+                #MSUB -N pass2_%s_%s_%s    #name of job
+                #MSUB -A ared         # sets bank account
+                #MSUB -l nodes=1:ppn=1,walltime=23:59:59,partition=borax  # uses 1 node
+                #MSUB -q pbatch         #pool
+                #MSUB -o log/pass2_%s_%s_%s.log
+                #MSUB -e log/pass2_%s_%s_%s.err
+                #MSUB -d %s  # directory to run from
+                #MSUB -V
+                #MSUB                     # no more psub commands
 
-            source %s/bin/thisroot.sh
-            source %s/../../../bin/geant4.sh
-            source %s/geant4make.sh
-            source %s/env.sh
-            source %s/env_wm.sh
-            """%(additionalString,ii,cover,\
-            additionalString,ii,cover,additionalString,ii,cover,\
-            directory,rootDir,g4Dir,g4Dir,ratDir,watchmakersDir))
+                source %s/bin/thisroot.sh
+                source %s/../../../bin/geant4.sh
+                source %s/geant4make.sh
+                source %s/env.sh
+                source %s/env_wm.sh
+                """%(additionalString,ii,cover,\
+                additionalString,ii,cover,additionalString,ii,cover,\
+                directory,rootDir,g4Dir,g4Dir,ratDir,watchmakersDir))
 
-                dir_p1 = "pass1_root_files%s/%s/%s/" %(additionalString,ii,cover)
-                dir_p2 = "pass2_root_files%s/%s/" %(additionalString,cover)
-                _file = "watchman_%s.root"%(ii)
+                    dir_p1 = "pass1_root_files%s/%s/%s/" %(additionalString,ii,cover)
+                    dir_p2 = "pass2_root_files%s/%s/" %(additionalString,cover)
+                    _file = "watchman_%s.root"%(ii)
 
-                print "Will create ",dir_p2+_file
-                onlyfiles = dictionary["%s"%(dir_p1)]
-                first = 1
-                firstPMT = 1
-                firstFV = 1
-                for _f in onlyfiles:
-                    if 'PMT' in _f or 'FV' in _f:
-                        if 'PMT' in _f:
-                            _file = "watchman_%s_%s.root"%(ii,'PMT')
-                            line = "root -b -q $WATCHENV/watchmakers/\'pass2Trigger.C(\"%s\",\"%s\",%d)\'\n" %(dir_p2+_file,dir_p1+_f,firstPMT)
-                            firstPMT = 0
-                        if 'FV' in _f:
-                            _file = "watchman_%s_%s.root"%(ii,'WV')
-                            line = "root -b -q $WATCHENV/watchmakers/\'pass2Trigger.C(\"%s\",\"%s\",%d)\'\n" %(dir_p2+_file,dir_p1+_f,firstFV)
-                            firstFV = 0
-                    else:
-                        line = "root -b -q $WATCHENV/watchmakers/\'pass2Trigger.C(\"%s\",\"%s\",%d)\'\n" %(dir_p2+_file,dir_p1+_f,first)
-                        first = 0
-                    outfile2.writelines(line)
-                outfile2.close
+                    print "Will create ",dir_p2+_file
+                    onlyfiles = dictionary["%s"%(dir_p1)]
+                    first = 1
+                    firstPMT = 1
+                    firstFV = 1
+                    for _f in onlyfiles:
+                        if 'PMT' in _f or 'FV' in _f:
+                            if 'PMT' in _f:
+                                _file = "watchman_%s_%s.root"%(ii,'PMT')
+                                line = "root -b -q $WATCHENV/watchmakers/\'pass2Trigger.C(\"%s\",\"%s\",%d)\'\n" %(dir_p2+_file,dir_p1+_f,firstPMT)
+                                firstPMT = 0
+                            if 'FV' in _f:
+                                _file = "watchman_%s_%s.root"%(ii,'WV')
+                                line = "root -b -q $WATCHENV/watchmakers/\'pass2Trigger.C(\"%s\",\"%s\",%d)\'\n" %(dir_p2+_file,dir_p1+_f,firstFV)
+                                firstFV = 0
+                        else:
+                            line = "root -b -q $WATCHENV/watchmakers/\'pass2Trigger.C(\"%s\",\"%s\",%d)\'\n" %(dir_p2+_file,dir_p1+_f,first)
+                            first = 0
+                        outfile2.writelines(line)
+                    outfile2.close
     outfile.close
