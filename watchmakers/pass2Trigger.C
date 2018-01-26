@@ -285,8 +285,8 @@ int pass2Trigger(const char *cumulativeFile, const char *addfile,int first = 0) 
   TTree *runSummary = new TTree("runSummary","mc run summary");
   runSummary->Branch("subEventTally",subEventTally,"subEventTally[20]/I");
   runSummary->Branch("rateHZ",&rate,"rateHz/D");
-  runSummary->Branch("inputFile",file,"inputFile/C");
-  runSummary->Branch("outputFile",outfile,"outputFile/C");
+  runSummary->Branch("inputFile",&file,"inputFile/C");
+  runSummary->Branch("outputFile",&outfile,"outputFile/C");
   runSummary->Branch("code",&code,"code/I");
   runSummary->Branch("runEndTime",&runEndTime,"runEndTime/L");//Record last time stamp of the file
   runSummary->Branch("runEndTime_s",&runEndTime_s,"runEndTime_s/I");//Record last time stamp of the file
@@ -421,10 +421,11 @@ int pass2Trigger(const char *cumulativeFile, const char *addfile,int first = 0) 
 
 
 
-
+ f->cd();
  data->Write("", TObject::kOverwrite);
  nodata->Write("", TObject::kOverwrite);
  runSummary->Write("", TObject::kOverwrite);
+ f->Close();
  af->Close();
  return 0;
 
