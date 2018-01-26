@@ -60,11 +60,14 @@ int pass2Trigger(const char *cumulativeFile, const char *addfile,int first = 0) 
   Long64_t             timestamp,runEndTime;
   Int_t                 timestamp_ns,timestamp_s,runEndTime_ns,runEndTime_s,code;
   Double_t              x,y,z,u,v,w,rate;
-  Double_t              mcX,mcY,mcZ,mcU,mcV,mcW,mcP;
+  Double_t              mcX,mcY,mcZ,mcU,mcV,mcW,mcP,closestPMT;
   Double_t              timeLapse;
   const char *file,outfile;
   int nPMT;
   double fidBoundR ,fidBoundZ ,pmtBoundR, pmtBoundZ, tankBoundR ,tankBoundZ;
+  double nhit_min_p,good_pos_p,good_dir_p,pe_p,n9_p,n9over_nhit_p,nhit_min_d,good_pos_d ,good_dir_d,pe_d,n9_d,n9over_nhit_d;
+
+
   Int_t subEventTally[20] = {};
 
 
@@ -89,6 +92,7 @@ int pass2Trigger(const char *cumulativeFile, const char *addfile,int first = 0) 
   dataDaughter->SetBranchAddress("u",&dirX);
   dataDaughter->SetBranchAddress("v",&dirY);
   dataDaughter->SetBranchAddress("w",&dirZ);
+  dataDaughter->SetBranchAddress("closestPMT",&closestPMT);
   dataDaughter->SetBranchAddress("particleCountMC",&particleCountMC);
   dataDaughter->SetBranchAddress("mc_energy",&mc_energy);
   dataDaughter->SetBranchAddress("mcx",&mcX);
@@ -147,6 +151,19 @@ int pass2Trigger(const char *cumulativeFile, const char *addfile,int first = 0) 
   runSummaryDaughter->SetBranchAddress("tankBoundR",&tankBoundR);//,"tankBoundR/D");
   runSummaryDaughter->SetBranchAddress("tankBoundZ",&tankBoundZ);//,"tankBoundZ/D");
   runSummaryDaughter->SetBranchAddress("nPMT",&nPMT);//,"nPMT/I");
+  runSummaryDaughter->SetBranchAddress("nhit_min_p",&nhit_min_p);//,,"nhit_min_p/D");
+  runSummaryDaughter->SetBranchAddress("good_pos_p",&good_pos_p);//,,"good_pos_p/D");
+  runSummaryDaughter->SetBranchAddress("good_dir_p",&good_dir_p);//,,"good_dir_p/D");
+  runSummaryDaughter->SetBranchAddress("pe_p",&pe_p);//,,"pe_p/D");
+  runSummaryDaughter->SetBranchAddress("n9_p",&n9_p);//,,"n9_p/D");
+  runSummaryDaughter->SetBranchAddress("n9over_nhit_p",&n9over_nhit_p);//,,"n9over_nhit_p/D");
+  runSummaryDaughter->SetBranchAddress("nhit_min_d",&nhit_min_d);//,,"nhit_min_d/D");
+  runSummaryDaughter->SetBranchAddress("good_pos_d",&good_pos_d);//,,"good_pos_d/D");
+  runSummaryDaughter->SetBranchAddress("good_dir_d",&good_dir_d);//,,"good_dir_d/D");
+  runSummaryDaughter->SetBranchAddress("pe_d",&pe_d);//,,"pe_d/D");
+  runSummaryDaughter->SetBranchAddress("n9_d",&n9_d);//,,"n9_d/D");
+  runSummaryDaughter->SetBranchAddress("n9over_nhit_d",&n9over_nhit_d);//,,"n9over_nhit_d/D");
+
   if (dataDaughter==0x0||nodataDaughter==0x0||runSummaryDaughter==0x0){
     return -1;
   }
@@ -195,6 +212,8 @@ int pass2Trigger(const char *cumulativeFile, const char *addfile,int first = 0) 
     dataParent->SetBranchAddress("mcv",&mcV);
     dataParent->SetBranchAddress("mcw",&mcW);
     dataParent->SetBranchAddress("code",&code);
+    dataParent->SetBranchAddress("closestPMT",&closestPMT);
+
     TTree *nodataParent = (TTree*) f->Get("nodata");
     nodataParent->SetBranchAddress("timestamp",&timestamp);
     nodataParent->SetBranchAddress("timestamp_ns",&timestamp_ns);
@@ -287,6 +306,7 @@ int pass2Trigger(const char *cumulativeFile, const char *addfile,int first = 0) 
   data->Branch("u",&dirX,"u/D");
   data->Branch("v",&dirY,"v/D");
   data->Branch("w",&dirZ,"w/D");
+  data->Branch("closestPMT",&closestPMT,"closestPMT/D");
   data->Branch("particleCountMC",&particleCountMC ,"particleCountMC/I");
   data->Branch("mc_energy",&mc_energy,"mc_energy/D");
   data->Branch("mcx",&mcX,"mcx/D");
