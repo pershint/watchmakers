@@ -54,7 +54,7 @@ int pass2Trigger(const char *cumulativeFile, const char *addfile,int first = 0) 
   TVector3 posTruth,posReco,dirTruth,dirNu,dirReco,dirIBD,pos1,pos2;
   Double_t eff_p,eff_d;
 
-  Int_t maybePrompt, maybeDelay;
+  Int_t maybePrompt, maybeDelay,nEvents;
   Int_t totNHIT = 0,nhits =0,od_hit=0;
   Int_t particleCountMC;
   Long64_t             timestamp,runEndTime;
@@ -131,7 +131,7 @@ int pass2Trigger(const char *cumulativeFile, const char *addfile,int first = 0) 
   nodataDaughter->SetBranchAddress("code",&code);
 
   TTree *runSummaryDaughter = (TTree*) af->Get("runSummary");
-
+  runSummaryDaughter->SetBranchAddress("nEvents",&nEvents);
   runSummaryDaughter->SetBranchAddress("subEventTally",subEventTally);//,"subEventTally[20]/I");
   runSummaryDaughter->SetBranchAddress("rateHZ",&rate);//,"rateHz/D");
   runSummaryDaughter->SetBranchAddress("inputFile",file);//,"inputFile/C");
@@ -241,6 +241,7 @@ int pass2Trigger(const char *cumulativeFile, const char *addfile,int first = 0) 
     nodataParent->SetBranchAddress("mcw",&mcW);
     nodataParent->SetBranchAddress("code",&code);
     TTree *runSummaryParent = (TTree*) f->Get("runSummary");
+    runSummaryParent->SetBranchAddress("nEvents",&nEvents);
     runSummaryParent->SetBranchAddress("subEventTally",subEventTally);//,"subEventTally[20]/I");
     runSummaryParent->SetBranchAddress("rateHZ",&rate);//,"rateHz/D");
     runSummaryParent->SetBranchAddress("inputFile",file);//,"inputFile/C");
@@ -283,10 +284,11 @@ int pass2Trigger(const char *cumulativeFile, const char *addfile,int first = 0) 
 
   // TFile *f = new TFile(cumulativeFile,"update");
   TTree *runSummary = new TTree("runSummary","mc run summary");
+  runSummary->Branch("nEvents",&nEvents,"nEvents/I");
   runSummary->Branch("subEventTally",subEventTally,"subEventTally[20]/I");
   runSummary->Branch("rateHZ",&rate,"rateHz/D");
-  runSummary->Branch("inputFile",&file,"inputFile/C");
-  runSummary->Branch("outputFile",&outfile,"outputFile/C");
+  runSummary->Branch("inputFile",file,"inputFile/C");
+  runSummary->Branch("outputFile",outfile,"outputFile/C");
   runSummary->Branch("code",&code,"code/I");
   runSummary->Branch("runEndTime",&runEndTime,"runEndTime/L");//Record last time stamp of the file
   runSummary->Branch("runEndTime_s",&runEndTime_s,"runEndTime_s/I");//Record last time stamp of the file
