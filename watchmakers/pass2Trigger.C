@@ -177,7 +177,7 @@ int pass2Trigger(const char *cumulativeFile, const char *addfile,int first = 0) 
     TTree *nodata = nodataDaughter->CloneTree();
     TTree *runSummary = runSummaryDaughter->CloneTree();
     data->Write("", TObject::kOverwrite);
-    nodata->Write("", TObject::kOverwrite);
+//    nodata->Write("", TObject::kOverwrite);
     runSummary->Write("", TObject::kOverwrite);
     af->Close();
     return 0;
