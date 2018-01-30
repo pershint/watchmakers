@@ -349,34 +349,34 @@ int pass2Trigger(const char *cumulativeFile, const char *addfile,int first = 0) 
   // data->Branch("timestamp_ns",&timestamp_ns,"timestamp_ns/I");
   // data->Branch("timestamp_s",&timestamp_s,"timestamp_s/I");
 
-  TTree *nodata =  new TTree("nodata","low-energy detector untriggered events");
-  nodata->Branch("timestamp",&timestamp,"timestamp/L");
-  nodata->Branch("timestamp_s",&timestamp_s,"timestamp_s/I");
-  nodata->Branch("timestamp_ns",&timestamp_ns,"timestamp_ns/I");
-  nodata->Branch("nhit",&nhits,"nhit/I");
-  nodata->Branch("id_plus_dr_hit",&totNHIT,"id_plus_dr_hit/I");//Inner detector plus dark rate hits
-  nodata->Branch("od_hit",&od_hit,"od_hit/I");//Inner detector plus dark rate hits
-  nodata->Branch("pe",&totPE,"pe/D");
-  nodata->Branch("n9",&n9,"n9/D");
-  nodata->Branch("good_pos",&goodness,"good_pos/D");
-  nodata->Branch("good_dir",&dirGoodness,"good_dir/D");
-  nodata->Branch("x",&newX,"x/D");
-  nodata->Branch("y",&newY,"y/D");
-  nodata->Branch("z",&newZ,"z/D");
-  nodata->Branch("u",&dirX,"u/D");
-  nodata->Branch("v",&dirY,"v/D");
-  nodata->Branch("w",&dirZ,"w/D");
-  nodata->Branch("particleCountMC",&particleCountMC ,"particleCountMC/I");
-  nodata->Branch("mc_energy",&mc_energy,"mc_energy/D");
-  nodata->Branch("mcx",&mcX,"mcx/D");
-  nodata->Branch("mcy",&mcY,"mcy/D");
-  nodata->Branch("mcz",&mcZ,"mcz/D");
-  nodata->Branch("mcu",&mcU,"mcu/D");
-  nodata->Branch("mcv",&mcV,"mcv/D");
-  nodata->Branch("mcw",&mcW,"mcw/D");
-  nodata->Branch("code",&code,"code/I");
-
-  //    Int_t particleCountMC;
+  // TTree *nodata =  new TTree("nodata","low-energy detector untriggered events");
+  // nodata->Branch("timestamp",&timestamp,"timestamp/L");
+  // nodata->Branch("timestamp_s",&timestamp_s,"timestamp_s/I");
+  // nodata->Branch("timestamp_ns",&timestamp_ns,"timestamp_ns/I");
+  // nodata->Branch("nhit",&nhits,"nhit/I");
+  // nodata->Branch("id_plus_dr_hit",&totNHIT,"id_plus_dr_hit/I");//Inner detector plus dark rate hits
+  // nodata->Branch("od_hit",&od_hit,"od_hit/I");//Inner detector plus dark rate hits
+  // nodata->Branch("pe",&totPE,"pe/D");
+  // nodata->Branch("n9",&n9,"n9/D");
+  // nodata->Branch("good_pos",&goodness,"good_pos/D");
+  // nodata->Branch("good_dir",&dirGoodness,"good_dir/D");
+  // nodata->Branch("x",&newX,"x/D");
+  // nodata->Branch("y",&newY,"y/D");
+  // nodata->Branch("z",&newZ,"z/D");
+  // nodata->Branch("u",&dirX,"u/D");
+  // nodata->Branch("v",&dirY,"v/D");
+  // nodata->Branch("w",&dirZ,"w/D");
+  // nodata->Branch("particleCountMC",&particleCountMC ,"particleCountMC/I");
+  // nodata->Branch("mc_energy",&mc_energy,"mc_energy/D");
+  // nodata->Branch("mcx",&mcX,"mcx/D");
+  // nodata->Branch("mcy",&mcY,"mcy/D");
+  // nodata->Branch("mcz",&mcZ,"mcz/D");
+  // nodata->Branch("mcu",&mcU,"mcu/D");
+  // nodata->Branch("mcv",&mcV,"mcv/D");
+  // nodata->Branch("mcw",&mcW,"mcw/D");
+  // nodata->Branch("code",&code,"code/I");
+  //
+  // //    Int_t particleCountMC;
 
   Long64_t parentEndTime;
   for (int evt = 0; evt < runSummaryParent->GetEntries(); evt++) {
@@ -408,24 +408,24 @@ int pass2Trigger(const char *cumulativeFile, const char *addfile,int first = 0) 
     data->Fill();
  }
  //    Int_t particleCountMC;
-
- for (int evt = 0; evt < nodataParent->GetEntries(); evt++) {
-   nodataParent->GetEntry(evt);
-   nodata->Fill();
- }
- for (int evt = 0; evt < nodataDaughter->GetEntries(); evt++) {
-   nodataDaughter->GetEntry(evt);
-   timestamp+=parentEndTime;
-   timestamp_ns                = int((float(timestamp/1.0e9)-int(timestamp/1.0e9))*1.0e9);//For some reason Modulo does not work
-   timestamp_s                = int(timestamp/1e9);
-   nodata->Fill();
- }
-
+ // Choosing not to save the nodata tree
+ // for (int evt = 0; evt < nodataParent->GetEntries(); evt++) {
+ //   nodataParent->GetEntry(evt);
+ //   nodata->Fill();
+ // }
+ // for (int evt = 0; evt < nodataDaughter->GetEntries(); evt++) {
+ //   nodataDaughter->GetEntry(evt);
+ //   timestamp+=parentEndTime;
+ //   timestamp_ns                = int((float(timestamp/1.0e9)-int(timestamp/1.0e9))*1.0e9);//For some reason Modulo does not work
+ //   timestamp_s                = int(timestamp/1e9);
+ //   nodata->Fill();
+ // }
+ //
 
 
  f->cd();
  data->Write("", TObject::kOverwrite);
- nodata->Write("", TObject::kOverwrite);
+ // nodata->Write("", TObject::kOverwrite);
  runSummary->Write("", TObject::kOverwrite);
  f->Close();
  af->Close();
