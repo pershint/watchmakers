@@ -103,32 +103,32 @@ int pass2Trigger(const char *cumulativeFile, const char *addfile,int first = 0) 
   dataDaughter->SetBranchAddress("mcw",&mcW);
   dataDaughter->SetBranchAddress("code",&code);
 
-  TTree *nodataDaughter = (TTree*) af->Get("nodata");
-  nodataDaughter->SetBranchAddress("timestamp",&timestamp);
-  nodataDaughter->SetBranchAddress("timestamp_ns",&timestamp_ns);
-  nodataDaughter->SetBranchAddress("timestamp_s",&timestamp_s);
-  nodataDaughter->SetBranchAddress("nhit",&nhits);
-  nodataDaughter->SetBranchAddress("id_plus_dr_hit",&totNHIT);//Inner detector plus dark rate hits
-  nodataDaughter->SetBranchAddress("od_hit",&od_hit);//Inner detector plus dark rate hits
-  nodataDaughter->SetBranchAddress("pe",&totPE);
-  nodataDaughter->SetBranchAddress("n9",&n9);
-  nodataDaughter->SetBranchAddress("good_pos",&goodness);
-  nodataDaughter->SetBranchAddress("good_dir",&dirGoodness);
-  nodataDaughter->SetBranchAddress("x",&newX);
-  nodataDaughter->SetBranchAddress("y",&newY);
-  nodataDaughter->SetBranchAddress("z",&newZ);
-  nodataDaughter->SetBranchAddress("u",&dirX);
-  nodataDaughter->SetBranchAddress("v",&dirY);
-  nodataDaughter->SetBranchAddress("w",&dirZ);
-  nodataDaughter->SetBranchAddress("particleCountMC",&particleCountMC);
-  nodataDaughter->SetBranchAddress("mc_energy",&mc_energy);
-  nodataDaughter->SetBranchAddress("mcx",&mcX);
-  nodataDaughter->SetBranchAddress("mcy",&mcY);
-  nodataDaughter->SetBranchAddress("mcz",&mcZ);
-  nodataDaughter->SetBranchAddress("mcu",&mcU);
-  nodataDaughter->SetBranchAddress("mcv",&mcV);
-  nodataDaughter->SetBranchAddress("mcw",&mcW);
-  nodataDaughter->SetBranchAddress("code",&code);
+  // TTree *nodataDaughter = (TTree*) af->Get("nodata");
+  // nodataDaughter->SetBranchAddress("timestamp",&timestamp);
+  // nodataDaughter->SetBranchAddress("timestamp_ns",&timestamp_ns);
+  // nodataDaughter->SetBranchAddress("timestamp_s",&timestamp_s);
+  // nodataDaughter->SetBranchAddress("nhit",&nhits);
+  // nodataDaughter->SetBranchAddress("id_plus_dr_hit",&totNHIT);//Inner detector plus dark rate hits
+  // nodataDaughter->SetBranchAddress("od_hit",&od_hit);//Inner detector plus dark rate hits
+  // nodataDaughter->SetBranchAddress("pe",&totPE);
+  // nodataDaughter->SetBranchAddress("n9",&n9);
+  // nodataDaughter->SetBranchAddress("good_pos",&goodness);
+  // nodataDaughter->SetBranchAddress("good_dir",&dirGoodness);
+  // nodataDaughter->SetBranchAddress("x",&newX);
+  // nodataDaughter->SetBranchAddress("y",&newY);
+  // nodataDaughter->SetBranchAddress("z",&newZ);
+  // nodataDaughter->SetBranchAddress("u",&dirX);
+  // nodataDaughter->SetBranchAddress("v",&dirY);
+  // nodataDaughter->SetBranchAddress("w",&dirZ);
+  // nodataDaughter->SetBranchAddress("particleCountMC",&particleCountMC);
+  // nodataDaughter->SetBranchAddress("mc_energy",&mc_energy);
+  // nodataDaughter->SetBranchAddress("mcx",&mcX);
+  // nodataDaughter->SetBranchAddress("mcy",&mcY);
+  // nodataDaughter->SetBranchAddress("mcz",&mcZ);
+  // nodataDaughter->SetBranchAddress("mcu",&mcU);
+  // nodataDaughter->SetBranchAddress("mcv",&mcV);
+  // nodataDaughter->SetBranchAddress("mcw",&mcW);
+  // nodataDaughter->SetBranchAddress("code",&code);
 
   TTree *runSummaryDaughter = (TTree*) af->Get("runSummary");
   runSummaryDaughter->SetBranchAddress("nEvents",&nEvents);
@@ -164,7 +164,7 @@ int pass2Trigger(const char *cumulativeFile, const char *addfile,int first = 0) 
   runSummaryDaughter->SetBranchAddress("n9_d",&n9_d);//,,"n9_d/D");
   runSummaryDaughter->SetBranchAddress("n9over_nhit_d",&n9over_nhit_d);//,,"n9over_nhit_d/D");
 
-  if (dataDaughter==0x0||nodataDaughter==0x0||runSummaryDaughter==0x0){
+  if (dataDaughter==0x0||runSummaryDaughter==0x0){
     return -1;
   }
 
@@ -174,10 +174,10 @@ int pass2Trigger(const char *cumulativeFile, const char *addfile,int first = 0) 
   if(test!=0 || first!=0){
     TFile *f = new TFile(cumulativeFile,"update");
     TTree *data = dataDaughter->CloneTree();
-    TTree *nodata = nodataDaughter->CloneTree();
+    // TTree *nodata = nodataDaughter->CloneTree();
     TTree *runSummary = runSummaryDaughter->CloneTree();
     data->Write("", TObject::kOverwrite);
-//    nodata->Write("", TObject::kOverwrite);
+    // nodata->Write("", TObject::kOverwrite);
     runSummary->Write("", TObject::kOverwrite);
     af->Close();
     return 0;
@@ -213,33 +213,33 @@ int pass2Trigger(const char *cumulativeFile, const char *addfile,int first = 0) 
     dataParent->SetBranchAddress("mcw",&mcW);
     dataParent->SetBranchAddress("code",&code);
     dataParent->SetBranchAddress("closestPMT",&closestPMT);
-
-    TTree *nodataParent = (TTree*) f->Get("nodata");
-    nodataParent->SetBranchAddress("timestamp",&timestamp);
-    nodataParent->SetBranchAddress("timestamp_ns",&timestamp_ns);
-    nodataParent->SetBranchAddress("timestamp_s",&timestamp_s);
-    nodataParent->SetBranchAddress("nhit",&nhits);
-    nodataParent->SetBranchAddress("id_plus_dr_hit",&totNHIT);//Inner detector plus dark rate hits
-    nodataParent->SetBranchAddress("od_hit",&od_hit);//Inner detector plus dark rate hits
-    nodataParent->SetBranchAddress("pe",&totPE);
-    nodataParent->SetBranchAddress("n9",&n9);
-    nodataParent->SetBranchAddress("good_pos",&goodness);
-    nodataParent->SetBranchAddress("good_dir",&dirGoodness);
-    nodataParent->SetBranchAddress("x",&newX);
-    nodataParent->SetBranchAddress("y",&newY);
-    nodataParent->SetBranchAddress("z",&newZ);
-    nodataParent->SetBranchAddress("u",&dirX);
-    nodataParent->SetBranchAddress("v",&dirY);
-    nodataParent->SetBranchAddress("w",&dirZ);
-    nodataParent->SetBranchAddress("particleCountMC",&particleCountMC);
-    nodataParent->SetBranchAddress("mc_energy",&mc_energy);
-    nodataParent->SetBranchAddress("mcx",&mcX);
-    nodataParent->SetBranchAddress("mcy",&mcY);
-    nodataParent->SetBranchAddress("mcz",&mcZ);
-    nodataParent->SetBranchAddress("mcu",&mcU);
-    nodataParent->SetBranchAddress("mcv",&mcV);
-    nodataParent->SetBranchAddress("mcw",&mcW);
-    nodataParent->SetBranchAddress("code",&code);
+    //
+    // TTree *nodataParent = (TTree*) f->Get("nodata");
+    // nodataParent->SetBranchAddress("timestamp",&timestamp);
+    // nodataParent->SetBranchAddress("timestamp_ns",&timestamp_ns);
+    // nodataParent->SetBranchAddress("timestamp_s",&timestamp_s);
+    // nodataParent->SetBranchAddress("nhit",&nhits);
+    // nodataParent->SetBranchAddress("id_plus_dr_hit",&totNHIT);//Inner detector plus dark rate hits
+    // nodataParent->SetBranchAddress("od_hit",&od_hit);//Inner detector plus dark rate hits
+    // nodataParent->SetBranchAddress("pe",&totPE);
+    // nodataParent->SetBranchAddress("n9",&n9);
+    // nodataParent->SetBranchAddress("good_pos",&goodness);
+    // nodataParent->SetBranchAddress("good_dir",&dirGoodness);
+    // nodataParent->SetBranchAddress("x",&newX);
+    // nodataParent->SetBranchAddress("y",&newY);
+    // nodataParent->SetBranchAddress("z",&newZ);
+    // nodataParent->SetBranchAddress("u",&dirX);
+    // nodataParent->SetBranchAddress("v",&dirY);
+    // nodataParent->SetBranchAddress("w",&dirZ);
+    // nodataParent->SetBranchAddress("particleCountMC",&particleCountMC);
+    // nodataParent->SetBranchAddress("mc_energy",&mc_energy);
+    // nodataParent->SetBranchAddress("mcx",&mcX);
+    // nodataParent->SetBranchAddress("mcy",&mcY);
+    // nodataParent->SetBranchAddress("mcz",&mcZ);
+    // nodataParent->SetBranchAddress("mcu",&mcU);
+    // nodataParent->SetBranchAddress("mcv",&mcV);
+    // nodataParent->SetBranchAddress("mcw",&mcW);
+    // nodataParent->SetBranchAddress("code",&code);
     TTree *runSummaryParent = (TTree*) f->Get("runSummary");
     runSummaryParent->SetBranchAddress("nEvents",&nEvents);
     runSummaryParent->SetBranchAddress("subEventTally",subEventTally);//,"subEventTally[20]/I");
@@ -276,7 +276,7 @@ int pass2Trigger(const char *cumulativeFile, const char *addfile,int first = 0) 
 
 
 
-    if (dataParent==0x0||nodataParent==0x0||runSummaryParent==0x0){
+    if (dataParent==0x0||runSummaryParent==0x0){
       printf("Error in loading pass2 current file.");
       return -1;
     }
@@ -375,8 +375,8 @@ int pass2Trigger(const char *cumulativeFile, const char *addfile,int first = 0) 
   // nodata->Branch("mcv",&mcV,"mcv/D");
   // nodata->Branch("mcw",&mcW,"mcw/D");
   // nodata->Branch("code",&code,"code/I");
-  //
-  // //    Int_t particleCountMC;
+
+  //    Int_t particleCountMC;
 
   Long64_t parentEndTime;
   for (int evt = 0; evt < runSummaryParent->GetEntries(); evt++) {
