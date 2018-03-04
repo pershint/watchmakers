@@ -854,7 +854,7 @@ def extractHistogramWitCorrectRate():
     return h
 
 
-def extractPDFandCorrectRate(_distance2pmt=1,_posGood=0.1,_pos_dir=0.1,_n9=8,\
+def extractPDFandCorrectRate(_distance2pmt=1,_posGood=0.1,_dirGood=0.1,_n9=8,\
 _pe=8,_nhit=8,_itr = 0.0):
 
     # Using this as an example to read in pass2 files. These pass2 files include
@@ -933,10 +933,11 @@ _pe=8,_nhit=8,_itr = 0.0):
         rfile = TFile(s)
         t   = rfile.Get('data')
 
-        recoFVstring   = "(sqrt(pow(posReco.X(),2) + pow(posReco.Y(),2))<%f && sqrt(pow(posReco.Z(),2))<%f)"%(fiducialRadius,fiducialHalfHeight)
-        trueFVstring   = "(sqrt(pow(posTruth.X(),2) + pow(posTruth.Y(),2))<%f && sqrt(pow(posTruth.Z(),2))<%f)"%(fiducialRadius,fiducialHalfHeight)
-        posGood        = "(pos_goodness>%f)" %(float(arguments["-g"]))
-
+        recoFVstring   = "closestPMT>%f"%(_distance2pmt)
+        trueFVstring   = "(sqrt(pow(mcx,2) + pow(mcy,2))<%f && sqrt(pow(mcz,2))<%f)"%(fiducialRadius,fiducialHalfHeight)
+        defaultCond    = "good_pos>%f && good_dir>%f " %(_posGood,dirGood)
+        defaultCond   += "&& n9 > %f && nhit > %f && pe > %f" %(_n9,_nhit,_pe)
+        
         backgroundNoise = 1.0e3*float(pc_num["%s"%(cover)])*1.50*1e-6 # 1.5 microsecond
 
         for _index,_2fit in enumerate(toFit):
@@ -944,7 +945,7 @@ _pe=8,_nhit=8,_itr = 0.0):
             fits[_str]  = TF1(_str,"[0]+[1]*x",0.0,10.0)
             fits[_str].SetParameters(backgroundNoise,15.)
             s_eisi        = "%s_%s%s_%s_%s_%s_%d"%('si',_2fit,varUnit[_index],cover,ii,locj,1)
-            t.Draw("%s:mc_prim_energy>>h%s(100,0,10,500,0,500)"%(_2fit,s_eisi),"%s && %s "%(recoFVstring,posGood),"goff")
+            t.Draw("%s:mc_prim_energy>>h%s(100,0,10,500,0,500)"%(_2fit,s_eisi),"%s && %s "%(recoFVstring,defaultCond),"goff")
             h1 = t.GetHistogram()
             h[s_eisi] = h1.ProfileX()
             h[s_eisi].Fit(_str,"MREQ","",2,6.5)
