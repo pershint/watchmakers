@@ -382,7 +382,7 @@ def extractHistogramWitCorrectRate():
     f_root = TFile(_str,"recreate")
 
     # First find the PE per MeV
-    procConsidered = ['boulby','imb']
+    procConsidered = ['boulby']
     locj           = 'S'
     PEMEV    = {}
 
@@ -854,6 +854,127 @@ def extractHistogramWitCorrectRate():
     return h
 
 
+def extractPDFandCorrectRate(_distance2pmt=1,_posGood=0.1,_pos_dir=0.1,_n9=8,\
+_pe=8,_nhit=8,_itr = 0.0):
+
+    # Using this as an example to read in pass2 files. These pass2 files include
+
+    g,h,fits = {},{},{}
+    
+    d,iso,loc,coverage,coveragePCT = loadSimulationParameters()
+
+    # Obtain logarithmic binnings
+    nbins, xbins, ybins = logx_logy_array()
+
+    additionalString,additionalCommands,additionalMacStr,additionalMacOpt = testEnabledCondition(arguments)
+
+    #fiducialVolume          = float(arguments["--fv"])
+    fiducialHalfHeight= float(arguments['--halfHeight'])- float(arguments['--steelThick'])- float(arguments['--shieldThick'])- float(arguments['--fidThick'])
+    fiducialRadius    = float(arguments['--tankRadius'])- float(arguments['--steelThick'])- float(arguments['--shieldThick'])- float(arguments['--fidThick'])
+
+    #pmtDist                 = float(arguments["--psup"])
+    pmtDist  = float(arguments["--tankRadius"])-float(arguments['--steelThick'])-float(arguments["--shieldThick"])
+    pmtDistZ = float(arguments["--halfHeight"])-float(arguments['--steelThick'])-float(arguments["--shieldThick"])
+
+    print "Values of Fid. Vol. (HalfHeight,Radius) and PMT placement (HalfHeight,Radius) ",fiducialHalfHeight,fiducialRadius,pmtDist,pmtDistZ, ' mm'
+
+    timeScale               = arguments["--timeScale"]
+    inFilePrefix            = arguments["--ft"]
+    timeCut                 = float(arguments["-t"])*1e3
+    distCut                 = float(arguments["-d"])
+
+    parameters  = loadAnalysisParameters(timeScale)
+    rates       = parameters[11]
+    mass        = parameters[10]
+    pc_num      = parameters[12]
+    pc_val      = parameters[13]
+    timeS       = parameters[8]
+    timeRedux     = float(arguments["-t"]) # cut is in microsecond
+    timeRedux     *=1e-6/timeS
+
+    print "\nThe raw rate of events per %s are"%(timeScale)
+
+    _rates = sorted(rates,key=rates.__getitem__, reverse=True)
+
+    for _r in _rates:
+        if 'PMT' in _r:
+            print "%25s %5.3e per %s per PMT"%(_r,rates[_r],timeScale)
+        else:
+            print "%25s %5.3e per %s"%(_r,rates[_r],timeScale)
+    print "The cuts are : time window %4.3e %s" %(timeRedux,timeScale)
+
+    if arguments['--pass2Flag']:
+        print 'pass2 flag set as default. To use old sensitivity code use --pass2Flag 0.\n'
+        _str = "pass2_root_files%s/%s"%(additionalString,arguments["-o"])
+        f_root = TFile(_str,"recreate")
+    else:
+        extractHistogramWitCorrectRate()
+        return 0
+
+    # First find the PE per MeV
+    procConsidered = ['boulby']
+    locj           = 'S'
+    PEMEV    = {}
+    toFit = ["pe","nhit","n9"]
+    varUnit = ["PerMev","PerMev","PerMev"]
+
+    for _index,_2fit in enumerate(toFit):
+        string  = "%s%sPerMeV_boulby"%(_2fit,varUnit[_index])
+        g[string] = TGraph()
+    cntB,cntF    = 0,0
+
+    ii = 'boulby'
+    for idx,cover in enumerate(coverage):
+        covPCT  = coveragePCT[cover]
+        s =  "ntuple_root_files%s/%s_%s_%s_%s.root"%(additionalString,inFilePrefix,ii,cover,locj)
+        print "\nEvaluating pe/MeV in ",s
+
+        rfile = TFile(s)
+        t   = rfile.Get('data')
+
+        recoFVstring   = "(sqrt(pow(posReco.X(),2) + pow(posReco.Y(),2))<%f && sqrt(pow(posReco.Z(),2))<%f)"%(fiducialRadius,fiducialHalfHeight)
+        trueFVstring   = "(sqrt(pow(posTruth.X(),2) + pow(posTruth.Y(),2))<%f && sqrt(pow(posTruth.Z(),2))<%f)"%(fiducialRadius,fiducialHalfHeight)
+        posGood        = "(pos_goodness>%f)" %(float(arguments["-g"]))
+
+        backgroundNoise = 1.0e3*float(pc_num["%s"%(cover)])*1.50*1e-6 # 1.5 microsecond
+
+        for _index,_2fit in enumerate(toFit):
+            _str = "fPolyFit%s%s"%(_2fit,varUnit[_index])
+            fits[_str]  = TF1(_str,"[0]+[1]*x",0.0,10.0)
+            fPolyFit1.SetParameters(backgroundNoise,15.)
+            s_eisi        = "%s_%s%s_%s_%s_%s_%d"%('si',_2fit,varUnit[_index],cover,ii,locj,1)
+            t.Draw("%s:mc_prim_energy>>h%s(100,0,10,500,0,500)"%(_2fit,s_eisi),"%s && %s "%(recoFVstring,posGood),"goff")
+            h1 = t.GetHistogram()
+            h[s_eisi] = h1.ProfileX()
+            h[s_eisi].Fit(_str,"MREQ","",2,6.5)
+            fitRes = h[s_eisi].GetFunction(_)
+            print ' %s results of fit :'%(_2fit),fitRes.GetParameter(0),fitRes.GetParameter(1)
+            _strSave = "%s%s_boulby"%(_2fit,varUnit[_index])
+            g[_strSave].SetPoint(cntB,pc_val["%s"%(cover)],fitRes.GetParameter(1))
+            g[_strSave].SetName(_strSave)
+            g[_strSave].GetXaxis().SetTitle('PMT coverage')
+            g[_strSave].GetYaxis().SetTitle('%s / MeV'%(_2fit))
+            cntB+=1
+            f_root.cd()
+            h[s_eisi].Write()
+
+
+    print PEMEV
+    f_root.cd()
+    g["pePerMeV_boulby"].Write()
+    g["nhitPerMeV_boulby"].Write()
+    g["n9PerMeV_boulby"].Write()
+
+    print "\n\n\nThe following file has been created for your convenience: ",_str,"\n\n"
+    # print "Total in-fiducial raw rate ",rawTotalRateEISI
+    # print "Total raw rate ",rawTotalRateTot
+    #        f.Close()
+
+    return h
+
+
+
+
 def logx_logy_array(nbins = 500,xmin = 1e-2,xmax = 30.,ymin = 1e-9,ymax = 1e3):
     #x-axis
     logxmin = log10(xmin)
@@ -880,17 +1001,8 @@ def obtainAbsoluteEfficiency(f,timeScale='day',cut = 10.0):
 
     f           = TFile(f,'read')
     EG          = {}
-    # print 'Before'
-    # print covPCT
-    # print pct
 
     inta,proc,loca,acc,arr,Activity,br,site,timeS,boulbyNeutronFV,mass,dAct,cove,covePCT,covPCT,pct = loadAnalysisParameters(timeScale)
-    #print boulbyNeutronFV
-    #print 'activity',Activity
-    #print dAct
-    # print 'After'
-    # print covPCT
-    # print pct
 
     x,y         = Double(0.),Double(0.)
     boolFirst   = True
@@ -911,12 +1023,7 @@ def obtainAbsoluteEfficiency(f,timeScale='day',cut = 10.0):
                 if eff>0.00:
                     EG[_strEff].SetPoint(cnter,pct[cc],eff)
                     cnter+=1
-                    #                    if loca[ii]=="RN":
-                    # print s,_inta,val,proc[ii],loca[ii],cnter,pct[cc],eff
-                    # print s,cnter,eff
 	    if 1==1:
- #           try:
- #		print _str1
                 EG[_str1] = f.Get(_str1)
                 EG[_scal_str1] = EG[_str1].Clone()
 
@@ -924,20 +1031,11 @@ def obtainAbsoluteEfficiency(f,timeScale='day',cut = 10.0):
                     EG[_str1].GetPoint(i,x,y)
                     nY      = y*dAct["%s_%s%s"%(proc[ii],loca[ii],site[ii])]*EG[_strEff].Eval(x)
                     _act = "%s_%s"%(proc[ii],loca[ii])
-                    # print 'D',_str1,_act,x,y,dAct[_act],nY
-                    # nY1     = y*dAct["%s_%s"%(ii,loca[ii])]
-                    #                    if _inta == 'ei' and loca[ii] == 'S':
-                    # print 'A',_str1,_strEff,y,Activity[ii],timeS,br[ii],EG[_strEff].Eval(x),nY
                     if loca[ii] == 'PMT':
                         nY      *= mass*covPCT["%s"%(x)]
                         EG[_scal_str1].SetPoint(i,x,nY)
-                        # print 'B',nY,i,x,y,covPCT["%s"%(x)]
                     else:
                         EG[_scal_str1].SetPoint(i,x,nY)
-                        # print 'C',nY,x,y
-  #          except:
-#                a = 0
-#		print 'Did not succeed'
 
     _scal_acc,_scal_acc_notFV,_scal_acc1,_scal_acc_notFV1 ="scaled_accidental",\
     "scaled_accidental_notFV","cut_accidental","all_cut_accidental"
@@ -979,6 +1077,50 @@ def obtainAbsoluteEfficiency(f,timeScale='day',cut = 10.0):
 
     #DistanceEff was taken from watchmanDetector.pdf (0.004)
     # New values are estimated from watch -a results
+    distanceEff = 0.025
+    dT = float(arguments["-t"])*1e-6 # Change microsecond to rate
+    for iii,value in enumerate(pct):
+        x   = float(value)
+        oY  = EG[_scal_acc].Eval(x)
+        nY  = 0.0001/timeS*oY*oY
+        EG[_scal_acc1].SetPoint(iii,x,nY)
+        EG[_scal_acc_notFV1].SetPoint(iii,x,nY*distanceEff)
+    return EG
+
+
+def obtainNeutronLike(f,timeScale='day',cut = 10.0):
+
+    pctVal      = ['10pct','15pct','20pct','25pct','30pct','35pct','40pct']
+    f           = TFile(f,'read')
+    EG          = {}
+    inta,proc,loca,acc,arr,Activity,br,site,timeS,boulbyNeutronFV,mass,dAct,cove,covePCT,covPCT,pct = loadAnalysisParameters(timeScale)
+
+    x,y         = Double(0.),Double(0.)
+    boolFirst   = True
+
+    # Extract the neutron information for each photocoverage
+
+    _inta    = 'neutron'
+    _proc    = 'N'
+    _loca    = 'corr'
+    _site    = ''
+    _acc     = 1
+
+    _str1               = "%s_%s_%s_1_abs" %(_inta,_proc,_loca)
+    _scal_str1          = "nl_%s_%s_%s%s_1_abs_%s"%(_inta,_proc,_loca,_site,_acc)
+    _strEff             = "nl_eff_%s_%s_%s%s_1_abs" %(_inta,_proc,_loca,_site)
+
+    cnter = 0
+    EG[_strEff]         = Graph()
+    EG[_strEff].SetPoint(cnter,0.,0.)
+    cnter+=1
+    for cc,val in enumerate(pctVal):
+        s              = "%s_pe_%s_%s_%s_1"%(_inta,val,proc[ii],loca[ii])
+        eff = histIntegral(s,f,cut)
+        if eff>0.00:
+            EG[_strEff].SetPoint(cnter,pct[cc],eff)
+            cnter+=1
+
     distanceEff = 0.025
     dT = float(arguments["-t"])*1e-6 # Change microsecond to rate
     for iii,value in enumerate(pct):

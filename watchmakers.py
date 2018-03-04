@@ -56,5 +56,8 @@ if __name__ == "__main__":
     if arguments['--fileDict']:
         createFileDictionary(arguments)
 
+    if arguments['--PDFs']:
+        extractPDFandCorrectRate()    
+
 
 ######################## Waba Luba Dub Dub!! ###########################
