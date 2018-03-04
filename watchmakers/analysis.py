@@ -949,7 +949,7 @@ _pe=8,_nhit=8,_itr = 0.0):
             h1 = t.GetHistogram()
             h[s_eisi] = h1.ProfileX()
             h[s_eisi].Fit(_str,"MREQ","",2,6.5)
-            fitRes = h[s_eisi].GetFunction(_)
+            fitRes = h[s_eisi].GetFunction(_str)
             print ' %s results of fit :'%(_2fit),fitRes.GetParameter(0),fitRes.GetParameter(1)
             _strSave = "%s%s_boulby"%(_2fit,varUnit[_index])
             g[_strSave].SetPoint(cntB,pc_val["%s"%(cover)],fitRes.GetParameter(1))
