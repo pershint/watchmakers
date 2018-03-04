@@ -956,9 +956,9 @@ _pe=8,_nhit=8,_itr = 0.0):
             g[_strSave].SetName(_strSave)
             g[_strSave].GetXaxis().SetTitle('PMT coverage')
             g[_strSave].GetYaxis().SetTitle('%s / MeV'%(_2fit))
-            cntB+=1
             f_root.cd()
             h[s_eisi].Write()
+        cntB+=1
 
 
     print PEMEV
