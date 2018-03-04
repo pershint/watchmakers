@@ -920,7 +920,7 @@ _pe=8,_nhit=8,_itr = 0.0):
     varUnit = ["PerMev","PerMev","PerMev"]
 
     for _index,_2fit in enumerate(toFit):
-        string  = "%s%sPerMeV_boulby"%(_2fit,varUnit[_index])
+        string  = "%s%s_boulby"%(_2fit,varUnit[_index])
         g[string] = TGraph()
     cntB,cntF    = 0,0
 
