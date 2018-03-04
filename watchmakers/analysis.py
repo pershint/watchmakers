@@ -406,7 +406,7 @@ def extractHistogramWitCorrectRate():
     for ii in procConsidered:
         for idx,cover in enumerate(coverage):
             covPCT  = coveragePCT[cover]
-            s =  "ntuple_root_files%s/%s/%s%s%s.root"%(additionalString,cover,inFilePrefix,ii,locj)
+            s =  "ntuple_root_files%s/%s_%s_%s_%s.root"%(additionalString,inFilePrefix,ii,cover,locj)
             print "\nEvaluating pe/MeV in ",s
             rfile = TFile(s)
             t   = rfile.Get('data')
@@ -927,7 +927,7 @@ _pe=8,_nhit=8,_itr = 0.0):
     ii = 'boulby'
     for idx,cover in enumerate(coverage):
         covPCT  = coveragePCT[cover]
-        s =  "pass2_root_files%s/%s_%s_%s_%s.root"%(additionalString,inFilePrefix,ii,cover,locj)
+        s =  "pass2_root_files%s/%s/watchman_%s_%s.root"%(additionalString,cover,ii,locj)
         print "\nEvaluating pe/MeV in ",s
 
         rfile = TFile(s)
