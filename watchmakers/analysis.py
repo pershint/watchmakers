@@ -927,7 +927,7 @@ _pe=8,_nhit=8,_itr = 0.0):
     ii = 'boulby'
     for idx,cover in enumerate(coverage):
         covPCT  = coveragePCT[cover]
-        s =  "pass2_root_files%s/%s/watchman_%s_%s.root"%(additionalString,cover,ii,locj)
+        s =  "pass2_root_files%s/%s/watchman_%s.root"%(additionalString,cover,ii)
         print "\nEvaluating pe/MeV in ",s
 
         rfile = TFile(s)
