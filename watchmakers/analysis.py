@@ -963,10 +963,11 @@ _pe=8,_nhit=8,_itr = 0.0):
 
     print PEMEV
     f_root.cd()
-    g["pePerMeV_boulby"].Write()
-    g["nhitPerMeV_boulby"].Write()
-    g["n9PerMeV_boulby"].Write()
+    for _index,_2fit in enumerate(toFit):
+        string  = "%s%s_boulby"%(_2fit,varUnit[_index])
+        g[string].Write()
 
+    f_root.Close()
     print "\n\n\nThe following file has been created for your convenience: ",_str,"\n\n"
     # print "Total in-fiducial raw rate ",rawTotalRateEISI
     # print "Total raw rate ",rawTotalRateTot
