@@ -942,7 +942,7 @@ _pe=8,_nhit=8,_itr = 0.0):
         for _index,_2fit in enumerate(toFit):
             _str = "fPolyFit%s%s"%(_2fit,varUnit[_index])
             fits[_str]  = TF1(_str,"[0]+[1]*x",0.0,10.0)
-            fPolyFit1.SetParameters(backgroundNoise,15.)
+            fits[_str].SetParameters(backgroundNoise,15.)
             s_eisi        = "%s_%s%s_%s_%s_%s_%d"%('si',_2fit,varUnit[_index],cover,ii,locj,1)
             t.Draw("%s:mc_prim_energy>>h%s(100,0,10,500,0,500)"%(_2fit,s_eisi),"%s && %s "%(recoFVstring,posGood),"goff")
             h1 = t.GetHistogram()
