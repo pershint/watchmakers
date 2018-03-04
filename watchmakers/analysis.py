@@ -406,7 +406,7 @@ def extractHistogramWitCorrectRate():
     for ii in procConsidered:
         for idx,cover in enumerate(coverage):
             covPCT  = coveragePCT[cover]
-            s =  "ntuple_root_files%s/%s_%s_%s_%s.root"%(additionalString,inFilePrefix,ii,cover,locj)
+            s =  "ntuple_root_files%s/%s/%s%s%s.root"%(additionalString,cover,inFilePrefix,ii,locj)
             print "\nEvaluating pe/MeV in ",s
             rfile = TFile(s)
             t   = rfile.Get('data')
