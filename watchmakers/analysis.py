@@ -860,7 +860,7 @@ _pe=8,_nhit=8,_itr = 0.0):
     # Using this as an example to read in pass2 files. These pass2 files include
 
     g,h,fits = {},{},{}
-    
+
     d,iso,loc,coverage,coveragePCT = loadSimulationParameters()
 
     # Obtain logarithmic binnings
@@ -926,7 +926,7 @@ _pe=8,_nhit=8,_itr = 0.0):
     ii = 'boulby'
     for idx,cover in enumerate(coverage):
         covPCT  = coveragePCT[cover]
-        s =  "ntuple_root_files%s/%s_%s_%s_%s.root"%(additionalString,inFilePrefix,ii,cover,locj)
+        s =  "pass2_root_files%s/%s_%s_%s_%s.root"%(additionalString,inFilePrefix,ii,cover,locj)
         print "\nEvaluating pe/MeV in ",s
 
         rfile = TFile(s)
