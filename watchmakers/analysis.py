@@ -908,7 +908,7 @@ _pe=8,_nhit=8,_itr = 0.0):
         _str = "pass2_root_files%s/%s"%(additionalString,arguments["-o"])
         f_root = TFile(_str,"recreate")
     else:
-        print 'Using old analysis.''
+        print 'Using old analysis.'
         extractHistogramWitCorrectRate()
         return 0
 
