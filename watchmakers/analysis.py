@@ -903,11 +903,12 @@ _pe=8,_nhit=8,_itr = 0.0):
             print "%25s %5.3e per %s"%(_r,rates[_r],timeScale)
     print "The cuts are : time window %4.3e %s" %(timeRedux,timeScale)
 
-    if arguments['--pass2Flag']:
+    if int(arguments['--pass2Flag'])==1:
         print 'pass2 flag set as default. To use old sensitivity code use --pass2Flag 0.\n'
         _str = "pass2_root_files%s/%s"%(additionalString,arguments["-o"])
         f_root = TFile(_str,"recreate")
     else:
+        print 'Using old analysis.''
         extractHistogramWitCorrectRate()
         return 0
 
