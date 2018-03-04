@@ -935,9 +935,9 @@ _pe=8,_nhit=8,_itr = 0.0):
 
         recoFVstring   = "closestPMT>%f"%(_distance2pmt)
         trueFVstring   = "(sqrt(pow(mcx,2) + pow(mcy,2))<%f && sqrt(pow(mcz,2))<%f)"%(fiducialRadius,fiducialHalfHeight)
-        defaultCond    = "good_pos>%f && good_dir>%f " %(_posGood,dirGood)
+        defaultCond    = "good_pos>%f && good_dir>%f " %(_posGood,_dirGood)
         defaultCond   += "&& n9 > %f && nhit > %f && pe > %f" %(_n9,_nhit,_pe)
-        
+
         backgroundNoise = 1.0e3*float(pc_num["%s"%(cover)])*1.50*1e-6 # 1.5 microsecond
 
         for _index,_2fit in enumerate(toFit):
