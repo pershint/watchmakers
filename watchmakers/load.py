@@ -63,7 +63,7 @@ docstring = """
     --supernovaFormat   Record supernova files instead of golden files
     --pass1Trigger      Process rat-pac files with pass1 triggering
     --pass2Trigger      Process pass1 files with pass2 conditions
-    --pass2Flag         Use pass2 files in analysis [Default: 1]
+    --pass2Flag=<p2f>   Use pass2 files in analysis [Default: 1]
     --fileDict          Create a dicionary of exisiting files
     --PDFs              Extract PDFs with series of cuts
 
