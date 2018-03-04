@@ -967,8 +967,8 @@ _pe=8,_nhit=8,_itr = 0.0):
         string  = "%s%s_boulby"%(_2fit,varUnit[_index])
         g[string].Write()
 
+    print "\n\n\nThe following file has been created for your convenience: ",f_root.GetName(),"\n\n"
     f_root.Close()
-    print "\n\n\nThe following file has been created for your convenience: ",_str,"\n\n"
     # print "Total in-fiducial raw rate ",rawTotalRateEISI
     # print "Total raw rate ",rawTotalRateTot
     #        f.Close()
