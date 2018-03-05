@@ -971,8 +971,8 @@ _pe=8,_nhit=8,_itr = 0.0):
     toFit = ["pe","nhit","n9","mc_energy"]
     varUnit = ["sigmaR","sigmaR","sigmaR","sigmaR"]
     fitFunction = '[0]/x+[1]/sqrt(x)+[2]'
-    fitRangeXmin = 8
-    fitRangeXmax = 40
+    fitRangeXmin = [8,8,8,2]
+    fitRangeXmax = [50,50,40,8]
     for _index,_2fit in enumerate(toFit):
         string  = "%s%s_boulby"%(_2fit,varUnit[_index])
         g[string] = TGraph()
@@ -1001,7 +1001,7 @@ _pe=8,_nhit=8,_itr = 0.0):
             t.Draw("%s:sqrt((x-mcx)**2+(y-mcy)**2+(z-mcz)**2)>>h%s(200,0,20,500,0,500)"%(_2fit,s_eisi),"%s && %s "%(recoFVstring,defaultCond),"goff")
             h1 = t.GetHistogram()
             h[s_eisi] = h1.ProfileY()
-            h[s_eisi].Fit(_str,"MREQ","",fitRangeXmin,fitRangeXmax)
+            h[s_eisi].Fit(_str,"MREQ","",fitRangeXmin[_index],fitRangeXmax[_index])
             fitRes = h[s_eisi].GetFunction(_str)
             print ' %s results of fit :'%(_2fit),fitRes.GetParameter(0),fitRes.GetParameter(1),fitRes.GetParameter(2)
             _strSave = "%s%s_%s"%(_2fit,varUnit[_index],ii)
