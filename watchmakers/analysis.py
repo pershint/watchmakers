@@ -973,6 +973,7 @@ _pe=8,_nhit=8,_itr = 0.0):
     fitFunction = '[0]/x+[1]/sqrt(x)+[2]'
     fitRangeXmin = [8,8,8,2]
     fitRangeXmax = [50,50,40,8]
+    drawRangeXmax = [100,100,100,10]
     for _index,_2fit in enumerate(toFit):
         string  = "%s%s_boulby"%(_2fit,varUnit[_index])
         g[string] = TGraph()
@@ -998,7 +999,7 @@ _pe=8,_nhit=8,_itr = 0.0):
             fits[_str]  = TF1(_str,fitFunction,0.0,10.0)
             fits[_str].SetParameters(backgroundNoise,15.)
             s_eisi        = "%s_%s%s_%s_%s_%s_%d"%('si',_2fit,varUnit[_index],cover,ii,locj,1)
-            t.Draw("%s:sqrt((x-mcx)**2+(y-mcy)**2+(z-mcz)**2)>>h%s(200,0,20,500,0,500)"%(_2fit,s_eisi),"%s && %s "%(recoFVstring,defaultCond),"goff")
+            t.Draw("%s:sqrt((x-mcx)**2+(y-mcy)**2+(z-mcz)**2)>>h%s(200,0,20,500,0,%f)"%(_2fit,s_eisi,drawRangeXmax[_index]),"%s && %s "%(recoFVstring,defaultCond),"goff")
             h1 = t.GetHistogram()
             h[s_eisi] = h1.ProfileY()
             h[s_eisi].Fit(_str,"MREQ","",fitRangeXmin[_index],fitRangeXmax[_index])
