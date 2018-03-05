@@ -974,6 +974,7 @@ _pe=8,_nhit=8,_itr = 0.0):
     fitRangeXmin = [8,8,8,2]
     fitRangeXmax = [50,50,40,8]
     drawRangeXmax = [100,100,100,10]
+    sampleEnergy = [2.0,4.0,6.0]
     for ii in procConsidered:
         for _index,_2fit in enumerate(toFit):
             for i in range(3):
@@ -1009,12 +1010,15 @@ _pe=8,_nhit=8,_itr = 0.0):
                     h[s_eisi].Fit(_str,"MREQ","",fitRangeXmin[_index],fitRangeXmax[_index])
                     fitRes = h[s_eisi].GetFunction(_str)
                     print ' %s results of fit :'%(_2fit),fitRes.GetParameter(0),fitRes.GetParameter(1),fitRes.GetParameter(2)
+                    a,b,c = fitRes.GetParameter(0),fitRes.GetParameter(1),fitRes.GetParameter(2)
                     for i in range(3):
+                        i = float(i)
                         _strSave = "%s%s_%s_%d"%(_2fit,varUnit[_index],ii,i)
-                        g[_strSave].SetPoint(cntB,pc_val["%s"%(cover)],fitRes.GetParameter(i))
+                        _tmpR = a/sampleEnergy[i]+b/sqrt(sampleEnergy[i])+c
+                        g[_strSave].SetPoint(cntB,pc_val["%s"%(cover)],_tmpR)
                         g[_strSave].SetName(_strSave)
                         g[_strSave].GetXaxis().SetTitle('photocoverage')
-                        g[_strSave].GetYaxis().SetTitle('%s / MeV'%(_2fit))
+                        g[_strSave].GetYaxis().SetTitle('%d MeV reconstruction resolution'%(i))
                     f_root.cd()
                     h[s_eisi].Write()
             cntB+=1
