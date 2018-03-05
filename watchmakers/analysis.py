@@ -976,8 +976,9 @@ _pe=8,_nhit=8,_itr = 0.0):
     drawRangeXmax = [100,100,100,10]
     for ii in procConsidered:
         for _index,_2fit in enumerate(toFit):
-            string  = "%s%s_%s"%(_2fit,varUnit[_index],ii)
-            g[string] = TGraph()
+            for i in range(3):
+                string  = "%s%s_%s_%d"%(_2fit,varUnit[_index],ii,i)
+                g[string] = TGraph()
         cntB,cntF    = 0,0
 
         for idx,cover in enumerate(coverage):
@@ -1008,16 +1009,20 @@ _pe=8,_nhit=8,_itr = 0.0):
                     h[s_eisi].Fit(_str,"MREQ","",fitRangeXmin[_index],fitRangeXmax[_index])
                     fitRes = h[s_eisi].GetFunction(_str)
                     print ' %s results of fit :'%(_2fit),fitRes.GetParameter(0),fitRes.GetParameter(1),fitRes.GetParameter(2)
-                    _strSave = "%s%s_%s"%(_2fit,varUnit[_index],ii)
-                    g[_strSave].SetPoint(cntB,pc_val["%s"%(cover)],fitRes.GetParameter(1))
-                    g[_strSave].SetName(_strSave)
-                    g[_strSave].GetXaxis().SetTitle('PMT coverage')
-                    g[_strSave].GetYaxis().SetTitle('%s / MeV'%(_2fit))
+                    for i in range(3):
+                        _strSave = "%s%s_%s_%d"%(_2fit,varUnit[_index],ii,i)
+                        g[_strSave].SetPoint(cntB,pc_val["%s"%(cover)],fitRes.GetParameter(1),i)
+                        g[_strSave].SetName(_strSave)
+                        g[_strSave].GetXaxis().SetTitle('hits')
+                        g[_strSave].GetYaxis().SetTitle('%s / MeV'%(_2fit))
                     f_root.cd()
                     h[s_eisi].Write()
             cntB+=1
 
-
+    for _index,_2fit in enumerate(toFit):
+        for i in range(3):
+            _strSave = "%s%s_%s_%d"%(_2fit,varUnit[_index],ii,i)
+            g[_strSave].Write()        
     print "\n\n\nThe following file has been created for your convenience: ",f_root.GetName(),"\n\n"
     f_root.Close()
     # print "Total in-fiducial raw rate ",rawTotalRateEISI
