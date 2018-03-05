@@ -973,6 +973,10 @@ _pe=8,_nhit=8,_itr = 0.0):
     fitFunction = '[0]/x+[1]/sqrt(x)+[2]'
     fitRangeXmin = 8
     fitRangeXmax = 40
+    for _index,_2fit in enumerate(toFit):
+        string  = "%s%s_boulby"%(_2fit,varUnit[_index])
+        g[string] = TGraph()
+    cntB,cntF    = 0,0
 
     for idx,cover in enumerate(coverage):
         covPCT  = coveragePCT[cover]
