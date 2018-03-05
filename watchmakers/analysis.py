@@ -997,7 +997,7 @@ _pe=8,_nhit=8,_itr = 0.0):
 
             for _index,_2fit in enumerate(toFit):
 
-                if _2fit != 'mc_energy' and ii!='neutron':
+                if !(_2fit == 'mc_energy' and ii== 'neutron'):
                     _str = "fPolyFit%s%s"%(_2fit,varUnit[_index])
                     fits[_str]  = TF1(_str,fitFunction,0.0,10.0)
                     fits[_str].SetParameters(backgroundNoise,15.)
