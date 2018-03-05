@@ -1012,7 +1012,7 @@ _pe=8,_nhit=8,_itr = 0.0):
                     print ' %s results of fit :'%(_2fit),fitRes.GetParameter(0),fitRes.GetParameter(1),fitRes.GetParameter(2)
                     a,b,c = fitRes.GetParameter(0),fitRes.GetParameter(1),fitRes.GetParameter(2)
                     for i in range(3):
-                        i = float(i)
+                        
                         _strSave = "%s%s_%s_%d"%(_2fit,varUnit[_index],ii,i)
                         _tmpR = a/sampleEnergy[i]+b/sqrt(sampleEnergy[i])+c
                         g[_strSave].SetPoint(cntB,pc_val["%s"%(cover)],_tmpR)
