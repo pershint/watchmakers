@@ -968,8 +968,8 @@ _pe=8,_nhit=8,_itr = 0.0):
 
     procConsidered = ['neutron']
     locj           = 'N'
-    toFit = ["pe","nhit","n9"]
-    varUnit = ["sigmaR","sigmaR","sigmaR"]
+    toFit = ["pe","nhit","n9","mc_energy"]
+    varUnit = ["sigmaR","sigmaR","sigmaR","sigmaR"]
     fitFunction = '[0]/x+[1]/sqrt(x)+[2]'
     fitRangeXmin = 8
     fitRangeXmax = 40
@@ -998,13 +998,13 @@ _pe=8,_nhit=8,_itr = 0.0):
             fits[_str]  = TF1(_str,fitFunction,0.0,10.0)
             fits[_str].SetParameters(backgroundNoise,15.)
             s_eisi        = "%s_%s%s_%s_%s_%s_%d"%('si',_2fit,varUnit[_index],cover,ii,locj,1)
-            t.Draw("%s:sqrt((x-mcx)**2+(y-mcy)**2+(z-mcz)**2)>>h%s(100,0,10,500,0,500)"%(_2fit,s_eisi),"%s && %s "%(recoFVstring,defaultCond),"goff")
+            t.Draw("%s:sqrt((x-mcx)**2+(y-mcy)**2+(z-mcz)**2)>>h%s(200,0,20,500,0,500)"%(_2fit,s_eisi),"%s && %s "%(recoFVstring,defaultCond),"goff")
             h1 = t.GetHistogram()
             h[s_eisi] = h1.ProfileY()
             h[s_eisi].Fit(_str,"MREQ","",fitRangeXmin,fitRangeXmax)
             fitRes = h[s_eisi].GetFunction(_str)
-            print ' %s results of fit :'%(_2fit),fitRes.GetParameter(0),fitRes.GetParameter(1)
-            _strSave = "%s%s_boulby"%(_2fit,varUnit[_index])
+            print ' %s results of fit :'%(_2fit),fitRes.GetParameter(0),fitRes.GetParameter(1),fitRes.GetParameter(2)
+            _strSave = "%s%s_%s"%(_2fit,varUnit[_index],ii)
             g[_strSave].SetPoint(cntB,pc_val["%s"%(cover)],fitRes.GetParameter(1))
             g[_strSave].SetName(_strSave)
             g[_strSave].GetXaxis().SetTitle('PMT coverage')
