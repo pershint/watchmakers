@@ -960,12 +960,55 @@ _pe=8,_nhit=8,_itr = 0.0):
             h[s_eisi].Write()
         cntB+=1
 
-
-    print PEMEV
+    # print PEMEV
     f_root.cd()
     for _index,_2fit in enumerate(toFit):
         string  = "%s%s_boulby"%(_2fit,varUnit[_index])
         g[string].Write()
+
+    procConsidered = ['neutron']
+    locj           = 'N'
+    toFit = ["pe","nhit","n9"]
+    varUnit = ["sigmaR","sigmaR","sigmaR"]
+    fitFunction = '[0]/x+[1]/sqrt(x)+[2]'
+    fitRangeXmin = 8
+    fitRangeXmax = 40
+
+    for idx,cover in enumerate(coverage):
+        covPCT  = coveragePCT[cover]
+        s =  "pass2_root_files%s/%s/watchman_%s.root"%(additionalString,cover,ii)
+        print "\nEvaluating bonsai reconstruction in ",s
+
+        rfile = TFile(s)
+        t   = rfile.Get('data')
+
+        recoFVstring   = "closestPMT>%f"%(_distance2pmt)
+        trueFVstring   = "(sqrt(pow(mcx,2) + pow(mcy,2))<%f && sqrt(pow(mcz,2))<%f)"%(fiducialRadius,fiducialHalfHeight)
+        defaultCond    = "good_pos>%f && good_dir>%f " %(_posGood,_dirGood)
+        defaultCond   += "&& n9 > %f && nhit > %f && pe > %f" %(_n9,_nhit,_pe)
+
+        backgroundNoise = 1.0e3*float(pc_num["%s"%(cover)])*1.50*1e-6 # 1.5 microsecond
+
+        for _index,_2fit in enumerate(toFit):
+            _str = "fPolyFit%s%s"%(_2fit,varUnit[_index])
+            fits[_str]  = TF1(_str,fitFunction,0.0,10.0)
+            fits[_str].SetParameters(backgroundNoise,15.)
+            s_eisi        = "%s_%s%s_%s_%s_%s_%d"%('si',_2fit,varUnit[_index],cover,ii,locj,1)
+            t.Draw("%s:sqrt((x-mcx)**2+(y-mcy)**2+(z-mcz)**2)>>h%s(100,0,10,500,0,500)"%(_2fit,s_eisi),"%s && %s "%(recoFVstring,defaultCond),"goff")
+            h1 = t.GetHistogram()
+            h[s_eisi] = h1.ProfileX()
+            h[s_eisi].Fit(_str,"MREQ","",fitRangeXmin,fitRangeXmax)
+            fitRes = h[s_eisi].GetFunction(_str)
+            print ' %s results of fit :'%(_2fit),fitRes.GetParameter(0),fitRes.GetParameter(1)
+            _strSave = "%s%s_boulby"%(_2fit,varUnit[_index])
+            g[_strSave].SetPoint(cntB,pc_val["%s"%(cover)],fitRes.GetParameter(1))
+            g[_strSave].SetName(_strSave)
+            g[_strSave].GetXaxis().SetTitle('PMT coverage')
+            g[_strSave].GetYaxis().SetTitle('%s / MeV'%(_2fit))
+            f_root.cd()
+            h[s_eisi].Write()
+        cntB+=1
+
 
     print "\n\n\nThe following file has been created for your convenience: ",f_root.GetName(),"\n\n"
     f_root.Close()
@@ -975,7 +1018,8 @@ _pe=8,_nhit=8,_itr = 0.0):
 
     return h
 
-
+## There are different approaches to the following problem: how do you extract
+## the efficiency of the different process?
 
 
 def logx_logy_array(nbins = 500,xmin = 1e-2,xmax = 30.,ymin = 1e-9,ymax = 1e3):
