@@ -1012,13 +1012,13 @@ _pe=8,_nhit=8,_itr = 0.0):
                     print ' %s results of fit :'%(_2fit),fitRes.GetParameter(0),fitRes.GetParameter(1),fitRes.GetParameter(2)
                     a,b,c = fitRes.GetParameter(0),fitRes.GetParameter(1),fitRes.GetParameter(2)
                     for i in range(3):
-                        
+
                         _strSave = "%s%s_%s_%d"%(_2fit,varUnit[_index],ii,i)
                         _tmpR = a/sampleEnergy[i]+b/sqrt(sampleEnergy[i])+c
                         g[_strSave].SetPoint(cntB,pc_val["%s"%(cover)],_tmpR)
                         g[_strSave].SetName(_strSave)
                         g[_strSave].GetXaxis().SetTitle('photocoverage')
-                        g[_strSave].GetYaxis().SetTitle('%d MeV reconstruction resolution'%(i))
+                        g[_strSave].GetYaxis().SetTitle('%2.1f MeV reconstruction resolution'%(sampleEnergy[i]))
                     f_root.cd()
                     h[s_eisi].Write()
             cntB+=1
