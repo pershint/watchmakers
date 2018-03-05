@@ -1000,7 +1000,7 @@ _pe=8,_nhit=8,_itr = 0.0):
             s_eisi        = "%s_%s%s_%s_%s_%s_%d"%('si',_2fit,varUnit[_index],cover,ii,locj,1)
             t.Draw("%s:sqrt((x-mcx)**2+(y-mcy)**2+(z-mcz)**2)>>h%s(100,0,10,500,0,500)"%(_2fit,s_eisi),"%s && %s "%(recoFVstring,defaultCond),"goff")
             h1 = t.GetHistogram()
-            h[s_eisi] = h1.ProfileX()
+            h[s_eisi] = h1.ProfileY()
             h[s_eisi].Fit(_str,"MREQ","",fitRangeXmin,fitRangeXmax)
             fitRes = h[s_eisi].GetFunction(_str)
             print ' %s results of fit :'%(_2fit),fitRes.GetParameter(0),fitRes.GetParameter(1)
