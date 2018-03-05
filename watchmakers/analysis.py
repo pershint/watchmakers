@@ -1011,9 +1011,9 @@ _pe=8,_nhit=8,_itr = 0.0):
                     print ' %s results of fit :'%(_2fit),fitRes.GetParameter(0),fitRes.GetParameter(1),fitRes.GetParameter(2)
                     for i in range(3):
                         _strSave = "%s%s_%s_%d"%(_2fit,varUnit[_index],ii,i)
-                        g[_strSave].SetPoint(cntB,pc_val["%s"%(cover)],fitRes.GetParameter(1),i)
+                        g[_strSave].SetPoint(cntB,pc_val["%s"%(cover)],fitRes.GetParameter(i))
                         g[_strSave].SetName(_strSave)
-                        g[_strSave].GetXaxis().SetTitle('hits')
+                        g[_strSave].GetXaxis().SetTitle('photocoverage')
                         g[_strSave].GetYaxis().SetTitle('%s / MeV'%(_2fit))
                     f_root.cd()
                     h[s_eisi].Write()
@@ -1022,7 +1022,7 @@ _pe=8,_nhit=8,_itr = 0.0):
     for _index,_2fit in enumerate(toFit):
         for i in range(3):
             _strSave = "%s%s_%s_%d"%(_2fit,varUnit[_index],ii,i)
-            g[_strSave].Write()        
+            g[_strSave].Write()
     print "\n\n\nThe following file has been created for your convenience: ",f_root.GetName(),"\n\n"
     f_root.Close()
     # print "Total in-fiducial raw rate ",rawTotalRateEISI
