@@ -913,7 +913,7 @@ _pe=8,_nhit=8,_itr = 0.0):
         return 0
 
     # First find the PE per MeV
-    procConsidered = ['boulby']
+    procConsidered = ['boulby','neutron']
     locj           = 'S'
     PEMEV    = {}
     toFit = ["pe","nhit","n9"]
@@ -922,43 +922,43 @@ _pe=8,_nhit=8,_itr = 0.0):
     for _index,_2fit in enumerate(toFit):
         string  = "%s%s_boulby"%(_2fit,varUnit[_index])
         g[string] = TGraph()
-    cntB,cntF    = 0,0
+        
+    for ii procConsidered:
+        cntB = 0
+        for idx,cover in enumerate(coverage):
+            covPCT  = coveragePCT[cover]
+            s =  "pass2_root_files%s/%s/watchman_%s.root"%(additionalString,cover,ii)
+            print "\nEvaluating pe/MeV in ",s
 
-    ii = 'boulby'
-    for idx,cover in enumerate(coverage):
-        covPCT  = coveragePCT[cover]
-        s =  "pass2_root_files%s/%s/watchman_%s.root"%(additionalString,cover,ii)
-        print "\nEvaluating pe/MeV in ",s
+            rfile = TFile(s)
+            t   = rfile.Get('data')
 
-        rfile = TFile(s)
-        t   = rfile.Get('data')
+            recoFVstring   = "closestPMT>%f"%(_distance2pmt)
+            trueFVstring   = "(sqrt(pow(mcx,2) + pow(mcy,2))<%f && sqrt(pow(mcz,2))<%f)"%(fiducialRadius,fiducialHalfHeight)
+            defaultCond    = "good_pos>%f && good_dir>%f " %(_posGood,_dirGood)
+            defaultCond   += "&& n9 > %f && nhit > %f && pe > %f" %(_n9,_nhit,_pe)
 
-        recoFVstring   = "closestPMT>%f"%(_distance2pmt)
-        trueFVstring   = "(sqrt(pow(mcx,2) + pow(mcy,2))<%f && sqrt(pow(mcz,2))<%f)"%(fiducialRadius,fiducialHalfHeight)
-        defaultCond    = "good_pos>%f && good_dir>%f " %(_posGood,_dirGood)
-        defaultCond   += "&& n9 > %f && nhit > %f && pe > %f" %(_n9,_nhit,_pe)
+            backgroundNoise = 1.0e3*float(pc_num["%s"%(cover)])*1.50*1e-6 # 1.5 microsecond
 
-        backgroundNoise = 1.0e3*float(pc_num["%s"%(cover)])*1.50*1e-6 # 1.5 microsecond
-
-        for _index,_2fit in enumerate(toFit):
-            _str = "fPolyFit%s%s"%(_2fit,varUnit[_index])
-            fits[_str]  = TF1(_str,"[0]+[1]*x",0.0,10.0)
-            fits[_str].SetParameters(backgroundNoise,15.)
-            s_eisi        = "%s_%s%s_%s_%s_%s_%d"%('si',_2fit,varUnit[_index],cover,ii,locj,1)
-            t.Draw("%s:mc_energy>>h%s(100,0,10,500,0,500)"%(_2fit,s_eisi),"%s && %s "%(recoFVstring,defaultCond),"goff")
-            h1 = t.GetHistogram()
-            h[s_eisi] = h1.ProfileX()
-            h[s_eisi].Fit(_str,"MREQ","",2.5,6.5)
-            fitRes = h[s_eisi].GetFunction(_str)
-            print ' %s results of fit :'%(_2fit),fitRes.GetParameter(0),fitRes.GetParameter(1)
-            _strSave = "%s%s_boulby"%(_2fit,varUnit[_index])
-            g[_strSave].SetPoint(cntB,pc_val["%s"%(cover)],fitRes.GetParameter(1))
-            g[_strSave].SetName(_strSave)
-            g[_strSave].GetXaxis().SetTitle('PMT coverage')
-            g[_strSave].GetYaxis().SetTitle('%s / MeV'%(_2fit))
-            f_root.cd()
-            h[s_eisi].Write()
-        cntB+=1
+            for _index,_2fit in enumerate(toFit):
+                _str = "fPolyFit%s%s"%(_2fit,varUnit[_index])
+                fits[_str]  = TF1(_str,"[0]+[1]*x",0.0,10.0)
+                fits[_str].SetParameters(backgroundNoise,15.)
+                s_eisi        = "%s_%s%s_%s_%s_%s_%d"%('si',_2fit,varUnit[_index],cover,ii,locj,1)
+                t.Draw("%s:mc_energy>>h%s(100,0,10,500,0,500)"%(_2fit,s_eisi),"%s && %s "%(recoFVstring,defaultCond),"goff")
+                h1 = t.GetHistogram()
+                h[s_eisi] = h1.ProfileX()
+                h[s_eisi].Fit(_str,"MREQ","",2.5,6.5)
+                fitRes = h[s_eisi].GetFunction(_str)
+                print ' %s results of fit :'%(_2fit),fitRes.GetParameter(0),fitRes.GetParameter(1)
+                _strSave = "%s%s_boulby"%(_2fit,varUnit[_index])
+                g[_strSave].SetPoint(cntB,pc_val["%s"%(cover)],fitRes.GetParameter(1))
+                g[_strSave].SetName(_strSave)
+                g[_strSave].GetXaxis().SetTitle('PMT coverage')
+                g[_strSave].GetYaxis().SetTitle('%s / MeV'%(_2fit))
+                f_root.cd()
+                h[s_eisi].Write()
+            cntB+=1
 
     # print PEMEV
     f_root.cd()
