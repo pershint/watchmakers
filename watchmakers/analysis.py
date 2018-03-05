@@ -996,23 +996,25 @@ _pe=8,_nhit=8,_itr = 0.0):
             backgroundNoise = 1.0e3*float(pc_num["%s"%(cover)])*1.50*1e-6 # 1.5 microsecond
 
             for _index,_2fit in enumerate(toFit):
-                _str = "fPolyFit%s%s"%(_2fit,varUnit[_index])
-                fits[_str]  = TF1(_str,fitFunction,0.0,10.0)
-                fits[_str].SetParameters(backgroundNoise,15.)
-                s_eisi        = "%s_%s%s_%s_%s_%s_%d"%('si',_2fit,varUnit[_index],cover,ii,locj,1)
-                t.Draw("%s:sqrt((x-mcx)**2+(y-mcy)**2+(z-mcz)**2)>>h%s(200,0,20,500,0,%f)"%(_2fit,s_eisi,drawRangeXmax[_index]),"%s && %s "%(recoFVstring,defaultCond),"goff")
-                h1 = t.GetHistogram()
-                h[s_eisi] = h1.ProfileY()
-                h[s_eisi].Fit(_str,"MREQ","",fitRangeXmin[_index],fitRangeXmax[_index])
-                fitRes = h[s_eisi].GetFunction(_str)
-                print ' %s results of fit :'%(_2fit),fitRes.GetParameter(0),fitRes.GetParameter(1),fitRes.GetParameter(2)
-                _strSave = "%s%s_%s"%(_2fit,varUnit[_index],ii)
-                g[_strSave].SetPoint(cntB,pc_val["%s"%(cover)],fitRes.GetParameter(1))
-                g[_strSave].SetName(_strSave)
-                g[_strSave].GetXaxis().SetTitle('PMT coverage')
-                g[_strSave].GetYaxis().SetTitle('%s / MeV'%(_2fit))
-                f_root.cd()
-                h[s_eisi].Write()
+
+                if _2fit != 'mc_energy' and ii!='neutron':
+                    _str = "fPolyFit%s%s"%(_2fit,varUnit[_index])
+                    fits[_str]  = TF1(_str,fitFunction,0.0,10.0)
+                    fits[_str].SetParameters(backgroundNoise,15.)
+                    s_eisi        = "%s_%s%s_%s_%s_%s_%d"%('si',_2fit,varUnit[_index],cover,ii,locj,1)
+                    t.Draw("%s:sqrt((x-mcx)**2+(y-mcy)**2+(z-mcz)**2)>>h%s(200,0,20,500,0,%f)"%(_2fit,s_eisi,drawRangeXmax[_index]),"%s && %s "%(recoFVstring,defaultCond),"goff")
+                    h1 = t.GetHistogram()
+                    h[s_eisi] = h1.ProfileY()
+                    h[s_eisi].Fit(_str,"MREQ","",fitRangeXmin[_index],fitRangeXmax[_index])
+                    fitRes = h[s_eisi].GetFunction(_str)
+                    print ' %s results of fit :'%(_2fit),fitRes.GetParameter(0),fitRes.GetParameter(1),fitRes.GetParameter(2)
+                    _strSave = "%s%s_%s"%(_2fit,varUnit[_index],ii)
+                    g[_strSave].SetPoint(cntB,pc_val["%s"%(cover)],fitRes.GetParameter(1))
+                    g[_strSave].SetName(_strSave)
+                    g[_strSave].GetXaxis().SetTitle('PMT coverage')
+                    g[_strSave].GetYaxis().SetTitle('%s / MeV'%(_2fit))
+                    f_root.cd()
+                    h[s_eisi].Write()
             cntB+=1
 
 
