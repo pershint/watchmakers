@@ -623,7 +623,7 @@ def sensitivityMapPass2():
 
     # Function to find the optimal signal to background as a function
 
-    detectorMedium,detectorMass,reactorPower,reactorStandoff = 1,1000.,3.15/2.,25.
+    detectorMedium,detectorMass,reactorPower,reactorStandoff = 1,2150.,3.15/2.,25.
     experiment = nuOsc.NeutrinoOscillation(detectorMedium,detectorMass,reactorPower,reactorStandoff)
     preOsc,afterOsc = experiment.FindRate()
     print 'Neutrino rate pre osc:',preOsc,'; neutrino rate post osc:',afterOsc,\
@@ -667,7 +667,7 @@ def sensitivityMapPass2():
     # print 'boulby rates:',boulbyRate, 'per',t,'per', sizeDetc, \
     # 'kton; [per r:',fidRadius/1000., \
     # 'm: per z:',fidHeight/1000.,'m]'
-    print 'boulby rates: %4.2f per %s per %4.2f kton; [per r:%4.2f m: per z:%4.2f m]'%(boulbyRate,t,sizeDetc,fidRadius/1000.,fidHeight/1000.)
+    print 'boulby rates: %4.2f per %s per %4.2f kton; [per r: %4.2f m: per z: %4.2f m]'%(boulbyRate,t,sizeDetc,fidRadius/1000.,fidHeight/1000.)
     #fast neutrons
     proc        += ['QGSP_BERT_EMV','QGSP_BERT_EMX','QGSP_BERT','QGSP_BIC',\
     'QBBC','QBBC_EMZ','FTFP_BERT','QGSP_FTFP_BERT']
