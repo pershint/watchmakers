@@ -1153,16 +1153,17 @@ def obtainAbsoluteEfficiency(f,timeScale='day',cut = 10.0):
 
 
 def obtainNeutronLike(cover,process,_distance2pmt=1,_posGood=0.1,_dirGood=0.1,_n9=8,\
-_pe=8,_nhit=8,_itr = 0.0):
+_pe=8,_nhit=8,_itr = 1.5):
     # covPCT  = coveragePCT[cover]
     para = testEnabledCondition(arguments)
-    additionalString  = para[0] 
+    additionalString  = para[0]
     s =  "pass2_root_files%s/%s/watchman_%s.root"%(additionalString,cover,process)
     rfile = TFile(s)
     data   = rfile.Get('data')
-    cond = "closestPMT>%f"%(closestPMT)
+    cond = "closestPMT>%f"%(_distance2pmt)
     cond += "&& good_pos>%f && good_dir>%f " %(_posGood,_dirGood)
     cond += "&& n9 > %f && nhit > %f && pe > %f" %(_n9,_nhit,_pe)
+    cond += "&& pe/float(nhit) < %f" %(itr)
     total = data.Draw("",cond,"")
     print total,':',cover,process,_distance2pmt,_posGood,_dirGood,_n9,_pe,_nhit,_itr
     return total
