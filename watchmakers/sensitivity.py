@@ -660,9 +660,6 @@ def sensitivityMapPass2():
     sizeDetc    = 2.*pi*pow(fidRadius/1000.,2)*fidHeight/1000./1000.
     FVkTonRatio = (pow(fidRadius,2)*fidHeight)/(pow(detectorRadius,2)*detectorHeight)
     boulbyRate,imbRate = rates["boulby_S"]*FVkTonRatio,rates["imb_S"]*FVkTonRatio
-    # print 'boulby rates:',boulbyRate, 'per',t,'per', sizeDetc, \
-    # 'kton; [per r:',fidRadius/1000., \
-    # 'm: per z:',fidHeight/1000.,'m]'
     print ' boulby rates: %4.2f per %s per %4.2f kton; [per r: %4.2f m: per z: %4.2f m]'\
     %(boulbyRate,t,sizeDetc,fidRadius/1000.,fidHeight/1000.)
     #fast neutrons
@@ -671,11 +668,8 @@ def sensitivityMapPass2():
     detectorMedium,detectorMass,reactorPower,reactorStandoff = 1,sizeDetc*1000.,1.575,25.
     experiment = nuOsc.NeutrinoOscillation(detectorMedium,detectorMass,reactorPower,reactorStandoff)
     preOsc,afterOsc = experiment.FindRate()
-    print ' Neutrino rate pre osc:',preOsc,'; neutrino rate post osc:',afterOsc,\
-    ' at ',reactorPower,' GWth, at ',reactorStandoff,'km, for ',\
-    detectorMass/1000.,'kton'
 
-
+    print ' Neutrino rate pre osc: %4.2f; neutrino rate post osc: %4.2f at %4.2f GWth, at %4.2f km, for %4.2f kton' %(preOsc,afterOsc,reactorPower,reactorStandoff,detectorMass/1000.)
     proc        += ['QGSP_BERT_EMV','QGSP_BERT_EMX','QGSP_BERT','QGSP_BIC',\
     'QBBC','QBBC_EMZ','FTFP_BERT','QGSP_FTFP_BERT']
     _t          = 'FN%s' % (site)
