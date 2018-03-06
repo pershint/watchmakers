@@ -623,12 +623,7 @@ def sensitivityMapPass2():
 
     # Function to find the optimal signal to background as a function
 
-    detectorMedium,detectorMass,reactorPower,reactorStandoff = 1,2150.,3.15/2.,25.
-    experiment = nuOsc.NeutrinoOscillation(detectorMedium,detectorMass,reactorPower,reactorStandoff)
-    preOsc,afterOsc = experiment.FindRate()
-    print 'Neutrino rate pre osc:',preOsc,'; neutrino rate post osc:',afterOsc,\
-    ' at ',reactorPower,' GWth, at ',reactorStandoff,'km, for ',\
-    detectorMass/1000.,'kton'
+
 
     site = arguments["--site"]
 
@@ -659,6 +654,7 @@ def sensitivityMapPass2():
 
     proc,loca,type,color,lineS,acc,scale   = [],[],[],[],[],[],[]
 
+    print 'Evaluation based on geoneutrinos.org'
     parameters  = loadAnalysisParameters(t)
     rates       = parameters[11]
     sizeDetc    = 2.*pi*pow(fidRadius/1000.,2)*fidHeight/1000./1000.
@@ -667,8 +663,18 @@ def sensitivityMapPass2():
     # print 'boulby rates:',boulbyRate, 'per',t,'per', sizeDetc, \
     # 'kton; [per r:',fidRadius/1000., \
     # 'm: per z:',fidHeight/1000.,'m]'
-    print 'boulby rates: %4.2f per %s per %4.2f kton; [per r: %4.2f m: per z: %4.2f m]'%(boulbyRate,t,sizeDetc,fidRadius/1000.,fidHeight/1000.)
+    print ' boulby rates: %4.2f per %s per %4.2f kton; [per r: %4.2f m: per z: %4.2f m]'%(boulbyRate,t,sizeDetc,fidRadius/1000.,fidHeight/1000.)
     #fast neutrons
+
+    print 'Evaluation not based on geoneutrinos.org'
+    detectorMedium,detectorMass,reactorPower,reactorStandoff = 1,2150.,3.15/2.,25.
+    experiment = nuOsc.NeutrinoOscillation(detectorMedium,detectorMass,reactorPower,reactorStandoff)
+    preOsc,afterOsc = experiment.FindRate()
+    print ' Neutrino rate pre osc:',preOsc,'; neutrino rate post osc:',afterOsc,\
+    ' at ',reactorPower,' GWth, at ',reactorStandoff,'km, for ',\
+    detectorMass/1000.,'kton'
+
+
     proc        += ['QGSP_BERT_EMV','QGSP_BERT_EMX','QGSP_BERT','QGSP_BIC',\
     'QBBC','QBBC_EMZ','FTFP_BERT','QGSP_FTFP_BERT']
     _t          = 'FN%s' % (site)
