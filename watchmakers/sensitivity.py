@@ -661,7 +661,7 @@ def sensitivityMapPass2():
 
     parameters  = loadAnalysisParameters(t)
     rates       = parameters[11]
-    sizeDetc    = 2.*pi*pow(fidRadius,2)*fidHeight/1000.
+    sizeDetc    = 2.*pi*pow(fidRadius/1000.,2)*fidHeight/1000./1000.
     FVkTonRatio = (pow(fidRadius,2)*fidHeight)/(pow(detectorRadius,2)*detectorHeight)
     boulbyRate,imbRate = rates["boulby_S"]*FVkTonRatio,rates["imb_S"]*FVkTonRatio
     print 'boulby rates:',boulbyRate, 'per',t,'per', sizeDetc, \
