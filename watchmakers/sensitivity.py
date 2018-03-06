@@ -725,42 +725,36 @@ def sensitivityMapPass2():
     gStyle.SetOptStat(0)
     gStyle.SetPalette(55)
 
-    #
-    # hist2 = TH2D('hist2','Rate of events -  %s '%(location),31,0.45,3.55,18,7.5,25.5)
-    # hist2.SetXTitle('distance from wall [m]')
-    # hist2.SetYTitle('n9 cut')
-    # hist2.SetZTitle('rate per %s'%(t))
-    # hist2.GetZaxis().SetTitleOffset(-.55);
-    # hist2.GetZaxis().SetTitleColor(1);
-    # hist2.GetZaxis().CenterTitle();
-    # gStyle.SetOptStat(0)
-    # gStyle.SetPalette(55)
+
 
     fileIN = 'pass2_root_files%s/processed_watchman.root' %(additionalString)
+    h = {}
 
-    _proc = 'boulby'
-    hist2 = TH2D('hist%s'%(_proc),'Rate of events -  %s '%(location),31,0.45,3.55,18,7.5,25.5)
-    hist2.SetXTitle('distance from wall [m]')
-    hist2.SetYTitle('n9 cut')
-    hist2.SetZTitle('rate per %s'%(t))
-    hist2.GetZaxis().SetTitleOffset(-.55);
-    hist2.GetZaxis().SetTitleColor(1);
-    hist2.GetZaxis().CenterTitle();
-    gStyle.SetOptStat(0)
-    gStyle.SetPalette(55)
-    for _d in drange(0.5,3.5,0.1):
-        total,eff,rateHz = obtainNeutronLike('25pct',_proc,_distance2pmt=_d,_n9=8)
-        rate = rateHz*24.*3600./timeAdjustment
-        hist2.Fill(_d,8,rate)
-        print '\n',_d,eff,rateHz*24.*3600./timeAdjustment,
-        for _n in range(9,25):
-            total,eff,rateHz = obtainNeutronLike('25pct',_proc,_distance2pmt=_d,_n9=_n)
-            print rateHz*24.*3600./timeAdjustment,
+    proc = ['boulby','neutron']
+    proc = ['214Bi_PMT','208Tl_PMT']
+    for _proc in proc:
+        h['hist%s'%(_proc)] = TH2D('hist%s'%(_proc),'Rate of events -  %s '%(location),31,0.45,3.55,18,7.5,25.5)
+        h['hist%s'%(_proc)].SetXTitle('distance from wall [m]')
+        h['hist%s'%(_proc)].SetYTitle('n9 cut')
+        h['hist%s'%(_proc)].SetZTitle('rate per %s'%(t))
+        h['hist%s'%(_proc)].GetZaxis().SetTitleOffset(-.55);
+        h['hist%s'%(_proc)].GetZaxis().SetTitleColor(1);
+        h['hist%s'%(_proc)].GetZaxis().CenterTitle();
+        gStyle.SetOptStat(0)
+        gStyle.SetPalette(55)
+        for _d in drange(0.5,3.5,0.1):
+            total,eff,rateHz = obtainNeutronLike('25pct',_proc,_distance2pmt=_d,_n9=8)
             rate = rateHz*24.*3600./timeAdjustment
-            hist2.Fill(_d,_n,rate)
-    print ''
-    hist2.SaveAs('h%s.C'%(_proc))
-    hist2.SaveAs('h%s.gif'%(_proc))
+            h['hist%s'%(_proc)].Fill(_d,8,rate)
+            print '\n',_d,eff,rateHz*24.*3600./timeAdjustment,
+            for _n in range(9,25):
+                total,eff,rateHz = obtainNeutronLike('25pct',_proc,_distance2pmt=_d,_n9=_n)
+                print rateHz*24.*3600./timeAdjustment,
+                rate = rateHz*24.*3600./timeAdjustment
+                h['hist%s'%(_proc)].Fill(_d,_n,rate)
+        print ''
+        h['hist%s'%(_proc)].SaveAs('h%s.C'%(_proc))
+        h['hist%s'%(_proc)].SaveAs('h%s.gif'%(_proc))
 
 def runSensitivity():
     hBoulby = TH2D('hBoulby','hBoulby',50,0.5,50.5,50,0.5,50.5)
