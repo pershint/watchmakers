@@ -663,8 +663,8 @@ def sensitivityMapPass2():
     rates       = parameters[11]
     FVkTonRatio = (pow(fidRadius,2)*fidHeight)/(pow(detectorRadius,2)*detectorHeight)
     boulbyRate,imbRate = rates["boulby_S"]*FVkTonRatio,rates["imb_S"]*FVkTonRatio
-    print 'boulby rates:',boulbyRate, ' per ', t, 'per r:',fidRadius, \
-    'm: per z:',fidHeight,'m'
+    print 'boulby rates:',boulbyRate, ' per ', t, 'per r:',fidRadius/1000., \
+    'm: per z:',fidHeight/1000.,'m'
 
     #fast neutrons
     proc        += ['QGSP_BERT_EMV','QGSP_BERT_EMX','QGSP_BERT','QGSP_BIC',\
