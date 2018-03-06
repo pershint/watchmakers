@@ -1163,7 +1163,7 @@ _pe=8,_nhit=8,_itr = 1.5):
     cond = "closestPMT>%f"%(_distance2pmt)
     cond += "&& good_pos>%f && good_dir>%f " %(_posGood,_dirGood)
     cond += "&& n9 > %f && nhit > %f && pe > %f" %(_n9,_nhit,_pe)
-    cond += "&& pe/float(nhit) < %f" %(_itr)
+    cond += "&& pe/nhit < %f" %(_itr)
     total = data.Draw("",cond,"goff")
     print total,':',cover,process,_distance2pmt,_posGood,_dirGood,_n9,_pe,_nhit,_itr
     return total
