@@ -248,7 +248,8 @@ def loadAnalysisParameters(timeScale='day'):
 
     #Evaluate FV to total detector volume ratio
     nKiloTons   = tankVolume/1000.
-    FreeProtons = 0.6065
+    # FreeProtons = 0.6065
+    FreeProtons = 0.668559
     TNU         = FreeProtons* nKiloTons *timeSec
     #FVkTonRatio = pow(float(arguments['--fv']),3)/pow(float(arguments['--tankDis']),3)
 
