@@ -623,7 +623,7 @@ def sensitivityMapPass2():
 
     # Function to find the optimal signal to background as a function
 
-    detectorMedium,detectorMass,reactorPower,reactorStandoff = 1,1000.,0.04,25.
+    detectorMedium,detectorMass,reactorPower,reactorStandoff = 1,1000.,3.15,25.
     experiment = nuOsc.NeutrinoOscillation(detectorMedium,detectorMass,reactorPower,reactorStandoff)
     preOsc,afterOsc = experiment.FindRate()
     print 'Neutrino rate pre osc:',preOsc,'; neutrino rate post osc:',afterOsc
