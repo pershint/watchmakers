@@ -668,7 +668,7 @@ def sensitivityMapPass2():
     #fast neutrons
 
     print '\nEvaluation not based on geoneutrinos.org'
-    detectorMedium,detectorMass,reactorPower,reactorStandoff = 1,sizeDetc*1000.,3.15/2.,25.
+    detectorMedium,detectorMass,reactorPower,reactorStandoff = 1,sizeDetc*1000.,1.575,25.
     experiment = nuOsc.NeutrinoOscillation(detectorMedium,detectorMass,reactorPower,reactorStandoff)
     preOsc,afterOsc = experiment.FindRate()
     print ' Neutrino rate pre osc:',preOsc,'; neutrino rate post osc:',afterOsc,\
