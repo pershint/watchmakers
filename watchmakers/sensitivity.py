@@ -726,7 +726,7 @@ def sensitivityMapPass2():
     gStyle.SetPalette(55)
 
 
-    hist2 = TH2D('hist2','Rate of events -  %s '%(location),31,0.45,3.55,17,8.5,25.5)
+    hist2 = TH2D('hist2','Rate of events -  %s '%(location),31,0.45,3.55,18,7.5,25.5)
     hist2.SetXTitle('distance from wall [m]')
     hist2.SetYTitle('n9 cut')
     hist2.SetZTitle('off-time [%s] for 3 #sigma discovery'%(t))
@@ -740,15 +740,15 @@ def sensitivityMapPass2():
 
     for _d in drange(0.5,3.5,0.1):
         total,eff,rateHz = obtainNeutronLike('25pct','214Bi_PMT',_distance2pmt=_d,_n9=8)
-        hist2.Fill(_distance2pmt,_n9,rateHz)
+        hist2.Fill(_d,8,rateHz)
         print '\n',_d,eff,rateHz*24.*3600./timeAdjustment,
         for _n in range(9,25):
             total,eff,rateHz = obtainNeutronLike('25pct','214Bi_PMT',_distance2pmt=_d,_n9=_n)
             print rateHz*24.*3600./timeAdjustment,
-            hist2.Fill(_distance2pmt,_n9,rateHz)
+            hist2.Fill(_d,_n,rateHz)
 
     hist2.SaveAs('h%s.C'%('214Bi_PMT'))
-    hist2.SaveAs('h%s.gif'%('214Bi_PMT')) 
+    hist2.SaveAs('h%s.gif'%('214Bi_PMT'))
 
 def runSensitivity():
     hBoulby = TH2D('hBoulby','hBoulby',50,0.5,50.5,50,0.5,50.5)
