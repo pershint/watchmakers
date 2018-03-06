@@ -626,7 +626,9 @@ def sensitivityMapPass2():
     detectorMedium,detectorMass,reactorPower,reactorStandoff = 1,1000.,3.15,25.
     experiment = nuOsc.NeutrinoOscillation(detectorMedium,detectorMass,reactorPower,reactorStandoff)
     preOsc,afterOsc = experiment.FindRate()
-    print 'Neutrino rate pre osc:',preOsc,'; neutrino rate post osc:',afterOsc
+    print 'Neutrino rate pre osc:',preOsc,'; neutrino rate post osc:',afterOsc,\
+    ' at ',reactorPower,' GWth, at ',reactorStandoff,'km, for ',\
+    detectorMass/1000.,'kton'
 
     site = arguments["--site"]
 
