@@ -725,7 +725,7 @@ def sensitivityMapPass2():
     gStyle.SetOptStat(0)
     gStyle.SetPalette(55)
 
-    # 
+    #
     # hist2 = TH2D('hist2','Rate of events -  %s '%(location),31,0.45,3.55,18,7.5,25.5)
     # hist2.SetXTitle('distance from wall [m]')
     # hist2.SetYTitle('n9 cut')
@@ -750,13 +750,14 @@ def sensitivityMapPass2():
     gStyle.SetPalette(55)
     for _d in drange(0.5,3.5,0.1):
         total,eff,rateHz = obtainNeutronLike('25pct',_proc,_distance2pmt=_d,_n9=8)
-
-        hist2.Fill(_d,8,rateHz)
+        rate = rateHz*24.*3600./timeAdjustment
+        hist2.Fill(_d,8,rate)
         print '\n',_d,eff,rateHz*24.*3600./timeAdjustment,
         for _n in range(9,25):
             total,eff,rateHz = obtainNeutronLike('25pct',_proc,_distance2pmt=_d,_n9=_n)
             print rateHz*24.*3600./timeAdjustment,
-            hist2.Fill(_d,_n,rateHz)
+            rate = rateHz*24.*3600./timeAdjustment
+            hist2.Fill(_d,_n,rate)
 
     hist2.SaveAs('h%s.C'%(_proc))
     hist2.SaveAs('h%s.gif'%(_proc))
