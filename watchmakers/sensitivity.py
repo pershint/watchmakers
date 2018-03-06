@@ -635,7 +635,7 @@ def sensitivityMapPass2():
     # Need to fix this for future running
 
     OnOffRatio = float(arguments["--OnOff"])
-    print site,OnOffRatio
+    print site,'with on-off ratio of ',OnOffRatio
 
     cores = int(arguments["--cores"])
 
@@ -663,7 +663,7 @@ def sensitivityMapPass2():
     rates       = parameters[11]
     FVkTonRatio = (pow(fidRadius,2)*fidHeight)/(pow(detectorRadius,2)*detectorHeight)
     boulbyRate,imbRate = rates["boulby_S"]*FVkTonRatio,rates["imb_S"]*FVkTonRatio
-    print 'boulby rates:',boulbyRate, ' per ', t
+    print 'boulby rates:',boulbyRate, ' per ', t, 'per',FVkTonRatio, 'kton'
 
     #fast neutrons
     proc        += ['QGSP_BERT_EMV','QGSP_BERT_EMX','QGSP_BERT','QGSP_BIC',\
