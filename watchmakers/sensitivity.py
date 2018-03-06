@@ -660,7 +660,7 @@ def sensitivityMapPass2():
     sizeDetc    = 2.*pi*pow(fidRadius/1000.,2)*fidHeight/1000./1000.
     FVkTonRatio = (pow(fidRadius,2)*fidHeight)/(pow(detectorRadius,2)*detectorHeight)
     boulbyRate,imbRate = rates["boulby_S"]*FVkTonRatio,rates["imb_S"]*FVkTonRatio
-    print ' boulby rates: %4.2f per %s per %4.2f kton; [per r: %4.2f m: per z: %4.2f m]'\
+    print ' boulby rates: %4.2f per %s per %4.2f kton; [r: %4.2f m; z: %4.2f m]'\
     %(boulbyRate,t,sizeDetc,fidRadius/1000.,fidHeight/1000.)
     #fast neutrons
 

@@ -276,6 +276,7 @@ def loadAnalysisParameters(timeScale='day'):
 
 
     boulbyIBDRate   = 1120.8*.4/.6 *TNU #//924.48*TNU Taken from website, average corrected
+    boulbyIBDRate   = 800.*TNU #new values from geoneutrinos.org
     fairportIBDRate = 7583.*TNU
 
     inta        = ['si','so','eo','ei']
