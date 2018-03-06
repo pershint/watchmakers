@@ -1152,48 +1152,18 @@ def obtainAbsoluteEfficiency(f,timeScale='day',cut = 10.0):
     return EG
 
 
-def obtainNeutronLike(f,timeScale='day',cut = 10.0):
-
-    pctVal      = ['10pct','15pct','20pct','25pct','30pct','35pct','40pct']
-    f           = TFile(f,'read')
-    EG          = {}
-    inta,proc,loca,acc,arr,Activity,br,site,timeS,boulbyNeutronFV,mass,dAct,cove,covePCT,covPCT,pct = loadAnalysisParameters(timeScale)
-
-    x,y         = Double(0.),Double(0.)
-    boolFirst   = True
-
-    # Extract the neutron information for each photocoverage
-
-    _inta    = 'neutron'
-    _proc    = 'N'
-    _loca    = 'corr'
-    _site    = ''
-    _acc     = 1
-
-    _str1               = "%s_%s_%s_1_abs" %(_inta,_proc,_loca)
-    _scal_str1          = "nl_%s_%s_%s%s_1_abs_%s"%(_inta,_proc,_loca,_site,_acc)
-    _strEff             = "nl_eff_%s_%s_%s%s_1_abs" %(_inta,_proc,_loca,_site)
-
-    cnter = 0
-    EG[_strEff]         = Graph()
-    EG[_strEff].SetPoint(cnter,0.,0.)
-    cnter+=1
-    for cc,val in enumerate(pctVal):
-        s              = "%s_pe_%s_%s_%s_1"%(_inta,val,proc[ii],loca[ii])
-        eff = histIntegral(s,f,cut)
-        if eff>0.00:
-            EG[_strEff].SetPoint(cnter,pct[cc],eff)
-            cnter+=1
-
-    distanceEff = 0.025
-    dT = float(arguments["-t"])*1e-6 # Change microsecond to rate
-    for iii,value in enumerate(pct):
-        x   = float(value)
-        oY  = EG[_scal_acc].Eval(x)
-        nY  = 0.0001/timeS*oY*oY
-        EG[_scal_acc1].SetPoint(iii,x,nY)
-        EG[_scal_acc_notFV1].SetPoint(iii,x,nY*distanceEff)
-    return EG
+def obtainNeutronLike(cover,process,_distance2pmt=1,_posGood=0.1,_dirGood=0.1,_n9=8,\
+_pe=8,_nhit=8,_itr = 0.0):
+    covPCT  = coveragePCT[cover]
+    s =  "pass2_root_files%s/%s/watchman_%s.root"%(additionalString,cover,process)
+    rfile = TFile(s)
+    data   = rfile.Get('data')
+    cond = "closestPMT>%f"%(closestPMT)
+    cond += "&& good_pos>%f && good_dir>%f " %(_posGood,_dirGood)
+    cond += "&& n9 > %f && nhit > %f && pe > %f" %(_n9,_nhit,_pe)
+    total = data.Draw("",cond,"")
+    print total,':',cover,process,_distance2pmt,_posGood,_dirGood,_n9,_pe,_nhit,_itr
+    return total
 
 def pickColor(H,_loc,r_c,o_c,b_c,c_c ):
     if _loc=='PMT':

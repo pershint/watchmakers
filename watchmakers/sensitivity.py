@@ -652,8 +652,6 @@ def sensitivityMapPass2():
         timeAdjustment = 1./365.
     maxTime = 14400.*timeAdjustment
 
-    proc,loca,type,color,lineS,acc,scale   = [],[],[],[],[],[],[]
-
     print '\nEvaluation based on geoneutrinos.org'
     parameters  = loadAnalysisParameters(t)
     rates       = parameters[11]
@@ -673,7 +671,9 @@ def sensitivityMapPass2():
     experiment = nuOsc.NeutrinoOscillation(detectorMedium,detectorMass,reactorPower,reactorStandoff)
     preOsc,afterOsc = experiment.FindRate()
     print ' Neutrino rate pre osc: %4.2f; neutrino rate post osc: %4.2f at %4.2f GWth, at %4.2f km, for %4.2f kton' %(preOsc,afterOsc,reactorPower,reactorStandoff,detectorMass/1000.)
+    print ''
 
+    proc,loca,type,color,lineS,acc,scale   = [],[],[],[],[],[],[]
 
     proc        += ['QGSP_BERT_EMV','QGSP_BERT_EMX','QGSP_BERT','QGSP_BIC',\
     'QBBC','QBBC_EMZ','FTFP_BERT','QGSP_FTFP_BERT']
@@ -684,6 +684,7 @@ def sensitivityMapPass2():
     color       += [kO+6,kO+6,kO+6,kO+6,kO+6,kO+6,kO+6,kO+6]
     lineS       += [2,2,2,2,2,2,2,2]
     scale       += [1./8.,1./8.,1./8.,1./8.,1./8.,1./8.,1./8.,1./8.]
+
     #radionuclides
     proc        += ['9003','11003']
     _t          =  'RN%s' % (site)
@@ -712,10 +713,7 @@ def sensitivityMapPass2():
     additionalString,additionalCommands,additionalMacStr,additionalMacOpt = testEnabledCondition(arguments)
     if additionalString == "":
         additionalString = "_default"
-    if site == 'boulby':
-        location = 'Boulby '
-    else:
-        location = 'Fairport '
+    location = 'Boulby '
 
     hist = TH2D('hist','3#sigma discovery phase space -  %s '%(location),31,9.5,40.5,30,9.5,39.5)
     hist.SetXTitle('photocoverage [%]')
@@ -724,13 +722,24 @@ def sensitivityMapPass2():
     hist.GetZaxis().SetTitleOffset(-.55);
     hist.GetZaxis().SetTitleColor(1);
     hist.GetZaxis().CenterTitle();
+    gStyle.SetOptStat(0)
+    gStyle.SetPalette(55)
 
+
+    hist2 = TH2D('hist2','3#sigma discovery phase space -  %s '%(location),31,9.5,40.5,30,9.5,39.5)
+    hist2.SetXTitle('photocoverage [%]')
+    hist2.SetYTitle('photoelectron threhsold cut [p.e.]')
+    hist2.SetZTitle('off-time [%s] for 3 #sigma discovery'%(t))
+    hist2.GetZaxis().SetTitleOffset(-.55);
+    hist2.GetZaxis().SetTitleColor(1);
+    hist2.GetZaxis().CenterTitle();
     gStyle.SetOptStat(0)
     gStyle.SetPalette(55)
 
     fileIN = 'pass2_root_files%s/processed_watchman.root' %(additionalString)
 
-
+    total = obtainNeutronLike(cover,process,_distance2pmt=1)
+    print total
 
 def runSensitivity():
     hBoulby = TH2D('hBoulby','hBoulby',50,0.5,50.5,50,0.5,50.5)

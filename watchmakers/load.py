@@ -248,7 +248,6 @@ def loadAnalysisParameters(timeScale='day'):
 
     #Evaluate FV to total detector volume ratio
     nKiloTons   = tankVolume/1000.
-    # FreeProtons = 0.6065
     FreeProtons = 0.668559
     TNU         = FreeProtons* nKiloTons *timeSec
     #FVkTonRatio = pow(float(arguments['--fv']),3)/pow(float(arguments['--tankDis']),3)
@@ -276,7 +275,7 @@ def loadAnalysisParameters(timeScale='day'):
     radionuclideRate= (skRNRate*avgRNYieldRC/avgMuonSK)*muonRate*nKiloTons*1e9
 
 
-    boulbyIBDRate   = 1120.8*.4/.6 *TNU #//924.48*TNU Taken from website, average corrected
+    # boulbyIBDRate   = 1120.8*.4/.6 *TNU #//924.48*TNU Taken from website, average corrected
     boulbyIBDRate   = 800.*TNU #new values from geoneutrinos.org
     fairportIBDRate = 7583.*TNU
 
