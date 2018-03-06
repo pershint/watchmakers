@@ -738,7 +738,7 @@ def sensitivityMapPass2():
 
     fileIN = 'pass2_root_files%s/processed_watchman.root' %(additionalString)
 
-    total = obtainNeutronLike(cover,process,_distance2pmt=1)
+    total = obtainNeutronLike('25pct','neutron',_distance2pmt=1)
     print total
 
 def runSensitivity():
