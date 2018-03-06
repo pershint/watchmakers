@@ -739,10 +739,10 @@ def sensitivityMapPass2():
     fileIN = 'pass2_root_files%s/processed_watchman.root' %(additionalString)
 
     for _d in drange(0.5,3.5,0.1):
-        total,eff,rateHz = obtainNeutronLike('25pct','neutron',_distance2pmt=_d,_n9=8)
+        total,eff,rateHz = obtainNeutronLike('25pct','Bi214_PMT',_distance2pmt=_d,_n9=8)
         print '\n',_d,eff,rateHz*24.*3600./timeAdjustment,
         for _n in range(9,25):
-            total,eff,rateHz = obtainNeutronLike('25pct','neutron',_distance2pmt=_d,_n9=_n)
+            total,eff,rateHz = obtainNeutronLike('25pct','Bi214_PMT',_distance2pmt=_d,_n9=_n)
             print rateHz*24.*3600./timeAdjustment,
 
 def runSensitivity():
