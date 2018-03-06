@@ -1177,7 +1177,7 @@ _pe=8,_nhit=8,_itr = 1.5):
     cond += "&& pe/nhit < %f" %(_itr)
     total = data.Draw("",cond,"goff")
     # print total,total/totalEvents,total/totalEvents*rateHz,':',cover,process,_distance2pmt,_posGood,_dirGood,_n9,_pe,_nhit,_itr
-    return total,total/totalEvents,total/totalEvents*rateHz
+    return total,total/totalEvents,total/totalEvents*rateHz,1./totalEvents*rateHz
 
 def pickColor(H,_loc,r_c,o_c,b_c,c_c ):
     if _loc=='PMT':

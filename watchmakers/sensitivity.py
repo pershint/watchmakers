@@ -731,9 +731,10 @@ def sensitivityMapPass2():
     h = {}
 
     proc = ['boulby','neutron']
-    proc = ['214Bi_PMT','208Tl_PMT']
+    proc = ['214Bi_PMT','208Tl_PMT','210Tl_PMT']
     for _proc in proc:
-        h['hist%s'%(_proc)] = TH2D('hist%s'%(_proc),'Rate of events -  %s '%(location),31,0.45,3.55,18,7.5,25.5)
+        print 'Evaluating process ',_proc
+        h['hist%s'%(_proc)] = TH2D('hist%s'%(_proc),'%s Rate of events -  %s '%(_proc,location),31,0.45,3.55,18,7.5,25.5)
         h['hist%s'%(_proc)].SetXTitle('distance from wall [m]')
         h['hist%s'%(_proc)].SetYTitle('n9 cut')
         h['hist%s'%(_proc)].SetZTitle('rate per %s'%(t))
@@ -743,12 +744,16 @@ def sensitivityMapPass2():
         gStyle.SetOptStat(0)
         gStyle.SetPalette(55)
         for _d in drange(0.5,3.5,0.1):
-            total,eff,rateHz = obtainNeutronLike('25pct',_proc,_distance2pmt=_d,_n9=8)
+            total,eff,rateHz,minR = obtainNeutronLike('25pct',_proc,_distance2pmt=_d,_n9=8)
+            if rateHz == 0:
+                rateHz = minR
             rate = rateHz*24.*3600./timeAdjustment
             h['hist%s'%(_proc)].Fill(_d,8,rate)
             print '\n',_d,eff,rateHz*24.*3600./timeAdjustment,
             for _n in range(9,25):
                 total,eff,rateHz = obtainNeutronLike('25pct',_proc,_distance2pmt=_d,_n9=_n)
+                if rateHz == 0:
+                    rateHz = minR
                 print rateHz*24.*3600./timeAdjustment,
                 rate = rateHz*24.*3600./timeAdjustment
                 h['hist%s'%(_proc)].Fill(_d,_n,rate)
