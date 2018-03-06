@@ -617,6 +617,110 @@ def sensitivityMapNew():
     c4.SaveAs('results/SensitivitySize%s%s.gif'%(additionalString,analysisString))
 
 
+
+
+def sensitivityMapPass2():
+
+    # Function to find the optimal signal to background as a function
+
+    detectorMedium,detectorMass,reactorPower,reactorStandoff = 1,1000.,0.04,25.
+    experiment = nuOsc.NeutrinoOscillation(detectorMedium,detectorMass,reactorPower,reactorStandoff)
+    preOsc,afterOsc = experiment.FindRate()
+    print 'Neutrino rate pre osc:',preOsc,'; neutrino rate post osc:',afterOsc
+
+    site = arguments["--site"]
+
+    # Need to fix this for future running
+
+    OnOffRatio = float(arguments["--OnOff"])
+    print site,OnOffRatio
+
+    cores = int(arguments["--cores"])
+
+    if arguments["--RNRedux"]:
+        rnRedux = float(arguments["--RNRedux"])
+        if rnRedux>1:
+            print "Value of reduction of radionuclide greater than 1, setting to 0"
+            rnRedux = 0.0
+    else:
+        rnRedux = 0.0
+
+    if t == 'sec':
+        timeAdjustment = 24*3600.
+    if t == 'day':
+        timeAdjustment = 1.0
+    if t == 'month':
+        timeAdjustment = 1./31.
+    if t == 'year':
+        timeAdjustment = 1./365.
+    maxTime = 14400.*timeAdjustment
+
+    proc,loca,type,color,lineS,acc,scale   = [],[],[],[],[],[],[]
+
+    parameters  = loadAnalysisParameters(t)
+    rates       = parameters[11]
+    FVkTonRatio = (pow(fidRadius,2)*fidHeight)/(pow(detectorRadius,2)*detectorHeight)
+    boulbyRate,imbRate = rates["boulby_S"]*FVkTonRatio,rates["imb_S"]*FVkTonRatio
+    print 'boulby rates:',boulbyRate, ' per ', t
+
+    #fast neutrons
+    proc        += ['QGSP_BERT_EMV','QGSP_BERT_EMX','QGSP_BERT','QGSP_BIC',\
+    'QBBC','QBBC_EMZ','FTFP_BERT','QGSP_FTFP_BERT']
+    _t          = 'FN%s' % (site)
+    loca        += [_t,_t, _t,_t,_t,_t,_t,_t]
+    type        += ['si','si','si','si','si','si','si','si']
+    acc         += ['corr','corr','corr','corr','corr','corr','corr', 'corr']
+    color       += [kO+6,kO+6,kO+6,kO+6,kO+6,kO+6,kO+6,kO+6]
+    lineS       += [2,2,2,2,2,2,2,2]
+    scale       += [1./8.,1./8.,1./8.,1./8.,1./8.,1./8.,1./8.,1./8.]
+    #radionuclides
+    proc        += ['9003','11003']
+    _t          =  'RN%s' % (site)
+    loca        += [_t,_t]
+    type        += ['ei','ei']
+    acc         += ['di','di']
+    color       += [kG+3,kG+3]
+    lineS       += [1,1]
+    scale       += [1.,1.]
+    #ibds
+    if site == 'boulby':
+        proc    += ['boulby','boulby','neutron']
+    else:
+        proc    += ['imb','imb','neutron']
+    loca        += ['S','S','N%s'%(site)]
+    type        += ['ei','ei','ei']
+    acc         += ['di','corr','corr']
+    color       += [kA+0,kA-0,kA-0]
+    lineS       += [1,2,2]
+    scale       += [-1.0,0.0,0.0]
+
+    c1 = TCanvas('c1','c1',1618,1000)
+    c1.SetRightMargin(0.53)
+    c1.Divide(2,2)
+
+    additionalString,additionalCommands,additionalMacStr,additionalMacOpt = testEnabledCondition(arguments)
+    if additionalString == "":
+        additionalString = "_default"
+    if site == 'boulby':
+        location = 'Boulby '
+    else:
+        location = 'Fairport '
+
+    hist = TH2D('hist','3#sigma discovery phase space -  %s '%(location),31,9.5,40.5,30,9.5,39.5)
+    hist.SetXTitle('photocoverage [%]')
+    hist.SetYTitle('photoelectron threhsold cut [p.e.]')
+    hist.SetZTitle('off-time [%s] for 3 #sigma discovery'%(t))
+    hist.GetZaxis().SetTitleOffset(-.55);
+    hist.GetZaxis().SetTitleColor(1);
+    hist.GetZaxis().CenterTitle();
+
+    gStyle.SetOptStat(0)
+    gStyle.SetPalette(55)
+
+    fileIN = 'pass2_root_files%s/processed_watchman.root' %(additionalString)
+
+
+
 def runSensitivity():
     hBoulby = TH2D('hBoulby','hBoulby',50,0.5,50.5,50,0.5,50.5)
     print 'Boulby:'

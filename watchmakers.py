@@ -57,7 +57,10 @@ if __name__ == "__main__":
         createFileDictionary(arguments)
 
     if arguments['--PDFs']:
-        extractPDFandCorrectRate()    
+        extractPDFandCorrectRate()
+
+    if arguments['--sensIBD']:
+        sensitivityMapPass2()
 
 
 ######################## Waba Luba Dub Dub!! ###########################
