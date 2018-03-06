@@ -1157,8 +1157,19 @@ _pe=8,_nhit=8,_itr = 1.5):
     # covPCT  = coveragePCT[cover]
     para = testEnabledCondition(arguments)
     additionalString  = para[0]
+    
     s =  "pass2_root_files%s/%s/watchman_%s.root"%(additionalString,cover,process)
     rfile = TFile(s)
+    runSummary = rfile.Get('runSummary')
+    Entries = runSummary.GetEntries()
+    runSummary.GetEntry(Entries-1)
+    events = 0
+    for i in range(10):
+        events+= runSummary.subEventTally[i]
+    totalEvents = float(Entries)*events
+    rateHz = float(runSummary.rateHz)
+    print Entries,int(runSummary.runEndTime/1e9),totalEvents,rateHz
+
     data   = rfile.Get('data')
     cond = "closestPMT>%f"%(_distance2pmt)
     cond += "&& good_pos>%f && good_dir>%f " %(_posGood,_dirGood)
