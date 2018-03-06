@@ -1155,6 +1155,8 @@ def obtainAbsoluteEfficiency(f,timeScale='day',cut = 10.0):
 def obtainNeutronLike(cover,process,_distance2pmt=1,_posGood=0.1,_dirGood=0.1,_n9=8,\
 _pe=8,_nhit=8,_itr = 0.0):
     # covPCT  = coveragePCT[cover]
+    para = testEnabledCondition(arguments)
+    additionalString  = para[0] 
     s =  "pass2_root_files%s/%s/watchman_%s.root"%(additionalString,cover,process)
     rfile = TFile(s)
     data   = rfile.Get('data')
