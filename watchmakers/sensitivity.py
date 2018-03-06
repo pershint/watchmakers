@@ -738,7 +738,7 @@ def sensitivityMapPass2():
 
     fileIN = 'pass2_root_files%s/processed_watchman.root' %(additionalString)
 
-    _proc = 'neutron'
+    _proc = 'boulby'
     hist2 = TH2D('hist2','Rate of events -  %s '%(location),31,0.45,3.55,18,7.5,25.5)
     hist2.SetXTitle('distance from wall [m]')
     hist2.SetYTitle('n9 cut')
@@ -758,7 +758,7 @@ def sensitivityMapPass2():
             print rateHz*24.*3600./timeAdjustment,
             rate = rateHz*24.*3600./timeAdjustment
             hist2.Fill(_d,_n,rate)
-
+    print ''
     hist2.SaveAs('h%s.C'%(_proc))
     hist2.SaveAs('h%s.gif'%(_proc))
 
