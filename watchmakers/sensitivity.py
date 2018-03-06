@@ -665,11 +665,16 @@ def sensitivityMapPass2():
     #fast neutrons
 
     print '\nEvaluation not based on geoneutrinos.org'
-    detectorMedium,detectorMass,reactorPower,reactorStandoff = 1,sizeDetc*1000.,1.575,25.
+    detectorMedium,detectorMass,reactorPower,reactorStandoff = 1,sizeDetc*1000.,1.5,24.98
     experiment = nuOsc.NeutrinoOscillation(detectorMedium,detectorMass,reactorPower,reactorStandoff)
     preOsc,afterOsc = experiment.FindRate()
-
     print ' Neutrino rate pre osc: %4.2f; neutrino rate post osc: %4.2f at %4.2f GWth, at %4.2f km, for %4.2f kton' %(preOsc,afterOsc,reactorPower,reactorStandoff,detectorMass/1000.)
+    detectorMedium,detectorMass,reactorPower,reactorStandoff = 1,sizeDetc*1000.,1.575,24.98
+    experiment = nuOsc.NeutrinoOscillation(detectorMedium,detectorMass,reactorPower,reactorStandoff)
+    preOsc,afterOsc = experiment.FindRate()
+    print ' Neutrino rate pre osc: %4.2f; neutrino rate post osc: %4.2f at %4.2f GWth, at %4.2f km, for %4.2f kton' %(preOsc,afterOsc,reactorPower,reactorStandoff,detectorMass/1000.)
+
+
     proc        += ['QGSP_BERT_EMV','QGSP_BERT_EMX','QGSP_BERT','QGSP_BIC',\
     'QBBC','QBBC_EMZ','FTFP_BERT','QGSP_FTFP_BERT']
     _t          = 'FN%s' % (site)
