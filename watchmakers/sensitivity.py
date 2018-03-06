@@ -740,8 +740,8 @@ def sensitivityMapPass2():
 
     for _d in drange(0.5,3.5,0.1):
         total,eff,rateHz = obtainNeutronLike('25pct','neutron',_distance2pmt=_d,_n9=8)
-        print _d,eff,rateHz*24.*3600./timeAdjustment,
-        for _n in range(9,35):
+        print '\n',_d,eff,rateHz*24.*3600./timeAdjustment,
+        for _n in range(9,25):
             total,eff,rateHz = obtainNeutronLike('25pct','neutron',_distance2pmt=_d,_n9=_n)
             print rateHz*24.*3600./timeAdjustment,
 
