@@ -739,7 +739,7 @@ def sensitivityMapPass2():
     fileIN = 'pass2_root_files%s/processed_watchman.root' %(additionalString)
 
     _proc = 'boulby'
-    hist2 = TH2D('hist2','Rate of events -  %s '%(location),31,0.45,3.55,18,7.5,25.5)
+    hist2 = TH2D('hist%s'%(_proc),'Rate of events -  %s '%(location),31,0.45,3.55,18,7.5,25.5)
     hist2.SetXTitle('distance from wall [m]')
     hist2.SetYTitle('n9 cut')
     hist2.SetZTitle('rate per %s'%(t))
