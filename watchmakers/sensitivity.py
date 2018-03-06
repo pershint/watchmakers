@@ -738,8 +738,9 @@ def sensitivityMapPass2():
 
     fileIN = 'pass2_root_files%s/processed_watchman.root' %(additionalString)
 
-    total = obtainNeutronLike('25pct','neutron',_distance2pmt=1)
-    print total
+    for _d in drange(0.5,3.5,0.1):
+        total,eff,rateHz = obtainNeutronLike('25pct','neutron',_distance2pmt=_d)
+        print _d,eff,rateHz*24.*3600./timeAdjustment,'per day'
 
 def runSensitivity():
     hBoulby = TH2D('hBoulby','hBoulby',50,0.5,50.5,50,0.5,50.5)
