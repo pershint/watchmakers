@@ -1157,7 +1157,7 @@ _pe=8,_nhit=8,_itr = 1.5):
     # covPCT  = coveragePCT[cover]
     para = testEnabledCondition(arguments)
     additionalString  = para[0]
-    
+
     s =  "pass2_root_files%s/%s/watchman_%s.root"%(additionalString,cover,process)
     rfile = TFile(s)
     runSummary = rfile.Get('runSummary')
@@ -1168,7 +1168,7 @@ _pe=8,_nhit=8,_itr = 1.5):
         events+= runSummary.subEventTally[i]
     totalEvents = float(Entries)*events
     rateHz = float(runSummary.rateHz)
-    print Entries,int(runSummary.runEndTime/1e9),totalEvents,rateHz
+    # print Entries,int(runSummary.runEndTime/1e9),totalEvents,rateHz
 
     data   = rfile.Get('data')
     cond = "closestPMT>%f"%(_distance2pmt)
@@ -1176,7 +1176,7 @@ _pe=8,_nhit=8,_itr = 1.5):
     cond += "&& n9 > %f && nhit > %f && pe > %f" %(_n9,_nhit,_pe)
     cond += "&& pe/nhit < %f" %(_itr)
     total = data.Draw("",cond,"goff")
-    print total,':',cover,process,_distance2pmt,_posGood,_dirGood,_n9,_pe,_nhit,_itr
+    print total,total/totalEvents,total/totalEvents*rateHz,':',cover,process,_distance2pmt,_posGood,_dirGood,_n9,_pe,_nhit,_itr
     return total
 
 def pickColor(H,_loc,r_c,o_c,b_c,c_c ):
