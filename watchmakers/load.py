@@ -78,7 +78,7 @@ docstring = """
 
     -P=<proc>           Pick a single physics process to analyis/merge (used for ntup)
     -L=<loc>            Pick a single physics location to analyis/merge (used for ntup)
-    -C=<cov>            Pick a single coverage 
+    -C=<cov>            Pick a single coverage
 
     --customJob         Custom job for photocoverage 02-2017
 
@@ -168,7 +168,7 @@ def loadSimulationParameters():
         ZA[i] = str(int(A[i])*1000 +int(Z[i]))
     d['A_Z'] =  ZA
     #Oscillated spectrum at Boulby and IMB site
-    d['ibd'] = ['boulby','imb']
+    d['ibd'] = ['boulby']
     d['N'] = ['neutron']
     d['IBD'] = ['IBD']
     # Fast neutron contamination
@@ -183,6 +183,10 @@ def loadSimulationParameters():
     coverage = ['10pct','15pct','20pct','25pct','30pct','35pct','40pct']
     coveragePCT = {'10pct':9.86037,'15pct':14.887,'20pct':19.4453,\
     '25pct':24.994,'30pct':28.8925,'35pct':34.3254,'40pct':39.1385}
+
+    if arguments['-C']:
+        coverage = [arguments['-C']]
+
 
     return d, iso,loc,coverage,coveragePCT
 
