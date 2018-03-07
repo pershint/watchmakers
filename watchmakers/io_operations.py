@@ -265,6 +265,8 @@ def generateMacros(N,e):
     additionalString,additionalCommands,additionalMacStr,additionalMacOpt = testEnabledCondition(arguments)
     print additionalMacOpt
     print N,e
+    if arguments['-C']:
+        coverage = [arguments['-C']]
     ##Clean or create macro directories
     for j in range(len(iso)):
         for ii in d["%s"%(iso[int(j)])]:
@@ -309,6 +311,8 @@ def generateJobs(N,arguments):
         rmtree(directory)
         os.makedirs(directory)
 
+    if arguments['-C']:
+        coevrage = [arguments['-C']]
     for ii in loc:
         for idx,cover in enumerate(coverage):
             directory = "jobs_case%s%s/%s/%s" %(case,additionalMacStr,ii,cover)
@@ -433,6 +437,8 @@ def mergeFiles():
     trees = {}
     additionalString,additionalCommands,additionalMacStr,additionalMacOpt = testEnabledCondition(arguments)
     pathFinal = "root_files%s/merged_ntuple_watchman" % (additionalMacStr)
+    if arguments['-C']:
+        coverage = [arguments['-C']]
     for j in range(len(iso)):
         for ii in d["%s"%(iso[int(j)])]:
             for idx,cover in enumerate(coverage):

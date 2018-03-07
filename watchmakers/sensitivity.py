@@ -733,7 +733,7 @@ def sensitivityMapPass2():
     proc = ['boulby','neutron']
     proc = ['214Bi_PMT','208Tl_PMT','210Tl_PMT']
     for _proc in proc:
-        print 'Evaluating process ',_proc
+        print '\nEvaluating process ',_proc
         h['hist%s'%(_proc)] = TH2D('hist%s'%(_proc),'%s Rate of events -  %s '%(_proc,location),31,0.45,3.55,18,7.5,25.5)
         h['hist%s'%(_proc)].SetXTitle('distance from wall [m]')
         h['hist%s'%(_proc)].SetYTitle('n9 cut')

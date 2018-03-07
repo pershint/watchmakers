@@ -78,7 +78,7 @@ docstring = """
 
     -P=<proc>           Pick a single physics process to analyis/merge (used for ntup)
     -L=<loc>            Pick a single physics location to analyis/merge (used for ntup)
-    -C=<cov>            Pick a single coverage to analyse
+    -C=<cov>            Pick a single coverage 
 
     --customJob         Custom job for photocoverage 02-2017
 
