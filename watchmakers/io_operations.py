@@ -312,7 +312,7 @@ def generateJobs(N,arguments):
         os.makedirs(directory)
 
     if arguments['-C']:
-        coevrage = [arguments['-C']]
+        coverage = [arguments['-C']]
     for ii in loc:
         for idx,cover in enumerate(coverage):
             directory = "jobs_case%s%s/%s/%s" %(case,additionalMacStr,ii,cover)
