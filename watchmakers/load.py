@@ -199,9 +199,9 @@ def loadSimulationParameters():
         'ibd_n':['WaterVolume'],\
         'IBD':['WaterVolume']}
     else:
-        iso = ['CHAIN_238U_NA','CHAIN_232Th_NA','CHAIN_222Rn_NA','A_Z','ibd',\
-        'FN','N','IBD']
-        loc = ['PMT','PMT','TANK','ROCK','PMT','FV','RN','S','FN','N','I']
+        iso = ['CHAIN_238U_NA','CHAIN_232Th_NA','CHAIN_222Rn_NA',\
+        'CHAIN_222Rn_NA','A_Z','ibd','FN','N','IBD']
+        loc = ['PMT','PMT','PMT','FV','RN','S','FN','N','I']
 
 
     #Photocoverage selected
