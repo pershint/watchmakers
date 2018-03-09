@@ -46,6 +46,7 @@ docstring = """
 
     Options:
     -D                  Delete all current photocoverage directory.
+    --newVers           Major revision to Watchmakers. By default off for old results
 
     -j=<jobType>        Create submision scripts (1,2,4:rat-pac files|case >3 ntuplefiles) [default %d]
                         >3 option will generate a nutple_root_files_flags folder for results
@@ -155,30 +156,54 @@ def loadSimulationParameters():
 
     d['CHAIN_238U_NA'] =['234Pa','214Pb','214Bi','210Bi','210Tl']
     d['CHAIN_232Th_NA'] = ['228Ac','212Pb','212Bi','208Tl']
+    d['40K_NA']         = ['40K']
     d['CHAIN_222Rn_NA'] = ['214Pb','214Bi','210Bi','210Tl']
+    d['TANK_ACTIVITY'] = ['60Co','137Cs']
+
 
     # Radioisotope that should have beta-Neutron modes, (beta only generated)
     #    A = ['16','17','18','17','18','8','9','11']
     #    Z = ['6','6','6','7','7','2','3','3']
     #Reduced selection
-    A = ['9','11']
-    Z = ['3','3']
+    A,Z = ['9','11'],['3','3']
     ZA = A
     for i in range(len(A)):
         ZA[i] = str(int(A[i])*1000 +int(Z[i]))
     d['A_Z'] =  ZA
+
     #Oscillated spectrum at Boulby and IMB site
-    d['ibd'] = ['boulby']
-    d['N'] = ['neutron']
-    d['IBD'] = ['IBD']
-    # Fast neutron contamination
-    d['FN'] = ['QGSP_BERT_EMV','QGSP_BERT_EMX','QGSP_BERT','QGSP_BIC','QBBC',\
-    'QBBC_EMZ','FTFP_BERT','QGSP_FTFP_BERT']
+    if arguments['--newVers']:
+        d['ibd_p'] = ['promptPositron']
+        d['ibd_n'] = ['delayedNeutron']
+        d['IBD']   = ['promptDelayedPair']
+        # Fast neutron contamination
+        d['FN'] = ['QGSP_BERT_EMV','QGSP_BERT_EMX','QGSP_BERT','QGSP_BIC','QBBC',\
+        'QBBC_EMZ','FTFP_BERT','QGSP_FTFP_BERT']
+    else:
+        d['ibd'] = ['boulby']
+        d['N'] = ['neutron']
+        d['IBD'] = ['IBD']
+        # Fast neutron contamination
+        d['FN'] = ['QGSP_BERT_EMV','QGSP_BERT_EMX','QGSP_BERT','QGSP_BIC','QBBC',\
+        'QBBC_EMZ','FTFP_BERT','QGSP_FTFP_BERT']
     #
     #List of all physics process clumped together
-    iso = ['CHAIN_238U_NA','CHAIN_232Th_NA','CHAIN_222Rn_NA','A_Z','ibd',\
-    'FN','N','IBD']
-    loc = ['PMT','PMT','FV','RN','S','FN','N','I']
+    if arguments['--newVers']:
+        process = {'40K_na':['WaterVolume','PMT','TANK','SLAB','GUNITE','ROCK'],\
+        'CHAIN_238U_NA':['WaterVolume','PMT','TANK','SLAB','GUNITE','ROCK'],\
+        'CHAIN_232Th_NA':['WaterVolume','PMT','TANK','SLAB','GUNITE','ROCK'],\
+        'CHAIN_222Rn_NA':['WaterVolume','ROCK','SLAB'],\
+        'FN':['ROCK'],\
+        'A_Z':['WaterVolume'],\
+        'ibd_p':['WaterVolume'],\
+        'ibd_n':['WaterVolume'],\
+        'IBD':['WaterVolume']}
+    else:
+        iso = ['CHAIN_238U_NA','CHAIN_232Th_NA','CHAIN_222Rn_NA','A_Z','ibd',\
+        'FN','N','IBD']
+        loc = ['PMT','PMT','TANK','ROCK','PMT','FV','RN','S','FN','N','I']
+
+
     #Photocoverage selected
     coverage = ['10pct','15pct','20pct','25pct','30pct','35pct','40pct']
     coveragePCT = {'10pct':9.86037,'15pct':14.887,'20pct':19.4453,\
@@ -187,8 +212,10 @@ def loadSimulationParameters():
     if arguments['-C']:
         coverage = [arguments['-C']]
 
-
-    return d, iso,loc,coverage,coveragePCT
+    if arguments['--newVers']:
+        return d,proc,coverage
+    else:
+        return d, iso,loc,coverage,coveragePCT
 
 def loadPMTInfo():
     import subprocess
@@ -264,6 +291,8 @@ def loadAnalysisParameters(timeScale='day'):
     volumeR         = power(22.,3)-power(20.,3)# Rock cavern e.g. (22m x 22m x 22m) - (20m x 20m x 20m)
     density         = 2.39 #from McGrath
     rockMass        = volumeR*power(100.,3)*density
+
+
     #Mass of rock evalyated
     avgMuon         = npa([180.,264.])
     avgMuonNC       = power(avgMuon,0.849)
@@ -446,20 +475,6 @@ def loadAnalysisParameters(timeScale='day'):
         dAct["%s_%s%s"%(ele,_loca[index],_site[index])] = arr[index]*timeS
 
 
-
-    #    # Read in the different radionuclide
-    #    proc        +=  ['16006','17006','18006','17007','18007','8002','9003',\
-    #    '11003']
-    #    loca        +=  ['RN','RN','RN','RN','RN','RN','RN','RN']
-    #    acc         +=  ['di','di','di','di','di','di','di','di']
-    #    #normalised to 9Li from SK
-    #    arr         = npa([0.02,0.001,0.001,0.59*0.002,4e-6,0.23,1.9,0.01])/1.9
-    #    arr         *= radionuclideRate[0]
-    #    Activity    = append(Activity,arr)
-    #    br         +=  [.988,1.0,1.0,0.951,0.143,0.16,0.495,0.927]
-    #    site        += ['','','','','','','','']
-    #
-
     # Read in the different radionuclide
     _proc        =  ['9003', '11003']
     _loca        =  ['RN','RN']
@@ -477,21 +492,6 @@ def loadAnalysisParameters(timeScale='day'):
     site        += _site
     for index,ele in enumerate(_proc):
         dAct["%s_%s%s"%(ele,_loca[index],_site[index])] = arr[index]*timeS
-
-    #    # Read in the different radionuclide
-    #    proc        +=  ['16006','17006','18006','17007','18007','8002','9003',\
-    #    '11003']
-    #    loca        +=  ['RN','RN','RN','RN','RN','RN','RN','RN']
-    #    acc         +=  ['di','di','di','di','di','di','di','di']
-    #    #normalised to 9Li from SK
-    #    arr         = npa([ 0.02,0.001,0.001,0.59*0.002,4e-6,0.23,1.9,0.01])/1.9
-    #    arr         *= radionuclideRate[1]
-    #    Activity    = append(Activity,arr)
-    #    br         +=  [.988,1.0,1.0,0.951,0.143,0.16,0.495,0.927]
-    #    site        += ['boulby','boulby','boulby','boulby','boulby','boulby',\
-    #    'boulby','boulby']
-
-
 
     _proc        =  ['9003', '11003']
     _loca        =  ['RN','RN']
