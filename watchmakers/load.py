@@ -173,36 +173,17 @@ def loadSimulationParameters():
     d['A_Z'] =  ZA
 
     #Oscillated spectrum at Boulby and IMB site
-    if arguments['--newVers']:
-        d['ibd_p'] = ['promptPositron']
-        d['ibd_n'] = ['delayedNeutron']
-        d['IBD']   = ['promptDelayedPair']
-        # Fast neutron contamination
-        d['FN'] = ['QGSP_BERT_EMV','QGSP_BERT_EMX','QGSP_BERT','QGSP_BIC','QBBC',\
-        'QBBC_EMZ','FTFP_BERT','QGSP_FTFP_BERT']
-    else:
-        d['ibd'] = ['boulby']
-        d['N'] = ['neutron']
-        d['IBD'] = ['IBD']
-        # Fast neutron contamination
-        d['FN'] = ['QGSP_BERT_EMV','QGSP_BERT_EMX','QGSP_BERT','QGSP_BIC','QBBC',\
-        'QBBC_EMZ','FTFP_BERT','QGSP_FTFP_BERT']
+    d['ibd'] = ['boulby']
+    d['N'] = ['neutron']
+    d['IBD'] = ['IBD']
+    # Fast neutron contamination
+    d['FN'] = ['QGSP_BERT_EMV','QGSP_BERT_EMX','QGSP_BERT','QGSP_BIC','QBBC',\
+    'QBBC_EMZ','FTFP_BERT','QGSP_FTFP_BERT']
     #
     #List of all physics process clumped together
-    if arguments['--newVers']:
-        process = {'40K_na':['WaterVolume','PMT','TANK','SLAB','GUNITE','ROCK'],\
-        'CHAIN_238U_NA':['WaterVolume','PMT','TANK','SLAB','GUNITE','ROCK'],\
-        'CHAIN_232Th_NA':['WaterVolume','PMT','TANK','SLAB','GUNITE','ROCK'],\
-        'CHAIN_222Rn_NA':['WaterVolume','ROCK','SLAB'],\
-        'FN':['ROCK'],\
-        'A_Z':['WaterVolume'],\
-        'ibd_p':['WaterVolume'],\
-        'ibd_n':['WaterVolume'],\
-        'IBD':['WaterVolume']}
-    else:
-        iso = ['CHAIN_238U_NA','CHAIN_232Th_NA','CHAIN_222Rn_NA',\
-        'CHAIN_222Rn_NA','A_Z','ibd','FN','N','IBD']
-        loc = ['PMT','PMT','PMT','FV','RN','S','FN','N','I']
+    iso = ['CHAIN_238U_NA','CHAIN_232Th_NA','CHAIN_222Rn_NA',\
+    'CHAIN_222Rn_NA','A_Z','ibd','FN','N','IBD']
+    loc = ['PMT','PMT','PMT','FV','RN','S','FN','N','I']
 
 
     #Photocoverage selected
@@ -213,10 +194,7 @@ def loadSimulationParameters():
     if arguments['-C']:
         coverage = [arguments['-C']]
 
-    if arguments['--newVers']:
-        return d,process,coverage
-    else:
-        return d, iso,loc,coverage,coveragePCT
+    return d, iso,loc,coverage,coveragePCT
 
 def loadSimulationParametersNew():
     #Chain and subsequent isotopes
