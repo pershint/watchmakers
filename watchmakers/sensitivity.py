@@ -825,7 +825,8 @@ def sensitivityMapPass2():
 
     for _db in range(31):
         for _nb in range(18):
-            print eff,h['eff%s'%('boulby')].GetBinContent(_db,_nb)*h['eff%s'%('neutron')].GetBinContent(_db,_nb)
+            print _db,_nb,h['eff%s'%('boulby')].GetBinContent(_db,_nb)*h['eff%s'%('neutron')].GetBinContent(_db,_nb)
+
 def runSensitivity():
     hBoulby = TH2D('hBoulby','hBoulby',50,0.5,50.5,50,0.5,50.5)
     print 'Boulby:'
