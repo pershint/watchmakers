@@ -108,6 +108,7 @@ docstring = """
 
     --U238_PPM=<_Uppm>  Concentration of U-238 in glass [Default: %f]
     --Th232_PPM=<_Thp>  Concentration of Th-232 in glass [Default: %f]
+    --K40_PPM=<_K>      Concentration of K-40 in glass [Default: 16.0]
     --Rn222=<_Rn>       Radon activity in water SK 2x10^-3 Bq/m^3 [Default: %f]
 
     --detectMedia=<_dM>  Detector media (doped_water,...)
@@ -213,9 +214,51 @@ def loadSimulationParameters():
         coverage = [arguments['-C']]
 
     if arguments['--newVers']:
-        return d,proc,coverage
+        return d,process,coverage
     else:
         return d, iso,loc,coverage,coveragePCT
+
+def loadSimulationParametersNew():
+    #Chain and subsequent isotopes
+    d = {}
+
+    d['CHAIN_238U_NA'] =['234Pa','214Pb','214Bi','210Bi','210Tl']
+    d['CHAIN_232Th_NA'] = ['228Ac','212Pb','212Bi','208Tl']
+    d['40K_NA']         = ['40K']
+    d['CHAIN_222Rn_NA'] = ['214Pb','214Bi','210Bi','210Tl']
+    d['TANK_ACTIVITY'] = ['60Co','137Cs']
+
+    d['ibd_p'] = ['promptPositron']
+    d['ibd_n'] = ['delayedNeutron']
+    d['IBD']   = ['promptDelayedPair']
+    # Fast neutron contamination
+    d['FN'] = ['QGSP_BERT_EMV','QGSP_BERT_EMX','QGSP_BERT','QGSP_BIC','QBBC',\
+    'QBBC_EMZ','FTFP_BERT','QGSP_FTFP_BERT']
+    A,Z = ['9','11'],['3','3']
+    ZA = A
+    for i in range(len(A)):
+        ZA[i] = str(int(A[i])*1000 +int(Z[i]))
+    d['A_Z'] =  ZA
+
+    process = {'40K_NA':['WaterVolume','PMT','TANK','SLAB','GUNITE','ROCK'],\
+    'CHAIN_238U_NA':['WaterVolume','PMT','TANK','SLAB','GUNITE','ROCK'],\
+    'CHAIN_232Th_NA':['WaterVolume','PMT','TANK','SLAB','GUNITE','ROCK'],\
+    'CHAIN_222Rn_NA':['WaterVolume','ROCK','SLAB'],\
+    'FN':['ROCK'],\
+    'A_Z':['WaterVolume'],\
+    'ibd_p':['WaterVolume'],\
+    'ibd_n':['WaterVolume'],\
+    'IBD':['WaterVolume']}
+
+    #Photocoverage selected
+    coverage = ['15pct','20pct','25pct','30pct','35pct']
+
+    if arguments['-C']:
+        coverage = [arguments['-C']]
+
+    return d,process,coverage
+
+
 
 def loadPMTInfo():
     import subprocess
@@ -236,10 +279,6 @@ def loadPMTInfo():
     for _b in b:
         d.append(float(_b.split()[4])*100.)
 
-    # print '\nExtracting from log files number of PMTs and photocoverage'
-    # print cmd
-    # print 'Number of PMTs      ', c
-    # print 'Actual photocoverage', d
     return c,d
 
 
@@ -262,8 +301,6 @@ def loadAnalysisParameters(timeScale='day'):
 
     #PMT mass in kilograms
     mass = 1.4 # from Hamamatsu tech details
-
-
 
     ### This had been changed by M.B. from Tamzin implementation
     fidRadius = float(arguments['--tankRadius'])-float(arguments['--steelThick'])-float(arguments['--shieldThick'])-float(arguments['--fidThick'])
@@ -541,9 +578,330 @@ def loadAnalysisParameters(timeScale='day'):
     float(pmt[1][3]),float(pmt[1][4]),float(pmt[1][5]),\
     float(pmt[1][6]) ])
 
-
     return inta,proc,loca,acc,arr,Activity,br,site,timeS,\
     boulbyIBDRate*FVkTonRatio,mass,dAct,coveNumber,covePCT,pctTubes,pct
+
+
+
+def loadActivity():
+
+    d,process,coverage = loadSimulationParametersNew()
+
+    ##Evaluate the total mass of PMT glass in kg
+    mass, diameter = 1.4, 10.0/0.039 #inch_per_mm # from Hamamatsu tech details
+    areaPerPMT = pi*diameter*diameter/4.
+    pmtRadius = float(arguments['--tankRadius'])-float(arguments['--steelThick'])-float(arguments['--shieldThick'])
+    pmtHeight = float(arguments['--halfHeight'])-float(arguments['--steelThick'])-float(arguments['--shieldThick'])
+    psupArea = (2*pmtHeight)*2*pi*pmtRadius + 2.*(pi*pmtRadius**2)
+    numPMTs = psupArea/areaPerPMT
+    cPMTs = [float(s.strip('pct'))/100.*numPMTs for s in coverage]
+    mPMTs = [s*mass for s in cPMTs]
+
+    print "Num pmts", cPMTs
+    print "Total Mass",mPMTs
+
+    M_U238,Lambda_U238,Abund_U238 = 3.953e-25,4.916e-18,0.992745
+    PPM_U238    = float(arguments["--U238_PPM"])
+    ActivityU238= Lambda_U238*PPM_U238/M_U238/1e6*Abund_U238
+    mPMTsU238 = [s*ActivityU238 for s in mPMTs]
+    print 'U238',mPMTsU238
+
+    M_Th232,Lambda_Th232,Abund_Th232 = 3.853145e-25, 1.57e-18,1.0
+    PPM_Th232    = float(arguments["--Th232_PPM"])
+    ActivityTh232= Lambda_Th232*PPM_Th232/M_Th232/1e6*Abund_Th232
+    mPMTsTh232 = [s*ActivityTh232 for s in mPMTs]
+    print 'Th232',mPMTsTh232
+
+    M_K40,Lambda_K40,Abund_K40 = 6.636286e-26,1.842e-18,0.00117
+    PPM_K40    = float(arguments["--K40_PPM"])
+    ActivityK40= Lambda_K40*PPM_K40/M_K40/1e6*Abund_K40
+    mPMTsK40 = [s*ActivityK40 for s in mPMTs]
+    print 'K40',mPMTsK40
+
+    print
+
+#     M_Th232      = 3.853145e-25 #kg
+#     Lambda_Th232 = 1.57e-18 #1/s
+#     PPM_Th232    = float(arguments["--Th232_PPM"])
+#     ActivityTh232 = Lambda_Th232*PPM_Th232/M_Th232/1e6
+
+
+
+    return mPMTs
+
+#     fidVolume  = pi*pow(fidRadius/1000.,2)*(2.*fidHeight/1000.)
+#     tankVolume = pi*pow(tankRadius/1000.,2)*(2.*tankHeight/1000.)
+#
+#     FVkTonRatio = fidVolume/tankVolume
+#     #print "Change in load.py"
+#
+#     #Evaluate FV to total detector volume ratio
+#     nKiloTons   = tankVolume/1000.
+#     FreeProtons = 0.668559
+#     TNU         = FreeProtons* nKiloTons *timeSec
+#     #FVkTonRatio = pow(float(arguments['--fv']),3)/pow(float(arguments['--tankDis']),3)
+#
+#     #Fast neutrons conversion
+#     #Rock mass
+#     # Original Estimate
+#     # volumeR         = (2.*22.5*23.8*1.0+2.*17*23.8*1.0+2.*22.5*17.*1.0)
+#     volumeR         = power(2*float(arguments["--tankRadius"])+6,2)*(2*float(arguments["--halfHeight"])+6) - power(2*float(arguments["--tankRadius"])+4,2)*(2*float(arguments["--halfHeight"])+4) # Rock cavern e.g. (22m x 22m x 22m) - (20m x 20m x 20m)
+#     volumeR         = power(22.,3)-power(20.,3)# Rock cavern e.g. (22m x 22m x 22m) - (20m x 20m x 20m)
+#     density         = 2.39 #from McGrath
+#     rockMass        = volumeR*power(100.,3)*density
+#
+#
+#     #Mass of rock evalyated
+#     avgMuon         = npa([180.,264.])
+#     avgMuonNC       = power(avgMuon,0.849)
+#     avgNFluxMag     = 1e-6
+#     muonRate        = npa([7.06e-7,4.09e-8]) # mu/cm2/s
+#     tenMeVRatio     = npa([7.51/34.1,1.11/4.86])
+#     fastNeutrons    = rockMass*avgMuonNC*avgNFluxMag*muonRate*tenMeVRatio
+#
+#     avgRNYieldRC    = power(avgMuon,0.73)
+#     skRNRate        = 0.5e-7 # 1/mu/g cm2
+#     avgMuonSK       = power(219.,0.73)
+#     skMuFlux        = 1.58e-7 #mu/cm2/sec
+#     radionuclideRate= (skRNRate*avgRNYieldRC/avgMuonSK)*muonRate*nKiloTons*1e9
+#
+#
+#     # boulbyIBDRate   = 1120.8*.4/.6 *TNU #//924.48*TNU Taken from website, average corrected
+#     boulbyIBDRate   = 800.*TNU #new values from geoneutrinos.org
+#     fairportIBDRate = 7583.*TNU
+#
+#     inta        = ['si','so','eo','ei']
+#
+#     dAct        = {}
+#
+#     #Add the U-238 chain
+#     M_U238      = 3.953e-25
+#     Lambda_U238 = 4.916e-18
+#     PPM_U238    = float(arguments["--U238_PPM"])
+#     ActivityU238= Lambda_U238*PPM_U238/M_U238/1e6
+# #    _proc       = ['238U','234Pa','214Pb','214Bi','210Bi','210Tl']
+# #    _loca       = ['PMT','PMT',  'PMT',  'PMT',  'PMT',  'PMT']
+# #    acc         = ['chain','acc',  'acc',  'acc',  'acc',  'acc']
+# #    _br         = [1.0,1.0,     1.0,    1.0,   1.0 ,   0.002]
+# #    _site        = ['','',      '',     '',     '',     '']
+# #Changed for Tamzin, as we do not use 238U chain, but it's component
+#     _proc       = ['234Pa','214Pb','214Bi','210Bi','210Tl']
+#     _loca       = ['PMT',  'PMT',  'PMT',  'PMT',  'PMT']
+#     acc         = ['acc',  'acc',  'acc',  'acc',  'acc']
+#     _br         = [1.0,     1.0,    1.0,   1.0 ,   0.002]
+#     _site        = ['',      '',     '',     '',     '']
+#     proc        = _proc
+#     loca        = _loca
+#     br          = _br
+#     site        = _site
+#     #    decayCnst   = [2.9e-5,  4.31e-4,  5.81e-4,   1.601e-6 , 0.00909]
+#     arr         = empty(5)
+#     arr[:]      = ActivityU238
+#     for index,ele in enumerate(_proc):
+#         dAct["%s_%s"%(ele,_loca[index])] = ActivityU238*_br[index]*timeS
+#
+#     Activity    = arr
+#
+#
+#     #Add the Th-232 chain
+#     M_Th232      = 3.853145e-25 #kg
+#     Lambda_Th232 = 1.57e-18 #1/s
+#     PPM_Th232    = float(arguments["--Th232_PPM"])
+#     ActivityTh232 = Lambda_Th232*PPM_Th232/M_Th232/1e6
+#     #    print ActivityU238,ActivityTh232
+# #Changed for Tamzin, as we do not use 238U chain, but it's component
+# #    _proc        =['232Th','228Ac','212Pb','212Bi','208Tl']
+# #    _loca        =['PMT'  ,'PMT',   'PMT', 'PMT',  'PMT'  ]
+# #    acc          +=['chain'  ,'acc',   'acc', 'acc',  'acc'  ]
+# #    _br          = [1.0,     1.0,    1.0,   1.0 ,   1.0]
+#     #    decayCnst   += [1.57e-18,3.3e-5,1.8096e-5, 1.908e-4, 0.003784]
+#     _site        = ['',      '',     '',     '',     '']
+#     _proc        =['228Ac','212Pb','212Bi','208Tl']
+#     _loca        =['PMT',   'PMT', 'PMT',  'PMT'  ]
+#     acc          +=['acc',   'acc', 'acc',  'acc'  ]
+#     _br          = [ 1.0,    1.0,   1.0 ,   1.0]
+#     #    decayCnst   += [1.57e-18,3.3e-5,1.8096e-5, 1.908e-4, 0.003784]
+#     _site        = ['',     '',     '',     '']
+#
+#     arr         = empty(4)
+#     arr[:]      = ActivityTh232
+#     Activity    = append(   Activity,arr)
+#
+#     proc        += _proc
+#     loca        += _loca
+#     br          += _br
+#     site        +=_site
+#     for index,ele in enumerate(_proc):
+#         dAct["%s_%s"%(ele,_loca[index])] = ActivityTh232*_br[index]*timeS
+#
+#
+#
+#     #Add the Rn-222 chain
+#     # N_Rn222     = 2e-3 # Bq/m3
+#     ActivityRn222     = float(arguments["--Rn222"])*nKiloTons*1e3 #required tons, not ktons
+# #    _proc       =['222Rn','214Pb','214Bi','210Bi','210Tl']
+# #    _loca       =['FV', 'FV',   'FV',   'FV',   'FV']
+# #    acc         +=['chain','acc',  'acc',  'acc',   'acc']
+# #    _br         = [1.0, 1.0,   1.0,   1.0,     0.002]
+#     #    decayCnst   += [ 4.31e-4,  5.81e-4,   1.601e-6 , 0.00909]
+# #    _site        = ['', '',     '',     '',     '']
+#
+#     _proc       =['214Pb','214Bi','210Bi','210Tl']
+#     _loca       =['FV',   'FV',   'FV',   'FV']
+#     acc         +=['acc',  'acc',  'acc',   'acc']
+#     _br         = [1.0,   1.0,   1.0,     0.002]
+#     #    decayCnst   += [ 4.31e-4,  5.81e-4,   1.601e-6 , 0.00909]
+#     _site        = ['', '',     '',     '',     '']
+#
+#     arr = empty(4)
+#     arr[:]      = ActivityRn222
+#     Activity    = append(   Activity,arr)
+#     proc        += _proc
+#     loca        += _loca
+#     br          += _br
+#     site        += _site
+#     for index,ele in enumerate(_proc):
+#         dAct["%s_%s"%(ele,_loca[index])] = ActivityRn222*_br[index]*timeS
+#
+#
+#
+#     #Add the neutrino signal
+#     _proc        =['imb','imb','boulby','boulby']
+#     _loca        =['S','S',     'S',  'S']
+#     acc         +=['di', 'corr', 'di', 'corr']
+#     _br          = [1.0,  1.0, 1.0 , 1.0]
+#     site        += [''   ,'' , '', '']
+#     arr         = npa([fairportIBDRate,fairportIBDRate,boulbyIBDRate,boulbyIBDRate])
+#     Activity    = append(    Activity,arr)
+#
+#     proc        += _proc
+#     loca        += _loca
+#     br          += _br
+#     for index,ele in enumerate(_proc):
+#         dAct["%s_%s"%(ele,_loca[index])] = arr[index]*timeS
+#
+#     # Add the neutron
+#     _proc        =['neutron','neutron']
+#     _loca        =['N',     'N']
+#     acc         +=['corr',  'corr']
+#     _br          = [1.0,   1.0]
+#     arr         = npa([fairportIBDRate,boulbyIBDRate])
+#     #    print "Neutrino activity ",arr*timeS/nKiloTons
+#     Activity    = append(    Activity,arr)
+#     _site       = [ '','boulby']
+#     site        += _site
+#     proc        += _proc
+#     loca        += _loca
+#     br          += _br
+#     for index,ele in enumerate(_proc):
+#         dAct["%s_%s%s"%(ele,_loca[index],_site[index])] = arr[index]*timeS
+#
+#     # add a fast neutron at Fairport
+#     _proc        = ['QGSP_BERT_EMV','QGSP_BERT_EMX','QGSP_BERT','QGSP_BIC',\
+#     'QBBC','QBBC_EMZ','FTFP_BERT','QGSP_FTFP_BERT']
+#     _loca        =  ['FN','FN','FN','FN','FN','FN','FN','FN']
+#     acc         +=  ['corr','corr','corr','corr','corr','corr','corr','corr']
+#     _br          =  [1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0]
+#     _site        =  ['','','','','','','','']
+#     arr = empty(8)
+#     arr[:]      = fastNeutrons[0]
+#     Activity    = append(Activity,arr)
+#     proc        += _proc
+#     loca        += _loca
+#     br          += _br
+#     site        += _site
+#     for index,ele in enumerate(_proc):
+#         dAct["%s_%s%s"%(ele,_loca[index],_site[index])] = arr[index]*timeS
+#
+#
+#     # add a fast neutron at Boulby
+#     _proc        = ['QGSP_BERT_EMV','QGSP_BERT_EMX','QGSP_BERT','QGSP_BIC',\
+#     'QBBC','QBBC_EMZ','FTFP_BERT','QGSP_FTFP_BERT']
+#     _loca        =  ['FN','FN','FN','FN','FN','FN','FN','FN']
+#     acc         +=  ['corr','corr','corr','corr','corr','corr','corr','corr']
+#     _br          =  [1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0]
+#     arr = empty(8)
+#     arr[:]      = fastNeutrons[1]
+#     Activity    = append(Activity,arr)
+#     _site        = ['boulby','boulby','boulby','boulby','boulby','boulby',\
+#     'boulby','boulby']
+#     proc        += _proc
+#     loca        += _loca
+#     br          += _br
+#     site        += _site
+#     for index,ele in enumerate(_proc):
+#         dAct["%s_%s%s"%(ele,_loca[index],_site[index])] = arr[index]*timeS
+#
+#
+#     # Read in the different radionuclide
+#     _proc        =  ['9003', '11003']
+#     _loca        =  ['RN','RN']
+#     acc         +=  ['di','di']
+#     #normalised to 9Li from SK
+#     arr         = npa([1.9,0.01])/1.9
+#     arr         *= radionuclideRate[0]
+#     Activity    = append(Activity,arr)
+#     _br         =  [0.495,0.927]
+#     _site       = ['','']
+#
+#     proc        += _proc
+#     loca        += _loca
+#     br          += _br
+#     site        += _site
+#     for index,ele in enumerate(_proc):
+#         dAct["%s_%s%s"%(ele,_loca[index],_site[index])] = arr[index]*timeS
+#
+#     _proc        =  ['9003', '11003']
+#     _loca        =  ['RN','RN']
+#     acc         +=  ['di','di']
+#     #normalised to 9Li from SK
+#     arr         = npa([1.9,0.01])/1.9
+#     arr         *= radionuclideRate[1]
+#     Activity    = append(Activity,arr)
+#     _br         =  [0.495,0.927]
+#     _site       = ['boulby','boulby']
+#
+#
+#     proc        += _proc
+#     loca        += _loca
+#     br          += _br
+#     site        += _site
+#     for index,ele in enumerate(_proc):
+#         dAct["%s_%s%s"%(ele,_loca[index],_site[index])] = arr[index]*timeS
+#
+#     _proc        =['IBD','IBD']
+#     _loca        =['I',     'I']
+#     acc         +=['corr',  'corr']
+#     _br          = [1.0,   1.0]
+#     arr         = npa([fairportIBDRate,boulbyIBDRate])
+# #    print "Neutrino activity ",arr*timeS/nKiloTons
+#     Activity    = append(    Activity,arr)
+#     _site       = [ '','boulby']
+#     site        += _site
+#     proc        += _proc
+#     loca        += _loca
+#     br          += _br
+#     for index,ele in enumerate(_proc):
+#         dAct["%s_%s%s"%(ele,_loca[index],_site[index])] = arr[index]*timeS
+#
+#
+#     coveNumber    = {'10pct':pmt[0][0],   '15pct':pmt[0][1], '20pct':pmt[0][2],  \
+#     '25pct':pmt[0][3],  '30pct':pmt[0][4], '35pct':pmt[0][5],  '40pct':pmt[0][6]}
+#     covePCT       = {'10pct':pmt[1][0], '15pct':pmt[1][1],'20pct':pmt[1][2],\
+#     '25pct':pmt[1][3],'30pct':pmt[1][4],'35pct':pmt[1][5],'40pct':pmt[1][6]}
+#
+#     pctTubes   = {"%s"%(pmt[1][0]):pmt[0][0],"%s"%(pmt[1][1]):pmt[0][1],\
+#     "%s"%(pmt[1][2]):pmt[0][2],"%s"%(pmt[1][3]):pmt[0][3],\
+#     "%s"%(pmt[1][4]):pmt[0][4],"%s"%(pmt[1][5]):pmt[0][5],\
+#     "%s"%(pmt[1][6]):pmt[0][6]}
+#
+#     pct = npa([ float(pmt[1][0]),float(pmt[1][1]),float(pmt[1][2]),\
+#     float(pmt[1][3]),float(pmt[1][4]),float(pmt[1][5]),\
+#     float(pmt[1][6]) ])
+#
+#
+#     return inta,proc,loca,acc,arr,Activity,br,site,timeS,\
+#     boulbyIBDRate*FVkTonRatio,mass,dAct,coveNumber,covePCT,pctTubes,pct
 
     #
     # return inta,proc,loca,acc,arr,Activity,br,site,timeS,\

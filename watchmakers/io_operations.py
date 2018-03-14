@@ -25,6 +25,8 @@ def macroGenerator(percentage,isotope,location,runs,events):
     '25pct':0.25,'30pct':0.30,'35pct':0.35,'40pct':0.40}
     additionalString,additionalCommands,additionalMacStr,additionalMacOpt = testEnabledCondition(arguments)
 
+    loadActivity()
+
     #Part of the macro that is the same for all jobs
     dir = os.getcwd()
 #    print arguments
@@ -142,7 +144,111 @@ def macroGenerator(percentage,isotope,location,runs,events):
         print location
     return header+line1
 
+def macroGeneratorNew(percentage,location,element,_dict,runs,events,dirOpt):
+#_cover,_loc,_p,element,val,e
 
+    # print "percentage,location,element,_dict,runs,events"
+    # print percentage,location,element,_dict,runs,events
+    covPCT = {'10pct':0.1,'15pct':0.15,'20pct':0.2,\
+    '25pct':0.25,'30pct':0.30,'35pct':0.35,'40pct':0.40}
+
+    additionalString,additionalCommands,additionalMacStr,additionalMacOpt = testEnabledCondition(arguments)
+
+    # loadActivity()
+
+    #Part of the macro that is the same for all jobs
+    dir = os.getcwd()
+
+    depth = float(arguments["--depth"])
+
+    header = '''
+/glg4debug/glg4param omit_muon_processes  0.0
+/glg4debug/glg4param omit_hadronic_processes  0.0
+
+/rat/db/set DETECTOR experiment "Watchman"
+/rat/db/set DETECTOR detector_factory "Watchman"
+/rat/db/set WATCHMAN_PARAMS photocathode_coverage %4.2f
+%s
+
+/run/initialize
+
+# BEGIN EVENT LOOP
+/rat/proc lesssimpledaq
+# /rat/proc fitbonsai
+# /rat/proc fitcentroid
+# /rat/proc fitpath
+/rat/proc count
+/rat/procset update 1000
+
+# Use IO.default_output_filename
+/rat/proclast outroot
+/rat/procset file "%s/root_files%s%sfile_%d.root"
+#END EVENT LOOP
+''' %(covPCT[percentage],additionalMacOpt,dir,additionalMacStr,dirOpt,runs)
+
+    return header
+
+#
+#     #Part of macro that varies with the various conditions
+#     if location == 'PMT':
+#         line1 = '''
+# /generator/add decaychain %s:regexfill
+# /generator/pos/set inner_pmts[0-9]+
+# /run/beamOn %d''' %(isotope,events*5)
+#
+#     elif location == 'WaterVolume':
+#         line1 = '''
+# /generator/add decaychain %s:fill:poisson
+# /generator/pos/set  0 0 0
+# /generator/rate/set 6.43
+# /run/beamOn %d''' %(isotope,events*5)
+#
+#     elif location == 'FN':
+#         line1 = '''
+# /generator/add combo fastneutron:regexfill
+# /generator/pos/set rock_[0-9]+
+# /generator/vtx/set 0 0 0
+# /generator/fastneutron/depth %f
+# /generator/fastneutron/enthresh 10.0
+# /generator/fastneutron/sidewalls 1.0
+# /run/beamOn %d'''%(events)
+#     elif    location=='I':
+#         line1 = '''
+# /generator/add combo ibd:fill
+# /generator/vtx/set  1 0 0
+# /generator/pos/set 0 0 0
+# /run/beamOn %d'''%(events)
+#
+#     elif location == 'S':
+#         line1 ='''
+# /generator/add combo spectrum:fill
+# /generator/vtx/set e+ %s
+# /generator/pos/set 0 0 0
+# /run/beamOn %d'''%(isotope,events)
+#
+#     elif location =='N':
+#         line1 = '''
+# /generator/add combo gun2:fill
+# /generator/vtx/set %s  0 0 0 0 0.001 0.20
+# /generator/pos/set 0 0 0
+# /run/beamOn %d'''%(isotope,events)
+#
+#     elif location == 'RN':
+#         AZ = isotope
+#         A =  int(int(AZ)/1000)
+#         Z = int(AZ) - A*1000
+#         line1 = '''
+# /generator/add combo isotope:fill
+# /generator/pos/set 0 0 0
+# /generator/vtx/set GenericIon 0 0 0
+# /generator/isotope/A %s.0
+# /generator/isotope/Z %s.0
+# /generator/isotope/E 0.0
+# /run/beamOn %d''' %(A,Z,events)
+#     else:
+#         line1 = 'A'
+#         print location
+#     return header+line1
 
 def jobString(percentage,j,runs,models,arguments):
 #    directory = "/p/lscratche/adg/Watchboy/simplifiedData/rp_sim/wm"
@@ -160,7 +266,12 @@ def jobString(percentage,j,runs,models,arguments):
         sheffield =  0
 
     software    = "%s/bin/rat" %(ratDir)
-    d,iso,loc,coverage,coveragePCT = loadSimulationParameters()
+    # d,iso,loc,coverage,coveragePCT = loadSimulationParameters()
+
+    if arguments['--newVers']:
+        d,proc,coverage = loadSimulationParameters()
+    else:
+        d,iso,loc,coverage,coveragePCT = loadSimulationParameters()
 
     ele =  d["%s"%(iso[j])]
     location = loc[j]
@@ -217,52 +328,60 @@ def jobString(percentage,j,runs,models,arguments):
 
     else:
         line1 = """#!/bin/sh
-    #MSUB -N WM_%s_%s_%d_%s    #name of job
-    #MSUB -A ared         # sets bank account
-    #MSUB -l nodes=1:ppn=1,walltime=23:59:59,partition=borax  # uses 1 node
-    #MSUB -q pbatch         #pool
-    #MSUB -o %s/log_case%s%s/wmpc_%s_%s_%d.log
-    #MSUB -e %s/log_case%s%s/wmpc_%s_%s_%d.err
-    #MSUB -d %s  # directory to run from
-    #MSUB -V
-    #MSUB                     # no more psub commands
+#MSUB -N WM_%s_%s_%d_%s    #name of job
+#MSUB -A ared         # sets bank account
+#MSUB -l nodes=1:ppn=1,walltime=23:59:59,partition=borax  # uses 1 node
+#MSUB -q pbatch         #pool
+#MSUB -o %s/log_case%s%s/wmpc_%s_%s_%d.log
+#MSUB -e %s/log_case%s%s/wmpc_%s_%s_%d.err
+#MSUB -d %s  # directory to run from
+#MSUB -V
+#MSUB                     # no more psub commands
 
-    source %s/bin/thisroot.sh
-    source %s/../../../bin/geant4.sh
-    source %s/geant4make.sh
-    source %s/env.sh
-    source %s/env_wm.sh
-    export G4NEUTRONHP_USE_ONLY_PHOTONEVAPORATION=1\n
+source %s/bin/thisroot.sh
+source %s/../../../bin/geant4.sh
+source %s/geant4make.sh
+source %s/env.sh
+source %s/env_wm.sh
+export G4NEUTRONHP_USE_ONLY_PHOTONEVAPORATION=1\n
     """ %(percentage,location,runs,additionalMacStr,\
     directory,case,additionalMacStr,percentage,location,runs,\
     directory,case,additionalMacStr,percentage,location,runs,\
     directory,\
     rootDir,g4Dir,g4Dir,ratDir,watchmakersDir)
 
-    for mods in models:
-        if location == "FN":
-            line1 += "export PHYSLIST=%s\n" %(mods)
-        if case == 1 or case == 2 or case == 4:
-            _log = "log_case%s%s/%s/%s/rat.%s_%s_%s_%d.log" %(case,additionalMacStr,mods,percentage,percentage,mods,location,runs)
-            _mac = "%s/macro%s/%s/%s/run%s_%s_%d.mac" %(directory,additionalMacStr,mods,percentage,mods,location,runs)
-            line1 += "%s -l %s %s\n" %(software,_log,_mac)
-        if case >= 3:
-            fileN = "root_files%s/%s/%s/watchman_%s_%s_%s_%d.root" %(additionalString,mods,percentage,mods,percentage,location,runs)
-            if additionalString != "":
-                fileNO = "ntuple_root_files%s/%s/%s/watchman_%s_%s_%s%s_%d.root" %(additionalString,mods,percentage,mods,percentage,location,additionalString,runs)
-                if sheffield:
-                    line1 += "root -b -l -q %s/watchmakers/\'goldenFileExtractor.C(\"%s\",\"%s\",%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f\")\'\n" %(watchmakersDir,fileN,fileNO,minNHIT,goodness,dirGoodness,timemask,\
-                                    rate,distancemask,fidR,fidZ,pmtR,pmtZ,tankR,tankZ)
-                    ###int goldenFileExtractor(const char *file, const char *outfile = "null", double nhit_min =3., double goodness_min = 0.1, double goodness_dir = 0.1, double timeWindow_ns = 100000, double rate = 10.0, double maxDistance = 2.0, double fidBoundR = 5.42, double fidBoundZ = 5.42, double pmtBoundR = 6.42, double pmtBoundZ = 6.42, double tankBoundR = 8.02635, double tankBoundZ = 8.02635 ) {
-                else:
-                    line1 += "watch -n %s -f %s --ntupleout %s\n" %(additionalCommands,fileN,fileNO)
+    if arguments['--newVers']:
+        print
+    else:
+        for mods in models:
+            if location == "FN":
+                line1 += "export PHYSLIST=%s\n" %(mods)
+            if case == 1 or case == 2 or case == 4:
+                _log = "log_case%s%s/%s/%s/rat.%s_%s_%s_%d.log" %(case,additionalMacStr,mods,percentage,percentage,mods,location,runs)
+                _mac = "%s/macro%s/%s/%s/run%s_%s_%d.mac" %(directory,additionalMacStr,mods,percentage,mods,location,runs)
+                line1 += "%s -l %s %s\n" %(software,_log,_mac)
+            if case >= 3:
+                fileN = "root_files%s/%s/%s/watchman_%s_%s_%s_%d.root" %(additionalString,mods,percentage,mods,percentage,location,runs)
+                if additionalString != "":
+                    fileNO = "ntuple_root_files%s/%s/%s/watchman_%s_%s_%s%s_%d.root" %(additionalString,mods,percentage,mods,percentage,location,additionalString,runs)
+                    if sheffield:
+                        line1 += "root -b -l -q %s/watchmakers/\'goldenFileExtractor.C(\"%s\",\"%s\",%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f\")\'\n" %(watchmakersDir,fileN,fileNO,minNHIT,goodness,dirGoodness,timemask,\
+                                        rate,distancemask,fidR,fidZ,pmtR,pmtZ,tankR,tankZ)
+                        ###int goldenFileExtractor(const char *file, const char *outfile = "null", double nhit_min =3., double goodness_min = 0.1, double goodness_dir = 0.1, double timeWindow_ns = 100000, double rate = 10.0, double maxDistance = 2.0, double fidBoundR = 5.42, double fidBoundZ = 5.42, double pmtBoundR = 6.42, double pmtBoundZ = 6.42, double tankBoundR = 8.02635, double tankBoundZ = 8.02635 ) {
+                    else:
+                        line1 += "watch -n %s -f %s --ntupleout %s\n" %(additionalCommands,fileN,fileNO)
     return line1,case
 
 
 
 def generateMacros(N,e):
-    d,iso,loc,coverage,coveragePCT = loadSimulationParameters()
+    if arguments['--newVers']:
+        d,proc,coverage = loadSimulationParameters()
+    else:
+        d,iso,loc,coverage,coveragePCT = loadSimulationParameters()
+
     additionalString,additionalCommands,additionalMacStr,additionalMacOpt = testEnabledCondition(arguments)
+
     print additionalMacOpt
     print N,e
 
@@ -287,10 +406,47 @@ def generateMacros(N,e):
     return 0
 
 
+def generateMacrosNew(N,e):
+
+    d,proc,coverage = loadSimulationParametersNew()
+
+    additionalString,additionalCommands,additionalMacStr,additionalMacOpt = testEnabledCondition(arguments)
+
+    print additionalMacOpt
+    print N,e
+
+    cnt = 0
+
+    for _p in proc:
+        for _loc in proc[_p]:
+            for idx,_cover in enumerate(coverage):
+                for _element in d[_p]:
+                    # print cnt,_p,element,_loc,cover
+                    for i in range(N/10+1):
+                        dir = "macro%s/%s/%s/%s/run%08d/"%(additionalMacStr,_cover,_loc,_element,i*10)
+                        testCreateDirectory(dir)
+                        cnt+=1
+                    for val in range(N):
+                        i = val/10
+                        dir = "%s/%s/%s/%s/run%08d/"%(additionalMacStr,_cover,_loc,_element,i*10)
+                        outfile = open("macro%s/run_%08d.mac" %(dir,val),"wb")
+                        line = macroGeneratorNew(_cover,_loc,_element,_p,val,e,dir)
+                        outfile.writelines(line)
+                        outfile.close
+
+    return 0
+
+
+
 
 def generateJobs(N,arguments):
-    d,iso,loc,coverage,coveragePCT = loadSimulationParameters()
+    if arguments['--newVers']:
+        d,proc,coverage = loadSimulationParameters()
+    else:
+        d,iso,loc,coverage,coveragePCT = loadSimulationParameters()
+
     case = arguments["-j"]
+
     additionalString,additionalCommands,additionalMacStr,additionalMacOpt = testEnabledCondition(arguments)
 
     try:
@@ -402,7 +558,10 @@ def generateJobs(N,arguments):
 
 
 def deleteAllWorkDirectories():
-    d,iso,loc,coverage,coveragePCT = loadSimulationParameters()
+    if arguments['--newVers']:
+        d,proc,coverage = loadSimulationParameters()
+    else:
+        d,iso,loc,coverage,coveragePCT = loadSimulationParameters()
 
     dir = "log"
     if os.path.exists(dir):
@@ -431,7 +590,11 @@ def mergeFiles():
     # Read external requirements
     #arguments = docopt.docopt(docstring)
     # Load internal requirements
-    d,iso,loc,coverage,coveragePCT = loadSimulationParameters()
+    if arguments['--newVers']:
+        d,proc,coverage = loadSimulationParameters()
+    else:
+        d,iso,loc,coverage,coveragePCT = loadSimulationParameters()
+
     trees = {}
     additionalString,additionalCommands,additionalMacStr,additionalMacOpt = testEnabledCondition(arguments)
     pathFinal = "root_files%s/merged_ntuple_watchman" % (additionalMacStr)
@@ -574,7 +737,12 @@ def testEnabledCondition(arguments):
 def writeResultsToFile(s,g,h):
     additionalString,additionalCommands,additionalMacStr,additionalMacOpt = testEnabledCondition(arguments)
     _str = "ntuple_root_files%s/%s" %(additionalString,s)
-    d,iso,loc,coverage,coveragePCT = loadSimulationParameters()
+    if arguments['--newVers']:
+        d,proc,coverage = loadSimulationParameters()
+    else:
+        d,iso,loc,coverage,coveragePCT = loadSimulationParameters()
+
+
     f_root = TFile(_str,"recreate")
     for gE in g:
         g["%s"%(gE)].Write()
@@ -587,7 +755,11 @@ def mergeNtupleFiles(arguments):
     # Read external requirements
     #arguments = docopt.docopt(docstring)
     # Load internal requirements
-    d,iso,loc,coverage,coveragePCT = loadSimulationParameters()
+    if arguments['--newVers']:
+        d,proc,coverage = loadSimulationParameters()
+    else:
+        d,iso,loc,coverage,coveragePCT = loadSimulationParameters()
+
     trees = {}
 
     additionalString,additionalCommands,additionalMacStr,additionalMacOpt = testEnabledCondition(arguments)
@@ -662,7 +834,11 @@ def extractNtuple(arguments):
     pass1Trigger = arguments["--pass1Trigger"]
 
     print file
-    d,iso,loc,coverage,coveragePCT = loadSimulationParameters()
+    if arguments['--newVers']:
+        d,proc,coverage = loadSimulationParameters()
+    else:
+        d,iso,loc,coverage,coveragePCT = loadSimulationParameters()
+
     if not pass1Trigger:
         try:
             goldenFileExtractor(fIn,outF,minNHIT,goodness,dirGoodness,timemask,\
@@ -677,7 +853,10 @@ def extractNtuple(arguments):
 
 
 def extractNtupleALL(arguments):
-    d,iso,loc,coverage,coveragePCT = loadSimulationParameters()
+    if arguments['--newVers']:
+        d,proc,coverage = loadSimulationParameters()
+    else:
+        d,iso,loc,coverage,coveragePCT = loadSimulationParameters()
 
     N            = int(arguments["-N"])
 
@@ -762,10 +941,15 @@ def createFileDictionary(arguments,prefix=""):
     from os import listdir
     from os.path import isfile, join
     simParam    = loadSimulationParameters()
-    d           = simParam[0]
-    iso         = simParam[1]
-    loc         = simParam[2]
-    coverage    = simParam[3]
+
+    if arguments['--newVers']:
+        d,proc,coverage = loadSimulationParameters()
+    else:
+        simParam = loadSimulationParameters()
+        d           = simParam[0]
+        iso         = simParam[1]
+        loc         = simParam[2]
+        coverage    = simParam[3]
 
     parameters  = loadAnalysisParameters(arguments["--timeScale"])
     rates       = parameters[11]
@@ -825,11 +1009,15 @@ def performPass1(arguments):
     from os.path import isfile, join
     # Perform Pass1 : Apply pass1 algorythm to the rootfiles generated by rat-pac
     # and save results in appropriate folders.
-    simParam    = loadSimulationParameters()
-    d           = simParam[0]
-    iso         = simParam[1]
-    loc         = simParam[2]
-    coverage    = simParam[3]
+
+    if arguments['--newVers']:
+        d,proc,coverage = loadSimulationParameters()
+    else:
+        simParam    = loadSimulationParameters()
+        d           = simParam[0]
+        iso         = simParam[1]
+        loc         = simParam[2]
+        coverage    = simParam[3]
 
     parameters  = loadAnalysisParameters(arguments["--timeScale"])
     rates       = parameters[11]
@@ -954,11 +1142,15 @@ def performPass2(arguments):
     from os.path import isfile, join
     # Perform Pass2 : Apply pass2 algorythm to the pass1 files
     # and save results in appropriate folders.
-    simParam    = loadSimulationParameters()
-    d           = simParam[0]
-    iso         = simParam[1]
-    loc         = simParam[2]
-    coverage    = simParam[3]
+
+    if arguments['--newVers']:
+        d,proc,coverage = loadSimulationParameters()
+    else:
+        simParam    = loadSimulationParameters()
+        d           = simParam[0]
+        iso         = simParam[1]
+        loc         = simParam[2]
+        coverage    = simParam[3]
 
     parameters  = loadAnalysisParameters(arguments["--timeScale"])
     rates       = parameters[11]

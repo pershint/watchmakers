@@ -19,7 +19,10 @@ if __name__ == "__main__":
         deleteAllWorkDirectories()
 
     if arguments['-m']:
-        generateMacros(int(arguments['-N']),int(arguments['-e']))
+        if arguments['--newVers']:
+            generateMacrosNew(int(arguments['-N']),int(arguments['-e']))
+        else:
+            generateMacros(int(arguments['-N']),int(arguments['-e']))
 
     if arguments['-j']:
         generateJobs(int(arguments['-N']),arguments)
