@@ -791,7 +791,7 @@ def sensitivityMapPass2():
         h['eff%s'%(_proc)] = TH2D('eff%s'%(_proc),'%s Rate of events -  %s '%(_proc,location),31,0.45,3.55,18,7.5,25.5)
         h['eff%s'%(_proc)].SetXTitle('distance from wall [m]')
         h['eff%s'%(_proc)].SetYTitle('n9 cut')
-        h['eff%s'%(_proc)].SetZTitle('rate per %s'%(t))
+        h['eff%s'%(_proc)].SetZTitle('efficiency')
         h['eff%s'%(_proc)].GetZaxis().SetTitleOffset(-.55);
         h['eff%s'%(_proc)].GetZaxis().SetTitleColor(1);
         h['eff%s'%(_proc)].GetZaxis().CenterTitle();
@@ -816,6 +816,7 @@ def sensitivityMapPass2():
                 print rateHz*24.*3600./timeAdjustment,
                 rate = rateHz*24.*3600./timeAdjustment
                 h['hist%s'%(_proc)].Fill(_d,_n,rate)
+                sizeFV    = 2.*pi*pow((pmtRadius-_d)/1000.,2)*(pmtHeight-_d)/1000./1000.
                 h['eff%s'%(_proc)].Fill(_d,_n,eff*sizeTank/sizeFV)
         print ''
         h['hist%s'%(_proc)].SaveAs('h%s.C'%(_proc))
