@@ -1164,9 +1164,10 @@ _pe=8,_nhit=8,_itr = 1.5):
     Entries = runSummary.GetEntries()
     runSummary.GetEntry(Entries-1)
     events = 0
+    _eventPerRun = runSummary.nEvents
     for i in range(10):
         events+= runSummary.subEventTally[i]
-    totalEvents = float(Entries)*events
+    totalEvents = float(Entries)*_eventPerRun
     rateHz = float(runSummary.rateHz)
     # print Entries,int(runSummary.runEndTime/1e9),totalEvents,rateHz
 
@@ -1177,7 +1178,7 @@ _pe=8,_nhit=8,_itr = 1.5):
     cond += "&& pe/nhit < %f" %(_itr)
     total = data.Draw("",cond,"goff")
     # print total,total/totalEvents,total/totalEvents*rateHz,':',cover,process,_distance2pmt,_posGood,_dirGood,_n9,_pe,_nhit,_itr
-    return total,total/totalEvents,total/totalEvents*rateHz,1./totalEvents*rateHz
+    return total,total/totalEvents,total/totalEvents*rateHz,1./totalEvents*rateHz,totalEvents
 
 def pickColor(H,_loc,r_c,o_c,b_c,c_c ):
     if _loc=='PMT':
