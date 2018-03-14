@@ -658,10 +658,10 @@ def sensitivityMapPass2():
     sizeDetc    = 2.*pi*pow(fidRadius/1000.,2)*fidHeight/1000./1000.
     FVkTonRatio = (pow(fidRadius,2)*fidHeight)/(pow(detectorRadius,2)*detectorHeight)
     boulbyRate,imbRate = rates["boulby_S"]*FVkTonRatio,rates["imb_S"]*FVkTonRatio
-    print ' boulby rates: %4.2f per %s per %4.2f kton; [r: %4.2f m; z: %4.2f m]'\
+    print ' boulby rates: %4.2e per %s per %4.2f kton; [r: %4.2f m; z: %4.2f m]'\
     %(boulbyRate,t,sizeDetc,fidRadius/1000.,fidHeight/1000.)
     #fast neutrons
-    print 'Debug',rates["boulby_S"],FVkTonRatio
+    # print 'Debug',rates["boulby_S"],FVkTonRatio
     print '\nEvaluation not based on geoneutrinos.org'
     detectorMedium,detectorMass,reactorPower,reactorStandoff = 1,sizeDetc*1000.,1.5,24.98
     experiment = nuOsc.NeutrinoOscillation(detectorMedium,detectorMass,reactorPower,reactorStandoff)
