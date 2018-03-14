@@ -221,7 +221,7 @@ def sensitivityMapNew():
     rates       = parameters[11]
     FVkTonRatio = (pow(fidRadius,2)*fidHeight)/(pow(detectorRadius,2)*detectorHeight)
     boulbyRate,imbRate = rates["boulby_S"]*FVkTonRatio,rates["imb_S"]*FVkTonRatio
-    print 'rates:',imbRate,boulbyRate, ' per ', t
+    print 'rates:',imbRate,boulbyRate, ' per ', t, '(',rates,FVkTonRatio,')'
 
     #fast neutrons
     proc        += ['QGSP_BERT_EMV','QGSP_BERT_EMX','QGSP_BERT','QGSP_BIC',\
@@ -769,7 +769,7 @@ def sensitivityMapPass2():
         h['hist%s'%('Sum')].Add(h['hist%s'%(_proc)],1)
         h['hist%s'%(_proc)].SaveAs('h%s.C'%(_proc))
         h['hist%s'%(_proc)].SaveAs('h%s.gif'%(_proc))
-    h['hist%s'%('Sum')].SaveAs('h%s.C'%('Sum'))    
+    h['hist%s'%('Sum')].SaveAs('h%s.C'%('Sum'))
 
 def runSensitivity():
     hBoulby = TH2D('hBoulby','hBoulby',50,0.5,50.5,50,0.5,50.5)
