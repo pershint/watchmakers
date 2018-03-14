@@ -12,6 +12,10 @@ t = arguments['--timeScale']
 
 fidRadius = float(arguments['--tankRadius'])-float(arguments['--steelThick'])-float(arguments['--shieldThick'])-float(arguments['--fidThick'])
 fidHeight = float(arguments['--halfHeight'])-float(arguments['--steelThick'])-float(arguments['--shieldThick'])-float(arguments['--fidThick'])
+
+pmtRadius = float(arguments['--tankRadius'])-float(arguments['--steelThick'])-float(arguments['--shieldThick'])
+pmtHeight = float(arguments['--halfHeight'])-float(arguments['--steelThick'])-float(arguments['--shieldThick'])
+
 detectorRadius  = float(arguments['--tankRadius'])-float(arguments['--steelThick'])
 detectorHeight  = float(arguments['--halfHeight'])-float(arguments['--steelThick'])
 
@@ -656,6 +660,7 @@ def sensitivityMapPass2():
     parameters  = loadAnalysisParameters(t)
     rates       = parameters[11]
     sizeDetc    = 2.*pi*pow(fidRadius/1000.,2)*fidHeight/1000./1000.
+    sizeTank    = 2.*pi*pow(tankRadius/1000.,2)*tankHeight/1000./1000.
     FVkTonRatio = (pow(fidRadius,2)*fidHeight)/(pow(detectorRadius,2)*detectorHeight)
     boulbyRate,imbRate = rates["boulby_S"]*FVkTonRatio,rates["imb_S"]*FVkTonRatio
     print ' boulby rates: %4.2e per %s per %4.2f kton; [r: %4.2f m; z: %4.2f m]'\
@@ -799,8 +804,10 @@ def sensitivityMapPass2():
                 rateHz = minR
                 eff = 1./total
             rate = rateHz*24.*3600./timeAdjustment
+            sizeFV    = 2.*pi*pow((pmtRadius-_d)/1000.,2)*(pmtHeight-_d)/1000./1000.
             h['hist%s'%(_proc)].Fill(_d,8,rate)
-            h['eff%s'%(_proc)].Fill(_d,8,eff)
+            h['eff%s'%(_proc)].Fill(_d,8,eff*sizeTank/sizeFV)
+
             print '\n',_d,eff,rateHz*24.*3600./timeAdjustment,
             for _n in range(9,25):
                 total,eff,rateHz,minR = obtainNeutronLike('25pct',_proc,_distance2pmt=_d,_n9=_n)
