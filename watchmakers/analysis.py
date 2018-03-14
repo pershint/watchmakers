@@ -1176,9 +1176,10 @@ _pe=8,_nhit=8,_itr = 1.5):
     cond += "&& good_pos>%f && good_dir>%f " %(_posGood,_dirGood)
     cond += "&& n9 > %f && nhit > %f && pe > %f" %(_n9,_nhit,_pe)
     cond += "&& pe/nhit < %f" %(_itr)
-    total = data.Draw("",cond,"goff")
+    evts = data.Draw("",cond,"goff")
     # print total,total/totalEvents,total/totalEvents*rateHz,':',cover,process,_distance2pmt,_posGood,_dirGood,_n9,_pe,_nhit,_itr
-    return total,total/totalEvents,total/totalEvents*rateHz,1./totalEvents*rateHz,totalEvents
+
+    return evts,evts/totalEvents,evts/totalEvents*rateHz,1./totalEvents*rateHz,totalEvents
 
 def pickColor(H,_loc,r_c,o_c,b_c,c_c ):
     if _loc=='PMT':
