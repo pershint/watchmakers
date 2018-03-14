@@ -816,10 +816,10 @@ def sensitivityMapPass2():
                     eff = 1./tot
                 # print rateHz*24.*3600./timeAdjustment,
                 sizeFV    = 2.*pi*pow((pmtRadius/1000.-_d),2)*(pmtHeight/1000.-_d)/1000.
-                print eff,'(',eff*sizeTank/sizeFV,')','
+                print eff,'(',eff*sizeTank/sizeFV,,sizeFV,sizeTank')','
                 rate = rateHz*24.*3600./timeAdjustment
                 h['hist%s'%(_proc)].Fill(_d,_n,rate)
-                print pmtRadius/1000.
+                # print pmtRadius/1000.
                 h['eff%s'%(_proc)].Fill(_d,_n,eff*sizeTank/sizeFV)
         print ''
         h['hist%s'%(_proc)].SaveAs('h%s.C'%(_proc))
