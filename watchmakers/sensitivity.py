@@ -804,7 +804,7 @@ def sensitivityMapPass2():
                 rateHz = minR
                 eff = 1./total
             rate = rateHz*24.*3600./timeAdjustment
-            sizeFV    = 2.*pi*pow((pmtRadius-_d)/1000.,2)*(pmtHeight-_d)/1000./1000.
+            sizeFV    = 2.*pi*pow(pmtRadius/1000.-_d,2)*(pmtHeight/1000.-_d)/1000./1000.
             h['hist%s'%(_proc)].Fill(_d,8,rate)
             h['eff%s'%(_proc)].Fill(_d,8,eff*sizeTank/sizeFV)
 
@@ -816,11 +816,15 @@ def sensitivityMapPass2():
                 print rateHz*24.*3600./timeAdjustment,
                 rate = rateHz*24.*3600./timeAdjustment
                 h['hist%s'%(_proc)].Fill(_d,_n,rate)
-                sizeFV    = 2.*pi*pow((pmtRadius-_d)/1000.,2)*(pmtHeight-_d)/1000./1000.
+                sizeFV    = 2.*pi*pow((pmtRadius/1000.-_d),2)*(pmtHeight/1000.-_d)/1000.
                 h['eff%s'%(_proc)].Fill(_d,_n,eff*sizeTank/sizeFV)
         print ''
         h['hist%s'%(_proc)].SaveAs('h%s.C'%(_proc))
         h['eff%s'%(_proc)].SaveAs('eff%s.C'%(_proc))
+
+
+    for _d in drange(0.5,3.5,0.1):
+        for _n in range(9,25):
 
 def runSensitivity():
     hBoulby = TH2D('hBoulby','hBoulby',50,0.5,50.5,50,0.5,50.5)
