@@ -804,7 +804,7 @@ def sensitivityMapPass2():
                 rateHz = minR
                 eff = 1./total
             rate = rateHz*24.*3600./timeAdjustment
-            sizeFV    = 2.*pi*pow(pmtRadius/1000.-_d,2)*(pmtHeight/1000.-_d)/1000./1000.
+            sizeFV    =  2.*pi*pow((pmtRadius/1000.-_d),2)*(pmtHeight/1000.-_d)/1000.
             h['hist%s'%(_proc)].Fill(_d,8,rate)
             h['eff%s'%(_proc)].Fill(_d,8,eff*sizeTank/sizeFV)
 
