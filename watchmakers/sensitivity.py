@@ -813,6 +813,7 @@ def sensitivityMapPass2():
                 total,eff,rateHz,minR,tot = obtainNeutronLike('25pct',_proc,_distance2pmt=_d,_n9=_n)
                 if rateHz == 0:
                     rateHz = minR
+                    eff = 1./total
                 print rateHz*24.*3600./timeAdjustment,
                 rate = rateHz*24.*3600./timeAdjustment
                 h['hist%s'%(_proc)].Fill(_d,_n,rate)
