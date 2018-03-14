@@ -802,7 +802,7 @@ def sensitivityMapPass2():
             total,eff,rateHz,minR,tot = obtainNeutronLike('25pct',_proc,_distance2pmt=_d,_n9=8)
             if rateHz == 0:
                 rateHz = minR
-                eff = 1./total
+                eff = 1./tot
             rate = rateHz*24.*3600./timeAdjustment
             sizeFV    =  2.*pi*pow((pmtRadius/1000.-_d),2)*(pmtHeight/1000.-_d)/1000.
             h['hist%s'%(_proc)].Fill(_d,8,rate)
@@ -813,11 +813,12 @@ def sensitivityMapPass2():
                 total,eff,rateHz,minR,tot = obtainNeutronLike('25pct',_proc,_distance2pmt=_d,_n9=_n)
                 if rateHz == 0:
                     rateHz = minR
-                    eff = 1./total
+                    eff = 1./tot
                 print rateHz*24.*3600./timeAdjustment,
                 rate = rateHz*24.*3600./timeAdjustment
                 h['hist%s'%(_proc)].Fill(_d,_n,rate)
                 sizeFV    = 2.*pi*pow((pmtRadius/1000.-_d),2)*(pmtHeight/1000.-_d)/1000.
+                print pmtRadius/1000.
                 h['eff%s'%(_proc)].Fill(_d,_n,eff*sizeTank/sizeFV)
         print ''
         h['hist%s'%(_proc)].SaveAs('h%s.C'%(_proc))
