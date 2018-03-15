@@ -850,7 +850,7 @@ def sensitivityMapPass2():
             _d_v  = h['hist%s'%('Sum')].GetBinContent(_db+offset,_nb+offset)
 
             print "Accidental       : Wall distance (%f,%f), n9 cut (%f,%f), rate (%f,%f): combined rate : %f"\
-            %(_p_d,_n_d,_p_n9,_n_n9,_p_v,_d_v,_p_v*_n_v,*timeAcc)
+            %(_p_d,_n_d,_p_n9,_n_n9,_p_v,_d_v,_p_v*_n_v*timeAcc)
 
 #             print _db,_nb,h['eff%s'%('boulby')].GetBinContent(_db,_nb)*h['eff%s'%('neutron')].GetBinContent(_db+5,_nb+5),\
 # h['hist%s'%('Sum')].GetBinContent(_db,_nb)* h['hist%s'%('Sum')].GetBinContent(_db+5,_nb+5)
