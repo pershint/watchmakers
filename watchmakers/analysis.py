@@ -1152,7 +1152,7 @@ def obtainAbsoluteEfficiency(f,timeScale='day',cut = 10.0):
     return EG
 
 
-def obtainNeutronLike(cover,process,_distance2pmt=1,_n9=8,_posGood=0.1,_dirGood=0.1,\
+def obtainNeutronLike(cover,process,_distance2pmt=1,_n9=8,_dist=30.0,_posGood=0.1,_dirGood=0.1,\
 _pe=8,_nhit=8,_itr = 1.5):
     # covPCT  = coveragePCT[cover]
     para = testEnabledCondition(arguments)
@@ -1176,6 +1176,7 @@ _pe=8,_nhit=8,_itr = 1.5):
     cond += "&& good_pos>%f && good_dir>%f " %(_posGood,_dirGood)
     cond += "&& n9 > %f && nhit > %f && pe > %f" %(_n9,_nhit,_pe)
     cond += "&& pe/nhit < %f" %(_itr)
+    cond += "&& sqrt(pow(x-mcx,2)+pow(x-mcx,2)+pow(x-mcx,2))<%f"%(_dist)
     evts = data.Draw("",cond,"goff")
     # print total,total/totalEvents,total/totalEvents*rateHz,':',cover,process,_distance2pmt,_posGood,_dirGood,_n9,_pe,_nhit,_itr
 
