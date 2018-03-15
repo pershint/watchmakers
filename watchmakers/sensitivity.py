@@ -882,11 +882,11 @@ def sensitivityMapPass2():
 
             print "Accidental       : Wall distance (%4.1f,%4.1f), n9 cut (%d,%d), rate (%4.3f,%4.3f): combined rate : %4.3f per day"\
             %(_p_d,_n_d,_p_n9,_n_n9,_p_v,_n_v,_p_v*_n_v*timeAcc)
-            _background = _p_v*_n_v*timeAcc
+            _background = _p_v*_n_v*timeAcc*0.05
 
             h['offset_S%s'%(_proc)].SetBinContent(_db,_nb,_signal)
             h['offset_B%s'%(_proc)].SetBinContent(_db,_nb,_background)
-            h['offset_SoverB%s'%(_proc)].SetBinContent(_db,_nb,_signal/_background)
+            h['offset_SoverB%s'%(_proc)].SetBinContent(_db,_nb,_signal/sqrt(_signal+_background))
 
 
     h['offset_S%s'%(_proc)].SaveAs("ibdSignal.C")
