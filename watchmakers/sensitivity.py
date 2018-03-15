@@ -831,6 +831,32 @@ def sensitivityMapPass2():
 
     offset = 5
     timeAcc = 0.0001*86400.
+
+    h['offset_S%s'%(_proc)] = TH2D('offset_S%s'%(_proc),'%s Rate of events -  %s '%(_proc,location),binR,rangeRmin,rangeRmax,binN,rangeNmin,rangeNmax)
+    h['offset_S%s'%(_proc)].SetXTitle('distance from wall [m]')
+    h['offset_S%s'%(_proc)].SetYTitle('n9 cut')
+    h['offset_S%s'%(_proc)].SetZTitle('rate per day')
+    h['offset_S%s'%(_proc)].GetZaxis().SetTitleOffset(-.55);
+    h['offset_S%s'%(_proc)].GetZaxis().SetTitleColor(1);
+    h['offset_S%s'%(_proc)].GetZaxis().CenterTitle();
+
+    h['offset_B%s'%(_proc)] = TH2D('offset_B%s'%(_proc),'%s Rate of events -  %s '%(_proc,location),binR,rangeRmin,rangeRmax,binN,rangeNmin,rangeNmax)
+    h['offset_B%s'%(_proc)].SetXTitle('distance from wall [m]')
+    h['offset_B%s'%(_proc)].SetYTitle('n9 cut')
+    h['offset_B%s'%(_proc)].SetZTitle('rate per day')
+    h['offset_B%s'%(_proc)].GetZaxis().SetTitleOffset(-.55);
+    h['offset_B%s'%(_proc)].GetZaxis().SetTitleColor(1);
+    h['offset_B%s'%(_proc)].GetZaxis().CenterTitle();
+
+    h['offset_SoverB%s'%(_proc)] = TH2D('offset_SoverB%s'%(_proc),'%s Rate of events -  %s '%(_proc,location),binR,rangeRmin,rangeRmax,binN,rangeNmin,rangeNmax)
+    h['offset_SoverB%s'%(_proc)].SetXTitle('distance from wall [m]')
+    h['offset_SoverB%s'%(_proc)].SetYTitle('n9 cut')
+    h['offset_SoverB%s'%(_proc)].SetZTitle('rate per day')
+    h['offset_SoverB%s'%(_proc)].GetZaxis().SetTitleOffset(-.55);
+    h['offset_SoverB%s'%(_proc)].GetZaxis().SetTitleColor(1);
+    h['offset_SoverB%s'%(_proc)].GetZaxis().CenterTitle();
+
+
     for _db in range(binR-offset):
         for _nb in range(binN-offset):
             _p_d  = h['eff%s'%('boulby')].GetXaxis().GetBinCenter(_db)
@@ -842,6 +868,7 @@ def sensitivityMapPass2():
             _rate_v  = h['hist%s'%('neutron')].GetBinContent(_db+offset,_nb+offset)
             print "Positron/neutron: Wall distance (%f,%f), n9 cut (%f,%f), efficiency (%f,%f): combined eff/rate : %f per day"\
             %(_p_d,_n_d,_p_n9,_n_n9,_p_v,_n_v,_rate_v*_p_v*86400.)
+            _signal = _rate_v*_p_v*86400.
 
             _p_d  = h['hist%s'%('Sum')].GetXaxis().GetBinCenter(_db)
             _p_n9 = h['hist%s'%('Sum')].GetYaxis().GetBinCenter(_nb)
@@ -852,6 +879,16 @@ def sensitivityMapPass2():
 
             print "Accidental       : Wall distance (%f,%f), n9 cut (%f,%f), rate (%f,%f): combined rate : %f per day"\
             %(_p_d,_n_d,_p_n9,_n_n9,_p_v,_n_v,_p_v*_n_v*timeAcc)
+            _background = _p_v*_n_v*timeAcc
+
+            h['offset_S%s'%(_proc)].Fill(_db,_nb,_signal)
+            h['offset_B%s'%(_proc)].Fill(_db,_nb,_background)
+            h['offset_SoverB%s'%(_proc)].Fill(_db,_nb,_signal/_background)
+
+
+    h['offset_S%s'%(_proc)].SaveAs("ibdSignal.C")
+    h['offset_B%s'%(_proc)].SaveAs("ibdBackground.C")
+    h['offset_SoverB%s'%(_proc)].SaveAs("ibdSignalOverBackground.C")
 
 #             print _db,_nb,h['eff%s'%('boulby')].GetBinContent(_db,_nb)*h['eff%s'%('neutron')].GetBinContent(_db+5,_nb+5),\
 # h['hist%s'%('Sum')].GetBinContent(_db,_nb)* h['hist%s'%('Sum')].GetBinContent(_db+5,_nb+5)
