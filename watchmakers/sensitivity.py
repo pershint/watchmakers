@@ -866,7 +866,7 @@ def sensitivityMapPass2():
             _p_v  = h['eff%s'%('boulby')].GetBinContent(_db,_nb)
             _n_v  = h['eff%s'%('neutron')].GetBinContent(_db+offset,_nb+offset)
             _rate_v  = h['hist%s'%('neutron')].GetBinContent(_db+offset,_nb+offset)
-            print "Positron/neutron: Wall distance (%f,%f), n9 cut (%f,%f), efficiency (%f,%f): combined eff/rate : %f per day"\
+            print "Positron/neutron: Wall distance (%4.1f,%4.1f), n9 cut (%d,%d), efficiency (%4.3f,%4.3f): combined eff/rate : %4.3f per day"\
             %(_p_d,_n_d,_p_n9,_n_n9,_p_v,_n_v,_rate_v*_p_v*86400.)
             _signal = _rate_v*_p_v*86400.
 
@@ -877,7 +877,7 @@ def sensitivityMapPass2():
             _p_v  = h['hist%s'%('Sum')].GetBinContent(_db,_nb)
             _n_v  = h['hist%s'%('Sum')].GetBinContent(_db+offset,_nb+offset)
 
-            print "Accidental       : Wall distance (%f,%f), n9 cut (%f,%f), rate (%f,%f): combined rate : %f per day"\
+            print "Accidental       : Wall distance (%4.1f,%4.1f), n9 cut (%d,%d), rate (%4.3f,%4.3f): combined rate : %4.3f per day"\
             %(_p_d,_n_d,_p_n9,_n_n9,_p_v,_n_v,_p_v*_n_v*timeAcc)
             _background = _p_v*_n_v*timeAcc
 
