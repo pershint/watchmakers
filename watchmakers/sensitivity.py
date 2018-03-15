@@ -839,18 +839,18 @@ def sensitivityMapPass2():
             _p_v  = h['eff%s'%('boulby')].GetBinContent(_db,_nb)
             _n_v  = h['eff%s'%('neutron')].GetBinContent(_db+offset,_nb+offset)
             _rate_v  = h['hist%s'%('neutron')].GetBinContent(_db+offset,_nb+offset)
-            print "Positron/neutron: Wall distance (%f,%f), n9 cut (%f,%f), efficiency (%f,%f): combined eff/rate : %f"\
-            %(_p_d,_n_d,_p_n9,_n_n9,_p_v,_n_v,_rate_v*_p_v)
+            print "Positron/neutron: Wall distance (%f,%f), n9 cut (%f,%f), efficiency (%f,%f): combined eff/rate : %f per day"\
+            %(_p_d,_n_d,_p_n9,_n_n9,_p_v,_n_v,_rate_v*_p_v*86400.)
 
-            # _p_d  = h['hist%s'%('Sum')].GetXaxis().GetBinCenter(_db)
-            # _p_n9 = h['hist%s'%('Sum')].GetYaxis().GetBinCenter(_nb)
-            # _n_d  = h['hist%s'%('Sum')].GetXaxis().GetBinCenter(_db+offset)
-            # _n_n9 = h['hist%s'%('Sum')].GetYaxis().GetBinCenter(_nb+offset)
-            # _p_v  = h['hist%s'%('Sum')].GetBinContent(_db,_nb)
-            # _n_v  = h['hist%s'%('Sum')].GetBinContent(_db+offset,_nb+offset)
-            #
-            # print "Accidental       : Wall distance (%f,%f), n9 cut (%f,%f), rate (%f,%f): combined rate : %f"\
-            # %(_p_d,_n_d,_p_n9,_n_n9,_p_v,_n_v,_p_v*_n_v*timeAcc)
+            _p_d  = h['hist%s'%('Sum')].GetXaxis().GetBinCenter(_db)
+            _p_n9 = h['hist%s'%('Sum')].GetYaxis().GetBinCenter(_nb)
+            _n_d  = h['hist%s'%('Sum')].GetXaxis().GetBinCenter(_db+offset)
+            _n_n9 = h['hist%s'%('Sum')].GetYaxis().GetBinCenter(_nb+offset)
+            _p_v  = h['hist%s'%('Sum')].GetBinContent(_db,_nb)
+            _n_v  = h['hist%s'%('Sum')].GetBinContent(_db+offset,_nb+offset)
+
+            print "Accidental       : Wall distance (%f,%f), n9 cut (%f,%f), rate (%f,%f): combined rate : %f per day"\
+            %(_p_d,_n_d,_p_n9,_n_n9,_p_v,_n_v,_p_v*_n_v*timeAcc)
 
 #             print _db,_nb,h['eff%s'%('boulby')].GetBinContent(_db,_nb)*h['eff%s'%('neutron')].GetBinContent(_db+5,_nb+5),\
 # h['hist%s'%('Sum')].GetBinContent(_db,_nb)* h['hist%s'%('Sum')].GetBinContent(_db+5,_nb+5)
