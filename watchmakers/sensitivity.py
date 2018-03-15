@@ -739,6 +739,7 @@ def sensitivityMapPass2():
     binN,rangeNmin,rangeNmax = 18,7.5,25.5
 
     proc = ['214Bi_PMT','208Tl_PMT','210Tl_PMT']
+    proc = ['214Bi_PMT','208Tl_PMT']
     _proc = 'Sum'
     h['hist%s'%(_proc)] = TH2D('hist%s'%(_proc),'%s Rate of events -  %s '%(_proc,location),binR,rangeRmin,rangeRmax,binN,rangeNmin,rangeNmax)
     h['hist%s'%(_proc)].SetXTitle('distance from wall [m]')
@@ -836,10 +837,10 @@ def sensitivityMapPass2():
             _n_d  = h['eff%s'%('neutron')].GetXaxis().GetBinCenter(_db+offset)
             _n_n9 = h['eff%s'%('neutron')].GetYaxis().GetBinCenter(_nb+offset)
             _p_v  = h['eff%s'%('boulby')].GetBinContent(_db,_nb)
-            _d_v  = h['eff%s'%('neutron')].GetBinContent(_db+offset,_nb+offset)
-
-            print "Positron/neutron: Wall distance (%f,%f), n9 cut (%f,%f), efficiency (%f,%f): combined eff : %f"\
-            %(_p_d,_n_d,_p_n9,_d_n9,_p_v,_d_v,_p_v*_d_v)
+            _n_v  = h['eff%s'%('neutron')].GetBinContent(_db+offset,_nb+offset)
+            _rate_v  = h['hist%s'%('neutron')].GetBinContent(_db+offset,_nb+offset)
+            print "Positron/neutron: Wall distance (%f,%f), n9 cut (%f,%f), efficiency (%f,%f): combined eff/rate : %f"\
+            %(_p_d,_n_d,_p_n9,_n_n9,_p_v,_d_v,_p_v*_n_v,_rate_v*_p_v)
 
             _p_d  = h['hist%s'%('Sum')].GetXaxis().GetBinCenter(_db)
             _p_n9 = h['hist%s'%('Sum')].GetYaxis().GetBinCenter(_nb)
@@ -849,7 +850,7 @@ def sensitivityMapPass2():
             _d_v  = h['hist%s'%('Sum')].GetBinContent(_db+offset,_nb+offset)
 
             print "Accidental       : Wall distance (%f,%f), n9 cut (%f,%f), rate (%f,%f): combined rate : %f"\
-            %(_p_d,_n_d,_p_n9,_d_n9,_p_v,_d_v,_p_v*_d_v*timeAcc)
+            %(_p_d,_n_d,_p_n9,_n_n9,_p_v,_d_v,_p_v*_n_v,*timeAcc)
 
 #             print _db,_nb,h['eff%s'%('boulby')].GetBinContent(_db,_nb)*h['eff%s'%('neutron')].GetBinContent(_db+5,_nb+5),\
 # h['hist%s'%('Sum')].GetBinContent(_db,_nb)* h['hist%s'%('Sum')].GetBinContent(_db+5,_nb+5)
