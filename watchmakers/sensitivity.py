@@ -840,7 +840,7 @@ def sensitivityMapPass2():
             _n_v  = h['eff%s'%('neutron')].GetBinContent(_db+offset,_nb+offset)
             _rate_v  = h['hist%s'%('neutron')].GetBinContent(_db+offset,_nb+offset)
             print "Positron/neutron: Wall distance (%f,%f), n9 cut (%f,%f), efficiency (%f,%f): combined eff/rate : %f"\
-            %(_p_d,_n_d,_p_n9,_n_n9,_p_v,_n_v,_p_v*_n_v,_rate_v*_p_v)
+            %(_p_d,_n_d,_p_n9,_n_n9,_p_v,_n_v,_rate_v*_p_v)
 
             # _p_d  = h['hist%s'%('Sum')].GetXaxis().GetBinCenter(_db)
             # _p_n9 = h['hist%s'%('Sum')].GetYaxis().GetBinCenter(_nb)
