@@ -740,7 +740,7 @@ def sensitivityMapPass2():
 
     proc = ['214Bi_PMT','208Tl_PMT','210Tl_PMT']
     proc = ['214Bi_PMT','208Tl_PMT']
-    proc = ['208Tl_PMT']
+    proc = ['214Bi_WV','208Tl_PMT']
     _proc = 'Sum'
     h['hist%s'%(_proc)] = TH2D('hist%s'%(_proc),'%s Rate of events -  %s '%(_proc,location),binR,rangeRmin,rangeRmax,binN,rangeNmin,rangeNmax)
     h['hist%s'%(_proc)].SetXTitle('distance from wall [m]')
