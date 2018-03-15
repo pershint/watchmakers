@@ -832,6 +832,7 @@ def sensitivityMapPass2():
     offset = 5
     timeAcc = 0.0001*86400.
 
+    _proc = 'happyTime'
     h['offset_S%s'%(_proc)] = TH2D('offset_S%s'%(_proc),'%s Rate of events -  %s '%(_proc,location),binR,rangeRmin,rangeRmax,binN,rangeNmin,rangeNmax)
     h['offset_S%s'%(_proc)].SetXTitle('distance from wall [m]')
     h['offset_S%s'%(_proc)].SetYTitle('n9 cut')
@@ -883,9 +884,9 @@ def sensitivityMapPass2():
             %(_p_d,_n_d,_p_n9,_n_n9,_p_v,_n_v,_p_v*_n_v*timeAcc)
             _background = _p_v*_n_v*timeAcc
 
-            h['offset_S%s'%(_proc)].Fill(_db,_nb,_signal)
-            h['offset_B%s'%(_proc)].Fill(_db,_nb,_background)
-            h['offset_SoverB%s'%(_proc)].Fill(_db,_nb,_signal/_background)
+            h['offset_S%s'%(_proc)].SetBinContent(_db,_nb,_signal)
+            h['offset_B%s'%(_proc)].SetBinContent(_db,_nb,_background)
+            h['offset_SoverB%s'%(_proc)].SetBinContent(_db,_nb,_signal/_background)
 
 
     h['offset_S%s'%(_proc)].SaveAs("ibdSignal.C")
