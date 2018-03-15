@@ -859,6 +859,8 @@ def sensitivityMapPass2():
 
     for _db in range(binR-offset):
         for _nb in range(binN-offset):
+            _db+=1
+            _nb+=1
             _p_d  = h['eff%s'%('boulby')].GetXaxis().GetBinCenter(_db)
             _p_n9 = h['eff%s'%('boulby')].GetYaxis().GetBinCenter(_nb)
             _n_d  = h['eff%s'%('neutron')].GetXaxis().GetBinCenter(_db+offset)
