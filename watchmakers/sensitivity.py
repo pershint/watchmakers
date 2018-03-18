@@ -736,7 +736,10 @@ def sensitivityMapPass2():
     h = {}
 
     binR,rangeRmin,rangeRmax = 31,0.45,3.55
+    binwidthR = (rangeRmax-rangeRmin)/binR
     binN,rangeNmin,rangeNmax = 28,7.5,35.5
+    binwidthN = (rangeNmax-rangeNmin)/binN
+
     _cov = '25pct'
 
     proc = ['214Bi_PMT','208Tl_PMT','210Tl_PMT']
@@ -761,14 +764,14 @@ def sensitivityMapPass2():
         h['hist%s'%(_proc)].GetZaxis().CenterTitle();
         gStyle.SetOptStat(0)
         gStyle.SetPalette(55)
-        for _d in drange(0.5,3.5,0.1):
+        for _d in drange(rangeRmin+binwidthR/2.,rangeRmax,binwidthR):
             _evts,eff,rateHz,minR,tot = obtainNeutronLike(_cov,_proc,_distance2pmt=_d,_n9=8)
             if rateHz == 0:
                 rateHz = minR
             rate = rateHz*24.*3600./timeAdjustment
-            h['hist%s'%(_proc)].Fill(_d,8,rate)
+            h['hist%s'%(_proc)].Fill(_d,rangeNmin+binwidthN/2.0,rate)
             print '\n',_d,eff,rateHz*24.*3600./timeAdjustment,
-            for _n in range(9,25):
+            for _n in range(rangeNmin+binwidthN/2.0+1,rangeNmax):
                 _evts,eff,rateHz,minR,tot = obtainNeutronLike(_cov,_proc,_distance2pmt=_d,_n9=_n)
                 if rateHz == 0:
                     rateHz = minR
