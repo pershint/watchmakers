@@ -1152,8 +1152,8 @@ def obtainAbsoluteEfficiency(f,timeScale='day',cut = 10.0):
     return EG
 
 
-def obtainNeutronLike(cover,process,_distance2pmt=1,_n9=8,_dist=30.0,_posGood=0.1,_dirGood=0.1,\
-_pe=8,_nhit=8,_itr = 1.5):
+def obtainNeutronLike(cover,process,_distance2pmt=1,_n9=8,_dist=30.0,\
+_posGood=0.1,_dirGood=0.1,_pe=8,_nhit=8,_itr = 1.5):
     # covPCT  = coveragePCT[cover]
     para = testEnabledCondition(arguments)
     additionalString  = para[0]
