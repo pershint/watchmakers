@@ -806,7 +806,7 @@ def sensitivityMapPass2():
 
         gStyle.SetOptStat(0)
         gStyle.SetPalette(55)
-        for _d in drange(0.5,3.5,0.1):
+        for _d in drange(rangeRmin+binwidthR/2.,rangeRmax,binwidthR):
             _evts,eff,rateHz,minR,tot = obtainNeutronLike(_cov,_proc,_distance2pmt=_d,_n9=8,_dist=2.0)
             if rateHz == 0:
                 rateHz = minR
@@ -817,7 +817,7 @@ def sensitivityMapPass2():
             h['eff%s'%(_proc)].Fill(_d,8,eff*sizeTank/sizeFV)
 
             print '\n',_d,eff,rateHz*24.*3600./timeAdjustment,
-            for _n in range(9,25):
+            for _n in range(9,rangeNmax):
                 _evts,eff,rateHz,minR,tot = obtainNeutronLike(_cov,_proc,_distance2pmt=_d,_n9=_n,_dist=2.0)
                 if rateHz == 0:
                     rateHz = minR
