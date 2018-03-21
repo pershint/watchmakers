@@ -740,7 +740,7 @@ def sensitivityMapPass2():
     binN,rangeNmin,rangeNmax = 48,7.5,55.5
     binwidthN = (rangeNmax-rangeNmin)/binN
 
-    _cov = '25pct'
+    _cov = arguments['-C']
 
     proc = ['214Bi_PMT','208Tl_PMT','210Tl_PMT']
     proc = ['214Bi_PMT','208Tl_PMT']
@@ -780,9 +780,9 @@ def sensitivityMapPass2():
                 h['hist%s'%(_proc)].Fill(_d,_n,rate)
         print ''
         h['hist%s'%('Sum')].Add(h['hist%s'%(_proc)],1)
-        h['hist%s'%(_proc)].SaveAs('h%s.C'%(_proc))
-        h['hist%s'%(_proc)].SaveAs('h%s.gif'%(_proc))
-    h['hist%s'%('Sum')].SaveAs('h%s.C'%('Sum'))
+        h['hist%s'%(_proc)].SaveAs('h%s%s.C'%(_proc,_cov))
+        h['hist%s'%(_proc)].SaveAs('h%s%s.gif'%(_proc,_cov))
+    h['hist%s'%('Sum')].SaveAs('h%s%s.C'%('Sum',_cov))
 
     procS = ['boulby','neutron']
 
@@ -903,7 +903,7 @@ def sensitivityMapPass2():
             h['S%s'%(_proc)].SaveAs("ibdSignal%s.C"%(_proc))
             h['B%s'%(_proc)].SaveAs("ibdBackground%s.C"%(_proc))
             h['SoverB%s'%(_proc)].SaveAs("ibdSignalOverBackground%s.C"%(_proc))
-
+            print _proc,h['SoverB%s'%(_proc)].GetMaximum()
 
 def runSensitivity():
     hBoulby = TH2D('hBoulby','hBoulby',50,0.5,50.5,50,0.5,50.5)
