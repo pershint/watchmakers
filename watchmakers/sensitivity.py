@@ -841,9 +841,9 @@ def sensitivityMapPass2():
     for offset in offsets_n9:
         for fv_offset in offsets_dtw:
             if fv_offset < 0:
-                _proc = '_%d_neg%d_%s'%(offset,-offset_dtw,_cov)
+                _proc = '_%d_neg%d_%s'%(offset,-fv_offset,_cov)
             else:
-                _proc = '_%d_%d_%s'%(offset,offset_dtw,_cov)
+                _proc = '_%d_%d_%s'%(offset,fv_offset,_cov)
 
             h['S%s'%(_proc)] = TH2D('S%s'%(_proc),'%s Rate of events -  %s '%(_proc,location),binR,rangeRmin,rangeRmax,binN,rangeNmin,rangeNmax)
             h['S%s'%(_proc)].SetXTitle('distance from wall [m]')
@@ -869,27 +869,27 @@ def sensitivityMapPass2():
             h['SoverB%s'%(_proc)].GetZaxis().SetTitleColor(1);
             h['SoverB%s'%(_proc)].GetZaxis().CenterTitle();
 
-            for _d in range(binR-offset-1):
+            for _d in range(binR-fv_offset-1):
                 for _n in range(binN-offset-1):
                     _db=_d+1
                     _nb=_n+1
                     _p_d  = h['eff%s'%('boulby')].GetXaxis().GetBinCenter(_db)
                     _p_n9 = h['eff%s'%('boulby')].GetYaxis().GetBinCenter(_nb)
-                    _n_d  = h['eff%s'%('neutron')].GetXaxis().GetBinCenter(_db+offset)
+                    _n_d  = h['eff%s'%('neutron')].GetXaxis().GetBinCenter(_db+fv_offset)
                     _n_n9 = h['eff%s'%('neutron')].GetYaxis().GetBinCenter(_nb+offset)
                     _p_v  = h['eff%s'%('boulby')].GetBinContent(_db,_nb)
-                    _n_v  = h['eff%s'%('neutron')].GetBinContent(_db+offset,_nb+offset)
-                    _rate_v  = h['hist%s'%('neutron')].GetBinContent(_db+offset,_nb+offset)
+                    _n_v  = h['eff%s'%('neutron')].GetBinContent(_db+fv_offset,_nb+offset)
+                    _rate_v  = h['hist%s'%('neutron')].GetBinContent(_db+fv_offset,_nb+offset)
                     print "Positron/neutron: Wall distance (%4.1f,%4.1f), n9 cut (%d,%d), efficiency (%4.3f,%4.3f): combined eff/rate : %4.3f per day"\
                     %(_p_d,_n_d,_p_n9,_n_n9,_p_v,_n_v,_rate_v*_p_v*86400.)
                     _signal = _rate_v*_p_v*86400.
 
                     _p_d  = h['hist%s'%('Sum')].GetXaxis().GetBinCenter(_db)
                     _p_n9 = h['hist%s'%('Sum')].GetYaxis().GetBinCenter(_nb)
-                    _n_d  = h['hist%s'%('Sum')].GetXaxis().GetBinCenter(_db+offset)
+                    _n_d  = h['hist%s'%('Sum')].GetXaxis().GetBinCenter(_db+fv_offset)
                     _n_n9 = h['hist%s'%('Sum')].GetYaxis().GetBinCenter(_nb+offset)
                     _p_v  = h['hist%s'%('Sum')].GetBinContent(_db,_nb)
-                    _n_v  = h['hist%s'%('Sum')].GetBinContent(_db+offset,_nb+offset)
+                    _n_v  = h['hist%s'%('Sum')].GetBinContent(_db+fv_offset,_nb+offset)
 
                     print "Accidental       : Wall distance (%4.1f,%4.1f), n9 cut (%d,%d), rate (%4.3f,%4.3f): combined rate : %4.3f per day"\
                     %(_p_d,_n_d,_p_n9,_n_n9,_p_v,_n_v,_p_v*_n_v*timeAcc)
