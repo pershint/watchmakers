@@ -737,7 +737,7 @@ def sensitivityMapPass2():
 
     binR,rangeRmin,rangeRmax = 31,0.45,3.55
     binwidthR = (rangeRmax-rangeRmin)/binR
-    binN,rangeNmin,rangeNmax = 28,7.5,35.5
+    binN,rangeNmin,rangeNmax = 48,7.5,55.5
     binwidthN = (rangeNmax-rangeNmin)/binN
 
     _cov = '25pct'
@@ -835,7 +835,7 @@ def sensitivityMapPass2():
 
     timeAcc = 0.0001*86400.
 
-    offsets_n9 = [2,4,6,8,10,12,14,16]  ## bin numbers
+    offsets_n9 = [0,2,4,6,8,10,12,14,16]  ## bin numbers
     offsets_dtw = [0]       ## bin numbers
 
     for offset in offsets_n9:
