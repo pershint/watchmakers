@@ -817,7 +817,7 @@ def sensitivityMapPass2():
             h['eff%s'%(_proc)].Fill(_d,8,eff*sizeTank/sizeFV)
 
             print '\n',_d,eff,rateHz*24.*3600./timeAdjustment,
-            for _n in range(9,rangeNmax):
+            for _n in range(9,int(rangeNmax)):
                 _evts,eff,rateHz,minR,tot = obtainNeutronLike(_cov,_proc,_distance2pmt=_d,_n9=_n,_dist=2.0)
                 if rateHz == 0:
                     rateHz = minR
