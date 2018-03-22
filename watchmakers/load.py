@@ -218,10 +218,11 @@ def loadSimulationParametersNew():
         ZA[i] = str(int(A[i])*1000 +int(Z[i]))
     d['A_Z'] =  ZA
 
-    process = {'40K_NA':['WaterVolume','PMT','TANK','concrete','GUNITE','ROCK'],\
-    'CHAIN_238U_NA':['WaterVolume','PMT','TANK','concrete','GUNITE','ROCK'],\
-    'CHAIN_232Th_NA':['WaterVolume','PMT','TANK','concrete','GUNITE','ROCK'],\
-    'CHAIN_222Rn_NA':['WaterVolume','ROCK','concrete'],\
+    process = {'40K_NA':['WaterVolume','PMT','CONCRETE','GUNITE','ROCK'],\
+    'CHAIN_238U_NA':['WaterVolume','PMT','CONCRETE','GUNITE','ROCK'],\
+    'CHAIN_232Th_NA':['WaterVolume','PMT','CONCRETE','GUNITE','ROCK'],\
+    'CHAIN_222Rn_NA':['WaterVolume','ROCK','CONCRETE'],\
+    'TANK_ACTIVITY':['TANK']
     'FN':['ROCK'],\
     'A_Z':['WaterVolume'],\
     'ibd_p':['WaterVolume'],\
@@ -575,8 +576,50 @@ def loadActivity():
     cPMTs = [float(s.strip('pct'))/100.*numPMTs for s in coverage]
     mPMTs = [s*mass for s in cPMTs]
 
-    print "Num pmts", cPMTs
-    print "Total Mass",mPMTs
+    # print "Num pmts", cPMTs
+    # print "Total Mass",mPMTs
+
+    M_U238,Lambda_U238,Abund_U238 = 3.953e-25,4.916e-18,0.992745
+    PPM_U238    = float(arguments["--U238_PPM"])
+    ActivityU238= Lambda_U238*PPM_U238/M_U238/1e6
+    mPMTsU238 = [s*ActivityU238 for s in mPMTs]
+    print 'U238',mPMTsU238
+
+    M_Th232,Lambda_Th232,Abund_Th232 = 3.853145e-25, 1.57e-18,1.0
+    PPM_Th232    = float(arguments["--Th232_PPM"])
+    ActivityTh232= Lambda_Th232*PPM_Th232/M_Th232/1e6
+    mPMTsTh232 = [s*ActivityTh232 for s in mPMTs]
+    print 'Th232',mPMTsTh232
+
+    M_K40,Lambda_K40,Abund_K40 = 6.636286e-26,1.842e-18,0.00117
+    PPM_K40    = float(arguments["--K40_PPM"])
+    ActivityK40= Lambda_K40*PPM_K40/M_K40/1e6
+    mPMTsK40 = [s*ActivityK40 for s in mPMTs]
+    print 'K40',mPMTsK40
+
+    print
+
+    return mPMTs
+
+
+
+
+def loadPMTActivity():
+
+    d,process,coverage = loadSimulationParametersNew()
+
+    ##Evaluate the total mass of PMT glass in kg
+    mass, diameter = 1.4, 10.0/0.039 #inch_per_mm # from Hamamatsu tech details
+    areaPerPMT = pi*diameter*diameter/4.
+    pmtRadius = float(arguments['--tankRadius'])-float(arguments['--steelThick'])-float(arguments['--shieldThick'])
+    pmtHeight = float(arguments['--halfHeight'])-float(arguments['--steelThick'])-float(arguments['--shieldThick'])
+    psupArea = (2*pmtHeight)*2*pi*pmtRadius + 2.*(pi*pmtRadius**2)
+    numPMTs = psupArea/areaPerPMT
+    cPMTs = [float(s.strip('pct'))/100.*numPMTs for s in coverage]
+    mPMTs = [s*mass for s in cPMTs]
+
+    # print "Num pmts", cPMTs
+    # print "Total Mass",mPMTs
 
     M_U238,Lambda_U238,Abund_U238 = 3.953e-25,4.916e-18,0.992745
     PPM_U238    = float(arguments["--U238_PPM"])

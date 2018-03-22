@@ -25,7 +25,10 @@ if __name__ == "__main__":
             generateMacros(int(arguments['-N']),int(arguments['-e']))
 
     if arguments['-j']:
-        generateJobs(int(arguments['-N']),arguments)
+        if arguments['--newVers']:
+            generateJobsNew(int(arguments['-N']),arguments)
+        else:
+            generateJobs(int(arguments['-N']),arguments)
 
     if arguments['-n']:
         extractNtuple(arguments)
