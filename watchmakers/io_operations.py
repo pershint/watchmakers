@@ -153,7 +153,7 @@ def macroGeneratorNew(percentage,location,element,_dict,runs,events,dirOpt):
     '25pct':0.25,'30pct':0.30,'35pct':0.35,'40pct':0.40}
 
     additionalString,additionalCommands,additionalMacStr,additionalMacOpt = testEnabledCondition(arguments)
-
+    d,process,coverage = loadSimulationParametersNew()
     # loadActivity()
 
     #Part of the macro that is the same for all jobs
@@ -186,7 +186,31 @@ def macroGeneratorNew(percentage,location,element,_dict,runs,events,dirOpt):
 #END EVENT LOOP
 ''' %(covPCT[percentage],additionalMacOpt,dir,additionalMacStr,dirOpt,runs)
 
-    return header
+    if element in d['FN']:
+        line1 = '''
+/generator/add combo fastneutron:regexfill:poisson
+/generator/pos/set rock_[0-9]+
+/generator/vtx/set 0 0 0
+/generator/fastneutron/depth %f
+/generator/fastneutron/enthresh 10.0
+/generator/fastneutron/sidewalls 1.0
+/run/beamOn %d'''%(depth,events)
+
+    elif element in d['CHAIN_238U_NA'] or element in d['CHAIN_232Th_NA'] or element in d['40K_NA'] or element in d['TANK_ACTIVITY']:
+        if location == 'PMT':
+            line1 = '''
+/generator/add decaychain %s:regexfill:poisson
+/generator/pos/set inner_pmts[0-9]+
+/generator/rate/set %f
+# /run/beamOn %d''' %(element,rate,events*2)
+        else:
+            line1 = '''
+/generator/add decaychain %s:regexfill:poisson
+/generator/pos/set %s+
+/generator/rate/set %f
+# /run/beamOn %d''' %(element,location,rate,events*2)
+
+    return header+line1
 
 #
 #     #Part of macro that varies with the various conditions
