@@ -18,6 +18,8 @@ def deleteDirectory(directory):
 def testCreateDirectoryIfNotExist(directory):
     if not os.path.exists(directory):
         os.makedirs(directory)
+    else:
+        print 'There is already a directory here. No new directory has been made.'
 
 def macroGenerator(percentage,isotope,location,runs,events):
 
@@ -628,11 +630,11 @@ def generateJobsNew(N,arguments):
                     # print cnt,_p,element,_loc,cover
                     for i in range(N/10+1):
                         dir = "root_files%s/%s/%s/%s/run%08d/"%(additionalMacStr,_cover,_loc,_element,i*10)
-                        testCreateDirectory(dir)
+                        testCreateDirectoryIfNotExist(dir)
                         dir = "bonsai_root_files%s/%s/%s/%s/run%08d/"%(additionalMacStr,_cover,_loc,_element,i*10)
-                        testCreateDirectory(dir)
+                        testCreateDirectoryIfNotExist(dir)
                         dir = "log%s/%s/%s/%s/run%08d/"%(additionalMacStr,_cover,_loc,_element,i*10)
-                        testCreateDirectory(dir)
+                        testCreateDirectoryIfNotExist(dir)
 
 
     '''Make sure that the softlink are correct for Bonsai input'''
@@ -650,13 +652,26 @@ def generateJobsNew(N,arguments):
         os.symlink(src,dst)
 
 
-    directory = 'jobs_case%s%s'%(case,additionalMacStr)
-    if not os.path.exists(directory):
-        os.makedirs(directory)
-    else:
-        rmtree(directory)
-        os.makedirs(directory)
+    # directory = 'jobs_case%s%s'%(case,additionalMacStr)
+    # if not os.path.exists(directory):
+    #     os.makedirs(directory)
+    # else:
+    #     rmtree(directory)
+    #     os.makedirs(directory)
 
+
+
+    for _p in proc:
+        for _loc in proc[_p]:
+            for idx,_cover in enumerate(coverage):
+                for _element in d[_p]:
+                    # print cnt,_p,element,_loc,cover
+                    for i in range(N/10+1):
+                        dir = "jobs%s/%s/%s/%s"%(additionalMacStr,_cover,_loc,_element)
+                        testCreateDirectoryIfNotExist(dir)
+                        outfile = open(dir+'/job%08d.sh'%(i*10),"wb")
+                        outfile.writelines('A')
+                        outfile.close()
     #
     # for ii in loc:
     #     for idx,cover in enumerate(coverage):
@@ -677,19 +692,7 @@ def generateJobsNew(N,arguments):
     #
 
 
-    # '''Make sure that the softlink are correct for Bonsai input'''
-    #
-    # ratDir      = os.environ['RATROOT']
-    #
-    # src = ratDir+'/fit_param.dat'
-    # dst = os.getcwd()+'/fit_param.dat'
-    # if not os.path.exists(dst):
-    #     os.symlink(src,dst)
-    #
-    # src = ratDir+'/like.bin'
-    # dst = os.getcwd()+'/like.bin'
-    # if not os.path.exists(dst):
-    #     os.symlink(src,dst)
+
 
     # job = 'jobs_case%s%s'%(case,additionalMacStr)
     #
