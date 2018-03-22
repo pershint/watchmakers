@@ -160,7 +160,8 @@ def macroGeneratorNew(percentage,location,element,_dict,runs,events,dirOpt):
     dir = os.getcwd()
 
     depth = float(arguments["--depth"])
-
+    rate = 1.0
+    
     header = '''
 /glg4debug/glg4param omit_muon_processes  0.0
 /glg4debug/glg4param omit_hadronic_processes  0.0
@@ -194,7 +195,8 @@ def macroGeneratorNew(percentage,location,element,_dict,runs,events,dirOpt):
 /generator/fastneutron/depth %f
 /generator/fastneutron/enthresh 10.0
 /generator/fastneutron/sidewalls 1.0
-/run/beamOn %d'''%(depth,events)
+/generator/rate/set %f
+/run/beamOn %d'''%(depth,rate,events)
 
     elif element in d['CHAIN_238U_NA'] or element in d['CHAIN_232Th_NA'] or element in d['40K_NA'] or element in d['TANK_ACTIVITY']:
         if location == 'PMT':
