@@ -161,7 +161,7 @@ def macroGeneratorNew(percentage,location,element,_dict,runs,events,dirOpt):
 
     depth = float(arguments["--depth"])
     rate = 1.0
-    
+
     header = '''
 /glg4debug/glg4param omit_muon_processes  0.0
 /glg4debug/glg4param omit_hadronic_processes  0.0
@@ -210,11 +210,26 @@ def macroGeneratorNew(percentage,location,element,_dict,runs,events,dirOpt):
 /generator/add decaychain %s:regexfill:poisson
 /generator/pos/set %s+
 /generator/rate/set %f
-# /run/beamOn %d''' %(element,location,rate,events*2)
+# /run/beamOn %d''' %(element,location.lower(),rate,events*2)
 
+    elif element in d['ibd_p']:
+        line1 ='''
+/generator/add combo spectrum:fill:poisson
+/generator/vtx/set e+ %s
+/generator/pos/set 0 0 0
+/generator/set/rate %f
+/run/beamOn %d'''%(isotope,rate,events)
+
+    elif element in d['ibd_n']:
+        line1 = '''
+/generator/add combo gun2:fill
+/generator/vtx/set %s  0 0 0 0 0.001 0.20
+/generator/pos/set 0 0 0
+/generator/rate/set %f
+/run/beamOn %d'''%(isotope,rate,events)
 
     else:
-        print 'Could not find ',element,location
+        print 'Could not find ',element,location.lower()
         line1 = ''
     return header+line1
 
