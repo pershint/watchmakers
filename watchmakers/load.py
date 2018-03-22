@@ -208,7 +208,7 @@ def loadSimulationParametersNew():
 
     d['ibd_p'] = ['promptPositron']
     d['ibd_n'] = ['delayedNeutron']
-    d['IBD']   = ['promptDelayedPair']
+    d['pn_ibd']   = ['promptDelayedPair']
     # Fast neutron contamination
     d['FN'] = ['QGSP_BERT_EMV','QGSP_BERT_EMX','QGSP_BERT','QGSP_BIC','QBBC',\
     'QBBC_EMZ','FTFP_BERT','QGSP_FTFP_BERT']
@@ -227,7 +227,7 @@ def loadSimulationParametersNew():
     'A_Z':['WaterVolume'],\
     'ibd_p':['WaterVolume'],\
     'ibd_n':['WaterVolume'],\
-    'IBD':['WaterVolume']}
+    'pn_ibd':['WaterVolume']}
 
     #Photocoverage selected
     coverage = ['15pct','20pct','25pct','30pct','35pct']

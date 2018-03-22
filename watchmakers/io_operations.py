@@ -620,28 +620,6 @@ def generateJobsNew(N,arguments):
 
     '''Find wheter the jobs folder exist: if not create, if yes clean and recreate'''
 
-    #Create directories for rootfile, bonsai files and logs
-    # for j in range(len(iso)):
-    #     for ii in d["%s"%(iso[int(j)])]:
-    #         for idx,cover in enumerate(coverage):
-    #             directory = "root_files%s/%s/%s" %(additionalMacStr,ii,cover)
-    #             if not os.path.exists(directory):
-    #                 os.makedirs(directory)
-    #
-    # for j in range(len(iso)):
-    #     for ii in d["%s"%(iso[int(j)])]:
-    #         for idx,cover in enumerate(coverage):
-    #             directory = "bonsai_root_files%s/%s/%s" %(additionalString,ii,cover)
-    #             if not os.path.exists(directory):
-    #                 os.makedirs(directory)
-    #
-    # for j in range(len(iso)):
-    #     for ii in d["%s"%(iso[int(j)])]:
-    #         for idx,cover in enumerate(coverage):
-    #             directory = "log_case%s%s/%s/%s" %(case,additionalMacStr,ii,cover)
-    #             if not os.path.exists(directory):
-    #                 os.makedirs(directory)
-
 
     for _p in proc:
         for _loc in proc[_p]:
@@ -655,35 +633,6 @@ def generateJobsNew(N,arguments):
                         testCreateDirectory(dir)
                         dir = "log%s/%s/%s/%s/run%08d/"%(additionalMacStr,_cover,_loc,_element,i*10)
                         testCreateDirectory(dir)
-                        cnt+=1
-
-
-
-    directory = 'jobs_case%s%s'%(case,additionalMacStr)
-    if not os.path.exists(directory):
-        os.makedirs(directory)
-    else:
-        rmtree(directory)
-        os.makedirs(directory)
-
-
-    for ii in loc:
-        for idx,cover in enumerate(coverage):
-            directory = "jobs_case%s%s/%s/%s" %(case,additionalMacStr,ii,cover)
-            if not os.path.exists(directory):
-                os.makedirs(directory)
-            else:
-                rmtree(directory)
-                os.makedirs(directory)
-
-    '''Find wheter the jobs folder exist: if no create, if yes clean and recreate'''
-    directory = 'log_case%s%s'%(case,additionalMacStr)
-    if not os.path.exists(directory):
-        os.makedirs(directory)
-    else:
-        rmtree(directory)
-        os.makedirs(directory)
-
 
 
     '''Make sure that the softlink are correct for Bonsai input'''
@@ -700,41 +649,83 @@ def generateJobsNew(N,arguments):
     if not os.path.exists(dst):
         os.symlink(src,dst)
 
-    job = 'jobs_case%s%s'%(case,additionalMacStr)
 
-    job_list = '''#!/bin/sh\n'''
+    directory = 'jobs_case%s%s'%(case,additionalMacStr)
+    if not os.path.exists(directory):
+        os.makedirs(directory)
+    else:
+        rmtree(directory)
+        os.makedirs(directory)
 
-    for j in range(len(iso)):
-        for idx,cover in enumerate(coverage):
-            models  = d["%s" %(iso[j])]
-            for index in range(N):
-                line,case = jobString(cover,j,index,models,arguments)
-                stringFile = "%s/%s/%s/jobs%s_%s_%s_%d_case%d.sh" %(job,loc[j],cover,cover,\
-                                                            "%s"%(iso[int(j)]),loc[j],index,case)
-		if sheffield:
-                    job_list+= 'condor_qsub -l nodes=1:ppn=1 ' + stringFile + '\n'
-                    outfile = open(stringFile,"wb")
-                    outfile.writelines(line)
-                else:
-		    if index == 0:
-                        job_list+= '(msub ' + stringFile +') || ./'+ stringFile + '\n'
-                    outfile = open(stringFile,"wb")
-                    outfile.writelines(line)
-
-                    if index < N-1:
-                        stringFile1 = "(msub %s/%s/%s/jobs%s_%s_%s_%d_case%d.sh || ./%s/%s/%s/jobs%s_%s_%s_%d_case%d.sh)" %(job,loc[j],cover,cover,\
-                                                                                                 "%s"%(iso[int(j)]),loc[j],index+1,case,job,loc[j],cover,cover,\
-                                                                                                 "%s"%(iso[int(j)]),loc[j],index+1,case)
-                    outfile.writelines(stringFile1)
-                outfile.close
-                os.chmod(stringFile,S_IRWXU)
+    #
+    # for ii in loc:
+    #     for idx,cover in enumerate(coverage):
+    #         directory = "jobs_case%s%s/%s/%s" %(case,additionalMacStr,ii,cover)
+    #         if not os.path.exists(directory):
+    #             os.makedirs(directory)
+    #         else:
+    #             rmtree(directory)
+    #             os.makedirs(directory)
+    #
+    # '''Find wheter the jobs folder exist: if no create, if yes clean and recreate'''
+    # directory = 'log_case%s%s'%(case,additionalMacStr)
+    # if not os.path.exists(directory):
+    #     os.makedirs(directory)
+    # else:
+    #     rmtree(directory)
+    #     os.makedirs(directory)
+    #
 
 
-    outfile = open('sub_jobs_case%s%s'%(case,additionalMacStr),"wb")
-    outfile.writelines(job_list)
-    outfile.close
-    os.chmod('sub_jobs_case%s%s'%(case,additionalMacStr),S_IRWXG)
-    os.chmod('sub_jobs_case%s%s'%(case,additionalMacStr),S_IRWXU)
+    # '''Make sure that the softlink are correct for Bonsai input'''
+    #
+    # ratDir      = os.environ['RATROOT']
+    #
+    # src = ratDir+'/fit_param.dat'
+    # dst = os.getcwd()+'/fit_param.dat'
+    # if not os.path.exists(dst):
+    #     os.symlink(src,dst)
+    #
+    # src = ratDir+'/like.bin'
+    # dst = os.getcwd()+'/like.bin'
+    # if not os.path.exists(dst):
+    #     os.symlink(src,dst)
+
+    # job = 'jobs_case%s%s'%(case,additionalMacStr)
+    #
+    # job_list = '''#!/bin/sh\n'''
+    #
+    # for j in range(len(iso)):
+    #     for idx,cover in enumerate(coverage):
+    #         models  = d["%s" %(iso[j])]
+    #         for index in range(N):
+    #             line,case = jobString(cover,j,index,models,arguments)
+    #             stringFile = "%s/%s/%s/jobs%s_%s_%s_%d_case%d.sh" %(job,loc[j],cover,cover,\
+    #                                                         "%s"%(iso[int(j)]),loc[j],index,case)
+	# 	if sheffield:
+    #                 job_list+= 'condor_qsub -l nodes=1:ppn=1 ' + stringFile + '\n'
+    #                 outfile = open(stringFile,"wb")
+    #                 outfile.writelines(line)
+    #             else:
+	# 	    if index == 0:
+    #                     job_list+= '(msub ' + stringFile +') || ./'+ stringFile + '\n'
+    #                 outfile = open(stringFile,"wb")
+    #                 outfile.writelines(line)
+    #
+    #                 if index < N-1:
+    #                     stringFile1 = "(msub %s/%s/%s/jobs%s_%s_%s_%d_case%d.sh || ./%s/%s/%s/jobs%s_%s_%s_%d_case%d.sh)" %(job,loc[j],cover,cover,\
+    #                                                                                              "%s"%(iso[int(j)]),loc[j],index+1,case,job,loc[j],cover,cover,\
+    #                                                                                              "%s"%(iso[int(j)]),loc[j],index+1,case)
+    #                 outfile.writelines(stringFile1)
+    #             outfile.close
+    #             os.chmod(stringFile,S_IRWXU)
+    #
+    #
+    # outfile = open('sub_jobs_case%s%s'%(case,additionalMacStr),"wb")
+    # outfile.writelines(job_list)
+    # outfile.close
+    # os.chmod('sub_jobs_case%s%s'%(case,additionalMacStr),S_IRWXG)
+    # os.chmod('sub_jobs_case%s%s'%(case,additionalMacStr),S_IRWXU)
     return 0
 
 
