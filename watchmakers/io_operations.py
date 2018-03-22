@@ -210,6 +210,10 @@ def macroGeneratorNew(percentage,location,element,_dict,runs,events,dirOpt):
 /generator/rate/set %f
 # /run/beamOn %d''' %(element,location,rate,events*2)
 
+
+    else:
+        print 'Could not find ',element,location
+        line1 = ''
     return header+line1
 
 #
