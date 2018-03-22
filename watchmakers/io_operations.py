@@ -16,12 +16,13 @@ def deleteDirectory(directory):
         rmtree(directory)
 
 def testCreateDirectoryIfNotExist(directory):
-    if not os.path.exists(directory):
-        os.makedirs(directory)
-    else:
+
+    if os.path.exists(directory):
         print '''There is already a directory here. %s
         No new directory has been made.\n'''%(directory)
-
+    if not os.path.exists(directory):
+        os.makedirs(directory)
+        
 def macroGenerator(percentage,isotope,location,runs,events):
 
     covPCT = {'10pct':0.1,'15pct':0.15,'20pct':0.2,\
@@ -630,11 +631,11 @@ def generateJobsNew(N,arguments):
                 for _element in d[_p]:
                     # print cnt,_p,element,_loc,cover
                     for i in range(N/10+1):
-                        dir = "root_files%s/%s/%s/%s/run%08d/"%(additionalMacStr,_cover,_loc,_element,i*10)
+                        dir = "root_files%s/%s/%s/%s/run%08d"%(additionalMacStr,_cover,_loc,_element,i*10)
                         testCreateDirectoryIfNotExist(dir)
-                        dir = "bonsai_root_files%s/%s/%s/%s/run%08d/"%(additionalMacStr,_cover,_loc,_element,i*10)
+                        dir = "bonsai_root_files%s/%s/%s/%s/run%08d"%(additionalMacStr,_cover,_loc,_element,i*10)
                         testCreateDirectoryIfNotExist(dir)
-                        dir = "log%s/%s/%s/%s/run%08d/"%(additionalMacStr,_cover,_loc,_element,i*10)
+                        dir = "log%s/%s/%s/%s/run%08d"%(additionalMacStr,_cover,_loc,_element,i*10)
                         testCreateDirectoryIfNotExist(dir)
 
 
