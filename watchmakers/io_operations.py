@@ -605,7 +605,7 @@ def generateJobs(N,arguments):
 
 def generateJobsNew(N,arguments):
 
-    d,proc,coverage = loadSimulationParameters()
+    d,proc,coverage = loadSimulationParametersNew()
 
     case = arguments["-j"]
 
