@@ -660,10 +660,10 @@ def generateJobsNew(N,arguments):
             for idx,_cover in enumerate(coverage):
                 for _element in d[_p]:
                     # print cnt,_p,element,_loc,cover
-                    dir = "jobs%s/%s/%s/%s"%(additionalMacStr,_cover,_loc,_element)
+                    dir = "jobs%s/%s/%s/%s/%s"%(additionalMacStr,_cover,_loc,_element,_p)
                     testCreateDirectoryIfNotExist(dir)
                     for i in range(N/10+1):
-                        dir = "jobs%s/%s/%s/%s"%(additionalMacStr,_cover,_loc,_element)
+                        dir = "jobs%s/%s/%s/%s/%s"%(additionalMacStr,_cover,_loc,_element,_p)
                         outfile = open(dir+'/job%08d.sh'%(i*10),"wb")
                         outfile.writelines('A')
                         outfile.close()
