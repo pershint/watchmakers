@@ -19,7 +19,8 @@ def testCreateDirectoryIfNotExist(directory):
     if not os.path.exists(directory):
         os.makedirs(directory)
     else:
-        print 'There is already a directory here. No new directory has been made.'
+        print '''There is already a directory here. %s
+        No new directory has been made.\n'''%(directory)
 
 def macroGenerator(percentage,isotope,location,runs,events):
 
@@ -652,23 +653,15 @@ def generateJobsNew(N,arguments):
         os.symlink(src,dst)
 
 
-    # directory = 'jobs_case%s%s'%(case,additionalMacStr)
-    # if not os.path.exists(directory):
-    #     os.makedirs(directory)
-    # else:
-    #     rmtree(directory)
-    #     os.makedirs(directory)
-
-
-
     for _p in proc:
         for _loc in proc[_p]:
             for idx,_cover in enumerate(coverage):
                 for _element in d[_p]:
                     # print cnt,_p,element,_loc,cover
+                    dir = "jobs%s/%s/%s/%s"%(additionalMacStr,_cover,_loc,_element)
+                    testCreateDirectoryIfNotExist(dir)
                     for i in range(N/10+1):
                         dir = "jobs%s/%s/%s/%s"%(additionalMacStr,_cover,_loc,_element)
-                        testCreateDirectoryIfNotExist(dir)
                         outfile = open(dir+'/job%08d.sh'%(i*10),"wb")
                         outfile.writelines('A')
                         outfile.close()
