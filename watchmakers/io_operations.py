@@ -472,12 +472,12 @@ def generateMacrosNew(N,e):
                 for _element in d[_p]:
                     # print cnt,_p,element,_loc,cover
                     for i in range(N/10+1):
-                        dir = "macro%s/%s/%s/%s/run%08d/"%(additionalMacStr,_cover,_loc,_element,i*10)
+                        dir = "macro%s/%s/%s/%s/%s/run%08d/"%(additionalMacStr,_cover,_loc,_element,_p,i*10)
                         testCreateDirectory(dir)
                         cnt+=1
                     for val in range(N):
                         i = val/10
-                        dir = "%s/%s/%s/%s/run%08d/"%(additionalMacStr,_cover,_loc,_element,i*10)
+                        dir = "%s/%s/%s/%s/%s/run%08d/"%(additionalMacStr,_cover,_loc,_element,_p,i*10)
                         outfile = open("macro%s/run_%08d.mac" %(dir,val),"wb")
                         line = macroGeneratorNew(_cover,_loc,_element,_p,val,e,dir)
                         outfile.writelines(line)
@@ -632,11 +632,11 @@ def generateJobsNew(N,arguments):
                     # print cnt,_p,element,_loc,cover
                     print _p,_loc,_cover,_element
                     for i in range(N/10+1):
-                        dir = "root_files%s/%s/%s/%s/run%08d"%(additionalMacStr,_cover,_loc,_element,i*10)
+                        dir = "root_files%s/%s/%s/%s/%s/run%08d"%(additionalMacStr,_cover,_loc,_element,_p,i*10)
                         testCreateDirectoryIfNotExist(dir)
-                        dir = "bonsai_root_files%s/%s/%s/%s/run%08d"%(additionalMacStr,_cover,_loc,_element,i*10)
+                        dir = "bonsai_root_files%s/%s/%s/%s/%s/run%08d"%(additionalMacStr,_cover,_loc,_element,_p,i*10)
                         testCreateDirectoryIfNotExist(dir)
-                        dir = "log%s/%s/%s/%s/run%08d"%(additionalMacStr,_cover,_loc,_element,i*10)
+                        dir = "log%s/%s/%s/%s/%s/run%08d"%(additionalMacStr,_cover,_loc,_element,_p,i*10)
                         testCreateDirectoryIfNotExist(dir)
 
 
