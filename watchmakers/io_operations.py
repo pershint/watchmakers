@@ -218,15 +218,15 @@ def macroGeneratorNew(percentage,location,element,_dict,runs,events,dirOpt):
 /generator/vtx/set e+ %s
 /generator/pos/set 0 0 0
 /generator/set/rate %f
-/run/beamOn %d'''%(isotope,rate,events)
+/run/beamOn %d'''%(element,rate,events)
 
     elif element in d['ibd_n']:
         line1 = '''
-/generator/add combo gun2:fill
+/generator/add combo gun2:fill:poisson
 /generator/vtx/set %s  0 0 0 0 0.001 0.20
 /generator/pos/set 0 0 0
 /generator/rate/set %f
-/run/beamOn %d'''%(isotope,rate,events)
+/run/beamOn %d'''%(element,rate,events)
 
     else:
         print 'Could not find ',element,location.lower()
