@@ -22,7 +22,7 @@ def testCreateDirectoryIfNotExist(directory):
         No new directory has been made.\n'''%(directory)
     if not os.path.exists(directory):
         os.makedirs(directory)
-        
+
 def macroGenerator(percentage,isotope,location,runs,events):
 
     covPCT = {'10pct':0.1,'15pct':0.15,'20pct':0.2,\
@@ -630,6 +630,7 @@ def generateJobsNew(N,arguments):
             for idx,_cover in enumerate(coverage):
                 for _element in d[_p]:
                     # print cnt,_p,element,_loc,cover
+                    print _p,_loc,_cover,_element
                     for i in range(N/10+1):
                         dir = "root_files%s/%s/%s/%s/run%08d"%(additionalMacStr,_cover,_loc,_element,i*10)
                         testCreateDirectoryIfNotExist(dir)
