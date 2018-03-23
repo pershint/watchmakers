@@ -635,19 +635,19 @@ def generateJobsNew(N,arguments):
                     for i in range(N/10+1):
                         dir = "root_files%s/%s/%s/%s/%s/run%08d"%(additionalMacStr,_cover,_loc,_element,_p,i*10)
                         if arguments['--force']:
-                            print 'Using force to recreate dir.'
+                            print 'Using force to recreate dir:',dir
                             testCreateDirectory(dir)
                         else:
                             testCreateDirectoryIfNotExist(dir)
                         dir = "bonsai_root_files%s/%s/%s/%s/%s/run%08d"%(additionalMacStr,_cover,_loc,_element,_p,i*10)
                         if arguments['--force']:
-                            print 'Using force to recreate dir.'
+                            print 'Using force to recreate dir:',dir
                             testCreateDirectory(dir)
                         else:
                             testCreateDirectoryIfNotExist(dir)
                         dir = "log%s/%s/%s/%s/%s/run%08d"%(additionalMacStr,_cover,_loc,_element,_p,i*10)
                         if arguments['--force']:
-                            print 'Using force to recreate dir.'
+                            print 'Using force to recreate dir:',dir
                             testCreateDirectory(dir)
                         else:
                             testCreateDirectoryIfNotExist(dir)
@@ -675,7 +675,7 @@ def generateJobsNew(N,arguments):
                     # print cnt,_p,element,_loc,cover
                     dir = "jobs%s/%s/%s/%s/%s"%(additionalMacStr,_cover,_loc,_element,_p)
                     if arguments['--force']:
-                        print 'Using force to recreate dir.'
+                        print 'Using force to recreate dir:',dir
                         testCreateDirectory(dir)
                     else:
                         testCreateDirectoryIfNotExist(dir)
