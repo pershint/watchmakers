@@ -186,8 +186,8 @@ def macroGeneratorNew(percentage,location,element,_dict,runs,events,dirOpt):
 /rat/procset update 1000
 
 # Use IO.default_output_filename
-/rat/proclast outroot
-/rat/procset file "%s/root_files%s%sfile_%d.root"
+# /rat/proclast outroot
+# /rat/procset file "%s/root_files%s%sfile_%d.root"
 #END EVENT LOOP
 ''' %(covPCT[percentage],additionalMacOpt,dir,additionalMacStr,dirOpt,runs)
 
