@@ -187,8 +187,8 @@ def macroGeneratorNew(percentage,location,element,_dict,runs,events,dirOpt):
 /rat/procset update 1000
 
 # Use IO.default_output_filename
-# /rat/proclast outroot
-# /rat/procset file "%s/root_files%s%sfile_%d.root"
+/rat/proclast outroot
+# /rat/procset file "%s/root_files%s%sfile_%d.root" Now set with -o object
 #END EVENT LOOP
 ''' %(covPCT[percentage],additionalMacOpt,dir,additionalMacStr,dirOpt,runs)
 
@@ -232,6 +232,42 @@ def macroGeneratorNew(percentage,location,element,_dict,runs,events,dirOpt):
 /generator/pos/set 0 0 0
 /generator/rate/set %f
 /run/beamOn %d'''%(element,rate,events)
+
+    elif element in d['pn_ibd']:
+        line1 = '''
+/generator/add combo ibd:fill:poisson
+/generator/vtx/set %s  1 0 0
+/generator/pos/set 0 0 0
+/generator/rate/set %f
+/run/beamOn %d'''%(element,rate,events)
+
+    elif element in d['A_Z']:
+        A =  int(int(element)/1000)
+        Z = int(element) - A*1000
+        line1 = '''
+/generator/add combo isotope:fill:poisson
+/generator/vtx/set GenericIon  1 0 0
+/generator/isotope/A %s.0
+/generator/isotope/Z %s.0
+/generator/isotope/E 0.0
+/generator/pos/set 0 0 0
+/generator/rate/set %f
+/run/beamOn %d'''%(A,Z,rate,events)
+
+
+
+#         AZ = isotope
+#         A =  int(int(AZ)/1000)
+#         Z = int(AZ) - A*1000
+#         line1 = '''
+# /generator/add combo isotope:fill
+# /generator/pos/set 0 0 0
+# /generator/vtx/set GenericIon 0 0 0
+# /generator/isotope/A %s.0
+# /generator/isotope/Z %s.0
+# /generator/isotope/E 0.0
+# /run/beamOn %d''' %(A,Z,events)
+
 
     else:
         print 'Could not find ',element,location.lower()
@@ -688,7 +724,7 @@ def generateJobsNew(N,arguments):
                             l_outfile = "log%s/%s/%s/%s/%s/run%08d/run_%08d.log"%(additionalMacStr,_cover,_loc,_element,_p,i*10,i*10+_j)
                             b_outfile = "bonsai_root_files%s/%s/%s/%s/%s/run%08d/run_%08d.root"%(additionalMacStr,_cover,_loc,_element,_p,i*10,i*10+_j)
                             lines = ''' rat %s -o %s -l %s
-bonsai %s %s\n'''%(mac,r_outfile,l_outfile,r_outfile,b_outfile)
+bonsai %s %s || bonsai %s %s ||bonsai %s %s ||bonsai %s %s || echo \"Could not run bonsai after 4 tries.\" \n'''%(mac,r_outfile,l_outfile,r_outfile,b_outfile,r_outfile,b_outfile,r_outfile,b_outfile,r_outfile,b_outfile)
 
                             outfile.writelines(lines)
                         outfile.close()
