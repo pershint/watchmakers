@@ -669,7 +669,7 @@ def generateJobsNew(N,arguments):
                             mac = "macro%s/%s/%s/%s/%s/run%08d/run%08d.mac"%(additionalMacStr,_cover,_loc,_element,_p,i*10,i*10+_j)
                             r_outfile = "root_file%s/%s/%s/%s/%s/run%08d/run%08d.root"%(additionalMacStr,_cover,_loc,_element,_p,i*10,i*10+_j)
                             b_outfile = "bonsai_root_file%s/%s/%s/%s/%s/run%08d/run%08d.root"%(additionalMacStr,_cover,_loc,_element,_p,i*10,i*10+_j)
-                            lines = ''' rat %s %s
+                            lines = ''' rat %s -o %s
 bonsai %s %s\n'''%(mac,r_outfile,r_outfile,b_outfile)
 
                             outfile.writelines(lines)
