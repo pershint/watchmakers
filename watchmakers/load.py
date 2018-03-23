@@ -47,6 +47,7 @@ docstring = """
     Options:
     -D                  Delete all current photocoverage directory.
     --newVers           Major revision to Watchmakers. By default off for old results
+    --force             Forcing the recreation of the root_file,bonsai_root_file and log folders
 
     -j=<jobType>        Create submision scripts (1,2,4:rat-pac files|case >3 ntuplefiles) [default %d]
                         >3 option will generate a nutple_root_files_flags folder for results

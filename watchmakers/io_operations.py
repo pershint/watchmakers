@@ -19,7 +19,8 @@ def testCreateDirectoryIfNotExist(directory):
 
     if os.path.exists(directory):
         print '''There is already a directory here. %s
-        No new directory has been made.\n'''%(directory)
+No new directory has been made. Bad idea. Consider saving current files
+and using --force.        \n'''%(directory)
     if not os.path.exists(directory):
         os.makedirs(directory)
 
@@ -633,11 +634,23 @@ def generateJobsNew(N,arguments):
                     print _p,_loc,_cover,_element
                     for i in range(N/10+1):
                         dir = "root_files%s/%s/%s/%s/%s/run%08d"%(additionalMacStr,_cover,_loc,_element,_p,i*10)
-                        testCreateDirectoryIfNotExist(dir)
+                        if arguments['--force']:
+                            print 'Using force to recreate dir.'
+                            testCreateDirectory(dir)
+                        else:
+                            testCreateDirectoryIfNotExist(dir)
                         dir = "bonsai_root_files%s/%s/%s/%s/%s/run%08d"%(additionalMacStr,_cover,_loc,_element,_p,i*10)
-                        testCreateDirectoryIfNotExist(dir)
+                        if arguments['--force']:
+                            print 'Using force to recreate dir.'
+                            testCreateDirectory(dir)
+                        else:
+                            testCreateDirectoryIfNotExist(dir)
                         dir = "log%s/%s/%s/%s/%s/run%08d"%(additionalMacStr,_cover,_loc,_element,_p,i*10)
-                        testCreateDirectoryIfNotExist(dir)
+                        if arguments['--force']:
+                            print 'Using force to recreate dir.'
+                            testCreateDirectory(dir)
+                        else:
+                            testCreateDirectoryIfNotExist(dir)
 
 
     '''Make sure that the softlink are correct for Bonsai input'''
@@ -668,9 +681,10 @@ def generateJobsNew(N,arguments):
                         for _j in range(10):
                             mac = "macro%s/%s/%s/%s/%s/run%08d/run_%08d.mac"%(additionalMacStr,_cover,_loc,_element,_p,i*10,i*10+_j)
                             r_outfile = "root_file%s/%s/%s/%s/%s/run%08d/run_%08d.root"%(additionalMacStr,_cover,_loc,_element,_p,i*10,i*10+_j)
+                            l_outfile = "log%s/%s/%s/%s/%s/run%08d/run_%08d.log"%(additionalMacStr,_cover,_loc,_element,_p,i*10,i*10+_j)
                             b_outfile = "bonsai_root_file%s/%s/%s/%s/%s/run%08d/run_%08d.root"%(additionalMacStr,_cover,_loc,_element,_p,i*10,i*10+_j)
-                            lines = ''' rat %s -o %s
-bonsai %s %s\n'''%(mac,r_outfile,r_outfile,b_outfile)
+                            lines = ''' rat %s -o %s -l %s
+bonsai %s %s\n'''%(mac,r_outfile,l_outfile,r_outfile,b_outfile)
 
                             outfile.writelines(lines)
                         outfile.close()
