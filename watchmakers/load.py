@@ -219,9 +219,9 @@ def loadSimulationParametersNew():
     d['A_Z'] =  ZA
 
     process = {'40K_NA':['WaterVolume','PMT','CONCRETE','GUNITE','ROCK'],\
-    'CHAIN_238U_NA':['WaterVolume','PMT','CONCRETE','GUNITE','ROCK'],\
-    'CHAIN_232Th_NA':['WaterVolume','PMT','CONCRETE','GUNITE','ROCK'],\
-    'CHAIN_222Rn_NA':['WaterVolume','ROCK','CONCRETE'],\
+    'CHAIN_238U_NA':['PMT','CONCRETE','GUNITE','ROCK'],\
+    'CHAIN_232Th_NA':['PMT','CONCRETE','GUNITE','ROCK'],\
+    'CHAIN_222Rn_NA':['WaterVolume'],\
     'TANK_ACTIVITY':['TANK'],\
     'FN':['ROCK'],\
     'A_Z':['WaterVolume'],\

@@ -665,7 +665,8 @@ def generateJobsNew(N,arguments):
                     for i in range(N/10+1):
                         dir = "jobs%s/%s/%s/%s/%s"%(additionalMacStr,_cover,_loc,_element,_p)
                         outfile = open(dir+'/job%08d.sh'%(i*10),"wb")
-                        outfile.writelines('A')
+                        for _j in range(10):
+                            outfile.writelines('job%d.sh'%(i*10+_j))
                         outfile.close()
     #
     # for ii in loc:
