@@ -674,7 +674,11 @@ def generateJobsNew(N,arguments):
                 for _element in d[_p]:
                     # print cnt,_p,element,_loc,cover
                     dir = "jobs%s/%s/%s/%s/%s"%(additionalMacStr,_cover,_loc,_element,_p)
-                    testCreateDirectoryIfNotExist(dir)
+                    if arguments['--force']:
+                        print 'Using force to recreate dir.'
+                        testCreateDirectory(dir)
+                    else:
+                        testCreateDirectoryIfNotExist(dir)
                     for i in range(N/10+1):
                         dir = "jobs%s/%s/%s/%s/%s"%(additionalMacStr,_cover,_loc,_element,_p)
                         outfile = open(dir+'/job%08d.sh'%(i*10),"wb")
