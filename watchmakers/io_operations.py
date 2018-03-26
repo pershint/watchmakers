@@ -222,7 +222,7 @@ def macroGeneratorNew(percentage,location,element,_dict,runs,events,dirOpt):
 /generator/add combo spectrum:fill:poisson
 /generator/vtx/set e+ %s
 /generator/pos/set 0 0 0
-/generator/set/rate %f
+/generator/rate/set %f
 /run/beamOn %d'''%(element,rate,events)
 
     elif element in d['ibd_n']:
