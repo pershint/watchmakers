@@ -724,10 +724,10 @@ def generateJobsNew(N,arguments):
                     else:
                         testCreateDirectoryIfNotExist(dir)
                     outfile_jobs.writelines('msub %s\n'%(dir+'/job%08d.sh'%(0)))
+                    log = "log%s/%s/%s/%s/%s/log"%(additionalMacStr,_cover,_loc,_element,_p)
                     for i in range(N/10+1):
                         dir = "jobs%s/%s/%s/%s/%s"%(additionalMacStr,_cover,_loc,_element,_p)
                         outfile = open(dir+'/job%08d.sh'%(i*10),"wb")
-
                         job_line = "%s_%s_%s_%s_%s_%s"%(additionalMacStr,_cover,_loc,_element,_p,i*10)
                         outfile.writelines("""#!/bin/sh
 #MSUB -N job_%s    #name of job
@@ -744,7 +744,7 @@ source %s/bin/thisroot.sh
 source %s/../../../bin/geant4.sh
 source %s/geant4make.sh
 source %s/env.sh
-source %s/env_wm.sh\n\n"""%(job_line,job_line,job_line,directory,\
+source %s/env_wm.sh\n\n"""%(job_line,log+'.out',log+'.err',directory,\
                         rootDir,g4Dir,g4Dir,ratDir,watchmakersDir))
                         for _j in range(10):
                             mac = "macro%s/%s/%s/%s/%s/run%08d/run_%08d.mac"%(additionalMacStr,_cover,_loc,_element,_p,i*10,i*10+_j)
