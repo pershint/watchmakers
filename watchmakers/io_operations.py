@@ -703,7 +703,15 @@ def generateJobsNew(N,arguments):
     if not os.path.exists(dst):
         os.symlink(src,dst)
 
+    rootDir     = os.environ['ROOTSYS']
+    softDir     = "/usr/gapps/adg/geant4/rat_pac_and_dependency"
+    rootDir     = os.environ['ROOTSYS']
+    g4Dir       =  os.environ['G4INSTALL']
+    watchmakersDir = os.environ['WATCHENV']
+    directory   = os.getcwd()
 
+    outfile_jobs = open('sub_job_%s'%(additionalMacStr),"wb")
+    outfile_jobs.writelines("#!/bin/sh\n")
     for _p in proc:
         for _loc in proc[_p]:
             for idx,_cover in enumerate(coverage):
@@ -715,18 +723,38 @@ def generateJobsNew(N,arguments):
                         testCreateDirectory(dir)
                     else:
                         testCreateDirectoryIfNotExist(dir)
+                    outfile_jobs.writelines('msub %s\n'%(dir+'/job%08d.sh'%(0)))
                     for i in range(N/10+1):
                         dir = "jobs%s/%s/%s/%s/%s"%(additionalMacStr,_cover,_loc,_element,_p)
                         outfile = open(dir+'/job%08d.sh'%(i*10),"wb")
+
+                        job_line = "%s_%s_%s_%s_%s_%s"%(additionalMacStr,_cover,_loc,_element,_p,i*10)
+                        outfile.writelines("""#!/bin/sh
+#MSUB -N job_%s    #name of job
+#MSUB -A ared         # sets bank account
+#MSUB -l nodes=1:ppn=1,walltime=23:59:59,partition=borax  # uses 1 node
+#MSUB -q pbatch         #pool
+#MSUB -o %s
+#MSUB -e %s
+#MSUB -d %s  # directory to run from
+#MSUB -V
+#MSUB                     # no more psub commands
+
+source %s/bin/thisroot.sh
+source %s/../../../bin/geant4.sh
+source %s/geant4make.sh
+source %s/env.sh
+source %s/env_wm.sh\n\n"""%(job_line,job_line,job_line,directory,\
+                        rootDir,g4Dir,g4Dir,ratDir,watchmakersDir))
                         for _j in range(10):
                             mac = "macro%s/%s/%s/%s/%s/run%08d/run_%08d.mac"%(additionalMacStr,_cover,_loc,_element,_p,i*10,i*10+_j)
                             r_outfile = "root_files%s/%s/%s/%s/%s/run%08d/run_%08d.root"%(additionalMacStr,_cover,_loc,_element,_p,i*10,i*10+_j)
                             l_outfile = "log%s/%s/%s/%s/%s/run%08d/run_%08d.log"%(additionalMacStr,_cover,_loc,_element,_p,i*10,i*10+_j)
                             b_outfile = "bonsai_root_files%s/%s/%s/%s/%s/run%08d/run_%08d.root"%(additionalMacStr,_cover,_loc,_element,_p,i*10,i*10+_j)
-                            lines = ''' rat %s -o %s -l %s
-bonsai %s %s || bonsai %s %s ||bonsai %s %s ||bonsai %s %s || echo \"Could not run bonsai after 4 tries.\" \n'''%(mac,r_outfile,l_outfile,r_outfile,b_outfile,r_outfile,b_outfile,r_outfile,b_outfile,r_outfile,b_outfile)
-
+                            lines = '''rat %s -o %s -l %s
+(bonsai %s %s || bonsai %s %s ||bonsai %s %s ||bonsai %s %s || echo \"Could not run bonsai after 4 tries.\")>> %s\n\n'''%(mac,r_outfile,l_outfile,r_outfile,b_outfile,r_outfile,b_outfile,r_outfile,b_outfile,r_outfile,b_outfile,l_outfile)
                             outfile.writelines(lines)
+                        outfile.writelines("msub %s"%(dir+'/job%08d.sh'%((i+1)*10)))
                         outfile.close()
     #
     # for ii in loc:
