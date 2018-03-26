@@ -231,7 +231,7 @@ def macroGeneratorNew(percentage,location,element,_dict,runs,events,dirOpt):
 /generator/vtx/set %s  0 0 0 0 0.001 0.20
 /generator/pos/set 0 0 0
 /generator/rate/set %f
-/run/beamOn %d'''%(element,rate,events)
+/run/beamOn %d'''%('neutron',rate,events)
 
     elif element in d['pn_ibd']:
         line1 = '''
