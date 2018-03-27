@@ -218,7 +218,7 @@ def macroGeneratorNew(percentage,location,element,_dict,runs,events,dirOpt):
 /generator/add decaychain %s:regexfill:poisson
 /generator/pos/set %s+
 /generator/rate/set %f
-/run/beamOn %d''' %(element,location.lower(),rate,events*2)
+/run/beamOn %d''' %(element,locat,rate,events*2)
 
     elif element in d['ibd_p']:
         line1 ='''
