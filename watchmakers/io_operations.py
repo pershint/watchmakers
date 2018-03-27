@@ -213,7 +213,7 @@ def macroGeneratorNew(percentage,location,element,_dict,runs,events,dirOpt):
         else:
             locat = location.lower()
             if locat == 'watervolume':
-                locat = 'doped_water'
+                locat = 'detector'
             line1 = '''
 /generator/add decaychain %s:regexfill:poisson
 /generator/pos/set %s+
