@@ -211,6 +211,9 @@ def macroGeneratorNew(percentage,location,element,_dict,runs,events,dirOpt):
 /generator/rate/set %f
 /run/beamOn %d''' %(element,rate,events*2)
         else:
+            locat = location.lower()
+            if locat == 'watervolume':
+                locat = 'doped_water'
             line1 = '''
 /generator/add decaychain %s:regexfill:poisson
 /generator/pos/set %s+
