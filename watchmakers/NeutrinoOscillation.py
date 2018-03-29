@@ -9,9 +9,13 @@ import math as math
 import numpy as n
 
 # Currently using ROOT, but will migrate to matplotlib
-import ROOT as ROOT
-from ROOT import TCanvas, TPad, TFile, TPaveText
-from ROOT import gBenchmark, gStyle, gROOT,TColor, TChain
+## Should this be called at all???
+if arguments['--noROOT']:
+    print 'Not using ROOT'
+else:
+    import ROOT as ROOT
+    from ROOT import TCanvas, TPad, TFile, TPaveText
+    from ROOT import gBenchmark, gStyle, gROOT,TColor, TChain
 
 #
 # Classes definition
