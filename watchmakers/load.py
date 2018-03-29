@@ -1,26 +1,18 @@
-from ROOT import TRandom3
-from ROOT import TChain,TGraph,TGraphErrors,gSystem,gROOT,TH1D,TH2D,TFile,TCanvas,TF1
-from ROOT import THStack,Double
-from ROOT import kRed,kBlue,kGreen,kCyan,kOrange
 
-from ROOT import kOrange as kO,kBlue as kB,kGreen as kG
-from ROOT import kMagenta as kM,kAzure as kA,kRed as kR
-from ROOT import TCanvas,TLine, TLatex
-from numpy import sqrt
-from ROOT import gStyle,gPad,TPaletteAxis
 import os.path
+
 from stat import S_IRWXG,S_IRWXU
 from shutil import rmtree
 import warnings
 
 import numpy as np
+from numpy import sqrt
 from numpy import array as npa
 from numpy import power,absolute,logical_and,column_stack,zeros,empty,append,\
 sqrt,absolute,recarray
 
 
 from math import pow,exp,log10,pi
-gStyle.SetOptStat(1112211)
 
 try:
     # from root_numpy import root2rec,array2tree,array2root,tree2array
@@ -48,7 +40,7 @@ docstring = """
     -D                  Delete all current photocoverage directory.
     --newVers           Major revision to Watchmakers. By default off for old results
     --force             Forcing the recreation of the root_file,bonsai_root_file and log folders
-
+    --noRoot            Allows to generate scripts without loading in any ROOT module
     -j=<jobType>        Create submision scripts (1,2,4:rat-pac files|case >3 ntuplefiles) [default %d]
                         >3 option will generate a nutple_root_files_flags folder for results
     -m                  Also generate macro files
@@ -133,15 +125,31 @@ except ImportError:
     print 'docopt is not a recognized module, it is required to run this module'
 
 
-gSystem.Load("$RATROOT/lib/libRATEvent")
-gSystem.AddIncludePath(" -I$RATROOT/include")
+if arguments['--noRoot']:
+    print 'Not loading any ROOT modules. usefull for generating files on oslic'
 
+else:
+    from ROOT import TRandom3
+    from ROOT import TChain,TGraph,TGraphErrors,gSystem,gROOT,TH1D,TH2D,TFile,TCanvas,TF1
+    from ROOT import THStack,Double
+    from ROOT import kRed,kBlue,kGreen,kCyan,kOrange
 
-gROOT.LoadMacro("$WATCHENV/watchmakers/goldenFileExtractor.C")
-from ROOT import goldenFileExtractor
+    from ROOT import kOrange as kO,kBlue as kB,kGreen as kG
+    from ROOT import kMagenta as kM,kAzure as kA,kRed as kR
+    from ROOT import TCanvas,TLine, TLatex
+    from ROOT import gStyle,gPad,TPaletteAxis
 
-gROOT.LoadMacro("$WATCHENV/watchmakers/pass1Trigger.C")
-from ROOT import pass1Trigger
+    gSystem.Load("$RATROOT/lib/libRATEvent")
+    gSystem.AddIncludePath(" -I$RATROOT/include")
+
+    gROOT.LoadMacro("$WATCHENV/watchmakers/goldenFileExtractor.C")
+    from ROOT import goldenFileExtractor
+
+    gROOT.LoadMacro("$WATCHENV/watchmakers/pass1Trigger.C")
+    from ROOT import pass1Trigger
+
+    gStyle.SetOptStat(1112211)
+
 
 
 # This is deprecated
@@ -519,7 +527,6 @@ def loadAnalysisParameters(timeScale='day'):
     Activity    = append(Activity,arr)
     _br         =  [0.495,0.927]
     _site       = ['boulby','boulby']
-
 
     proc        += _proc
     loca        += _loca
