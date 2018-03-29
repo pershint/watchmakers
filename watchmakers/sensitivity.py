@@ -3,7 +3,11 @@
 from watchmakers.load import *
 from watchmakers.analysis import *
 from io_operations import testEnabledCondition
-import watchmakers.NeutrinoOscillation as nuOsc
+if arguments['--noRoot']:
+    print 'Not loading the neutrinoOscillation module'
+else:
+    import watchmakers.NeutrinoOscillation as nuOsc
+
 from decimal import *
 setcontext(ExtendedContext)
 

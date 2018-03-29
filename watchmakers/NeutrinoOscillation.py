@@ -13,10 +13,10 @@ import numpy as n
 # if arguments['--noROOT']:
 #     print 'Not using ROOT'
 # else:
-#     import ROOT as ROOT
-#     from ROOT import TCanvas, TPad, TFile, TPaveText
-#     from ROOT import gBenchmark, gStyle, gROOT,TColor, TChain
-#
+import ROOT as ROOT
+from ROOT import TCanvas, TPad, TFile, TPaveText
+from ROOT import gBenchmark, gStyle, gROOT,TColor, TChain
+
 # #
 # Classes definition
 #
