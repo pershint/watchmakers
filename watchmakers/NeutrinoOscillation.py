@@ -10,16 +10,18 @@ import numpy as n
 
 # Currently using ROOT, but will migrate to matplotlib
 ## Should this be called at all???
-if arguments['--noROOT']:
-    print 'Not using ROOT'
-else:
-    import ROOT as ROOT
-    from ROOT import TCanvas, TPad, TFile, TPaveText
-    from ROOT import gBenchmark, gStyle, gROOT,TColor, TChain
-
+# if arguments['--noROOT']:
+#     print 'Not using ROOT'
+# else:
+#     import ROOT as ROOT
+#     from ROOT import TCanvas, TPad, TFile, TPaveText
+#     from ROOT import gBenchmark, gStyle, gROOT,TColor, TChain
 #
+# #
 # Classes definition
 #
+from watchmakers.load import *
+
 class NeutrinoOscillation:
     """ Class to display the neutrino oscillation at a specific stand-off """
 
