@@ -1077,6 +1077,125 @@ def mergeNtupleFiles(arguments):
     return 0
 
 
+
+
+
+
+def mergeNtupleFilesNew(arguments):
+    # Read external requirements
+    #arguments = docopt.docopt(docstring)
+    # Load internal requirements
+    d,proc,coverage = loadSimulationParametersNew()
+
+    trees = {}
+
+    additionalString,additionalCommands,additionalMacStr,additionalMacOpt = testEnabledCondition(arguments)
+
+
+    pathFinal = "bonsai_root_files%s/" %(additionalString)
+
+
+    # print additionalMacOpt
+    # print N,e
+
+    cnt = 0
+
+    for _p in proc:
+        for _loc in proc[_p]:
+            for idx,_cover in enumerate(coverage):
+                for _element in d[_p]:
+                    _tmp =  "%s_%s_%s_%s"%(_cover,_loc,_element,_p)
+                    trees[_tmp] = TChain("data")
+                    trees[_tmp+'_RS'] = TChain("runSummary")
+                    print _tmp
+                    for _ii in range(100):# Covers up to 1000 jobs,
+                        dir = "bonsai_root_files%s/%s/%s/%s/%s/run%08d/*.root"%(additionalMacStr,_cover,_loc,_element,_p,_ii*10)
+                        trees[_tmp].Add(dir)
+                        trees[_tmp+'_RS'].Add(dir)
+                        # data = gROOT.FindObject('data')
+                        # print "dir: ",data.GetEntries()
+                    data = gROOT.FindObject('data')
+                    fLocation = "bonsai_root_files%s/%s/merged_%s_%s_%s.root"%(additionalMacStr,_cover,_loc,_element,_p)
+                    fLocationSum = "bonsai_root_files%s/%s/mergedSumary_%s_%s_%s.root"%(additionalMacStr,_cover,_loc,_element,_p)
+                    nEntry = data.GetEntries()
+                    runSummary = gROOT.FindObject('runSummary')
+                    totalEntries = runSummary.GetEntries()
+                    runSummary.GetEntry(0)
+                    try:
+                        totEvents = totalEntries*runSummary.nEvents
+                    except:
+                        print 'Something went wrong'
+                        totEvents = -1
+                    print 'Merging :\n\t',dir, '\n->\n\t', fLocation, \
+                    ';\ntotal entries (trigger/total):', nEntry,'/',totEvents,\
+                    ',merged a total of ',totalEntries,'files.'
+                    # data.AddFriend(runSummary)
+                    data.Merge(fLocation)
+                    runSummary.Merge(fLocationSum)
+
+                    print 'done\n'
+                    trees[_tmp].Delete()
+                    trees[_tmp+'_RS'].Delete()
+                    # for i in range(N/10+1):
+                    #     dir = "macro%s/%s/%s/%s/%s/run%08d/"%(additionalMacStr,_cover,_loc,_element,_p,i*10)
+                    #     testCreateDirectory(dir)
+                    #     cnt+=1
+                    # for val in range(N):
+                    #     i = val/10
+                    #     dir = "%s/%s/%s/%s/%s/run%08d/"%(additionalMacStr,_cover,_loc,_element,_p,i*10)
+                    #     outfile = open("macro%s/run_%08d.mac" %(dir,val),"wb")
+                    #     line = macroGeneratorNew(_cover,_loc,_element,_p,val,e,dir)
+                    #     outfile.writelines(line)
+                    #     outfile.close
+
+
+    # if arguments["-P"] and arguments["-L"]:
+    #     ii      = arguments["-P"]
+    #     locj    = arguments["-L"]
+    #     for idx,cover in enumerate(coverage):
+    #         t_name  = "data_%s_%s_%s"%(ii,cover,locj)
+    #         try:
+    #             trees[t_name] = TChain("data")
+    #
+    #             s = "ntuple_root_files%s/%s/%s/watchman_%s_%s_%s_*.root" %(additionalString,ii,cover,ii,cover,locj)
+    #             sw = "%s_%s_%s_%s.root"%(pathFinal,ii,cover,locj)
+    #
+    #             print "Writing ", sw,"from",s
+    #             trees[t_name].Add(s)
+    #             print "Number of entries ",trees[t_name].GetEntries()
+    #             trees[t_name].Merge(sw)
+    #             del trees[t_name]
+    #         except:
+    #             print 'Error for %s' %(t_name)
+    #
+    # if (arguments["-P"] and not arguments["-L"]) or (arguments["-L"] and not arguments["-P"]):
+    #     print "arguments -L and -P must be used at the same time, for now"
+    #
+    #
+    # if (not arguments["-P"] and not arguments["-L"]):
+    #     for j in range(len(iso)):
+    #         for ii in d["%s"%(iso[int(j)])]:
+    #             for idx,cover in enumerate(coverage):
+    #                 t_name  = "data_%s_%s_%s"%(ii,cover,loc[j])
+    #                 try:
+    #                     trees[t_name] = TChain("data")
+    #
+    #                     s = "ntuple_root_files%s/%s/%s/watchman_%s_%s_%s_*.root" %(additionalString,ii,cover,ii,cover,loc[j])
+    #                     sw = "%s_%s_%s_%s.root"%(pathFinal,ii,cover,loc[j])
+    #
+    #                     print "Writing ", sw,"from",s
+    #                     trees[t_name].Add(s)
+    #                     print "Number of entries ",trees[t_name].GetEntries()
+    #                     trees[t_name].Merge(sw)
+    #                     del trees[t_name]
+    #                 except:
+    #                     print 'Error for %s' %(t_name)
+
+
+    del trees
+    return 0
+
+
 def extractNtuple(arguments):
 
     N            = int(arguments["-N"])

@@ -37,7 +37,10 @@ if __name__ == "__main__":
         extractNtupleALL(arguments)
 
     if arguments['-M']:
-        mergeNtupleFiles(arguments)
+        if arguments['--newVers']:
+            mergeNtupleFilesNew(arguments)
+        else:
+            mergeNtupleFiles(arguments)
 
     if arguments['-A']:
         g,h = {},{}
