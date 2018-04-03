@@ -1040,18 +1040,18 @@ def sensitivityMapPass2New():
                     print _tmp
                     _tag = "%s_%s_%s_%s"%(_cover,_loc,_element,_p)
                     _file = "bonsai_root_files%s/%s/merged_%s_%s_%s.root"%(additionalMacStr,_cover,_loc,_element,_p)
-                    h['hist%s'%(_proc)] = TH2D('hist%s'%(_tag),'Rate of events -  %s '%(_tag),binR,rangeRmin,rangeRmax,binN,rangeNmin,rangeNmax)
-                    h['hist%s'%(_proc)].SetXTitle('distance from wall [m]')
-                    h['hist%s'%(_proc)].SetYTitle('n9 cut')
-                    h['hist%s'%(_proc)].SetZTitle('rate per %s'%(t))
-                    h['hist%s'%(_proc)].GetZaxis().SetTitleOffset(-.55);
-                    h['hist%s'%(_proc)].GetZaxis().SetTitleColor(1);
-                    h['hist%s'%(_proc)].GetZaxis().CenterTitle();
-                     for _d in drange(rangeRmin+binwidthR/2.,rangeRmax,binwidthR):
-                        _evts,eff,minR,tot = obtainEventEfficiency(_cov,_proc,_distance2pmt=_d,_n9=8)
+                    h['hist%s'%(_tag)] = TH2D('hist%s'%(_tag),'Rate of events -  %s '%(_tag),binR,rangeRmin,rangeRmax,binN,rangeNmin,rangeNmax)
+                    h['hist%s'%(_tag)].SetXTitle('distance from wall [m]')
+                    h['hist%s'%(_tag)].SetYTitle('n9 cut')
+                    h['hist%s'%(_tag)].SetZTitle('rate per %s'%(t))
+                    h['hist%s'%(_tag)].GetZaxis().SetTitleOffset(-.55);
+                    h['hist%s'%(_tag)].GetZaxis().SetTitleColor(1);
+                    h['hist%s'%(_tag)].GetZaxis().CenterTitle();
+                    for _d in drange(rangeRmin+binwidthR/2.,rangeRmax,binwidthR):
+                        _evts,eff,minR,tot = obtainEventEfficiency(_cov,_file,_distance2pmt=_d,_n9=8)
                         if eff == 0:
                             eff = minR
-                        h['hist%s'%(_proc)].Fill(_d,rangeNmin+binwidthN/2.0,eff)
+                        h['hist%s'%(_tag)].Fill(_d,rangeNmin+binwidthN/2.0,eff)
 
     #
     # for _proc in proc:
