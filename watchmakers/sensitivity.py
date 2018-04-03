@@ -941,8 +941,9 @@ def sensitivityMapPass2New():
     maxTime = 14400.*timeAdjustment
 
     print '\nEvaluation based on geoneutrinos.org'
-    parameters  = loadAnalysisParameters(t)
-    rates       = parameters[11]
+    #parameters  = loadAnalysisParametersNew(t)
+    rates       = 1#parameters[11]
+    print 'Wrong rates for now'
     sizeDetc    = 2.*pi*pow(fidRadius/1000.,2)*fidHeight/1000./1000.
     sizeTank    = 2.*pi*pow(detectorRadius/1000.,2)*detectorHeight/1000./1000.
     FVkTonRatio = (pow(fidRadius,2)*fidHeight)/(pow(detectorRadius,2)*detectorHeight)
