@@ -1100,6 +1100,26 @@ def mergeNtupleFilesNew(arguments):
 
     cnt = 0
 
+
+# #     for _p in proc:
+#         for _loc in proc[_p]:
+#             for idx,_cover in enumerate(coverage):
+#                 for _element in d[_p]:
+#                     # print cnt,_p,element,_loc,cover
+#                     for i in range(N/10+1):
+#                         dir = "macro%s/%s/%s/%s/%s/run%08d/"%(additionalMacStr,_cover,_loc,_element,_p,i*10)
+#                         testCreateDirectory(dir)
+#                         cnt+=1
+#                     for val in range(N):
+#                         i = val/10
+#                         dir = "%s/%s/%s/%s/%s/run%08d/"%(additionalMacStr,_cover,_loc,_element,_p,i*10)
+#                         outfile = open("macro%s/run_%08d.mac" %(dir,val),"wb")
+#                         line = macroGeneratorNew(_cover,_loc,_element,_p,val,e,dir)
+#                         outfile.writelines(line)
+#                         outfile.close
+
+    N = arguments['-N']
+
     for _p in proc:
         for _loc in proc[_p]:
             for idx,_cover in enumerate(coverage):
@@ -1108,10 +1128,21 @@ def mergeNtupleFilesNew(arguments):
                     trees[_tmp] = TChain("data")
                     trees[_tmp+'_RS'] = TChain("runSummary")
                     print _tmp
-                    for _ii in range(100):# Covers up to 1000 jobs,
-                        dir = "bonsai_root_files%s/%s/%s/%s/%s/run%08d/*.root"%(additionalMacStr,_cover,_loc,_element,_p,_ii*10)
-                        trees[_tmp].Add(dir)
-                        trees[_tmp+'_RS'].Add(dir)
+                    for _ii in range(N):# Covers up to 1000 jobs,
+                        i = _ii/N
+                        dir = "bonsai_root_files%s/%s/%s/%s/%s/run%08d/run_%08d.root"%(additionalMacStr,_cover,_loc,_element,_p,i,_ii)
+                        try:
+                            _f = ROOT.TFile(dir)
+                            data = _f.Get('data')
+                            if data == 0x0:
+                                print 'problem with dir, no tree'
+                            else:
+                                trees[_tmp].Add(dir)
+                                trees[_tmp+'_RS'].Add(dir)
+                        except:
+                            print 'Could not read ',dir
+                        # trees[_tmp].Add(dir)
+                        # trees[_tmp+'_RS'].Add(dir)
                         # data = gROOT.FindObject('data')
                         # print "dir: ",data.GetEntries()
                     data = gROOT.FindObject('data')
