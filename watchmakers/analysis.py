@@ -1191,6 +1191,7 @@ _posGood=0.1,_dirGood=0.1,_pe=8,_nhit=8,_itr = 1.5):
     additionalString  = para[0]
 
     rfile = TFile(file)
+    print 'Reading', file
     runSummary = rfile.Get('runSummary')
     Entries = runSummary.GetEntries()
     runSummary.GetEntry(Entries-1)
