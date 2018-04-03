@@ -1047,6 +1047,7 @@ def sensitivityMapPass2New():
                     h['hist%s'%(_tag)].GetZaxis().SetTitleOffset(-.55);
                     h['hist%s'%(_tag)].GetZaxis().SetTitleColor(1);
                     h['hist%s'%(_tag)].GetZaxis().CenterTitle();
+                    print _tag,
                     for _d in drange(rangeRmin+binwidthR/2.,rangeRmax,binwidthR):
                         _evts,eff,minR,tot = obtainEventEfficiency(_cov,_file,_distance2pmt=_d,_n9=8)
                         if eff == 0:
