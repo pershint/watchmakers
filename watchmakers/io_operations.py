@@ -1118,7 +1118,7 @@ def mergeNtupleFilesNew(arguments):
 #                         outfile.writelines(line)
 #                         outfile.close
 
-    N = arguments['-N']
+    N = int(arguments['-N'])
 
     for _p in proc:
         for _loc in proc[_p]:
