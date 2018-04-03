@@ -1203,11 +1203,11 @@ _posGood=0.1,_dirGood=0.1,_pe=8,_nhit=8,_itr = 1.5):
     # print Entries,int(runSummary.runEndTime/1e9),totalEvents,rateHz
 
     data   = rfile.Get('data')
-    cond = "closestPMT/1000.>%f"%(_distance2pmt)
+    cond = "closestPMT>%f"%(_distance2pmt)
     cond += "&& good_pos>%f " %(_posGood)
     cond += "&& n9 > %f && nhit > %f && pe > %f" %(_n9,_nhit,_pe)
     cond += "&& pe/nhit < %f" %(_itr)
-    cond += "&& sqrt(pow(x-mcx,2)+pow(y-mcy,2)+pow(z-mcz,2))<%f"%(_dist)
+    cond += "&& sqrt(pow(x-mcx,2)+pow(y-mcy,2)+pow(z-mcz,2))/1000.<%f"%(_dist)
     evts = data.Draw("",cond,"goff")
     # print total,total/totalEvents,total/totalEvents*rateHz,':',cover,process,_distance2pmt,_posGood,_dirGood,_n9,_pe,_nhit,_itr
     print evts,evts/totalEvents,1./totalEvents,totalEvents
