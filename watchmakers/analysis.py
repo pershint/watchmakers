@@ -1211,6 +1211,7 @@ _posGood=0.1,_dirGood=0.1,_pe=8,_nhit=8,_itr = 1.5):
     evts = data.Draw("",cond,"goff")
     # print total,total/totalEvents,total/totalEvents*rateHz,':',cover,process,_distance2pmt,_posGood,_dirGood,_n9,_pe,_nhit,_itr
     # print evts,evts/totalEvents,1./totalEvents,totalEvents
+    rfile.Close()
     return evts,evts/totalEvents,1./totalEvents,totalEvents
 
 def pickColor(H,_loc,r_c,o_c,b_c,c_c ):
