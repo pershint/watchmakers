@@ -1203,7 +1203,7 @@ _posGood=0.1,_dirGood=0.1,_pe=8,_nhit=8,_itr = 1.5):
     # print Entries,int(runSummary.runEndTime/1e9),totalEvents,rateHz
 
     data   = rfile.Get('data')
-    cond = "closestPMT>%f"%(_distance2pmt)
+    cond = "closestPMT/1000.>%f"%(_distance2pmt)
     cond += "&& good_pos>%f " %(_posGood)
     cond += "&& n9 > %f && nhit > %f && pe > %f" %(_n9,_nhit,_pe)
     cond += "&& pe/nhit < %f" %(_itr)
