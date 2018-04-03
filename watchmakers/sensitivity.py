@@ -1060,7 +1060,7 @@ def sensitivityMapPass2New():
                             if eff == 0:
                                 eff = minR
                             h['hist%s'%(_tag)].Fill(_d,_n,eff)
-                            print '(%4.2e,%4.2e)'%(_n,eff)
+                            print '(%2d,%4.2e),'%(_n,eff),
 
                     print ''
     #
