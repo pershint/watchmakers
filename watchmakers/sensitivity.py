@@ -1038,10 +1038,6 @@ def sensitivityMapPass2New():
         for _loc in proc[_p]:
             for idx,_cover in enumerate(coverage):
                 for _element in d[_p]:
-                    _tmp =  "%s_%s_%s_%s"%(_cover,_loc,_element,_p)
-                    trees[_tmp] = TChain("data")
-                    trees[_tmp+'_RS'] = TChain("runSummary")
-                    print _tmp
                     _tag = "%s_%s_%s_%s"%(_cover,_loc,_element,_p)
                     _file = "bonsai_root_files%s/%s/merged_%s_%s_%s.root"%(additionalMacStr,_cover,_loc,_element,_p)
                     h['hist%s'%(_tag)] = TH2D('hist%s'%(_tag),'Rate of events -  %s '%(_tag),binR,rangeRmin,rangeRmax,binN,rangeNmin,rangeNmax)
