@@ -1190,8 +1190,7 @@ _posGood=0.1,_dirGood=0.1,_pe=8,_nhit=8,_itr = 1.5):
     para = testEnabledCondition(arguments)
     additionalString  = para[0]
 
-    s =  "bonsai_root_files%s/%s/%s"%(additionalString,cover,file)
-    rfile = TFile(s)
+    rfile = TFile(file)
     runSummary = rfile.Get('runSummary')
     Entries = runSummary.GetEntries()
     runSummary.GetEntry(Entries-1)
