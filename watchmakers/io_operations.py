@@ -1169,6 +1169,7 @@ def mergeNtupleFilesNew(arguments):
                     except:
                         print 'Something went wrong'
                         totEvents = -1
+                    dir = "bonsai_root_files%s/%s/%s/%s/%s/run********/run_********.root"%(additionalMacStr,_cover,_loc,_element,_p,i*10,_ii)
                     print 'Merging :\n\t',dir, '\n->\n\t', fLocation, \
                     ';\ntotal entries (trigger/total):', nEntry,'/',totEvents,\
                     ',merged a total of ',totalEntries,'files.'
@@ -1179,63 +1180,9 @@ def mergeNtupleFilesNew(arguments):
                     print 'done\n'
                     trees[_tmp].Delete()
                     trees[_tmp+'_RS'].Delete()
-                    # for i in range(N/10+1):
-                    #     dir = "macro%s/%s/%s/%s/%s/run%08d/"%(additionalMacStr,_cover,_loc,_element,_p,i*10)
-                    #     testCreateDirectory(dir)
-                    #     cnt+=1
-                    # for val in range(N):
-                    #     i = val/10
-                    #     dir = "%s/%s/%s/%s/%s/run%08d/"%(additionalMacStr,_cover,_loc,_element,_p,i*10)
-                    #     outfile = open("macro%s/run_%08d.mac" %(dir,val),"wb")
-                    #     line = macroGeneratorNew(_cover,_loc,_element,_p,val,e,dir)
-                    #     outfile.writelines(line)
-                    #     outfile.close
 
 
-    # if arguments["-P"] and arguments["-L"]:
-    #     ii      = arguments["-P"]
-    #     locj    = arguments["-L"]
-    #     for idx,cover in enumerate(coverage):
-    #         t_name  = "data_%s_%s_%s"%(ii,cover,locj)
-    #         try:
-    #             trees[t_name] = TChain("data")
-    #
-    #             s = "ntuple_root_files%s/%s/%s/watchman_%s_%s_%s_*.root" %(additionalString,ii,cover,ii,cover,locj)
-    #             sw = "%s_%s_%s_%s.root"%(pathFinal,ii,cover,locj)
-    #
-    #             print "Writing ", sw,"from",s
-    #             trees[t_name].Add(s)
-    #             print "Number of entries ",trees[t_name].GetEntries()
-    #             trees[t_name].Merge(sw)
-    #             del trees[t_name]
-    #         except:
-    #             print 'Error for %s' %(t_name)
-    #
-    # if (arguments["-P"] and not arguments["-L"]) or (arguments["-L"] and not arguments["-P"]):
-    #     print "arguments -L and -P must be used at the same time, for now"
-    #
-    #
-    # if (not arguments["-P"] and not arguments["-L"]):
-    #     for j in range(len(iso)):
-    #         for ii in d["%s"%(iso[int(j)])]:
-    #             for idx,cover in enumerate(coverage):
-    #                 t_name  = "data_%s_%s_%s"%(ii,cover,loc[j])
-    #                 try:
-    #                     trees[t_name] = TChain("data")
-    #
-    #                     s = "ntuple_root_files%s/%s/%s/watchman_%s_%s_%s_*.root" %(additionalString,ii,cover,ii,cover,loc[j])
-    #                     sw = "%s_%s_%s_%s.root"%(pathFinal,ii,cover,loc[j])
-    #
-    #                     print "Writing ", sw,"from",s
-    #                     trees[t_name].Add(s)
-    #                     print "Number of entries ",trees[t_name].GetEntries()
-    #                     trees[t_name].Merge(sw)
-    #                     del trees[t_name]
-    #                 except:
-    #                     print 'Error for %s' %(t_name)
-
-
-    del trees
+    # del trees
     return 0
 
 
