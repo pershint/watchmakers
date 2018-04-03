@@ -1129,7 +1129,7 @@ def mergeNtupleFilesNew(arguments):
                     trees[_tmp+'_RS'] = TChain("runSummary")
                     print _tmp
                     for _ii in range(N):# Covers up to 1000 jobs,
-                        i = _ii/N
+                        i = _ii/10
                         dir = "bonsai_root_files%s/%s/%s/%s/%s/run%08d/run_%08d.root"%(additionalMacStr,_cover,_loc,_element,_p,i,_ii)
                         try:
                             _ff = TFile(dir)
