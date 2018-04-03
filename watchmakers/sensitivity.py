@@ -1034,6 +1034,8 @@ def sensitivityMapPass2New():
     # _proc = 'Sum'
     d,proc,coverage = loadSimulationParametersNew()
 
+    minAchieve = 0
+
     for _p in proc:
         for _loc in proc[_p]:
             for idx,_cover in enumerate(coverage):
@@ -1048,18 +1050,22 @@ def sensitivityMapPass2New():
                     h['hist%s'%(_tag)].GetZaxis().SetTitleColor(1);
                     h['hist%s'%(_tag)].GetZaxis().CenterTitle();
                     print _tag
+
                     for _d in drange(rangeRmin+binwidthR/2.,rangeRmax,binwidthR):
                         _evts,eff,minR,tot = obtainEventEfficiency(_cov,_file,_distance2pmt=_d,_n9=8)
+                        minAchieve = 0
                         if eff == 0:
                             eff = minR
+                            minAchieve =1
                         print '\nD:',_d
                         # h['hist%s'%(_tag)].Fill(_d,rangeNmin+binwidthN/2.0,eff)
                         for _n in range(int(rangeNmin+binwidthN/2.0),int(rangeNmax)):
-
-                            _evts,eff,minR,tot = obtainEventEfficiency(_cov,_file,_distance2pmt=_d,_n9=_n)
-                            if eff == 0:
-                                eff = minR
-                            h['hist%s'%(_tag)].Fill(_d,_n,eff)
+                            if minAchieve == 0:
+                                _evts,eff,minR,tot = obtainEventEfficiency(_cov,_file,_distance2pmt=_d,_n9=_n)
+                                if eff == 0:
+                                    eff = minR
+                                    minAchieve = 1
+                                h['hist%s'%(_tag)].Fill(_d,_n,eff)
                             print '(%2d,%4.2e),'%(_n,eff),
 
                     print ''
