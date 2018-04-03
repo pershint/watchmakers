@@ -943,7 +943,8 @@ def sensitivityMapPass2New():
     print '\nEvaluation based on geoneutrinos.org'
     #parameters  = loadAnalysisParametersNew(t)
     rates       = {}#parameters[11]
-    rates["boulby_S"]=1,rates["imb_S"]=1
+    rates["boulby_S"]=1.0
+    rates["imb_S"]=1.0
     print 'Wrong rates for now'
     sizeDetc    = 2.*pi*pow(fidRadius/1000.,2)*fidHeight/1000./1000.
     sizeTank    = 2.*pi*pow(detectorRadius/1000.,2)*detectorHeight/1000./1000.
