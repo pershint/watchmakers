@@ -1134,14 +1134,18 @@ def mergeNtupleFilesNew(arguments):
                         try:
                             _ff = TFile(dir)
                             _data = _ff.Get('data')
+                            _tot = data.GetEntries()
+                            if _tot>=0:
+                                trees[_tmp].Add(dir)
+                                trees[_tmp+'_RS'].Add(dir)
                             # _ff.Close()
                             # trees[_tmp].Add(dir)
                             # trees[_tmp+'_RS'].Add(dir)
-                            if data == 0x0:
-                                print 'problem with dir, no tree'
-                            else:
-                                trees[_tmp].Add(dir)
-                                trees[_tmp+'_RS'].Add(dir)
+                            # if data == 0x0:
+                            #     print 'problem with dir, no tree'
+                            # else:
+                            #     trees[_tmp].Add(dir)
+                            #     trees[_tmp+'_RS'].Add(dir)
                             _ff.Close()
                         except:
                             print 'Could not read ',dir
