@@ -909,6 +909,305 @@ def sensitivityMapPass2():
             h['SoverB%s'%(_proc)].SaveAs("ibdSignalOverBackground%s.C"%(_proc))
             print _proc,h['SoverB%s'%(_proc)].GetMaximum()
 
+
+
+def sensitivityMapPass2New():
+
+    site = arguments["--site"]
+
+    # Need to fix this for future running
+
+    OnOffRatio = float(arguments["--OnOff"])
+    print site,'with on-off ratio of ',OnOffRatio
+
+    cores = int(arguments["--cores"])
+
+    if arguments["--RNRedux"]:
+        rnRedux = float(arguments["--RNRedux"])
+        if rnRedux>1:
+            print "Value of reduction of radionuclide greater than 1, setting to 0"
+            rnRedux = 0.0
+    else:
+        rnRedux = 0.0
+
+    if t == 'sec':
+        timeAdjustment = 24*3600.
+    if t == 'day':
+        timeAdjustment = 1.0
+    if t == 'month':
+        timeAdjustment = 1./31.
+    if t == 'year':
+        timeAdjustment = 1./365.
+    maxTime = 14400.*timeAdjustment
+
+    print '\nEvaluation based on geoneutrinos.org'
+    parameters  = loadAnalysisParameters(t)
+    rates       = parameters[11]
+    sizeDetc    = 2.*pi*pow(fidRadius/1000.,2)*fidHeight/1000./1000.
+    sizeTank    = 2.*pi*pow(detectorRadius/1000.,2)*detectorHeight/1000./1000.
+    FVkTonRatio = (pow(fidRadius,2)*fidHeight)/(pow(detectorRadius,2)*detectorHeight)
+    boulbyRate,imbRate = rates["boulby_S"]*FVkTonRatio,rates["imb_S"]*FVkTonRatio
+    print ' boulby rates: %4.2e per %s per %4.2f kton; [r: %4.2f m; z: %4.2f m]'\
+    %(boulbyRate,t,sizeDetc,fidRadius/1000.,fidHeight/1000.)
+    #fast neutrons
+    # print 'Debug',rates["boulby_S"],FVkTonRatio
+    print '\nEvaluation not based on geoneutrinos.org'
+    detectorMedium,detectorMass,reactorPower,reactorStandoff = 1,sizeDetc*1000.,1.5,24.98
+    experiment = nuOsc.NeutrinoOscillation(detectorMedium,detectorMass,reactorPower,reactorStandoff)
+    preOsc,afterOsc = experiment.FindRate()
+    print ' Neutrino rate pre osc: %4.2f; neutrino rate post osc: %4.2f at %4.2f GWth, at %4.2f km, for %4.2f kton' %(preOsc,afterOsc,reactorPower,reactorStandoff,detectorMass/1000.)
+    detectorMedium,detectorMass,reactorPower,reactorStandoff = 1,sizeDetc*1000.,1.575,24.98
+    experiment = nuOsc.NeutrinoOscillation(detectorMedium,detectorMass,reactorPower,reactorStandoff)
+    preOsc,afterOsc = experiment.FindRate()
+    print ' Neutrino rate pre osc: %4.2f; neutrino rate post osc: %4.2f at %4.2f GWth, at %4.2f km, for %4.2f kton' %(preOsc,afterOsc,reactorPower,reactorStandoff,detectorMass/1000.)
+    print ''
+
+    proc,loca,type,color,lineS,acc,scale   = [],[],[],[],[],[],[]
+
+    proc        += ['QGSP_BERT_EMV','QGSP_BERT_EMX','QGSP_BERT','QGSP_BIC',\
+    'QBBC','QBBC_EMZ','FTFP_BERT','QGSP_FTFP_BERT']
+    _t          = 'FN%s' % (site)
+    loca        += [_t,_t, _t,_t,_t,_t,_t,_t]
+    type        += ['si','si','si','si','si','si','si','si']
+    acc         += ['corr','corr','corr','corr','corr','corr','corr', 'corr']
+    color       += [kO+6,kO+6,kO+6,kO+6,kO+6,kO+6,kO+6,kO+6]
+    lineS       += [2,2,2,2,2,2,2,2]
+    scale       += [1./8.,1./8.,1./8.,1./8.,1./8.,1./8.,1./8.,1./8.]
+
+    #radionuclides
+    proc        += ['9003','11003']
+    _t          =  'RN%s' % (site)
+    loca        += [_t,_t]
+    type        += ['ei','ei']
+    acc         += ['di','di']
+    color       += [kG+3,kG+3]
+    lineS       += [1,1]
+    scale       += [1.,1.]
+    #ibds
+    if site == 'boulby':
+        proc    += ['boulby','boulby','neutron']
+    else:
+        proc    += ['imb','imb','neutron']
+    loca        += ['S','S','N%s'%(site)]
+    type        += ['ei','ei','ei']
+    acc         += ['di','corr','corr']
+    color       += [kA+0,kA-0,kA-0]
+    lineS       += [1,2,2]
+    scale       += [-1.0,0.0,0.0]
+
+    c1 = TCanvas('c1','c1',1618,1000)
+    c1.SetRightMargin(0.53)
+    c1.Divide(2,2)
+
+    additionalString,additionalCommands,additionalMacStr,additionalMacOpt = testEnabledCondition(arguments)
+    if additionalString == "":
+        additionalString = "_default"
+    location = 'Boulby '
+
+    hist = TH2D('hist','3#sigma discovery phase space -  %s '%(location),31,9.5,40.5,30,9.5,39.5)
+    hist.SetXTitle('photocoverage [%]')
+    hist.SetYTitle('photoelectron threhsold cut [p.e.]')
+    hist.SetZTitle('off-time [%s] for 3 #sigma discovery'%(t))
+    hist.GetZaxis().SetTitleOffset(-.55);
+    hist.GetZaxis().SetTitleColor(1);
+    hist.GetZaxis().CenterTitle();
+    gStyle.SetOptStat(0)
+    gStyle.SetPalette(55)
+
+
+
+    h = {}
+
+    binR,rangeRmin,rangeRmax = 31,0.45,3.55
+    binwidthR = (rangeRmax-rangeRmin)/binR
+    binN,rangeNmin,rangeNmax = 48,7.5,55.5
+    binwidthN = (rangeNmax-rangeNmin)/binN
+
+    _cov = arguments['-C']
+
+    # proc = ['214Bi_PMT','208Tl_PMT','210Tl_PMT']
+    # proc = ['214Bi_PMT','208Tl_PMT']
+    # proc = ['214Bi_WV','208Tl_PMT','214Bi_PMT']
+    # _proc = 'Sum'
+
+    for _p in proc:
+        for _loc in proc[_p]:
+            for idx,_cover in enumerate(coverage):
+                for _element in d[_p]:
+                    _tmp =  "%s_%s_%s_%s"%(_cover,_loc,_element,_p)
+                    trees[_tmp] = TChain("data")
+                    trees[_tmp+'_RS'] = TChain("runSummary")
+                    print _tmp
+                    _tag = "%s_%s_%s_%s"%(_cover,_loc,_element,_p)
+                    _file = "bonsai_root_files%s/%s/merged_%s_%s_%s.root"%(additionalMacStr,_cover,_loc,_element,_p)
+                    h['hist%s'%(_proc)] = TH2D('hist%s'%(_tag),'Rate of events -  %s '%(_tag),binR,rangeRmin,rangeRmax,binN,rangeNmin,rangeNmax)
+                    h['hist%s'%(_proc)].SetXTitle('distance from wall [m]')
+                    h['hist%s'%(_proc)].SetYTitle('n9 cut')
+                    h['hist%s'%(_proc)].SetZTitle('rate per %s'%(t))
+                    h['hist%s'%(_proc)].GetZaxis().SetTitleOffset(-.55);
+                    h['hist%s'%(_proc)].GetZaxis().SetTitleColor(1);
+                    h['hist%s'%(_proc)].GetZaxis().CenterTitle();
+                     for _d in drange(rangeRmin+binwidthR/2.,rangeRmax,binwidthR):
+                        _evts,eff,minR,tot = obtainEventEfficiency(_cov,_proc,_distance2pmt=_d,_n9=8)
+                        if eff == 0:
+                            eff = minR
+                        h['hist%s'%(_proc)].Fill(_d,rangeNmin+binwidthN/2.0,eff)
+
+    #
+    # for _proc in proc:
+    #     print '\nEvaluating process ',_proc
+    #     h['hist%s'%(_proc)] = TH2D('hist%s'%(_proc),'%s Rate of events -  %s '%(_proc,location),binR,rangeRmin,rangeRmax,binN,rangeNmin,rangeNmax)
+    #     h['hist%s'%(_proc)].SetXTitle('distance from wall [m]')
+    #     h['hist%s'%(_proc)].SetYTitle('n9 cut')
+    #     h['hist%s'%(_proc)].SetZTitle('rate per %s'%(t))
+    #     h['hist%s'%(_proc)].GetZaxis().SetTitleOffset(-.55);
+    #     h['hist%s'%(_proc)].GetZaxis().SetTitleColor(1);
+    #     h['hist%s'%(_proc)].GetZaxis().CenterTitle();
+    #     gStyle.SetOptStat(0)
+    #     gStyle.SetPalette(55)
+    #     for _d in drange(rangeRmin+binwidthR/2.,rangeRmax,binwidthR):
+    #         _evts,eff,rateHz,minR,tot = obtainEventEfficiency(_cov,_proc,_distance2pmt=_d,_n9=8)
+    #         if rateHz == 0:
+    #             rateHz = minR
+    #         rate = rateHz*24.*3600./timeAdjustment
+    #         h['hist%s'%(_proc)].Fill(_d,rangeNmin+binwidthN/2.0,rate)
+    #         print '\n',_d,eff,rateHz*24.*3600./timeAdjustment,
+    #         for _n in range(int(rangeNmin+binwidthN/2.0+1),int(rangeNmax)):
+    #             _evts,eff,rateHz,minR,tot = obtainEventEfficiency(_cov,_proc,_distance2pmt=_d,_n9=_n)
+    #             if rateHz == 0:
+    #                 rateHz = minR
+    #             print rateHz*24.*3600./timeAdjustment,
+    #             rate = rateHz*24.*3600./timeAdjustment
+    #             h['hist%s'%(_proc)].Fill(_d,_n,rate)
+    #     print ''
+    #     h['hist%s'%('Sum')].Add(h['hist%s'%(_proc)],1)
+    #     h['hist%s'%(_proc)].SaveAs('h%s%s.C'%(_proc,_cov))
+    #     h['hist%s'%(_proc)].SaveAs('h%s%s.gif'%(_proc,_cov))
+    # h['hist%s'%('Sum')].SaveAs('h%s%s.C'%('Sum',_cov))
+    #
+    # procS = ['boulby','neutron']
+    #
+    # for _proc in procS:
+    #     print '\nEvaluating process ',_proc
+    #     h['hist%s'%(_proc)] = TH2D('hist%s'%(_proc),'%s Rate of events -  %s '%(_proc,location),binR,rangeRmin,rangeRmax,binN,rangeNmin,rangeNmax)
+    #     h['hist%s'%(_proc)].SetXTitle('distance from wall [m]')
+    #     h['hist%s'%(_proc)].SetYTitle('n9 cut')
+    #     h['hist%s'%(_proc)].SetZTitle('rate per %s'%(t))
+    #     h['hist%s'%(_proc)].GetZaxis().SetTitleOffset(-.55);
+    #     h['hist%s'%(_proc)].GetZaxis().SetTitleColor(1);
+    #     h['hist%s'%(_proc)].GetZaxis().CenterTitle();
+    #
+    #     h['eff%s'%(_proc)] = TH2D('eff%s'%(_proc),'%s Rate of events -  %s '%(_proc,location),binR,rangeRmin,rangeRmax,binN,rangeNmin,rangeNmax)
+    #     h['eff%s'%(_proc)].SetXTitle('distance from wall [m]')
+    #     h['eff%s'%(_proc)].SetYTitle('n9 cut')
+    #     h['eff%s'%(_proc)].SetZTitle('efficiency')
+    #     h['eff%s'%(_proc)].GetZaxis().SetTitleOffset(-.55);
+    #     h['eff%s'%(_proc)].GetZaxis().SetTitleColor(1);
+    #     h['eff%s'%(_proc)].GetZaxis().CenterTitle();
+    #
+    #     gStyle.SetOptStat(0)
+    #     gStyle.SetPalette(55)
+    #     for _d in drange(rangeRmin+binwidthR/2.,rangeRmax,binwidthR):
+    #         _evts,eff,rateHz,minR,tot = obtainNeutronLike(_cov,_proc,_distance2pmt=_d,_n9=8,_dist=2.0)
+    #         if rateHz == 0:
+    #             rateHz = minR
+    #             eff = 1./tot
+    #         rate = rateHz*24.*3600./timeAdjustment
+    #         sizeFV    =  2.*pi*pow((pmtRadius/1000.-_d),2)*(pmtHeight/1000.-_d)/1000.
+    #         h['hist%s'%(_proc)].Fill(_d,8,rate)
+    #         h['eff%s'%(_proc)].Fill(_d,8,eff*sizeTank/sizeFV)
+    #
+    #         print '\n',_d,eff,rateHz*24.*3600./timeAdjustment,
+    #         for _n in range(9,int(rangeNmax)):
+    #             _evts,eff,rateHz,minR,tot = obtainNeutronLike(_cov,_proc,_distance2pmt=_d,_n9=_n,_dist=2.0)
+    #             if rateHz == 0:
+    #                 rateHz = minR
+    #                 eff = 1./tot
+    #             # print rateHz*24.*3600./timeAdjustment,
+    #             sizeFV    = 2.*pi*pow((pmtRadius/1000.-_d),2)*(pmtHeight/1000.-_d)/1000.
+    #             print eff*sizeTank/sizeFV,
+    #             rate = rateHz*24.*3600./timeAdjustment
+    #             h['hist%s'%(_proc)].Fill(_d,_n,rate)
+    #             # print pmtRadius/1000.
+    #             h['eff%s'%(_proc)].Fill(_d,_n,eff*sizeTank/sizeFV)
+    #     print ''
+    #     h['hist%s'%(_proc)].SaveAs('h%s.C'%(_proc))
+    #     h['eff%s'%(_proc)].SaveAs('eff%s.C'%(_proc))
+    #
+    # # timeAcc = 0.0001*86400.
+    #
+    # offsets_n9 = [0,2,4,6,8,10,12,14,16]  ## bin numbers
+    # offsets_dtw = [0]       ## bin numbers
+    #
+    # for offset in offsets_n9:
+    #     for fv_offset in offsets_dtw:
+    #         if fv_offset < 0:
+    #             _proc = '_%d_neg%d_%s'%(offset,-fv_offset,_cov)
+    #         else:
+    #             _proc = '_%d_%d_%s'%(offset,fv_offset,_cov)
+    #
+    #         h['S%s'%(_proc)] = TH2D('S%s'%(_proc),'%s Rate of events -  %s '%(_proc,location),binR,rangeRmin,rangeRmax,binN,rangeNmin,rangeNmax)
+    #         h['S%s'%(_proc)].SetXTitle('distance from wall [m]')
+    #         h['S%s'%(_proc)].SetYTitle('n9 cut')
+    #         h['S%s'%(_proc)].SetZTitle('rate per day')
+    #         h['S%s'%(_proc)].GetZaxis().SetTitleOffset(-.55);
+    #         h['S%s'%(_proc)].GetZaxis().SetTitleColor(1);
+    #         h['S%s'%(_proc)].GetZaxis().CenterTitle();
+    #
+    #         h['B%s'%(_proc)] = TH2D('B%s'%(_proc),'%s Rate of events -  %s '%(_proc,location),binR,rangeRmin,rangeRmax,binN,rangeNmin,rangeNmax)
+    #         h['B%s'%(_proc)].SetXTitle('distance from wall [m]')
+    #         h['B%s'%(_proc)].SetYTitle('n9 cut')
+    #         h['B%s'%(_proc)].SetZTitle('rate per day')
+    #         h['B%s'%(_proc)].GetZaxis().SetTitleOffset(-.55);
+    #         h['B%s'%(_proc)].GetZaxis().SetTitleColor(1);
+    #         h['B%s'%(_proc)].GetZaxis().CenterTitle();
+    #
+    #         h['SoverB%s'%(_proc)] = TH2D('SoverB%s'%(_proc),'%s Rate of events -  %s '%(_proc,location),binR,rangeRmin,rangeRmax,binN,rangeNmin,rangeNmax)
+    #         h['SoverB%s'%(_proc)].SetXTitle('distance from wall [m]')
+    #         h['SoverB%s'%(_proc)].SetYTitle('n9 cut')
+    #         h['SoverB%s'%(_proc)].SetZTitle('rate per day')
+    #         h['SoverB%s'%(_proc)].GetZaxis().SetTitleOffset(-.55);
+    #         h['SoverB%s'%(_proc)].GetZaxis().SetTitleColor(1);
+    #         h['SoverB%s'%(_proc)].GetZaxis().CenterTitle();
+    #
+    #         for _d in range(binR-fv_offset-1):
+    #             for _n in range(binN-offset-1):
+    #                 _db=_d+1
+    #                 _nb=_n+1
+    #                 _p_d  = h['eff%s'%('boulby')].GetXaxis().GetBinCenter(_db)
+    #                 _p_n9 = h['eff%s'%('boulby')].GetYaxis().GetBinCenter(_nb)
+    #                 _n_d  = h['eff%s'%('neutron')].GetXaxis().GetBinCenter(_db+fv_offset)
+    #                 _n_n9 = h['eff%s'%('neutron')].GetYaxis().GetBinCenter(_nb+offset)
+    #                 _p_v  = h['eff%s'%('boulby')].GetBinContent(_db,_nb)
+    #                 _n_v  = h['eff%s'%('neutron')].GetBinContent(_db+fv_offset,_nb+offset)
+    #                 _rate_v  = h['hist%s'%('neutron')].GetBinContent(_db+fv_offset,_nb+offset)
+    #                 print "Positron/neutron: Wall distance (%4.1f,%4.1f), n9 cut (%d,%d), efficiency (%4.3f,%4.3f): combined eff/rate : %4.3f per day"\
+    #                 %(_p_d,_n_d,_p_n9,_n_n9,_p_v,_n_v,_rate_v*_p_v*86400.)
+    #                 _signal = _rate_v*_p_v*86400.
+    #
+    #                 _p_d  = h['hist%s'%('Sum')].GetXaxis().GetBinCenter(_db)
+    #                 _p_n9 = h['hist%s'%('Sum')].GetYaxis().GetBinCenter(_nb)
+    #                 _n_d  = h['hist%s'%('Sum')].GetXaxis().GetBinCenter(_db+fv_offset)
+    #                 _n_n9 = h['hist%s'%('Sum')].GetYaxis().GetBinCenter(_nb+offset)
+    #                 _p_v  = h['hist%s'%('Sum')].GetBinContent(_db,_nb)
+    #                 _n_v  = h['hist%s'%('Sum')].GetBinContent(_db+fv_offset,_nb+offset)
+    #
+    #                 print "Accidental       : Wall distance (%4.1f,%4.1f), n9 cut (%d,%d), rate (%4.3f,%4.3f): combined rate : %4.3f per day"\
+    #                 %(_p_d,_n_d,_p_n9,_n_n9,_p_v,_n_v,_p_v*_n_v*timeAcc)
+    #                 _background = _p_v*_n_v*timeAcc*0.05
+    #
+    #                 h['S%s'%(_proc)].SetBinContent(_db,_nb,_signal)
+    #                 h['B%s'%(_proc)].SetBinContent(_db,_nb,_background)
+    #                 h['SoverB%s'%(_proc)].SetBinContent(_db,_nb,_signal/sqrt(_signal+_background))
+    #
+    #
+    #         h['S%s'%(_proc)].SaveAs("ibdSignal%s.C"%(_proc))
+    #         h['B%s'%(_proc)].SaveAs("ibdBackground%s.C"%(_proc))
+    #         h['SoverB%s'%(_proc)].SaveAs("ibdSignalOverBackground%s.C"%(_proc))
+    #         print _proc,h['SoverB%s'%(_proc)].GetMaximum()
+
+
+
 def runSensitivity():
     hBoulby = TH2D('hBoulby','hBoulby',50,0.5,50.5,50,0.5,50.5)
     print 'Boulby:'

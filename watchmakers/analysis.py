@@ -1182,6 +1182,38 @@ _posGood=0.1,_dirGood=0.1,_pe=8,_nhit=8,_itr = 1.5):
 
     return evts,evts/totalEvents,evts/totalEvents*rateHz,1./totalEvents*rateHz,totalEvents
 
+
+
+def obtainEventEfficiency(cover,file,_distance2pmt=1,_n9=8,_dist=30.0,\
+_posGood=0.1,_dirGood=0.1,_pe=8,_nhit=8,_itr = 1.5):
+    # covPCT  = coveragePCT[cover]
+    para = testEnabledCondition(arguments)
+    additionalString  = para[0]
+
+    s =  "bonsai_root_files%s/%s/%s"%(additionalString,cover,file)
+    rfile = TFile(s)
+    runSummary = rfile.Get('runSummary')
+    Entries = runSummary.GetEntries()
+    runSummary.GetEntry(Entries-1)
+    events = 0
+    _eventPerRun = runSummary.nEvents
+    for i in range(10):
+        events+= runSummary.subEventTally[i]
+    totalEvents = float(Entries)*_eventPerRun
+    # rateHz = float(runSummary.rateHz)
+    # print Entries,int(runSummary.runEndTime/1e9),totalEvents,rateHz
+
+    data   = rfile.Get('data')
+    cond = "closestPMT>%f"%(_distance2pmt)
+    cond += "&& good_pos>%f && good_dir>%f " %(_posGood,_dirGood)
+    cond += "&& n9 > %f && nhit > %f && pe > %f" %(_n9,_nhit,_pe)
+    cond += "&& pe/nhit < %f" %(_itr)
+    cond += "&& sqrt(pow(x-mcx,2)+pow(y-mcy,2)+pow(z-mcz,2))<%f"%(_dist)
+    evts = data.Draw("",cond,"goff")
+    # print total,total/totalEvents,total/totalEvents*rateHz,':',cover,process,_distance2pmt,_posGood,_dirGood,_n9,_pe,_nhit,_itr
+
+    return evts,evts/totalEvents,1./totalEvents,totalEvents
+
 def pickColor(H,_loc,r_c,o_c,b_c,c_c ):
     if _loc=='PMT':
         H.SetLineColor(kOrange+o_c)
