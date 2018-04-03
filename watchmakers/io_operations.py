@@ -1169,7 +1169,7 @@ def mergeNtupleFilesNew(arguments):
                     except:
                         print 'Something went wrong'
                         totEvents = -1
-                    dir = "bonsai_root_files%s/%s/%s/%s/%s/run********/run_********.root"%(additionalMacStr,_cover,_loc,_element,_p,i*10,_ii)
+                    dir = "bonsai_root_files%s/%s/%s/%s/%s/run********/run_********.root"%(additionalMacStr,_cover,_loc,_element,_p)
                     print 'Merging :\n\t',dir, '\n->\n\t', fLocation, \
                     ';\ntotal entries (trigger/total):', nEntry,'/',totEvents,\
                     ',merged a total of ',totalEntries,'files.'
