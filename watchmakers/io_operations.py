@@ -1175,7 +1175,10 @@ def mergeNtupleFilesNew(arguments):
                     ',merged a total of ',totalEntries,'files.'
                     # data.AddFriend(runSummary)
                     data.Merge(fLocation)
-                    runSummary.Merge(fLocationSum)
+                    _f = TFile(fLocation)
+                    runSummary.Write()
+                    _f.Close()
+                    # runSummary.Merge(fLocationSum)
 
                     print 'done\n'
                     trees[_tmp].Delete()
