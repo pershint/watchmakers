@@ -69,7 +69,10 @@ if __name__ == "__main__":
         extractPDFandCorrectRate()
 
     if arguments['--sensIBD']:
-        sensitivityMapPass2()
+        if arguments['--newVers']:
+            sensitivityMapPass2New()
+        else:
+            sensitivityMapPass2()
 
 
 ######################## Waba Luba Dub Dub!! ###########################
