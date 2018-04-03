@@ -1133,8 +1133,10 @@ def mergeNtupleFilesNew(arguments):
                         dir = "bonsai_root_files%s/%s/%s/%s/%s/run%08d/run_%08d.root"%(additionalMacStr,_cover,_loc,_element,_p,i,_ii)
                         try:
                             _ff = TFile(dir)
-                            # _data = _ff.Get('data')
+                            _data = _ff.Get('data')
                             _ff.Close()
+                            trees[_tmp].Add(dir)
+                            trees[_tmp+'_RS'].Add(dir)
                             # if data == 0x0:
                             #     print 'problem with dir, no tree'
                             # else:
