@@ -1032,6 +1032,7 @@ def sensitivityMapPass2New():
     # proc = ['214Bi_PMT','208Tl_PMT']
     # proc = ['214Bi_WV','208Tl_PMT','214Bi_PMT']
     # _proc = 'Sum'
+    d,proc,coverage = loadSimulationParametersNew()
 
     for _p in proc:
         for _loc in proc[_p]:
