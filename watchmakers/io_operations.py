@@ -1134,7 +1134,7 @@ def mergeNtupleFilesNew(arguments):
                         try:
                             _ff = TFile(dir)
                             _data = _ff.Get('data')
-                            _tot = data.GetEntries()
+                            _tot = _data.GetEntries()
                             if _tot>=0:
                                 trees[_tmp].Add(dir)
                                 trees[_tmp+'_RS'].Add(dir)
