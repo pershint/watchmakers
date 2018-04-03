@@ -1051,8 +1051,9 @@ def sensitivityMapPass2New():
                         _evts,eff,minR,tot = obtainEventEfficiency(_cov,_file,_distance2pmt=_d,_n9=8)
                         if eff == 0:
                             eff = minR
+                        print eff,
                         h['hist%s'%(_tag)].Fill(_d,rangeNmin+binwidthN/2.0,eff)
-
+                    print ''
     #
     # for _proc in proc:
     #     print '\nEvaluating process ',_proc
