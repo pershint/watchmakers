@@ -1206,7 +1206,6 @@ _posGood=0.1,_dirGood=0.1,_pe=8,_nhit=8,_itr = 1.5):
         events+= runSummary.subEventTally[i]
     totalEvents = float(Entries)*_eventPerRun
 
-    arbre = {}
     arbre["data"]   = arbre["rfile"].Get('data')
 
     binR,rangeRmin,rangeRmax = 31,0.45,3.55
