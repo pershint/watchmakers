@@ -1,6 +1,10 @@
 from load import *
 from io_operations import testEnabledCondition,writeResultsToFile
-
+def drange(start, stop, step):
+    rii= start
+    while rii<stop:
+        yield rii
+        rii+=step
 def fillHistograms(inFilePrefix,a1,t1,h,cover,ii,locj,covPCT):
     #   Obtain logarithmic binnings
     nbins, xbins, ybins = logx_logy_array()
