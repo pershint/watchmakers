@@ -1235,7 +1235,7 @@ _posGood=0.1,_dirGood=0.1,_pe=8,_nhit=8,_itr = 1.5):
                     eff = 1/totalEvents
                     minAchieve = 1
                 # h['hist%s'%(_tag)].Fill(_d,_n,eff)
-            print '(%2d,%4.2e),'%(_n,eff),
+            print '(%2d,%4.2e),'%(_n9,eff),
 
 
     arbre["rfile"].Close()
