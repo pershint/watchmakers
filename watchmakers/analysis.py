@@ -5,6 +5,7 @@ def drange(start, stop, step):
     while rii<stop:
         yield rii
         rii+=step
+
 def fillHistograms(inFilePrefix,a1,t1,h,cover,ii,locj,covPCT):
     #   Obtain logarithmic binnings
     nbins, xbins, ybins = logx_logy_array()
@@ -1207,7 +1208,8 @@ _posGood=0.1,_dirGood=0.1,_pe=8,_nhit=8,_itr = 1.5):
     # rateHz = float(runSummary.rateHz)
     # print Entries,int(runSummary.runEndTime/1e9),totalEvents,rateHz
 
-    data   = rfile.Get('data')
+    arbre = {}
+    arbre["data"]   = rfile.Get('data')
 
     # cond = "closestPMT/1000.>%f"%(_distance2pmt)
     # cond += "&& good_pos>%f " %(_posGood)
@@ -1249,7 +1251,7 @@ _posGood=0.1,_dirGood=0.1,_pe=8,_nhit=8,_itr = 1.5):
 
             if minAchieve == 0:
                 # _evts,eff,minR,tot = obtainEventEfficiency(_cov,_file,_distance2pmt=_d,_n9=_n)
-                evts = data.Draw("",cond,"goff")
+                evts = arbre["data"].Draw("",cond,"goff")
                 eff = evts/totalEvents
                 if eff == 0:
                     eff = minR
@@ -1258,7 +1260,7 @@ _posGood=0.1,_dirGood=0.1,_pe=8,_nhit=8,_itr = 1.5):
             print '(%2d,%4.2e),'%(_n,eff),
 
 
-
+    del arbre
     rfile.Close()
     return eff
 
