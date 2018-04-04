@@ -1194,10 +1194,10 @@ _posGood=0.1,_dirGood=0.1,_pe=8,_nhit=8,_itr = 1.5):
     # covPCT  = coveragePCT[cover]
     para = testEnabledCondition(arguments)
     additionalString  = para[0]
-
-    rfile = TFile(file)
+    arbre = {}
+    arbre["rfile"] = TFile(file)
     print 'Reading', file
-    runSummary = rfile.Get('runSummary')
+    runSummary = arbre["rfile"].Get('runSummary')
     Entries = runSummary.GetEntries()
     runSummary.GetEntry(Entries-1)
     events = 0
@@ -1205,20 +1205,9 @@ _posGood=0.1,_dirGood=0.1,_pe=8,_nhit=8,_itr = 1.5):
     for i in range(10):
         events+= runSummary.subEventTally[i]
     totalEvents = float(Entries)*_eventPerRun
-    # rateHz = float(runSummary.rateHz)
-    # print Entries,int(runSummary.runEndTime/1e9),totalEvents,rateHz
 
     arbre = {}
-    arbre["data"]   = rfile.Get('data')
-
-    # cond = "closestPMT/1000.>%f"%(_distance2pmt)
-    # cond += "&& good_pos>%f " %(_posGood)
-    # cond += "&& n9 > %f && nhit > %f && pe > %f" %(_n9,_nhit,_pe)
-    # cond += "&& pe/nhit < %f" %(_itr)
-    # cond += "&& sqrt(pow(x-mcx,2)+pow(y-mcy,2)+pow(z-mcz,2))/1000.<%f"%(_dist)
-    # evts = data.Draw("",cond,"goff")
-    # print total,total/totalEvents,total/totalEvents*rateHz,':',cover,process,_distance2pmt,_posGood,_dirGood,_n9,_pe,_nhit,_itr
-    # print evts,evts/totalEvents,1./totalEvents,totalEvents
+    arbre["data"]   = arbre["rfile"].Get('data')
 
     binR,rangeRmin,rangeRmax = 31,0.45,3.55
     binwidthR = (rangeRmax-rangeRmin)/binR
@@ -1227,21 +1216,11 @@ _posGood=0.1,_dirGood=0.1,_pe=8,_nhit=8,_itr = 1.5):
 
 
     for _d in drange(rangeRmin+binwidthR/2.,rangeRmax,binwidthR):
-        # _evts,eff,minR,tot = obtainEventEfficiency(_cov,_file,_distance2pmt=_d,_n9=8)
-        # cond = "closestPMT/1000.>%f"%(_d)
-        # cond += "&& good_pos>%f " %(_posGood)
-        # cond += "&& n9 > %f && nhit > %f && pe > %f" %(_n9,_nhit,_pe)
-        # cond += "&& pe/nhit < %f" %(_itr)
-        # cond += "&& sqrt(pow(x-mcx,2)+pow(y-mcy,2)+pow(z-mcz,2))/1000.<%f"%(_dist)
-        # evts = data.Draw("",cond,"goff")
-
         minAchieve = 0
-        # if eff == 0:
-        #     eff = minR
-        #     minAchieve =1
+
         print '\nD:',_d
         # h['hist%s'%(_tag)].Fill(_d,rangeNmin+binwidthN/2.0,eff)
-        for _n in range(int(rangeNmin+binwidthN/2.0),int(rangeNmax)):
+        for _n9 in range(int(rangeNmin+binwidthN/2.0),int(rangeNmax)):
             cond = "closestPMT/1000.>%f"%(_d)
             cond += "&& good_pos>%f " %(_posGood)
             cond += "&& n9 > %f && nhit > %f && pe > %f" %(_n9,_nhit,_pe)
@@ -1260,8 +1239,8 @@ _posGood=0.1,_dirGood=0.1,_pe=8,_nhit=8,_itr = 1.5):
             print '(%2d,%4.2e),'%(_n,eff),
 
 
+    arbre["rfile"].Close()
     del arbre
-    rfile.Close()
     return eff
 
 def pickColor(H,_loc,r_c,o_c,b_c,c_c ):
