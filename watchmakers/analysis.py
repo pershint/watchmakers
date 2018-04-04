@@ -1244,7 +1244,7 @@ _posGood=0.1,_dirGood=0.1,_pe=8,_nhit=8,_itr = 1.5):
 
 
             if minAchieve == 0:
-                _evts,eff,minR,tot = obtainEventEfficiency(_cov,_file,_distance2pmt=_d,_n9=_n)
+                # _evts,eff,minR,tot = obtainEventEfficiency(_cov,_file,_distance2pmt=_d,_n9=_n)
                 evts = data.Draw("",cond,"goff")
                 eff = evts/totalEvents
                 if eff == 0:
