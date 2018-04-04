@@ -1189,7 +1189,7 @@ _posGood=0.1,_dirGood=0.1,_pe=8,_nhit=8,_itr = 1.5):
 
 
 
-def obtainEventEfficiency(cover,file,_distance2pmt=1,_n9=8,_dist=30.0,\
+def obtainEventEfficiency(cover,file,_tag,_distance2pmt=1,_n9=8,_dist=30.0,\
 _posGood=0.1,_dirGood=0.1,_pe=8,_nhit=8,_itr = 1.5):
     # covPCT  = coveragePCT[cover]
     para = testEnabledCondition(arguments)
@@ -1212,8 +1212,13 @@ _posGood=0.1,_dirGood=0.1,_pe=8,_nhit=8,_itr = 1.5):
     binwidthR = (rangeRmax-rangeRmin)/binR
     binN,rangeNmin,rangeNmax = 48,7.5,55.5
     binwidthN = (rangeNmax-rangeNmin)/binN
-
-
+    h = TH2D('hist%s'%(_tag),'Rate of events -  %s '%(_tag),binR,rangeRmin,rangeRmax,binN,rangeNmin,rangeNmax)
+    h.SetXTitle('distance from wall [m]')
+    h.SetYTitle('n9 cut')
+    h.SetZTitle('rate per %s'%(t))
+    h.GetZaxis().SetTitleOffset(-.55);
+    h.GetZaxis().SetTitleColor(1);
+    h.GetZaxis().CenterTitle();
     for _d in drange(rangeRmin+binwidthR/2.,rangeRmax,binwidthR):
         minAchieve = 0
 
@@ -1234,10 +1239,10 @@ _posGood=0.1,_dirGood=0.1,_pe=8,_nhit=8,_itr = 1.5):
                 if eff == 0:
                     eff = 1/totalEvents
                     minAchieve = 1
-                # h['hist%s'%(_tag)].Fill(_d,_n,eff)
+                h.Fill(_d,_n9,eff)
             print '(%2d,%4.2e),'%(_n9,eff),
 
-
+    h.SaveAs("bonsai_root_files%s/%s/hist%s.C"%(additionalString,cover,_tag))
     arbre["rfile"].Close()
     del arbre
     return eff
