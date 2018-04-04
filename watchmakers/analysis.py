@@ -1204,16 +1204,59 @@ _posGood=0.1,_dirGood=0.1,_pe=8,_nhit=8,_itr = 1.5):
     # print Entries,int(runSummary.runEndTime/1e9),totalEvents,rateHz
 
     data   = rfile.Get('data')
-    cond = "closestPMT/1000.>%f"%(_distance2pmt)
-    cond += "&& good_pos>%f " %(_posGood)
-    cond += "&& n9 > %f && nhit > %f && pe > %f" %(_n9,_nhit,_pe)
-    cond += "&& pe/nhit < %f" %(_itr)
-    cond += "&& sqrt(pow(x-mcx,2)+pow(y-mcy,2)+pow(z-mcz,2))/1000.<%f"%(_dist)
-    evts = data.Draw("",cond,"goff")
+
+    # cond = "closestPMT/1000.>%f"%(_distance2pmt)
+    # cond += "&& good_pos>%f " %(_posGood)
+    # cond += "&& n9 > %f && nhit > %f && pe > %f" %(_n9,_nhit,_pe)
+    # cond += "&& pe/nhit < %f" %(_itr)
+    # cond += "&& sqrt(pow(x-mcx,2)+pow(y-mcy,2)+pow(z-mcz,2))/1000.<%f"%(_dist)
+    # evts = data.Draw("",cond,"goff")
     # print total,total/totalEvents,total/totalEvents*rateHz,':',cover,process,_distance2pmt,_posGood,_dirGood,_n9,_pe,_nhit,_itr
     # print evts,evts/totalEvents,1./totalEvents,totalEvents
+
+    binR,rangeRmin,rangeRmax = 31,0.45,3.55
+    binwidthR = (rangeRmax-rangeRmin)/binR
+    binN,rangeNmin,rangeNmax = 48,7.5,55.5
+    binwidthN = (rangeNmax-rangeNmin)/binN
+
+
+    for _d in drange(rangeRmin+binwidthR/2.,rangeRmax,binwidthR):
+        # _evts,eff,minR,tot = obtainEventEfficiency(_cov,_file,_distance2pmt=_d,_n9=8)
+        # cond = "closestPMT/1000.>%f"%(_d)
+        # cond += "&& good_pos>%f " %(_posGood)
+        # cond += "&& n9 > %f && nhit > %f && pe > %f" %(_n9,_nhit,_pe)
+        # cond += "&& pe/nhit < %f" %(_itr)
+        # cond += "&& sqrt(pow(x-mcx,2)+pow(y-mcy,2)+pow(z-mcz,2))/1000.<%f"%(_dist)
+        # evts = data.Draw("",cond,"goff")
+
+        minAchieve = 0
+        # if eff == 0:
+        #     eff = minR
+        #     minAchieve =1
+        print '\nD:',_d
+        # h['hist%s'%(_tag)].Fill(_d,rangeNmin+binwidthN/2.0,eff)
+        for _n in range(int(rangeNmin+binwidthN/2.0),int(rangeNmax)):
+            cond = "closestPMT/1000.>%f"%(_d)
+            cond += "&& good_pos>%f " %(_posGood)
+            cond += "&& n9 > %f && nhit > %f && pe > %f" %(_n9,_nhit,_pe)
+            cond += "&& pe/nhit < %f" %(_itr)
+            cond += "&& sqrt(pow(x-mcx,2)+pow(y-mcy,2)+pow(z-mcz,2))/1000.<%f"%(_dist)
+
+
+            if minAchieve == 0:
+                _evts,eff,minR,tot = obtainEventEfficiency(_cov,_file,_distance2pmt=_d,_n9=_n)
+                evts = data.Draw("",cond,"goff")
+                eff = evts/totalEvents
+                if eff == 0:
+                    eff = minR
+                    minAchieve = 1
+                # h['hist%s'%(_tag)].Fill(_d,_n,eff)
+            print '(%2d,%4.2e),'%(_n,eff),
+
+
+
     rfile.Close()
-    return evts,evts/totalEvents,1./totalEvents,totalEvents
+    return eff
 
 def pickColor(H,_loc,r_c,o_c,b_c,c_c ):
     if _loc=='PMT':
