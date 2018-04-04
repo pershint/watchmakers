@@ -1207,6 +1207,7 @@ _posGood=0.1,_dirGood=0.1,_pe=8,_nhit=8,_itr = 1.5):
     totalEvents = float(Entries)*_eventPerRun
 
     arbre["data"]   = arbre["rfile"].Get('data')
+    _someEntries = arbre["data"].GetEntries()
 
     binR,rangeRmin,rangeRmax = 31,0.45,3.55
     binwidthR = (rangeRmax-rangeRmin)/binR
@@ -1231,19 +1232,22 @@ _posGood=0.1,_dirGood=0.1,_pe=8,_nhit=8,_itr = 1.5):
             cond += "&& pe/nhit < %f" %(_itr)
             cond += "&& sqrt(pow(x-mcx,2)+pow(y-mcy,2)+pow(z-mcz,2))/1000.<%f"%(_dist)
 
+            if _someEntries !=0:
+                if minAchieve == 0:
+                    # _evts,eff,minR,tot = obtainEventEfficiency(_cov,_file,_distance2pmt=_d,_n9=_n)
+                    # print cond
+                    # print arbre["data"]
 
-            if minAchieve == 0:
-                # _evts,eff,minR,tot = obtainEventEfficiency(_cov,_file,_distance2pmt=_d,_n9=_n)
-                print cond
-                print arbre["data"]
-                evts = arbre["data"].Draw("",cond,"goff")
-                eff = evts/totalEvents
-                if eff == 0:
-                    eff = 1/totalEvents
-                    minAchieve = 1
-                h.Fill(_d,_n9,eff)
+                    evts = arbre["data"].Draw("",cond,"goff")
+                    eff = evts/totalEvents
+                    if eff == 0:
+                        eff = 1/totalEvents
+                        minAchieve = 1
+                    h.Fill(_d,_n9,eff)
+                else:
+                    h.Fill(_d,_n9,1./totalEvents)
             else:
-                h.Fill(_d,_n9,1./totalEvents)
+                h.Fill(_d,_n9,1./totalEvents)        
             print '(%2d,%4.2e),'%(_n9,eff),
 
     h.SaveAs("bonsai_root_files%s/%s/hist%s.C"%(additionalString,cover,_tag))
