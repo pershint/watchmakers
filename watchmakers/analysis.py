@@ -1246,8 +1246,10 @@ _posGood=0.1,_dirGood=0.1,_pe=8,_nhit=8,_itr = 1.5):
                     h.Fill(_d,_n9,eff)
                 else:
                     h.Fill(_d,_n9,1./totalEvents)
+                    eff = 1./totalEvents
             else:
-                h.Fill(_d,_n9,1./totalEvents)        
+                h.Fill(_d,_n9,1./totalEvents)
+                eff =  1./totalEvents
             print '(%2d,%4.2e),'%(_n9,eff),
 
     h.SaveAs("bonsai_root_files%s/%s/hist%s.C"%(additionalString,cover,_tag))
