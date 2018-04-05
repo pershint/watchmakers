@@ -1074,6 +1074,7 @@ def readEfficiencyHistogram():
     lineU238PMT,lineTh232PMT,lineKPMT = '','',''
     lineU238GUN,lineTh232GUN,lineKGUN = '','',''
     lineU238ROCK,lineTh232ROCK,lineKROCK = '','',''
+    lineU238CONC,lineTh232CONC,lineKCONC = '','',''
     lineELSE = ''
 
     for _t in hist:
@@ -1119,6 +1120,20 @@ def readEfficiencyHistogram():
             _sing+=hist[_t].GetMaximum()*mPMTsK40[0]
             lineKROCK += "%50s %e %15.10f\n"%(_t,hist[_t].GetMaximum(),hist[_t].GetMaximum()*mPMTsK40[0])
 
+        elif 'CONC' in _t and 'CHAIN_238U_NA' in _t:
+            if '210Tl' in _t:
+                _sing+=hist[_t].GetMaximum()*mPMTsU238[0]*0.002
+                lineU238CONC += "%50s %e %15.10f\n"%(_t,hist[_t].GetMaximum(),hist[_t].GetMaximum()*mPMTsU238[0]*0.002)
+            else:
+                _sing+=hist[_t].GetMaximum()*mPMTsU238[0]
+                lineU238CONC+= "%50s %e %15.10f\n"%(_t,hist[_t].GetMaximum(),hist[_t].GetMaximum()*mPMTsU238[0])
+        elif 'CONC' in _t and 'CHAIN_232Th_NA' in _t:
+            _sing+=hist[_t].GetMaximum()*mPMTsTh232[0]
+            lineTh232CONC += "%50s %e %15.10f\n"%(_t,hist[_t].GetMaximum(),hist[_t].GetMaximum()*mPMTsTh232[0])
+        elif 'CONC' in _t and '40K_NA' in _t:
+            _sing+=hist[_t].GetMaximum()*mPMTsK40[0]
+            lineKCONC += "%50s %e %15.10f\n"%(_t,hist[_t].GetMaximum(),hist[_t].GetMaximum()*mPMTsK40[0])
+
 
         else:
             lineELSE += "%50s %e\n"%(_t,hist[_t].GetMaximum())
@@ -1133,6 +1148,9 @@ def readEfficiencyHistogram():
     print 'Gunite U-238 \n', lineU238GUN,'\n'
     print 'Gunite Th-232\n', lineTh232GUN,'\n'
     print 'Gunite K\n', lineKGUN,'\n'
+    print 'CONC U-238 \n', lineU238CONC,'\n'
+    print 'CONC Th-232\n', lineTh232CONC,'\n'
+    print 'CONC K\n', lineKCONC,'\n'
     print 'ROCK U-238 \n', lineU238ROCK,'\n'
     print 'ROCK Th-232\n', lineTh232ROCK,'\n'
     print 'ROCK K\n', lineKROCK,'\n'
