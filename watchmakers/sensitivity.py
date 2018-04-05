@@ -1089,6 +1089,7 @@ def readEfficiencyHistogram():
     lineU238ROCK,lineTh232ROCK,lineKROCK = '','',''
     lineU238CONC,lineTh232CONC,lineKCONC = '','',''
     lineRn222WaterVolume = ''
+    linePromptWaterVolume,lineDelayedWaterVolume,linePromptDelayedWaterVolume = '','',''
     lineELSE = ''
 
     for _t in hist:
@@ -1156,6 +1157,10 @@ def readEfficiencyHistogram():
                 _sing+=hist[_t].GetMaximum()*rRn222
                 lineRn222WaterVolume+= "%50s %e %15.10f\n"%(_t,hist[_t].GetMaximum(),hist[_t].GetMaximum()*rRn222)
 
+        elif 'WaterVolume' in _t and 'promptPositron' in _t:
+            _sing+=hist[_t].GetMaximum()*boulbyIBDRate
+            linePromptWaterVolume += "%50s %e %15.10f\n"%(_t,hist[_t].GetMaximum(),hist[_t].GetMaximum()*boulbyIBDRate)
+
         else:
             lineELSE += "%50s %e\n"%(_t,hist[_t].GetMaximum())
 
@@ -1177,8 +1182,9 @@ def readEfficiencyHistogram():
     print 'ROCK Th-232\n', lineTh232ROCK
     print 'ROCK K\n', lineKROCK,'\n'
     print 'Else  \n', lineELSE,'\n'
-    print 'Total singles rate:\t\t\t',_sing,'events per sec at minimum buffer distance of 0.5 m'
-
+    print 'Total singles rate:\t\t\t',_sing,'events per sec at minimum buffer distance of 0.5 m\n'
+    print 'Signal information'
+    print 'Prompt positron Water volume \n', linePromptWaterVolume
     signal = ['WaterVolume_delayedNeutron_ibd_n','WaterVolume_promptPositron_ibd_p']
 
 
