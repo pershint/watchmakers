@@ -651,4 +651,4 @@ def loadPMTActivity():
 
     print
 
-    return mPMTs
+    return mPMTs,mPMTsU238,mPMTsTh232,mPMTsK40

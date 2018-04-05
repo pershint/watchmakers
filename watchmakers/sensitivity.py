@@ -1064,14 +1064,22 @@ def readEfficiencyHistogram():
 
     print 'done processing all .C files. What is in the directory:'
     gROOT.ProcessLine('.ls')
-    # h1 = TH2D()
-    # gROOT.GetObject('hist25pct_TANK_60Co_TANK_ACTIVITY',h1)
-    # print h1.GetMaximum()
+
+    print '\nLoading PMT activity:'
+    loadPMTActivity()
+    print 'done.'
+
+    print '\n What are the maximum efficiency found in each histogram:'
     for _t in hist:
         print "%50s %e"%(_t,hist[_t].GetMaximum())
 
+
+    signal = ['WaterVolume_delayedNeutron_ibd_n','WaterVolume_promptPositron_ibd_p']
+
                     # hist =
                     # print _hist.GetMaximum()
+    print ''
+
 
 def runSensitivity():
     hBoulby = TH2D('hBoulby','hBoulby',50,0.5,50.5,50,0.5,50.5)
