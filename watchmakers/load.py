@@ -635,19 +635,19 @@ def loadPMTActivity():
     PPM_U238    = float(arguments["--U238_PPM"])
     ActivityU238= Lambda_U238*PPM_U238/M_U238/1e6
     mPMTsU238 = [s*ActivityU238 for s in mPMTs]
-    print 'U238',mPMTsU238
+    print 'U238',mPMTsU238, ', PPM:',PPM_U238
 
     M_Th232,Lambda_Th232,Abund_Th232 = 3.853145e-25, 1.57e-18,1.0
     PPM_Th232    = float(arguments["--Th232_PPM"])
     ActivityTh232= Lambda_Th232*PPM_Th232/M_Th232/1e6
     mPMTsTh232 = [s*ActivityTh232 for s in mPMTs]
-    print 'Th232',mPMTsTh232
+    print 'Th232',mPMTsTh232, ', PPM:',PPM_Th232
 
     M_K40,Lambda_K40,Abund_K40 = 6.636286e-26,1.842e-18,0.00117
     PPM_K40    = float(arguments["--K40_PPM"])
     ActivityK40= Lambda_K40*PPM_K40/M_K40/1e6
     mPMTsK40 = [s*ActivityK40 for s in mPMTs]
-    print 'K40',mPMTsK40
+    print 'K40',mPMTsK40, ', PPM:',PPM_K40
 
     print
 
