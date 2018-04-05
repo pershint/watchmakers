@@ -1066,7 +1066,7 @@ def readEfficiencyHistogram():
     gROOT.ProcessLine('.ls')
 
     print '\nLoading PMT activity:'
-    loadPMTActivity()
+    mPMTs,mPMTsU238,mPMTsTh232,mPMTsK40 = loadPMTActivity()
     print 'done.'
 
     print '\n What are the maximum efficiency found in each histogram:'

@@ -628,8 +628,8 @@ def loadPMTActivity():
     cPMTs = [float(s.strip('pct'))/100.*numPMTs for s in coverage]
     mPMTs = [s*mass for s in cPMTs]
 
-    # print "Num pmts", cPMTs
-    # print "Total Mass",mPMTs
+    print "Num pmts", cPMTs
+    print "Total Mass",mPMTs
 
     M_U238,Lambda_U238,Abund_U238 = 3.953e-25,4.916e-18,0.992745
     PPM_U238    = float(arguments["--U238_PPM"])
