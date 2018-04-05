@@ -1058,7 +1058,8 @@ def readEfficiencyHistogram():
                     _dir = "bonsai_root_files%s/%s/"%(additionalMacStr,_cover)
                     _file =  _dir+'hist'+_tag+'.C'
                     gROOT.ProcessLine('.x %s'%(_file))
-                    gROOT.ProcessLine('.ls')
+    print 'Done processing all .C files. What is in the directory:'                
+    gROOT.ProcessLine('.ls')
                     # hist =
                     # print _hist.GetMaximum()
 
