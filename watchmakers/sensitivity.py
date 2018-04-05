@@ -1072,6 +1072,7 @@ def readEfficiencyHistogram():
     print '\n What are the maximum efficiency found in each histogram:'
     _sing = 0.0
     lineU238PMT,lineTh232PMT,lineKPMT = '','',''
+    lineU238GUN,lineTh232GUN,lineKGUN = '','',''
     lineELSE = ''
 
     for _t in hist:
@@ -1088,6 +1089,21 @@ def readEfficiencyHistogram():
         elif 'PMT' in _t and '40K_NA' in _t:
             _sing+=hist[_t].GetMaximum()*mPMTsK40[0]
             lineKPMT += "%50s %e %15.10f\n"%(_t,hist[_t].GetMaximum(),hist[_t].GetMaximum()*mPMTsK40[0])
+
+        if 'GUNITE' in _t and 'CHAIN_238U_NA' in _t:
+            if '210Tl' in _t:
+                _sing+=hist[_t].GetMaximum()*mPMTsU238[0]*0.002
+                lineU238GUN += "%50s %e %15.10f\n"%(_t,hist[_t].GetMaximum(),hist[_t].GetMaximum()*mPMTsU238[0]*0.002)
+            else:
+                _sing+=hist[_t].GetMaximum()*mPMTsU238[0]
+                lineU238GUN+= "%50s %e %15.10f\n"%(_t,hist[_t].GetMaximum(),hist[_t].GetMaximum()*mPMTsU238[0])
+        elif 'GUNITE' in _t and 'CHAIN_232Th_NA' in _t:
+            _sing+=hist[_t].GetMaximum()*mPMTsTh232[0]
+            lineTh232GUN += "%50s %e %15.10f\n"%(_t,hist[_t].GetMaximum(),hist[_t].GetMaximum()*mPMTsTh232[0])
+        elif 'GUNITE' in _t and '40K_NA' in _t:
+            _sing+=hist[_t].GetMaximum()*mPMTsK40[0]
+            lineKGUN += "%50s %e %15.10f\n"%(_t,hist[_t].GetMaximum(),hist[_t].GetMaximum()*mPMTsK40[0])
+
         else:
             lineELSE += "%50s %e\n"%(_t,hist[_t].GetMaximum())
 
@@ -1095,9 +1111,12 @@ def readEfficiencyHistogram():
                     # hist =
                     # print _hist.GetMaximum()
     print ''
-    print 'U-238  PMT\n', lineU238PMT,'\n'
-    print 'Th-232 PMT\n', lineTh232PMT,'\n'
-    print 'K      PMT\n', lineKPMT,'\n'
+    print 'PMT U-238 \n', lineU238PMT,'\n'
+    print 'PMT Th-232\n', lineTh232PMT,'\n'
+    print 'PMT K\n', lineKPMT,'\n'
+    print 'Gunite U-238 \n', lineU238GUN,'\n'
+    print 'Gunite Th-232\n', lineTh232GUN,'\n'
+    print 'Gunite K\n', lineKGUN,'\n'
     print 'Else  \n', lineELSE,'\n'
     print 'Total singles rate:\t\t\t',_sing,'events per sec at minimum buffer distance of 0.5 m'
 
