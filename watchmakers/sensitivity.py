@@ -1069,6 +1069,12 @@ def readEfficiencyHistogram():
     mPMTs,mPMTsU238,mPMTsTh232,mPMTsK40 = loadPMTActivity()
     print 'done.'
 
+    tankRadius  = float(arguments["--tankRadius"])-float(arguments['--steelThick'])
+    tankHeight  = float(arguments["--halfHeight"])-float(arguments['--steelThick'])
+    nKiloTons = pi*pow(tankRadius/1000.,2)*(2.*tankHeight/1000.)
+    rRn222 = float(arguments["--Rn222"])*nKiloTons
+    print '\nLoaded Rn-222 activity of ',rRn222,'Bq/m^3'
+
     print '\n What are the maximum efficiency/rate found in each histogram:'
     _sing = 0.0
     lineU238PMT,lineTh232PMT,lineKPMT = '','',''
@@ -1157,9 +1163,9 @@ def readEfficiencyHistogram():
     print 'Gunite U-238 \n', lineU238GUN,'\n'
     print 'Gunite Th-232\n', lineTh232GUN,'\n'
     print 'Gunite K\n', lineKGUN,'\n'
-    print 'CONC U-238 \n', lineU238CONC,'\n'
-    print 'CONC Th-232\n', lineTh232CONC,'\n'
-    print 'CONC K\n', lineKCONC,'\n'
+    print 'Concrete U-238 \n', lineU238CONC,'\n'
+    print 'Concrete Th-232\n', lineTh232CONC,'\n'
+    print 'Concrete K\n', lineKCONC,'\n'
     print 'ROCK U-238 \n', lineU238ROCK,'\n'
     print 'ROCK Th-232\n', lineTh232ROCK,'\n'
     print 'ROCK K\n', lineKROCK,'\n'
