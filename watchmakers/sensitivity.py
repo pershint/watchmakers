@@ -1071,7 +1071,10 @@ def readEfficiencyHistogram():
 
     print '\n What are the maximum efficiency found in each histogram:'
     for _t in hist:
-        print "%50s %e"%(_t,hist[_t].GetMaximum())
+        if 'PMT' in _t and 'CHAIN_238U_NA' in _t:
+            print "%50s %e %s"%(_t,hist[_t].GetMaximum(),hist[_t].GetMaximum()*mPMTsU238[0])
+        else:
+            print "%50s %e"%(_t,hist[_t].GetMaximum())
 
 
     signal = ['WaterVolume_delayedNeutron_ibd_n','WaterVolume_promptPositron_ibd_p']
