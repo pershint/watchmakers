@@ -1060,7 +1060,8 @@ def readEfficiencyHistogram():
                     gROOT.ProcessLine('.x %s'%(_file))
     print 'Done processing all .C files. What is in the directory:'
     gROOT.ProcessLine('.ls')
-    h = gROOT.GetObject('hist25pct_TANK_60Co_TANK_ACTIVITY')
+    h1 = ROOT.TH1D()
+    h = gROOT.GetObject('hist25pct_TANK_60Co_TANK_ACTIVITY',h1)
                     # hist =
                     # print _hist.GetMaximum()
 
