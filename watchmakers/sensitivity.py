@@ -1088,7 +1088,7 @@ def readEfficiencyHistogram():
         else:
             print "%50s %e"%(_t,hist[_t].GetMaximum())
 
-    print 'Total singles rate:',_sing
+    print 'Total singles rate:\t\t\t',_sing,'events per sec at minimum buffer distance of 0.5 m'
 
     signal = ['WaterVolume_delayedNeutron_ibd_n','WaterVolume_promptPositron_ibd_p']
 
