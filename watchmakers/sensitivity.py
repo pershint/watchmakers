@@ -1165,6 +1165,10 @@ def readEfficiencyHistogram():
             _day=hist[_t].GetMaximum()*boulbyIBDRate*3600.*24
             linePromptWaterVolume += "%50s %e %15.10f per sec (%15.10f per day)\n"%(_t,hist[_t].GetMaximum(),hist[_t].GetMaximum()*boulbyIBDRate,_day)
 
+        elif 'WaterVolume' in _t and 'promptDelayedPair' in _t:
+            _day=hist[_t].GetMaximum()*boulbyIBDRate*3600.*24
+            linePromptWaterVolume += "%50s %e %15.10f per sec (%15.10f per day)\n"%(_t,hist[_t].GetMaximum(),hist[_t].GetMaximum()*boulbyIBDRate,_day)
+
         else:
             lineELSE += "%50s %e\n"%(_t,hist[_t].GetMaximum())
 
