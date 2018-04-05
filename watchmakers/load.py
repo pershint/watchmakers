@@ -48,6 +48,8 @@ docstring = """
     -e=<runBeamEntry>   Number of entries per macro (U/Th event x5) [Default: %d]
     --depth=<depthD>    Depth of detector (for fast neutron spectra) [Default: %f]
 
+    --evalRate          Evaluate the rates and combine to efficiency histrograms
+
     -n                  generate ntuple from single rat-pac root files
     --extractNtup       generate ntuple from all rat-pac root files
     -f=<ifile>          Input file [Default: %s]

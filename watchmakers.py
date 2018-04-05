@@ -74,5 +74,12 @@ if __name__ == "__main__":
         else:
             sensitivityMapPass2()
 
+    if arguments['--evalRate']:
+        if arguments['--newVers']:
+            readEfficiencyHistogram()
+        else:
+            readEfficiencyHistogram()
+
+
 
 ######################## Waba Luba Dub Dub!! ###########################
