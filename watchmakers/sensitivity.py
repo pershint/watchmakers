@@ -1075,6 +1075,8 @@ def readEfficiencyHistogram():
             print "%50s %e %15.10f"%(_t,hist[_t].GetMaximum(),hist[_t].GetMaximum()*mPMTsU238[0])
         elif 'PMT' in _t and 'CHAIN_232Th_NA' in _t:
             print "%50s %e %15.10f"%(_t,hist[_t].GetMaximum(),hist[_t].GetMaximum()*mPMTsTh232[0])
+        elif 'PMT' in _t and '40K_NA' in _t:
+            print "%50s %e %15.10f"%(_t,hist[_t].GetMaximum(),hist[_t].GetMaximum()*mPMTsK40[0])
         else:
             print "%50s %e"%(_t,hist[_t].GetMaximum())
 
