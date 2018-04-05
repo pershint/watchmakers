@@ -1091,9 +1091,6 @@ def readEfficiencyHistogram():
         else:
             lineELSE += "%50s %e\n"%(_t,hist[_t].GetMaximum())
 
-    print 'Total singles rate:\t\t\t',_sing,'events per sec at minimum buffer distance of 0.5 m'
-
-    signal = ['WaterVolume_delayedNeutron_ibd_n','WaterVolume_promptPositron_ibd_p']
 
                     # hist =
                     # print _hist.GetMaximum()
@@ -1102,6 +1099,11 @@ def readEfficiencyHistogram():
     print 'Th-232 PMT\n', lineTh232PMT,'\n'
     print 'K      PMT\n', lineKPMT,'\n'
     print 'Else  \n', lineELSE,'\n'
+    print 'Total singles rate:\t\t\t',_sing,'events per sec at minimum buffer distance of 0.5 m'
+
+    signal = ['WaterVolume_delayedNeutron_ibd_n','WaterVolume_promptPositron_ibd_p']
+
+
 
 def runSensitivity():
     hBoulby = TH2D('hBoulby','hBoulby',50,0.5,50.5,50,0.5,50.5)
