@@ -1075,6 +1075,13 @@ def readEfficiencyHistogram():
     rRn222 = float(arguments["--Rn222"])*nKiloTons
     print '\nLoaded Rn-222 activity of ',rRn222,'Bq per water volume, assumed a rate of %4.3e Bq/m^3'%(float(arguments["--Rn222"]))
 
+
+    FreeProtons = 0.668559
+    TNU         = FreeProtons* nKiloTons /1000./365./24./3600.
+    boulbyIBDRate   = 800.*TNU
+    print '\nLoaded an IBD rate of ',boulbyIBDRate,' events per water volume per second, assumed a rate of %4.3e TNU'%(boulbyIBDRate/TNU)
+
+
     print '\n What are the maximum efficiency/rate found in each histogram:'
     _sing = 0.0
     lineU238PMT,lineTh232PMT,lineKPMT = '','',''
@@ -1156,18 +1163,18 @@ def readEfficiencyHistogram():
                     # hist =
                     # print _hist.GetMaximum()
     print ''
-    print 'PMT U-238 \n', lineU238PMT,'\n'
-    print 'PMT Th-232\n', lineTh232PMT,'\n'
+    print 'PMT U-238 \n', lineU238PMT
+    print 'PMT Th-232\n', lineTh232PMT
     print 'PMT K\n', lineKPMT,'\n'
     print 'Water Rn-222\n',lineRn222WaterVolume,'\n'
-    print 'Gunite U-238 \n', lineU238GUN,'\n'
-    print 'Gunite Th-232\n', lineTh232GUN,'\n'
+    print 'Gunite U-238 \n', lineU238GUN
+    print 'Gunite Th-232\n', lineTh232GUN
     print 'Gunite K\n', lineKGUN,'\n'
-    print 'Concrete U-238 \n', lineU238CONC,'\n'
-    print 'Concrete Th-232\n', lineTh232CONC,'\n'
+    print 'Concrete U-238 \n', lineU238CONC
+    print 'Concrete Th-232\n', lineTh232CONC
     print 'Concrete K\n', lineKCONC,'\n'
-    print 'ROCK U-238 \n', lineU238ROCK,'\n'
-    print 'ROCK Th-232\n', lineTh232ROCK,'\n'
+    print 'ROCK U-238 \n', lineU238ROCK
+    print 'ROCK Th-232\n', lineTh232ROCK
     print 'ROCK K\n', lineKROCK,'\n'
     print 'Else  \n', lineELSE,'\n'
     print 'Total singles rate:\t\t\t',_sing,'events per sec at minimum buffer distance of 0.5 m'
