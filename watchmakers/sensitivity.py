@@ -1055,8 +1055,8 @@ def readEfficiencyHistogram():
                 for _element in d[_p]:
                     _tag = "%s_%s_%s_%s"%(_cover,_loc,_element,_p)
                     _dir = "bonsai_root_files%s/%s/"%(additionalMacStr,_cover)
-                    print _dir+'hist'+_tag+'.C'
-
+                    _file =  _dir+'hist'+_tag+'.C'
+                    gROOT.ProcessLine('.x %s'%(_file))
 
 def runSensitivity():
     hBoulby = TH2D('hBoulby','hBoulby',50,0.5,50.5,50,0.5,50.5)
