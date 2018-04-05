@@ -1049,6 +1049,7 @@ def readEfficiencyHistogram():
     d,proc,coverage = loadSimulationParametersNew()
     additionalString,additionalCommands,additionalMacStr,additionalMacOpt = testEnabledCondition(arguments)
 
+    print 'Loading in all .C file...'
     for _p in proc:
         for _loc in proc[_p]:
             for idx,_cover in enumerate(coverage):
@@ -1061,14 +1062,14 @@ def readEfficiencyHistogram():
                     hist[_tag] =  TH2D()
                     gROOT.GetObject(_hist,hist[_tag])
 
-    print 'Done processing all .C files. What is in the directory:'
+    print 'done processing all .C files. What is in the directory:'
     gROOT.ProcessLine('.ls')
-    h1 = TH2D()
-    gROOT.GetObject('hist25pct_TANK_60Co_TANK_ACTIVITY',h1)
-    print h1.GetMaximum()
+    # h1 = TH2D()
+    # gROOT.GetObject('hist25pct_TANK_60Co_TANK_ACTIVITY',h1)
+    # print h1.GetMaximum()
     for _t in hist:
-        print _t,hist[_t].GetMaximum()
-        
+        print "%30s %e"_t,hist[_t].GetMaximum()
+
                     # hist =
                     # print _hist.GetMaximum()
 
