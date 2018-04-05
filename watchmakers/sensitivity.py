@@ -1072,7 +1072,10 @@ def readEfficiencyHistogram():
     print '\n What are the maximum efficiency found in each histogram:'
     for _t in hist:
         if 'PMT' in _t and 'CHAIN_238U_NA' in _t:
-            print "%50s %e %15.10f"%(_t,hist[_t].GetMaximum(),hist[_t].GetMaximum()*mPMTsU238[0])
+            if '210Tl' in _t:
+                print "%50s %e %15.10f"%(_t,hist[_t].GetMaximum(),hist[_t].GetMaximum()*mPMTsU238[0]*0.002)
+            else:
+                print "%50s %e %15.10f"%(_t,hist[_t].GetMaximum(),hist[_t].GetMaximum()*mPMTsU238[0])
         elif 'PMT' in _t and 'CHAIN_232Th_NA' in _t:
             print "%50s %e %15.10f"%(_t,hist[_t].GetMaximum(),hist[_t].GetMaximum()*mPMTsTh232[0])
         elif 'PMT' in _t and '40K_NA' in _t:
