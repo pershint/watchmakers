@@ -1055,7 +1055,7 @@ def readEfficiencyHistogram():
                 for _element in d[_p]:
                     _tag = "%s_%s_%s_%s"%(_cover,_loc,_element,_p)
                     _dir = "bonsai_root_files%s/%s/"%(additionalMacStr,_cover)
-                    print _dir+'hist'+_tag+'.root'
+                    print _dir+'hist'+_tag+'.C'
 
 
 def runSensitivity():
