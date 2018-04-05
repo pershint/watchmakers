@@ -1073,7 +1073,7 @@ def readEfficiencyHistogram():
     tankHeight  = float(arguments["--halfHeight"])-float(arguments['--steelThick'])
     nKiloTons = pi*pow(tankRadius/1000.,2)*(2.*tankHeight/1000.)
     rRn222 = float(arguments["--Rn222"])*nKiloTons
-    print '\nLoaded Rn-222 activity of ',rRn222,'Bq, assumed a rate of %4.3e Bq/m^3'%(float(arguments["--Rn222"]))
+    print '\nLoaded Rn-222 activity of ',rRn222,'Bq per water volume, assumed a rate of %4.3e Bq/m^3'%(float(arguments["--Rn222"]))
 
     print '\n What are the maximum efficiency/rate found in each histogram:'
     _sing = 0.0
@@ -1143,11 +1143,11 @@ def readEfficiencyHistogram():
 
         elif 'WaterVolume' in _t and 'CHAIN_222Rn_NA' in _t:
             if '210Tl' in _t:
-                _sing+=hist[_t].GetMaximum()*mPMTsU238[0]*0.002
-                lineRn222WaterVolume += "%50s %e %15.10f\n"%(_t,hist[_t].GetMaximum(),hist[_t].GetMaximum()*mPMTsU238[0]*0.002)
+                _sing+=hist[_t].GetMaximum()*rRn222*0.002
+                lineRn222WaterVolume += "%50s %e %15.10f\n"%(_t,hist[_t].GetMaximum(),hist[_t].GetMaximum()*rRn222*0.002)
             else:
-                _sing+=hist[_t].GetMaximum()*mPMTsU238[0]
-                lineRn222WaterVolume+= "%50s %e %15.10f\n"%(_t,hist[_t].GetMaximum(),hist[_t].GetMaximum()*mPMTsU238[0])
+                _sing+=hist[_t].GetMaximum()*rRn222
+                lineRn222WaterVolume+= "%50s %e %15.10f\n"%(_t,hist[_t].GetMaximum(),hist[_t].GetMaximum()*rRn222)
 
         else:
             lineELSE += "%50s %e\n"%(_t,hist[_t].GetMaximum())
