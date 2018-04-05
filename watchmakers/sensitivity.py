@@ -1068,7 +1068,7 @@ def readEfficiencyHistogram():
     # gROOT.GetObject('hist25pct_TANK_60Co_TANK_ACTIVITY',h1)
     # print h1.GetMaximum()
     for _t in hist:
-        print "%30s %e"_t,hist[_t].GetMaximum()
+        print "%30s %e"%(_t,hist[_t].GetMaximum())
 
                     # hist =
                     # print _hist.GetMaximum()
