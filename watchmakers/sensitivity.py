@@ -1058,11 +1058,15 @@ def readEfficiencyHistogram():
                     _dir = "bonsai_root_files%s/%s/"%(additionalMacStr,_cover)
                     _file =  _dir+'hist'+_tag+'.C'
                     gROOT.ProcessLine('.x %s'%(_file))
+                    hist[_tag] =  TH2D()
+                    gROOT.GetObject(_hist,hist[_tag])
+
     print 'Done processing all .C files. What is in the directory:'
     gROOT.ProcessLine('.ls')
     h1 = TH2D()
     gROOT.GetObject('hist25pct_TANK_60Co_TANK_ACTIVITY',h1)
     print h1.GetMaximum()
+    print hist
                     # hist =
                     # print _hist.GetMaximum()
 
