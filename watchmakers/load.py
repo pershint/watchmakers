@@ -103,7 +103,7 @@ docstring = """
 
     --U238_PPM=<_Uppm>  Concentration of U-238 in glass [Default: %f]
     --Th232_PPM=<_Thp>  Concentration of Th-232 in glass [Default: %f]
-    --K40_PPM=<_K>      Concentration of K-40 in glass [Default: 16.0]
+    --K_PPM=<_K>      Concentration of K-40 in glass [Default: 16.0]
     --Rn222=<_Rn>       Radon activity in water SK 2x10^-3 Bq/m^3 [Default: %f]
 
     --detectMedia=<_dM>  Detector media (doped_water,...)
@@ -601,11 +601,11 @@ def loadActivity():
     mPMTsTh232 = [s*ActivityTh232 for s in mPMTs]
     print 'Th232',mPMTsTh232, ', PPM:',PPM_Th232
 
-    M_K40,Lambda_K40,Abund_K40 = 6.636286e-26,1.842e-18,0.00117
-    PPM_K40    = float(arguments["--K40_PPM"])
-    ActivityK40= Lambda_K40*PPM_K40/M_K40/1e6
-    mPMTsK40 = [s*ActivityK40 for s in mPMTs]
-    print 'K40',mPMTsK40, ', PPM:',PPM_K40
+    M_K,Lambda_K,Abund_K = 6.636286e-26,1.842e-18,0.00117
+    PPM_K    = float(arguments["--K_PPM"])
+    ActivityK= Lambda_K*PPM_K/M_K/1e6
+    mPMTsK = [s*ActivityK for s in mPMTs]
+    print 'K',mPMTsK, ', PPM:',PPM_K
 
     print
 
@@ -643,12 +643,12 @@ def loadPMTActivity():
     mPMTsTh232 = [s*ActivityTh232 for s in mPMTs]
     print 'Th232',mPMTsTh232, ', PPM:',PPM_Th232, 'activity per PMT:', ActivityTh232*mass,'Bq per PMT per isotope in chain'
 
-    M_K40,Lambda_K40,Abund_K40 = 6.636286e-26,1.842e-18,0.00117
-    PPM_K40    = float(arguments["--K40_PPM"])
-    ActivityK40= Lambda_K40*PPM_K40/M_K40/1e6
-    mPMTsK40 = [s*ActivityK40 for s in mPMTs]
-    print 'K40',mPMTsK40, ', PPM:',PPM_K40, 'activity per PMT:', ActivityK40*mass,'Bq per PMT per isotope in chain'
+    M_K,Lambda_K,Abund_K = 6.636286e-26,1.842e-18,0.00117
+    PPM_K    = float(arguments["--K_PPM"])
+    ActivityK= Lambda_K*PPM_K/M_K/1e6*Abund_K
+    mPMTsK = [s*ActivityK for s in mPMTs]
+    print 'K',mPMTsK, ', PPM:',PPM_K, 'activity per PMT:', ActivityK*mass,'Bq per PMT per isotope in chain'
 
     print
 
-    return mPMTs,mPMTsU238,mPMTsTh232,mPMTsK40
+    return mPMTs,mPMTsU238,mPMTsTh232,mPMTsK
