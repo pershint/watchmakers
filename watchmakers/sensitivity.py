@@ -1075,6 +1075,7 @@ def readEfficiencyHistogram():
     lineU238GUN,lineTh232GUN,lineKGUN = '','',''
     lineU238ROCK,lineTh232ROCK,lineKROCK = '','',''
     lineU238CONC,lineTh232CONC,lineKCONC = '','',''
+    lineRn222WaterVolume = ''
     lineELSE = ''
 
     for _t in hist:
@@ -1134,6 +1135,13 @@ def readEfficiencyHistogram():
             _sing+=hist[_t].GetMaximum()*mPMTsK40[0]
             lineKCONC += "%50s %e %15.10f\n"%(_t,hist[_t].GetMaximum(),hist[_t].GetMaximum()*mPMTsK40[0])
 
+        elif 'WaterVolume' in _t and 'CHAIN_222Rn_NA' in _t:
+            if '210Tl' in _t:
+                _sing+=hist[_t].GetMaximum()*mPMTsU238[0]*0.002
+                lineRn222WaterVolume += "%50s %e %15.10f\n"%(_t,hist[_t].GetMaximum(),hist[_t].GetMaximum()*mPMTsU238[0]*0.002)
+            else:
+                _sing+=hist[_t].GetMaximum()*mPMTsU238[0]
+                lineRn222WaterVolume+= "%50s %e %15.10f\n"%(_t,hist[_t].GetMaximum(),hist[_t].GetMaximum()*mPMTsU238[0])
 
         else:
             lineELSE += "%50s %e\n"%(_t,hist[_t].GetMaximum())
@@ -1145,6 +1153,7 @@ def readEfficiencyHistogram():
     print 'PMT U-238 \n', lineU238PMT,'\n'
     print 'PMT Th-232\n', lineTh232PMT,'\n'
     print 'PMT K\n', lineKPMT,'\n'
+    print 'Water Rn-222\n',lineRn222WaterVolume,'\n'
     print 'Gunite U-238 \n', lineU238GUN,'\n'
     print 'Gunite Th-232\n', lineTh232GUN,'\n'
     print 'Gunite K\n', lineKGUN,'\n'
