@@ -1073,7 +1073,7 @@ def readEfficiencyHistogram():
     tankHeight  = float(arguments["--halfHeight"])-float(arguments['--steelThick'])
     nKiloTons = pi*pow(tankRadius/1000.,2)*(2.*tankHeight/1000.)
     rRn222 = float(arguments["--Rn222"])*nKiloTons
-    print '\nLoaded Rn-222 activity of ',rRn222,'Bq/m^3'
+    print '\nLoaded Rn-222 activity of ',rRn222,'Bq, assumed a rate of %4.3e Bq/m^3'%(float(arguments["--Rn222"]))
 
     print '\n What are the maximum efficiency/rate found in each histogram:'
     _sing = 0.0
