@@ -1336,6 +1336,8 @@ def readEfficiencyHistogram():
             line += (_line + _line2,)
 
     print line
+    for _l in line:
+        print _l
     f_root = TFile(_str,"recreate")
     h.Write()
     hn.Write()
