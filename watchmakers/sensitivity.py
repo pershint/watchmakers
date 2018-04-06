@@ -1317,7 +1317,6 @@ def readEfficiencyHistogram():
                     _background = _p_v*_n_v*timeAcc*0.05
                     if _signal/sqrt(_signal+_background)>_maxSoverB:
                         _maxSoverB = _signal/sqrt(_signal+_background)
-                        print _signal,_background,_maxSoverB
                         _maxSignal = _signal
                         _maxBkgd   = _background
                         _maxOffn9   = _n
