@@ -1081,6 +1081,17 @@ def readEfficiencyHistogram():
     boulbyIBDRate   = 800.*TNU
     print '\nLoaded an IBD rate of ',boulbyIBDRate,' events per water volume per second, assumed a rate of %4.3e TNU'%(boulbyIBDRate/TNU)
 
+    innerRad = 12.5 #meters
+    outerRad = 13.5 #meters
+    rockMass = (pi*pow(outerRad,2)*(2.*outerRad)-pi*pow(innerRad,2)*(2.*innerRad))*power(100.,3)*2.39
+    # volumeR         = power(22.,3)-power(20.,3)# Rock cavern e.g. (22m x 22m x 22m) - (20m x 20m x 20m)
+    # density         = 2.39 #from McGrath
+    # rockMass        = volumeR*power(100.,3)*density
+
+    print '\nLoaded mass of rock ',rockMass
+
+
+
 
     print '\n What are the maximum efficiency/rate found in each histogram:'
     _sing = 0.0
