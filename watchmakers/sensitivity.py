@@ -1127,12 +1127,15 @@ def readEfficiencyHistogram():
         if 'PMT' in _t and 'CHAIN_238U_NA' in _t:
             if '210Tl' in _t:
                 _sing+=hist[_t].GetMaximum()*mPMTsU238[0]*0.002
+                h.Add(hist[_t],mPMTsU238[0]*0.002)
                 lineU238PMT += "%50s %e %15.10f\n"%(_t,hist[_t].GetMaximum(),hist[_t].GetMaximum()*mPMTsU238[0]*0.002)
             else:
                 _sing+=hist[_t].GetMaximum()*mPMTsU238[0]
+                h.Add(hist[_t],mPMTsU238[0])
                 lineU238PMT+= "%50s %e %15.10f\n"%(_t,hist[_t].GetMaximum(),hist[_t].GetMaximum()*mPMTsU238[0])
         elif 'PMT' in _t and 'CHAIN_232Th_NA' in _t:
             _sing+=hist[_t].GetMaximum()*mPMTsTh232[0]
+            h.Add(hist[_t],mPMTsTh232[0])
             lineTh232PMT += "%50s %e %15.10f\n"%(_t,hist[_t].GetMaximum(),hist[_t].GetMaximum()*mPMTsTh232[0])
         elif 'PMT' in _t and '40K_NA' in _t:
             _sing+=hist[_t].GetMaximum()*mPMTsK40[0]
@@ -1227,7 +1230,7 @@ def readEfficiencyHistogram():
     print 'Signal information'
     print 'Prompt positron Water volume \n', linePromptWaterVolume
     signal = ['WaterVolume_delayedNeutron_ibd_n','WaterVolume_promptPositron_ibd_p']
-
+    h.SaveAs('test.root')
 
 
 def runSensitivity():
