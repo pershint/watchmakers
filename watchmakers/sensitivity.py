@@ -1038,7 +1038,7 @@ def sensitivityMapPass2New():
                     _tag = "%s_%s_%s_%s"%(_cover,_loc,_element,_p)
                     _file = "bonsai_root_files%s/%s/merged_%s_%s_%s.root"%(additionalMacStr,_cover,_loc,_element,_p)
                     print _tag
-
+                    obtainEventEfficiency(_cover,_file,_tag)
 
                     print ''
 
