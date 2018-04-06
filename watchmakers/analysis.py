@@ -1216,7 +1216,8 @@ _posGood=0.1,_dirGood=0.1,_pe=8,_nhit=8,_itr = 1.5):
         h.GetZaxis().SetTitleOffset(-.55);
         h.GetZaxis().SetTitleColor(1);
         h.GetZaxis().CenterTitle();
-        return h
+        h.SaveAs("bonsai_root_files%s/%s/hist%s.C"%(additionalString,cover,_tag))
+        return -1
 
     for i in range(10):
         events+= runSummary.subEventTally[i]
