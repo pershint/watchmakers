@@ -1277,7 +1277,7 @@ def readEfficiencyHistogram():
     detectorHeight  = float(arguments['--halfHeight'])-float(arguments['--steelThick'])
 
     _maxSignal,_maxBkgd,_maxSoverB,_maxOffn9,_maxOff_dtw = -1,-1,-1,-1,-1
-    line,_line= "",""
+    line,_line,_line2= "","",""
     for offset in offsets_n9:
         for fv_offset in offsets_dtw:
             _proc = '_%d_%d_%s'%(offset,fv_offset,_cov)
@@ -1328,12 +1328,13 @@ def readEfficiencyHistogram():
                             ,_p_v,_n_v\
                             ,_rate_v*86400.\
                             ,_rate_v*_p_v*86400.)
-                        _line +=    "Accidental       : Wall distance (%4.1f,%4.1f), n9 cut (%d,%d), rate (%4.3f,%4.3f): combined rate : %4.3f per day"\
+                        _line2 =    "Accidental       : Wall distance (%4.1f,%4.1f), n9 cut (%d,%d), rate (%4.3f,%4.3f): combined rate : %4.3f per day"\
                          %(_p_d,_n_d,_p_n9,_n_n9,_p_v,_n_v,_p_v*_n_v*timeAcc)
 
 
             print 'Offset:',offset,',Found max S/sqrt(S+B)',_maxSoverB,',(S,B,n9,dtw):(',_maxSignal,_maxBkgd,_maxOffn9,_maxOff_dtw,')'
             line+=_line
+            line+=_line2
 
     print line
     f_root = TFile(_str,"recreate")
