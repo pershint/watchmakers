@@ -1263,9 +1263,16 @@ def readEfficiencyHistogram():
     offsets_n9 = [0,2,4,6,8,10,12,14,16]  ## bin numbers
     offsets_dtw = [0]       ## bin numbers
 
+    binR,rangeRmin,rangeRmax = 31,0.45,3.55
+    binwidthR = (rangeRmax-rangeRmin)/binR
+    binN,rangeNmin,rangeNmax = 48,7.5,55.5
+    binwidthN = (rangeNmax-rangeNmin)/binN
+
+    _cov = arguments['-C']
+
     for offset in offsets_n9:
         for fv_offset in offsets_dtw:
-            _proc = '_%d_%d_%s'%(offset,fv_offset,_cover)
+            _proc = '_%d_%d_%s'%(offset,fv_offset,_cov)
 
 
             for _d in range(binR-fv_offset-1):
