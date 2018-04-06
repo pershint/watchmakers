@@ -1253,6 +1253,7 @@ def readEfficiencyHistogram():
     f_root = TFile(_str,"recreate")
     h.Write()
     hn.Write()
+    he.Write()
     f_root.Close()
 
 
