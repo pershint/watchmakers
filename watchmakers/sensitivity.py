@@ -1240,8 +1240,10 @@ def readEfficiencyHistogram():
     print 'Signal information'
     print 'Prompt positron Water volume \n', linePromptWaterVolume
     signal = ['WaterVolume_delayedNeutron_ibd_n','WaterVolume_promptPositron_ibd_p']
-    h.SaveAs('test.root')
-    hn.SaveAs('test.root+')
+    f_root = TFile('test.root',"recreate")
+    h.Write()
+    hn.Write()
+    f_root.Close()
 
 
 def runSensitivity():
