@@ -1202,8 +1202,15 @@ _posGood=0.1,_dirGood=0.1,_pe=8,_nhit=8,_itr = 1.5):
         Entries = runSummary.GetEntries()
         runSummary.GetEntry(Entries-1)
     except:
-        print 'File',file,'did not have run associated with it'
-        return -1    
+        print 'File',file,'did not have run associated with it. Returning empty histogram.'
+        h = TH2D('hist%s'%(_tag),'Rate of events -  %s '%(_tag),binR,rangeRmin,rangeRmax,binN,rangeNmin,rangeNmax)
+        h.SetXTitle('distance from wall [m]')
+        h.SetYTitle('n9 cut')
+        h.SetZTitle('efficiency')
+        h.GetZaxis().SetTitleOffset(-.55);
+        h.GetZaxis().SetTitleColor(1);
+        h.GetZaxis().CenterTitle();
+        return h
     events = 0
     _eventPerRun = runSummary.nEvents
     for i in range(10):
