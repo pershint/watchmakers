@@ -1221,7 +1221,7 @@ def readEfficiencyHistogram():
 
         elif 'WaterVolume' in _t and 'delayedNeutron' in _t:
             _day=hist[_t].GetMaximum()*boulbyIBDRate*3600.*24
-            hn.Add(hist[_t],boulbyIBDRate*3600.*24)
+            hn.Add(hist[_t],boulbyIBDRate)
             hne.Add(hist[_t],1.)
             linePromptWaterVolume += "%50s %e %15.10f per sec (%15.10f per day)\n"%(_t,hist[_t].GetMaximum(),hist[_t].GetMaximum()*boulbyIBDRate,_day)
 
