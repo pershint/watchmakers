@@ -1087,8 +1087,22 @@ def readEfficiencyHistogram():
     # volumeR         = power(22.,3)-power(20.,3)# Rock cavern e.g. (22m x 22m x 22m) - (20m x 20m x 20m)
     # density         = 2.39 #from McGrath
     # rockMass        = volumeR*power(100.,3)*density
+    #Mass of rock evalyated
+    avgMuon         = npa([180.,264.])
+    avgMuonNC       = power(avgMuon,0.849)
+    avgNFluxMag     = 1e-6
+    muonRate        = npa([7.06e-7,4.09e-8]) # mu/cm2/s
+    tenMeVRatio     = npa([7.51/34.1,1.11/4.86])
+    fastNeutrons    = rockMass*avgMuonNC*avgNFluxMag*muonRate*tenMeVRatio
+    FN_boulby = fastNeutrons[1]
 
-    print '\nLoaded mass of rock %e g'%(rockMass)
+    avgRNYieldRC    = power(avgMuon,0.73)
+    skRNRate        = 0.5e-7 # 1/mu/g cm2
+    avgMuonSK       = power(219.,0.73)
+    skMuFlux        = 1.58e-7 #mu/cm2/sec
+    radionuclideRate= (skRNRate*avgRNYieldRC/avgMuonSK)*muonRate*nKiloTons*1e9
+    RN_boulby        = radionuclideRate[1]
+    print '\nLoaded mass of rock %e g. Fast Neutron Yield %e per sec; radionuclide yie;d %e '%(rockMass,FN_boulby,RN_boulby)
 
 
 
