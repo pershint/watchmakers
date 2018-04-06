@@ -1201,6 +1201,8 @@ _posGood=0.1,_dirGood=0.1,_pe=8,_nhit=8,_itr = 1.5):
         runSummary = arbre["rfile"].Get('runSummary')
         Entries = runSummary.GetEntries()
         runSummary.GetEntry(Entries-1)
+        events = 0
+        _eventPerRun = runSummary.nEvents
     except:
         print 'File',file,'did not have run associated with it. Returning empty histogram.'
         h = TH2D('hist%s'%(_tag),'Rate of events -  %s '%(_tag),binR,rangeRmin,rangeRmax,binN,rangeNmin,rangeNmax)
@@ -1211,8 +1213,7 @@ _posGood=0.1,_dirGood=0.1,_pe=8,_nhit=8,_itr = 1.5):
         h.GetZaxis().SetTitleColor(1);
         h.GetZaxis().CenterTitle();
         return h
-    events = 0
-    _eventPerRun = runSummary.nEvents
+
     for i in range(10):
         events+= runSummary.subEventTally[i]
     totalEvents = float(Entries)*_eventPerRun
