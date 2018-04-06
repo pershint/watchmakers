@@ -1289,7 +1289,7 @@ def readEfficiencyHistogram():
                     _n_d  = hne.GetXaxis().GetBinCenter(_db+fv_offset)
                     _n_n9 = hne.GetYaxis().GetBinCenter(_nb+offset)
                     _p_v  = hee.GetBinContent(_db,_nb)
-                    fidRadius,fidHeight = pmtRadius-_p_d,pmtHeight-_p_d
+                    fidRadius,fidHeight = pmtRadius-_p_d*1e3,pmtHeight-_p_d*1e3
                     _p_v  /= (pow(fidRadius,2)*fidHeight)/(pow(detectorRadius,2)*detectorHeight)
                     _n_v  = hne.GetBinContent(_db+fv_offset,_nb+offset)
                     _rate_v  = hn.GetBinContent(_db+fv_offset,_nb+offset)
