@@ -1240,7 +1240,7 @@ def readEfficiencyHistogram():
     print 'Signal information'
     print 'Prompt positron Water volume \n', linePromptWaterVolume
     signal = ['WaterVolume_delayedNeutron_ibd_n','WaterVolume_promptPositron_ibd_p']
-    _str =  "bonsai_root_files%s/%s/histograms_%s_U238_%06.3f_Th232_%06.3f_K_%06.3f.root"%(additionalMacStr,_cover,float(arguments["--U238_PPM"]),float(arguments["--Th238_PPM"]),float(arguments["--K_PPM"]))
+    _str =  "bonsai_root_files%s/%s/histograms_%s_U238_%06.3fPPM_Th232_%06.3fPPM_K_%06.3fPPMT.root"%(additionalMacStr,_cover,float(arguments["--U238_PPM"]),float(arguments["--Th232_PPM"]),float(arguments["--K_PPM"]))
     f_root = TFile(_str,"recreate")
     h.Write()
     hn.Write()
