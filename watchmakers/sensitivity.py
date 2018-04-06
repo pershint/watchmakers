@@ -1328,14 +1328,14 @@ def readEfficiencyHistogram():
                             ,_p_v,_n_v\
                             ,_rate_v*86400.\
                             ,_rate_v*_p_v*86400.),)
-                        _line2 =    ("\nAccidental       : Wall distance (%4.1f,%4.1f), n9 cut (%d,%d), rate (%4.3f,%4.3f): combined rate : %4.3f per day"\
+                        _line2 =    ("\nAccidental       : Wall distance (%4.1f,%4.1f), n9 cut (%d,%d), rate (%4.3f,%4.3f): combined rate : %4.3f per day (pre-prox)"\
                          %(_p_d,_n_d,_p_n9,_n_n9,_p_v,_n_v,_p_v*_n_v*timeAcc),)
 
 
             print 'Offset:',offset,',Found max S/sqrt(S+B)',_maxSoverB,',(S,B,n9,dtw):(',_maxSignal,_maxBkgd,_maxOffn9,_maxOff_dtw,')'
             line += (_line + _line2,)
 
-    print line
+    # print line
     for _l in line:
         print _l
     f_root = TFile(_str,"recreate")
