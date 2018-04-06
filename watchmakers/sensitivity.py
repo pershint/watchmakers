@@ -1290,10 +1290,10 @@ def readEfficiencyHistogram():
                     _p_n9 = hee.GetYaxis().GetBinCenter(_nb)
                     _n_d  = hne.GetXaxis().GetBinCenter(_db+fv_offset)
                     _n_n9 = hne.GetYaxis().GetBinCenter(_nb+offset)
-                    _p_v  = hee.GetBinContent(_db,_nb)
                     fidRadius,fidHeight = pmtRadius-_p_d*1e3,pmtHeight-_p_d*1e3
-                    _p_v  /= (pow(fidRadius,2)*fidHeight)/(pow(detectorRadius,2)*detectorHeight)
-                    _n_v  = hne.GetBinContent(_db+fv_offset,_nb+offset)
+                    ratioScaling = (pow(fidRadius,2)*fidHeight)/(pow(detectorRadius,2)*detectorHeight)
+                    _p_v  = hee.GetBinContent(_db,_nb)/ratioScaling
+                    _n_v  = hne.GetBinContent(_db+fv_offset,_nb+offset)/ratioScaling
                     _rate_v  = hn.GetBinContent(_db+fv_offset,_nb+offset)
 
                     _signal = _rate_v*_p_v*86400.
@@ -1312,7 +1312,7 @@ def readEfficiencyHistogram():
                         _maxBkgd   = _background
                         _maxOffn9   = _n_n9
                         _maxOff_dtw = _n_d
-                        _line = ("Offset:%d, Positron/neutron: Wall distance (%4.1f,%4.1f), n9 cut (%d,%d), efficiency (%4.2f,%4.2f), rate :(%4.2f per day), combined eff/rate : %4.2f per day"\
+                        _line = ("Offset:%d, Positron/neutron: Wall distance (%4.1f,%4.1f), n9 cut (%d,%d), rel. efficiency (%4.2f,%4.2f), rate :(%4.2f per day), combined eff/rate : %4.2f per day"\
                             %(offset,_p_d,_n_d\
                             ,_p_n9,_n_n9\
                             ,_p_v,_n_v\
