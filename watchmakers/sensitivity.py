@@ -1293,7 +1293,7 @@ def readEfficiencyHistogram():
                     _p_v  /= (pow(fidRadius,2)*fidHeight)/(pow(detectorRadius,2)*detectorHeight)
                     _n_v  = hne.GetBinContent(_db+fv_offset,_nb+offset)
                     _rate_v  = hn.GetBinContent(_db+fv_offset,_nb+offset)
-                    if _rate_v*_p_v*86400.>0.2:
+                    if _rate_v*_p_v*86400.>0.5:
                         print offset,"Positron/neutron: Wall distance (%4.1f,%4.1f), n9 cut (%d,%d), efficiency (%4.2f,%4.2f), rate :(%4.2f per day), combined eff/rate : %4.2f per day"\
                         %(_p_d,_n_d\
                         ,_p_n9,_n_n9\
