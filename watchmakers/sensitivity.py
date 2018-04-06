@@ -1131,7 +1131,11 @@ def readEfficiencyHistogram():
             hn.SetTitle('rate')
             hn.SetName('hNeutronRate')
             hn.Reset()
-
+            he = hist[_t].Clone()
+            he.SetZTitle('positron efficiency')
+            he.SetTitle('efficiency')
+            he.SetName('hPositronEfficiency')
+            he.Reset()
 
             firstGo =0
         if 'PMT' in _t and 'CHAIN_238U_NA' in _t:
@@ -1149,6 +1153,7 @@ def readEfficiencyHistogram():
             lineTh232PMT += "%50s %e %15.10f\n"%(_t,hist[_t].GetMaximum(),hist[_t].GetMaximum()*mPMTsTh232[0])
         elif 'PMT' in _t and '40K_NA' in _t:
             _sing+=hist[_t].GetMaximum()*mPMTsK40[0]
+            h.Add(hist[_t],mPMTsK40[0])
             lineKPMT += "%50s %e %15.10f\n"%(_t,hist[_t].GetMaximum(),hist[_t].GetMaximum()*mPMTsK40[0])
 
         elif 'GUNITE' in _t and 'CHAIN_238U_NA' in _t:
@@ -1197,17 +1202,21 @@ def readEfficiencyHistogram():
         elif 'WaterVolume' in _t and 'CHAIN_222Rn_NA' in _t:
             if '210Tl' in _t:
                 _sing+=hist[_t].GetMaximum()*rRn222*0.002
+                h.Add(hist[_t],rRn222*0.002)
                 lineRn222WaterVolume += "%50s %e %15.10f\n"%(_t,hist[_t].GetMaximum(),hist[_t].GetMaximum()*rRn222*0.002)
             else:
                 _sing+=hist[_t].GetMaximum()*rRn222
+                h.Add(hist[_t],rRn222)
                 lineRn222WaterVolume+= "%50s %e %15.10f\n"%(_t,hist[_t].GetMaximum(),hist[_t].GetMaximum()*rRn222)
 
         elif 'WaterVolume' in _t and 'promptPositron' in _t:
             _day=hist[_t].GetMaximum()*boulbyIBDRate*3600.*24
+            he.Add(hist[_t],1.)#Only add efficiency for positron
             linePromptWaterVolume += "%50s %e %15.10f per sec (%15.10f per day)\n"%(_t,hist[_t].GetMaximum(),hist[_t].GetMaximum()*boulbyIBDRate,_day)
 
         elif 'WaterVolume' in _t and 'delayedNeutron' in _t:
             _day=hist[_t].GetMaximum()*boulbyIBDRate*3600.*24
+            hn.Add(hist[_t],boulbyIBDRate*3600.*24)
             linePromptWaterVolume += "%50s %e %15.10f per sec (%15.10f per day)\n"%(_t,hist[_t].GetMaximum(),hist[_t].GetMaximum()*boulbyIBDRate,_day)
 
         elif 'WaterVolume' in _t and 'promptDelayedPair' in _t:
@@ -1240,7 +1249,7 @@ def readEfficiencyHistogram():
     print 'Signal information'
     print 'Prompt positron Water volume \n', linePromptWaterVolume
     signal = ['WaterVolume_delayedNeutron_ibd_n','WaterVolume_promptPositron_ibd_p']
-    _str =  "bonsai_root_files%s/%s/histograms_U238_%06.3fPPM_Th232_%06.3fPPM_K_%06.3fPPM.root"%(additionalMacStr,_cover,float(arguments["--U238_PPM"]),float(arguments["--Th232_PPM"]),float(arguments["--K_PPM"]))
+    _str =  "bonsai_root_files%s/%s/histograms_U238_%4.3fPPM_Th232_%4.3fPPM_K_%4.3fPPM.root"%(additionalMacStr,_cover,float(arguments["--U238_PPM"]),float(arguments["--Th232_PPM"]),float(arguments["--K_PPM"]))
     f_root = TFile(_str,"recreate")
     h.Write()
     hn.Write()
