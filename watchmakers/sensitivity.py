@@ -1088,7 +1088,7 @@ def readEfficiencyHistogram():
     # density         = 2.39 #from McGrath
     # rockMass        = volumeR*power(100.,3)*density
 
-    print '\nLoaded mass of rock ',rockMass
+    print '\nLoaded mass of rock %e g'%(rockMass)
 
 
 
