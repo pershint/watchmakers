@@ -1161,7 +1161,7 @@ def readEfficiencyHistogram():
             _sing+=hist[_t].GetMaximum()*mPMTsK40[0]
             lineKROCK += "%50s %e %15.10f\n"%(_t,hist[_t].GetMaximum(),hist[_t].GetMaximum()*mPMTsK40[0])
         elif 'ROCK' in _t and '_FN' in _t:
-            lineFNROCK += "%50s %e %15.10f (%15.10f per day)\n"%(_t,hist[_t].GetMaximum(),hist[_t].GetMaximum()*FN_boulby,hist[_t].GetMaximum()*FN_boulby*3600.*24.))
+            lineFNROCK += "%50s %e %15.10f (%15.10f per day)\n"%(_t,hist[_t].GetMaximum(),hist[_t].GetMaximum()*FN_boulby,hist[_t].GetMaximum()*FN_boulby*3600.*24.)
         elif 'CONC' in _t and 'CHAIN_238U_NA' in _t:
             if '210Tl' in _t:
                 _sing+=hist[_t].GetMaximum()*mPMTsU238[0]*0.002
