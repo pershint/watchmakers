@@ -1197,9 +1197,13 @@ _posGood=0.1,_dirGood=0.1,_pe=8,_nhit=8,_itr = 1.5):
     arbre = {}
     arbre["rfile"] = TFile(file)
     print 'Reading', file
-    runSummary = arbre["rfile"].Get('runSummary')
-    Entries = runSummary.GetEntries()
-    runSummary.GetEntry(Entries-1)
+    try:
+        runSummary = arbre["rfile"].Get('runSummary')
+        Entries = runSummary.GetEntries()
+        runSummary.GetEntry(Entries-1)
+    except:
+        print 'File',file,'did not have run associated with it'
+        return -1    
     events = 0
     _eventPerRun = runSummary.nEvents
     for i in range(10):
