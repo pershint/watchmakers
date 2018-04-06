@@ -1276,12 +1276,12 @@ def readEfficiencyHistogram():
     detectorRadius  = float(arguments['--tankRadius'])-float(arguments['--steelThick'])
     detectorHeight  = float(arguments['--halfHeight'])-float(arguments['--steelThick'])
 
-    _maxSignal,_maxBkgd,_maxSoverB = -1,-1,-1
+    _maxSignal,_maxBkgd,_maxSoverB,_maxOffn9,_maxOff_dtw = -1,-1,-1,-1,-1
     for offset in offsets_n9:
         for fv_offset in offsets_dtw:
             _proc = '_%d_%d_%s'%(offset,fv_offset,_cov)
 
-
+            _maxSignal,_maxBkgd,_maxSoverB,_maxOffn9,_maxOff_dtw = -1,-1,-1,-1,-1
             for _d in range(binR-fv_offset-1):
                 for _n in range(binN-offset-1):
                     _db,_nb=_d+1,_n+1
@@ -1294,13 +1294,13 @@ def readEfficiencyHistogram():
                     _p_v  /= (pow(fidRadius,2)*fidHeight)/(pow(detectorRadius,2)*detectorHeight)
                     _n_v  = hne.GetBinContent(_db+fv_offset,_nb+offset)
                     _rate_v  = hn.GetBinContent(_db+fv_offset,_nb+offset)
-                    if _rate_v*_p_v*86400.>0.5:
-                        print offset,"Positron/neutron: Wall distance (%4.1f,%4.1f), n9 cut (%d,%d), efficiency (%4.2f,%4.2f), rate :(%4.2f per day), combined eff/rate : %4.2f per day"\
-                        %(_p_d,_n_d\
-                        ,_p_n9,_n_n9\
-                        ,_p_v,_n_v\
-                        ,_rate_v*86400.\
-                        ,_rate_v*_p_v*86400.)
+                    # if _rate_v*_p_v*86400.>0.5:
+                    #     print offset,"Positron/neutron: Wall distance (%4.1f,%4.1f), n9 cut (%d,%d), efficiency (%4.2f,%4.2f), rate :(%4.2f per day), combined eff/rate : %4.2f per day"\
+                    #     %(_p_d,_n_d\
+                    #     ,_p_n9,_n_n9\
+                    #     ,_p_v,_n_v\
+                    #     ,_rate_v*86400.\
+                    #     ,_rate_v*_p_v*86400.)
 
 
                     _signal = _rate_v*_p_v*86400.
@@ -1312,28 +1312,19 @@ def readEfficiencyHistogram():
                     _p_v  = h.GetBinContent(_db,_nb)
                     _n_v  = h.GetBinContent(_db+fv_offset,_nb+offset)
 
-                    print "Accidental       : Wall distance (%4.1f,%4.1f), n9 cut (%d,%d), rate (%4.3f,%4.3f): combined rate : %4.3f per day"\
-                    %(_p_d,_n_d,_p_n9,_n_n9,_p_v,_n_v,_p_v*_n_v*timeAcc)
+                    # print "Accidental       : Wall distance (%4.1f,%4.1f), n9 cut (%d,%d), rate (%4.3f,%4.3f): combined rate : %4.3f per day"\
+                    # %(_p_d,_n_d,_p_n9,_n_n9,_p_v,_n_v,_p_v*_n_v*timeAcc)
                     _background = _p_v*_n_v*timeAcc*0.05
                     if _signal/sqrt(_signal+_background)>_maxSoverB:
                         _maxSoverB = _signal/sqrt(_signal+_background)
                         print _signal,_background,_maxSoverB
                         _maxSignal = _signal
                         _maxBkgd   = _background
-
-            #
-            #         h['S%s'%(_proc)].SetBinContent(_db,_nb,_signal)
-            #         h['B%s'%(_proc)].SetBinContent(_db,_nb,_background)
-            #         h['SoverB%s'%(_proc)].SetBinContent(_db,_nb,_signal/sqrt(_signal+_background))
-            #
-            #
-            # h['S%s'%(_proc)].SaveAs("ibdSignal%s.C"%(_proc))
-            # h['B%s'%(_proc)].SaveAs("ibdBackground%s.C"%(_proc))
-            # h['SoverB%s'%(_proc)].SaveAs("ibdSignalOverBackground%s.C"%(_proc))
-            # print _proc,h['SoverB%s'%(_proc)].GetMaximum()
+                        _maxOffn9   = _n
+                        _maxOff_dtw = _n_d
 
 
-    print 'Found max S/sqrt(S+B)',_maxSoverB,_maxSignal,_maxBkgd
+            print 'Offset:',offset,',Found max S/sqrt(S+B)',_maxSoverB,',(S,B,n9,dtw):(',_maxSignal,_maxBkgd,_maxOffn9,_maxOff_dtw,')'
 
     f_root = TFile(_str,"recreate")
     h.Write()
