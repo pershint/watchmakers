@@ -1265,31 +1265,8 @@ def readEfficiencyHistogram():
 
     for offset in offsets_n9:
         for fv_offset in offsets_dtw:
-            _proc = '_%d_%d_%s'%(offset,fv_offset,_cov)
+            _proc = '_%d_%d_%s'%(offset,fv_offset,_cover)
 
-            # h['S%s'%(_proc)] = TH2D('S%s'%(_proc),'%s Rate of events -  %s '%(_proc,location),binR,rangeRmin,rangeRmax,binN,rangeNmin,rangeNmax)
-            # h['S%s'%(_proc)].SetXTitle('distance from wall [m]')
-            # h['S%s'%(_proc)].SetYTitle('n9 cut')
-            # h['S%s'%(_proc)].SetZTitle('rate per day')
-            # h['S%s'%(_proc)].GetZaxis().SetTitleOffset(-.55);
-            # h['S%s'%(_proc)].GetZaxis().SetTitleColor(1);
-            # h['S%s'%(_proc)].GetZaxis().CenterTitle();
-            #
-            # h['B%s'%(_proc)] = TH2D('B%s'%(_proc),'%s Rate of events -  %s '%(_proc,location),binR,rangeRmin,rangeRmax,binN,rangeNmin,rangeNmax)
-            # h['B%s'%(_proc)].SetXTitle('distance from wall [m]')
-            # h['B%s'%(_proc)].SetYTitle('n9 cut')
-            # h['B%s'%(_proc)].SetZTitle('rate per day')
-            # h['B%s'%(_proc)].GetZaxis().SetTitleOffset(-.55);
-            # h['B%s'%(_proc)].GetZaxis().SetTitleColor(1);
-            # h['B%s'%(_proc)].GetZaxis().CenterTitle();
-            #
-            # h['SoverB%s'%(_proc)] = TH2D('SoverB%s'%(_proc),'%s Rate of events -  %s '%(_proc,location),binR,rangeRmin,rangeRmax,binN,rangeNmin,rangeNmax)
-            # h['SoverB%s'%(_proc)].SetXTitle('distance from wall [m]')
-            # h['SoverB%s'%(_proc)].SetYTitle('n9 cut')
-            # h['SoverB%s'%(_proc)].SetZTitle('rate per day')
-            # h['SoverB%s'%(_proc)].GetZaxis().SetTitleOffset(-.55);
-            # h['SoverB%s'%(_proc)].GetZaxis().SetTitleColor(1);
-            # h['SoverB%s'%(_proc)].GetZaxis().CenterTitle();
 
             for _d in range(binR-fv_offset-1):
                 for _n in range(binN-offset-1):
