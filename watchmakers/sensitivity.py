@@ -1319,7 +1319,7 @@ def readEfficiencyHistogram():
                         _maxSoverB = _signal/sqrt(_signal+_background)
                         _maxSignal = _signal
                         _maxBkgd   = _background
-                        _maxOffn9   = _n
+                        _maxOffn9   = _n_n9
                         _maxOff_dtw = _n_d
 
 
