@@ -1289,7 +1289,7 @@ def readEfficiencyHistogram():
                     %(_p_d,_n_d\
                     ,_p_n9,_n_n9\
                     ,_p_v,_n_v\
-                    ,_rate_v*86400.,\
+                    ,_rate_v*86400.\
                     ,_rate_v*_p_v*86400.)
             #         _signal = _rate_v*_p_v*86400.
             #
