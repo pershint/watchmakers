@@ -1118,7 +1118,12 @@ def readEfficiencyHistogram():
     linePromptWaterVolume,lineDelayedWaterVolume,linePromptDelayedWaterVolume = '','',''
     lineELSE = ''
 
+    firstGo = 1
     for _t in hist:
+        if firstGo:
+            h = hist[_t].Clone()
+            h.Reset()
+            firstGo =0
         if 'PMT' in _t and 'CHAIN_238U_NA' in _t:
             if '210Tl' in _t:
                 _sing+=hist[_t].GetMaximum()*mPMTsU238[0]*0.002
