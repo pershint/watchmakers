@@ -1205,7 +1205,11 @@ _posGood=0.1,_dirGood=0.1,_pe=8,_nhit=8,_itr = 1.5):
         _eventPerRun = runSummary.nEvents
     except:
         print 'File',file,'did not have run associated with it. Returning empty histogram.'
-        h = TH2D('hist%s'%(_tag),'Rate of events -  %s '%(_tag),binR,rangeRmin,rangeRmax,binN,rangeNmin,rangeNmax)
+        binR,rangeRmin,rangeRmax = 31,0.45,3.55
+        binwidthR = (rangeRmax-rangeRmin)/binR
+        binN,rangeNmin,rangeNmax = 48,7.5,55.5
+        binwidthN = (rangeNmax-rangeNmin)/binN
+        h = TH2D('hist%s'%(_tag),'EMPTY - Rate of events -  %s '%(_tag),binR,rangeRmin,rangeRmax,binN,rangeNmin,rangeNmax)
         h.SetXTitle('distance from wall [m]')
         h.SetYTitle('n9 cut')
         h.SetZTitle('efficiency')
