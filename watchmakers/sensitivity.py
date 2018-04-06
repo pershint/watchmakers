@@ -1131,11 +1131,16 @@ def readEfficiencyHistogram():
             hn.SetTitle('rate')
             hn.SetName('hNeutronRate')
             hn.Reset()
-            he = hist[_t].Clone()
-            he.SetZTitle('positron efficiency')
-            he.SetTitle('efficiency')
-            he.SetName('hPositronEfficiency')
-            he.Reset()
+            hee = hist[_t].Clone()
+            hee.SetZTitle('positron efficiency')
+            hee.SetTitle('efficiency')
+            hee.SetName('hPositronEfficiency')
+            hee.Reset()
+            hne = hist[_t].Clone()
+            hne.SetZTitle('neutron efficiency')
+            hne.SetTitle('efficiency')
+            hne.SetName('hPositronEfficiency')
+            hne.Reset()
 
             firstGo =0
         if 'PMT' in _t and 'CHAIN_238U_NA' in _t:
@@ -1211,12 +1216,13 @@ def readEfficiencyHistogram():
 
         elif 'WaterVolume' in _t and 'promptPositron' in _t:
             _day=hist[_t].GetMaximum()*boulbyIBDRate*3600.*24
-            he.Add(hist[_t],1.)#Only add efficiency for positron
+            hee.Add(hist[_t],1.)#Only add efficiency for positron
             linePromptWaterVolume += "%50s %e %15.10f per sec (%15.10f per day)\n"%(_t,hist[_t].GetMaximum(),hist[_t].GetMaximum()*boulbyIBDRate,_day)
 
         elif 'WaterVolume' in _t and 'delayedNeutron' in _t:
             _day=hist[_t].GetMaximum()*boulbyIBDRate*3600.*24
             hn.Add(hist[_t],boulbyIBDRate*3600.*24)
+            hne.Add(hist[_t],1.)
             linePromptWaterVolume += "%50s %e %15.10f per sec (%15.10f per day)\n"%(_t,hist[_t].GetMaximum(),hist[_t].GetMaximum()*boulbyIBDRate,_day)
 
         elif 'WaterVolume' in _t and 'promptDelayedPair' in _t:
@@ -1250,10 +1256,84 @@ def readEfficiencyHistogram():
     print 'Prompt positron Water volume \n', linePromptWaterVolume
     signal = ['WaterVolume_delayedNeutron_ibd_n','WaterVolume_promptPositron_ibd_p']
     _str =  "bonsai_root_files%s/%s/histograms_U238_%4.3fPPM_Th232_%4.3fPPM_K_%4.3fPPM.root"%(additionalMacStr,_cover,float(arguments["--U238_PPM"]),float(arguments["--Th232_PPM"]),float(arguments["--K_PPM"]))
+
+
+    timeAcc = 0.0001*86400.
+
+    offsets_n9 = [0,2,4,6,8,10,12,14,16]  ## bin numbers
+    offsets_dtw = [0]       ## bin numbers
+
+    for offset in offsets_n9:
+        for fv_offset in offsets_dtw:
+            _proc = '_%d_%d_%s'%(offset,fv_offset,_cov)
+
+            # h['S%s'%(_proc)] = TH2D('S%s'%(_proc),'%s Rate of events -  %s '%(_proc,location),binR,rangeRmin,rangeRmax,binN,rangeNmin,rangeNmax)
+            # h['S%s'%(_proc)].SetXTitle('distance from wall [m]')
+            # h['S%s'%(_proc)].SetYTitle('n9 cut')
+            # h['S%s'%(_proc)].SetZTitle('rate per day')
+            # h['S%s'%(_proc)].GetZaxis().SetTitleOffset(-.55);
+            # h['S%s'%(_proc)].GetZaxis().SetTitleColor(1);
+            # h['S%s'%(_proc)].GetZaxis().CenterTitle();
+            #
+            # h['B%s'%(_proc)] = TH2D('B%s'%(_proc),'%s Rate of events -  %s '%(_proc,location),binR,rangeRmin,rangeRmax,binN,rangeNmin,rangeNmax)
+            # h['B%s'%(_proc)].SetXTitle('distance from wall [m]')
+            # h['B%s'%(_proc)].SetYTitle('n9 cut')
+            # h['B%s'%(_proc)].SetZTitle('rate per day')
+            # h['B%s'%(_proc)].GetZaxis().SetTitleOffset(-.55);
+            # h['B%s'%(_proc)].GetZaxis().SetTitleColor(1);
+            # h['B%s'%(_proc)].GetZaxis().CenterTitle();
+            #
+            # h['SoverB%s'%(_proc)] = TH2D('SoverB%s'%(_proc),'%s Rate of events -  %s '%(_proc,location),binR,rangeRmin,rangeRmax,binN,rangeNmin,rangeNmax)
+            # h['SoverB%s'%(_proc)].SetXTitle('distance from wall [m]')
+            # h['SoverB%s'%(_proc)].SetYTitle('n9 cut')
+            # h['SoverB%s'%(_proc)].SetZTitle('rate per day')
+            # h['SoverB%s'%(_proc)].GetZaxis().SetTitleOffset(-.55);
+            # h['SoverB%s'%(_proc)].GetZaxis().SetTitleColor(1);
+            # h['SoverB%s'%(_proc)].GetZaxis().CenterTitle();
+
+            for _d in range(binR-fv_offset-1):
+                for _n in range(binN-offset-1):
+                    _db,_nb=_d+1,_n+1
+                    _p_d  = hee.GetXaxis().GetBinCenter(_db)
+                    _p_n9 = hee.GetYaxis().GetBinCenter(_nb)
+                    _n_d  = hne.GetXaxis().GetBinCenter(_db+fv_offset)
+                    _n_n9 = hne.GetYaxis().GetBinCenter(_nb+offset)
+                    _p_v  = hee.GetBinContent(_db,_nb)
+                    _n_v  = hne.GetBinContent(_db+fv_offset,_nb+offset)
+                    _rate_v  = hn.GetBinContent(_db+fv_offset,_nb+offset)
+                    print "Positron/neutron: Wall distance (%4.1f,%4.1f), n9 cut (%d,%d), efficiency (%4.3f,%4.3f): combined eff/rate : %4.3f per day"\
+                    %(_p_d,_n_d,_p_n9,_n_n9,_p_v,_n_v,_rate_v*_p_v*86400.)
+            #         _signal = _rate_v*_p_v*86400.
+            #
+            #         _p_d  = h['hist%s'%('Sum')].GetXaxis().GetBinCenter(_db)
+            #         _p_n9 = h['hist%s'%('Sum')].GetYaxis().GetBinCenter(_nb)
+            #         _n_d  = h['hist%s'%('Sum')].GetXaxis().GetBinCenter(_db+fv_offset)
+            #         _n_n9 = h['hist%s'%('Sum')].GetYaxis().GetBinCenter(_nb+offset)
+            #         _p_v  = h['hist%s'%('Sum')].GetBinContent(_db,_nb)
+            #         _n_v  = h['hist%s'%('Sum')].GetBinContent(_db+fv_offset,_nb+offset)
+            #
+            #         print "Accidental       : Wall distance (%4.1f,%4.1f), n9 cut (%d,%d), rate (%4.3f,%4.3f): combined rate : %4.3f per day"\
+            #         %(_p_d,_n_d,_p_n9,_n_n9,_p_v,_n_v,_p_v*_n_v*timeAcc)
+            #         _background = _p_v*_n_v*timeAcc*0.05
+            #
+            #         h['S%s'%(_proc)].SetBinContent(_db,_nb,_signal)
+            #         h['B%s'%(_proc)].SetBinContent(_db,_nb,_background)
+            #         h['SoverB%s'%(_proc)].SetBinContent(_db,_nb,_signal/sqrt(_signal+_background))
+            #
+            #
+            # h['S%s'%(_proc)].SaveAs("ibdSignal%s.C"%(_proc))
+            # h['B%s'%(_proc)].SaveAs("ibdBackground%s.C"%(_proc))
+            # h['SoverB%s'%(_proc)].SaveAs("ibdSignalOverBackground%s.C"%(_proc))
+            # print _proc,h['SoverB%s'%(_proc)].GetMaximum()
+
+
+
+
     f_root = TFile(_str,"recreate")
     h.Write()
     hn.Write()
-    he.Write()
+    hne.Write()
+    hee.Write()
     f_root.Close()
 
 
