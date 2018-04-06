@@ -1277,7 +1277,7 @@ def readEfficiencyHistogram():
     detectorHeight  = float(arguments['--halfHeight'])-float(arguments['--steelThick'])
 
     _maxSignal,_maxBkgd,_maxSoverB,_maxOffn9,_maxOff_dtw = -1,-1,-1,-1,-1
-    line,_line,_line2= "","",""
+    line,_line,_line2= ("",),"",""
     for offset in offsets_n9:
         for fv_offset in offsets_dtw:
             _proc = '_%d_%d_%s'%(offset,fv_offset,_cov)
