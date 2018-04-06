@@ -1122,6 +1122,9 @@ def readEfficiencyHistogram():
     for _t in hist:
         if firstGo:
             h = hist[_t].Clone()
+            h.SetZTitle('singles rate (Hz)')
+            h.SetTitle('Singles rate')
+            h.SetName('hSingles')
             h.Reset()
             firstGo =0
         if 'PMT' in _t and 'CHAIN_238U_NA' in _t:
