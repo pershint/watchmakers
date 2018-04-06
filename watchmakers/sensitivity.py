@@ -1333,7 +1333,7 @@ def readEfficiencyHistogram():
 
 
             print 'Offset:',offset,',Found max S/sqrt(S+B)',_maxSoverB,',(S,B,n9,dtw):(',_maxSignal,_maxBkgd,_maxOffn9,_maxOff_dtw,')'
-            line += _line + _line2,
+            line += (_line + _line2,)
 
     print line
     f_root = TFile(_str,"recreate")
