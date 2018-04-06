@@ -1305,15 +1305,15 @@ def readEfficiencyHistogram():
                     _p_v_1  = h.GetBinContent(_db,_nb)
                     _n_v_1  = h.GetBinContent(_db+fv_offset,_nb+offset)
 
-                    _background = _p_v*_n_v*timeAcc*0.05
+                    _background = _p_v_1*_n_v_1*timeAcc*0.05
                     if _signal/sqrt(_signal+_background)>_maxSoverB:
                         _maxSoverB = _signal/sqrt(_signal+_background)
                         _maxSignal = _signal
                         _maxBkgd   = _background
                         _maxOffn9   = _n_n9
                         _maxOff_dtw = _n_d
-                        _line = ("Offset:",offset,"Positron/neutron: Wall distance (%4.1f,%4.1f), n9 cut (%d,%d), efficiency (%4.2f,%4.2f), rate :(%4.2f per day), combined eff/rate : %4.2f per day"\
-                            %(_p_d,_n_d\
+                        _line = ("Offset:%d, Positron/neutron: Wall distance (%4.1f,%4.1f), n9 cut (%d,%d), efficiency (%4.2f,%4.2f), rate :(%4.2f per day), combined eff/rate : %4.2f per day"\
+                            %(offset,_p_d,_n_d\
                             ,_p_n9,_n_n9\
                             ,_p_v,_n_v\
                             ,_rate_v*86400.\
