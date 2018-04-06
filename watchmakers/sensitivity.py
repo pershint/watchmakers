@@ -1085,6 +1085,7 @@ def readEfficiencyHistogram():
     print '\n What are the maximum efficiency/rate found in each histogram:'
     _sing = 0.0
     lineU238PMT,lineTh232PMT,lineKPMT = '','',''
+    lineFNROCK = ''
     lineU238GUN,lineTh232GUN,lineKGUN = '','',''
     lineU238ROCK,lineTh232ROCK,lineKROCK = '','',''
     lineU238CONC,lineTh232CONC,lineKCONC = '','',''
@@ -1134,7 +1135,8 @@ def readEfficiencyHistogram():
         elif 'ROCK' in _t and '40K_NA' in _t:
             _sing+=hist[_t].GetMaximum()*mPMTsK40[0]
             lineKROCK += "%50s %e %15.10f\n"%(_t,hist[_t].GetMaximum(),hist[_t].GetMaximum()*mPMTsK40[0])
-
+        elif 'ROCK' in _t and '_FN' in _t:
+            lineFNROCK += "%50s %e %15.10f\n"%(_t,hist[_t].GetMaximum(),hist[_t].GetMaximum()*mPMTsK40[0])
         elif 'CONC' in _t and 'CHAIN_238U_NA' in _t:
             if '210Tl' in _t:
                 _sing+=hist[_t].GetMaximum()*mPMTsU238[0]*0.002
@@ -1189,6 +1191,7 @@ def readEfficiencyHistogram():
     print 'ROCK U-238 \n', lineU238ROCK
     print 'ROCK Th-232\n', lineTh232ROCK
     print 'ROCK K\n', lineKROCK,'\n'
+    print 'ROCK Fast Neutron\n',lineFNROCK,'\n'
     print 'Else  \n', lineELSE,'\n'
     print 'Total singles rate:\t\t\t',_sing,'events per sec at minimum buffer distance of 0.5 m\n'
     print 'Signal information'
