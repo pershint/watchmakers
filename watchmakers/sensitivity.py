@@ -1300,18 +1300,20 @@ def readEfficiencyHistogram():
                         ,_p_v,_n_v\
                         ,_rate_v*86400.\
                         ,_rate_v*_p_v*86400.)
-            #         _signal = _rate_v*_p_v*86400.
+
+
+                    _signal = _rate_v*_p_v*86400.
             #
-            #         _p_d  = h['hist%s'%('Sum')].GetXaxis().GetBinCenter(_db)
-            #         _p_n9 = h['hist%s'%('Sum')].GetYaxis().GetBinCenter(_nb)
-            #         _n_d  = h['hist%s'%('Sum')].GetXaxis().GetBinCenter(_db+fv_offset)
-            #         _n_n9 = h['hist%s'%('Sum')].GetYaxis().GetBinCenter(_nb+offset)
-            #         _p_v  = h['hist%s'%('Sum')].GetBinContent(_db,_nb)
-            #         _n_v  = h['hist%s'%('Sum')].GetBinContent(_db+fv_offset,_nb+offset)
-            #
-            #         print "Accidental       : Wall distance (%4.1f,%4.1f), n9 cut (%d,%d), rate (%4.3f,%4.3f): combined rate : %4.3f per day"\
-            #         %(_p_d,_n_d,_p_n9,_n_n9,_p_v,_n_v,_p_v*_n_v*timeAcc)
-            #         _background = _p_v*_n_v*timeAcc*0.05
+                    _p_d  = h.GetXaxis().GetBinCenter(_db)
+                    _p_n9 = h.GetYaxis().GetBinCenter(_nb)
+                    _n_d  = h.GetXaxis().GetBinCenter(_db+fv_offset)
+                    _n_n9 = h.GetYaxis().GetBinCenter(_nb+offset)
+                    _p_v  = h.GetBinContent(_db,_nb)
+                    _n_v  = h.GetBinContent(_db+fv_offset,_nb+offset)
+
+                    print "Accidental       : Wall distance (%4.1f,%4.1f), n9 cut (%d,%d), rate (%4.3f,%4.3f): combined rate : %4.3f per day"\
+                    %(_p_d,_n_d,_p_n9,_n_n9,_p_v,_n_v,_p_v*_n_v*timeAcc)
+                    _background = _p_v*_n_v*timeAcc*0.05
             #
             #         h['S%s'%(_proc)].SetBinContent(_db,_nb,_signal)
             #         h['B%s'%(_proc)].SetBinContent(_db,_nb,_background)
