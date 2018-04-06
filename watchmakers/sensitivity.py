@@ -1102,7 +1102,7 @@ def readEfficiencyHistogram():
     skMuFlux        = 1.58e-7 #mu/cm2/sec
     radionuclideRate= (skRNRate*avgRNYieldRC/avgMuonSK)*muonRate*nKiloTons*1e9
     RN_boulby        = radionuclideRate[1]
-    print '\nLoaded mass of rock %e g. Fast Neutron Yield %e per sec; radionuclide yie;d %e '%(rockMass,FN_boulby,RN_boulby)
+    print '\nLoaded mass of rock %e g. Fast Neutron Yield %e per sec; radionuclide yield %e per sec'%(rockMass,FN_boulby,RN_boulby)
 
 
 
@@ -1161,7 +1161,7 @@ def readEfficiencyHistogram():
             _sing+=hist[_t].GetMaximum()*mPMTsK40[0]
             lineKROCK += "%50s %e %15.10f\n"%(_t,hist[_t].GetMaximum(),hist[_t].GetMaximum()*mPMTsK40[0])
         elif 'ROCK' in _t and '_FN' in _t:
-            lineFNROCK += "%50s %e %15.10f\n"%(_t,hist[_t].GetMaximum(),hist[_t].GetMaximum()*mPMTsK40[0])
+            lineFNROCK += "%50s %e %15.10f\n"%(_t,hist[_t].GetMaximum(),hist[_t].GetMaximum()*FN_boulby)
         elif 'CONC' in _t and 'CHAIN_238U_NA' in _t:
             if '210Tl' in _t:
                 _sing+=hist[_t].GetMaximum()*mPMTsU238[0]*0.002
