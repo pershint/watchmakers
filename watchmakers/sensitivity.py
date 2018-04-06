@@ -1285,12 +1285,13 @@ def readEfficiencyHistogram():
                     _p_v  = hee.GetBinContent(_db,_nb)
                     _n_v  = hne.GetBinContent(_db+fv_offset,_nb+offset)
                     _rate_v  = hn.GetBinContent(_db+fv_offset,_nb+offset)
-                    print "Positron/neutron: Wall distance (%4.1f,%4.1f), n9 cut (%d,%d), efficiency (%4.2f,%4.2f), rate :(%4.2f per day), combined eff/rate : %4.2f per day"\
-                    %(_p_d,_n_d\
-                    ,_p_n9,_n_n9\
-                    ,_p_v,_n_v\
-                    ,_rate_v*86400.\
-                    ,_rate_v*_p_v*86400.)
+                    if _rate_v*_p_v*86400.>0.01:
+                        print "Positron/neutron: Wall distance (%4.1f,%4.1f), n9 cut (%d,%d), efficiency (%4.2f,%4.2f), rate :(%4.2f per day), combined eff/rate : %4.2f per day"\
+                        %(_p_d,_n_d\
+                        ,_p_n9,_n_n9\
+                        ,_p_v,_n_v\
+                        ,_rate_v*86400.\
+                        ,_rate_v*_p_v*86400.)
             #         _signal = _rate_v*_p_v*86400.
             #
             #         _p_d  = h['hist%s'%('Sum')].GetXaxis().GetBinCenter(_db)
