@@ -1295,26 +1295,16 @@ def readEfficiencyHistogram():
                     _p_v  /= (pow(fidRadius,2)*fidHeight)/(pow(detectorRadius,2)*detectorHeight)
                     _n_v  = hne.GetBinContent(_db+fv_offset,_nb+offset)
                     _rate_v  = hn.GetBinContent(_db+fv_offset,_nb+offset)
-                    # if _rate_v*_p_v*86400.>0.5:
-                    #     print offset,"Positron/neutron: Wall distance (%4.1f,%4.1f), n9 cut (%d,%d), efficiency (%4.2f,%4.2f), rate :(%4.2f per day), combined eff/rate : %4.2f per day"\
-                    #     %(_p_d,_n_d\
-                    #     ,_p_n9,_n_n9\
-                    #     ,_p_v,_n_v\
-                    #     ,_rate_v*86400.\
-                    #     ,_rate_v*_p_v*86400.)
-
 
                     _signal = _rate_v*_p_v*86400.
-            #
-                    _p_d  = h.GetXaxis().GetBinCenter(_db)
-                    _p_n9 = h.GetYaxis().GetBinCenter(_nb)
-                    _n_d  = h.GetXaxis().GetBinCenter(_db+fv_offset)
-                    _n_n9 = h.GetYaxis().GetBinCenter(_nb+offset)
-                    _p_v  = h.GetBinContent(_db,_nb)
-                    _n_v  = h.GetBinContent(_db+fv_offset,_nb+offset)
 
-                    # print "Accidental       : Wall distance (%4.1f,%4.1f), n9 cut (%d,%d), rate (%4.3f,%4.3f): combined rate : %4.3f per day"\
-                    # %(_p_d,_n_d,_p_n9,_n_n9,_p_v,_n_v,_p_v*_n_v*timeAcc)
+                    _p_d_1  = h.GetXaxis().GetBinCenter(_db)
+                    _p_n9_1 = h.GetYaxis().GetBinCenter(_nb)
+                    _n_d_1  = h.GetXaxis().GetBinCenter(_db+fv_offset)
+                    _n_n9_1 = h.GetYaxis().GetBinCenter(_nb+offset)
+                    _p_v_1  = h.GetBinContent(_db,_nb)
+                    _n_v_1  = h.GetBinContent(_db+fv_offset,_nb+offset)
+
                     _background = _p_v*_n_v*timeAcc*0.05
                     if _signal/sqrt(_signal+_background)>_maxSoverB:
                         _maxSoverB = _signal/sqrt(_signal+_background)
@@ -1328,8 +1318,8 @@ def readEfficiencyHistogram():
                             ,_p_v,_n_v\
                             ,_rate_v*86400.\
                             ,_rate_v*_p_v*86400.),)
-                        _line2 =    ("\nAccidental       : Wall distance (%4.1f,%4.1f), n9 cut (%d,%d), rate (%4.3f,%4.3f): combined rate : %4.3f per day (pre-prox)"\
-                         %(_p_d,_n_d,_p_n9,_n_n9,_p_v,_n_v,_p_v*_n_v*timeAcc),)
+                        _line2 =    ("Accidental: Wall distance (%4.1f,%4.1f), n9 cut (%d,%d), rate (%4.3f,%4.3f): combined rate : %4.3f per day (pre-prox)"\
+                         %(_p_d_1,_n_d_1,_p_n9_1,_n_n9_1,_p_v_1,_n_v_1,_p_v_1*_n_v_1*timeAcc),)
 
 
             print 'Offset:',offset,',Found max S/sqrt(S+B)',_maxSoverB,',(S,B,n9,dtw):(',_maxSignal,_maxBkgd,_maxOffn9,_maxOff_dtw,')'
