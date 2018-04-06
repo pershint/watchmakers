@@ -1276,7 +1276,6 @@ def readEfficiencyHistogram():
     detectorRadius  = float(arguments['--tankRadius'])-float(arguments['--steelThick'])
     detectorHeight  = float(arguments['--halfHeight'])-float(arguments['--steelThick'])
 
-    (pow(fidRadius,2)*fidHeight)/(pow(detectorRadius,2)*detectorHeight)
     for offset in offsets_n9:
         for fv_offset in offsets_dtw:
             _proc = '_%d_%d_%s'%(offset,fv_offset,_cov)
