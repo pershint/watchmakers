@@ -1270,6 +1270,13 @@ def readEfficiencyHistogram():
 
     _cov = arguments['-C']
 
+
+    pmtRadius = float(arguments['--tankRadius'])-float(arguments['--steelThick'])-float(arguments['--shieldThick'])
+    pmtHeight = float(arguments['--halfHeight'])-float(arguments['--steelThick'])-float(arguments['--shieldThick'])
+    detectorRadius  = float(arguments['--tankRadius'])-float(arguments['--steelThick'])
+    detectorHeight  = float(arguments['--halfHeight'])-float(arguments['--steelThick'])
+
+    (pow(fidRadius,2)*fidHeight)/(pow(detectorRadius,2)*detectorHeight)
     for offset in offsets_n9:
         for fv_offset in offsets_dtw:
             _proc = '_%d_%d_%s'%(offset,fv_offset,_cov)
@@ -1283,6 +1290,8 @@ def readEfficiencyHistogram():
                     _n_d  = hne.GetXaxis().GetBinCenter(_db+fv_offset)
                     _n_n9 = hne.GetYaxis().GetBinCenter(_nb+offset)
                     _p_v  = hee.GetBinContent(_db,_nb)
+                    fidRadius,fidHeight = pmtRadius-_p_d,pmtHeight-_p_d
+                    _p_v  /= (pow(fidRadius,2)*fidHeight)/(pow(detectorRadius,2)*detectorHeight)
                     _n_v  = hne.GetBinContent(_db+fv_offset,_nb+offset)
                     _rate_v  = hn.GetBinContent(_db+fv_offset,_nb+offset)
                     if _rate_v*_p_v*86400.>0.01:
