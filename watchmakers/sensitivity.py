@@ -1124,8 +1124,15 @@ def readEfficiencyHistogram():
             h = hist[_t].Clone()
             h.SetZTitle('singles rate (Hz)')
             h.SetTitle('Singles rate')
-            h.SetName('hSingles')
+            h.SetName('hSinglesRate')
             h.Reset()
+            hn = hist[_t].Clone()
+            hn.SetZTitle('neutron rate (Hz)')
+            hn.SetTitle('rate')
+            hn.SetName('hNeutronRate')
+            hn.Reset()
+
+
             firstGo =0
         if 'PMT' in _t and 'CHAIN_238U_NA' in _t:
             if '210Tl' in _t:
@@ -1234,6 +1241,7 @@ def readEfficiencyHistogram():
     print 'Prompt positron Water volume \n', linePromptWaterVolume
     signal = ['WaterVolume_delayedNeutron_ibd_n','WaterVolume_promptPositron_ibd_p']
     h.SaveAs('test.root')
+    hn.SaveAs('test.root+')
 
 
 def runSensitivity():
