@@ -1139,7 +1139,7 @@ def readEfficiencyHistogram():
             hne = hist[_t].Clone()
             hne.SetZTitle('neutron efficiency')
             hne.SetTitle('efficiency')
-            hne.SetName('hPositronEfficiency')
+            hne.SetName('hNeutronEfficiency')
             hne.Reset()
 
             firstGo =0
