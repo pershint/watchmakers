@@ -1286,8 +1286,8 @@ def readEfficiencyHistogram():
         for fv_offset in offsets_dtw:
             _histograms["sOverB_%d"%(offset)]= h.Clone()
             _histograms["sOverB_%d"%(offset)].SetZTitle('signal/sqrt(signal+background)')
-            _histograms["sOverB_%d"%(offset)].SetTitle('coincidence rate')
-            _histograms["sOverB_%d"%(offset)].SetName('hSoB - offset %2d'%(offset))
+            _histograms["sOverB_%d"%(offset)].SetTitle('hSoB - offset %2d'%(offset))
+            _histograms["sOverB_%d"%(offset)].SetName('hSoB%d'%(offset))
             _histograms["sOverB_%d"%(offset)].Reset()
 
             _proc = '_%d_%d_%s'%(offset,fv_offset,_cov)
@@ -1375,7 +1375,7 @@ def readEfficiencyHistogram():
     with open(_strRes,'a') as file:
         file.write(_res+'\n')
 
-    print 'Writing histograms to file',_str
+    print '\n\nWriting histograms to file',_str
     f_root = TFile(_str,"recreate")
     h.Write()
     hn.Write()
