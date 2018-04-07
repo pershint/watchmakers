@@ -1312,24 +1312,24 @@ def readEfficiencyHistogram():
                         _maxBkgd   = _background
                         _maxOffn9   = _n_n9
                         _maxOff_dtw = _n_d
-                        _line = ("Offset:%d, Positron/neutron: Wall distance (%4.1f,%4.1f), n9 cut (%d,%d), rel. efficiency (%4.2f,%4.2f), neutron rate :(%4.2f per day), combined eff/rate : %4.2f per day;"\
+                        _line = ("Offset:%3d, beta/n: Wall-dist (%4.1f,%4.1f) m, n9 cut (%d,%d), rel. efficiency (%4.2f,%4.2f), neutron rate :(%4.2f per day), combined eff/rate : %4.2f per day;"\
                             %(offset,_p_d,_n_d\
                             ,_p_n9,_n_n9\
                             ,_p_v,_n_v\
                             ,_rate_v*86400.\
                             ,_rate_v*_p_v*86400.),)
-                        _line2 =    ("Accidental rate (%4.3f,%4.3f): acc. combined rate: %4.3f per day (pre-prox)"\
+                        _line2 =    ("acc. rate (%4.3f,%4.3f): acc. combined rate: %4.3f per day (pre-prox)"\
                          %(_p_v_1,_n_v_1,_p_v_1*_n_v_1*timeAcc),)
 
 
-            print 'Offset:',offset,',Found max S/sqrt(S+B)',_maxSoverB,',(S,B,n9,dtw):(',_maxSignal,_maxBkgd,_maxOffn9,_maxOff_dtw,')'
+            print 'Offset:',srt(offset).rjust(3,' '),',Found max S/sqrt(S+B)',_maxSoverB,',(S,B,n9,dtw):(',_maxSignal,_maxBkgd,_maxOffn9,_maxOff_dtw,')'
             line += (_line + _line2,)
 
     # print line
     for _l in line:
         for i in range(len(_l)):
             print _l[i],
-        print ''    
+        print ''
     f_root = TFile(_str,"recreate")
     h.Write()
     hn.Write()
