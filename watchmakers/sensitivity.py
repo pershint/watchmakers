@@ -1284,10 +1284,10 @@ def readEfficiencyHistogram():
     _histograms = {}
     for offset in offsets_n9:
         for fv_offset in offsets_dtw:
-            _histograms["sOverB_%d"%(offset)] h = hist[_t].Clone()
-            _histograms["sOverB_%d"%(offset)].SetZTitle('singles rate (Hz)')
-            _histograms["sOverB_%d"%(offset)].SetTitle('Singles rate')
-            _histograms["sOverB_%d"%(offset)].SetName('hSinglesRate')
+            _histograms["sOverB_%d"%(offset)]= h.Clone()
+            _histograms["sOverB_%d"%(offset)].SetZTitle('signal/sqrt(signal+background)')
+            _histograms["sOverB_%d"%(offset)].SetTitle('coincidence rate')
+            _histograms["sOverB_%d"%(offset)].SetName('hSoB - offset %2d'%(offset))
             _histograms["sOverB_%d"%(offset)].Reset()
 
             _proc = '_%d_%d_%s'%(offset,fv_offset,_cov)
