@@ -1357,7 +1357,7 @@ def readEfficiencyHistogram():
     _strRes = "results_DTW_%dmm_U238_%4.3fPPM_Th232_%4.3fPPM_K_%4.3fPPM.txt"%(float(arguments['--shieldThick']),float(arguments["--U238_PPM"]),float(arguments["--Th232_PPM"]),float(arguments["--K_PPM"]))
     # _strRes = 'res.txt'
     with open(_strRes,'a') as file:
-        file.write(_res)
+        file.write(_res+'\n')
 
     f_root = TFile(_str,"recreate")
     h.Write()
