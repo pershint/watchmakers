@@ -1328,13 +1328,14 @@ def readEfficiencyHistogram():
     print '\n\nMore info on the maximal sensitivity found:'
     # print line
 
-    with open('results.txt','a') as file:
-        for _l in line:
-            for i in range(len(_l)):
-                print _l[i],
-                file.write(_l[i]+'\n')
-            print ''
+    for _l in line:
+        for i in range(len(_l)):
+            print _l[i],
+        print ''
 
+    _res = "%s %s %4.1f %3d" %(arguments['--sheildThick'],_cover,_maxOff_dtw,_maxOffn9)
+    with open('results.txt','a') as file:
+        file.write(_res)
 
     f_root = TFile(_str,"recreate")
     h.Write()
