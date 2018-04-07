@@ -1317,7 +1317,9 @@ def readEfficiencyHistogram():
 
                     _background = _p_v_1*_n_v_1*timeAcc*0.05
                     sob = _signal/sqrt(_signal+_background)
-                    _histograms["sOverB_%d"%(offset)].Fill(sob)
+
+                    _histograms["sOverB_%d"%(offset)].SetBinContent(_db,_nb,sob)
+
                     if sob >_maxSoverB:
                         _maxSoverB = _signal/sqrt(_signal+_background)
                         _maxSignal = _signal
