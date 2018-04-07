@@ -1332,7 +1332,7 @@ def readEfficiencyHistogram():
         for _l in line:
             for i in range(len(_l)):
                 print _l[i],
-                file.write(_l[i])
+                file.write(_l[i]+'\n')
             print ''
 
 
