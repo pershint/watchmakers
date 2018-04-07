@@ -1277,6 +1277,9 @@ def readEfficiencyHistogram():
     detectorHeight  = float(arguments['--halfHeight'])-float(arguments['--steelThick'])
 
     _maxSignal,_maxBkgd,_maxSoverB,_maxOffn9,_maxOff_dtw = -1,-1,-1,-1,-1
+    _maxSignal2,_maxBkgd2,_maxSoverB2,_maxOffn92,_maxOff_dtw2,_maxOffset2 = -1,-1,-1,-1,-1,-1
+
+
     line,_line,_line2= ("",),"",""
     for offset in offsets_n9:
         for fv_offset in offsets_dtw:
@@ -1321,6 +1324,23 @@ def readEfficiencyHistogram():
                         _line2 =    ("acc. rate (%5.3f,%5.3f): acc. combined rate: %4.3f per day (pre-prox)"\
                          %(_p_v_1,_n_v_1,_p_v_1*_n_v_1*timeAcc),)
 
+                    if _signal/sqrt(_signal+_background)>_maxSoverB2:
+                        _maxSoverB2 = _signal/sqrt(_signal+_background)
+                        _maxSignal2 = _signal
+                        _maxBkgd2   = _background
+                        _maxOffn92   = _n_n9
+                        _maxOff_dtw2 = _n_d
+                        _maxOffset2 = offset
+                        _line = ("Offset:%3d, beta/n: Wall-dist (%4.1f,%4.1f) m, n9 cut (%d,%d), rel. efficiency (%4.2f,%4.2f), neutron rate :(%4.2f per day), combined eff/rate : %4.2f per day;"\
+                            %(offset,_p_d,_n_d\
+                            ,_p_n9,_n_n9\
+                            ,_p_v,_n_v\
+                            ,_rate_v*86400.\
+                            ,_rate_v*_p_v*86400.),)
+                        _line2 =    ("acc. rate (%5.3f,%5.3f): acc. combined rate: %4.3f per day (pre-prox)"\
+                         %(_p_v_1,_n_v_1,_p_v_1*_n_v_1*timeAcc),)
+
+
 
             print 'Offset:',str(offset).rjust(3,' '),',Found max S/sqrt(S+B)',_maxSoverB,',(S,B,n9,dtw):(',_maxSignal,_maxBkgd,_maxOffn9,_maxOff_dtw,')'
             line += (_line + _line2,)
@@ -1333,7 +1353,7 @@ def readEfficiencyHistogram():
             print _l[i],
         print ''
 
-    _res = "%s %s %4.1f %3d" %(arguments['--shieldThick'],_cover,_maxOff_dtw,_maxOffn9)
+    _res = "%s %s %4.1fm %3d %3d %4.3f" %(arguments['--shieldThick'],_cover,_maxOff_dtw2,_maxOffn92,_maxOffn92 - _maxOffset2,_maxSignal2)
     with open('results.txt','a') as file:
         file.write(_res)
 
