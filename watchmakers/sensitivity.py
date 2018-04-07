@@ -1334,7 +1334,7 @@ def readEfficiencyHistogram():
                 print _l[i],
                 file.write(_l[i],)
             print ''
-            file.write(_l[i])
+            file.write('')
 
     f_root = TFile(_str,"recreate")
     h.Write()
