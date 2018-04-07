@@ -1333,7 +1333,7 @@ def readEfficiencyHistogram():
             print _l[i],
         print ''
 
-    _res = "%s %s %4.1f %3d" %(arguments['--sheildThick'],_cover,_maxOff_dtw,_maxOffn9)
+    _res = "%s %s %4.1f %3d" %(arguments['--shieldThick'],_cover,_maxOff_dtw,_maxOffn9)
     with open('results.txt','a') as file:
         file.write(_res)
 
