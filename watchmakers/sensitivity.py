@@ -1365,15 +1365,15 @@ def readEfficiencyHistogram():
         print ''
 
 
-
+    sigma = 3.
     _S = _maxSignal2
     _B = _maxSignal2 + _maxBkgd2
     OnOffRatio = 3
 
-    T3SIGMA = 9.*(_B +(_S+_B)/OnOffRatio)/_S/_S
+    T3SIGMA = sigma**2*(_B +(_S+_B)/OnOffRatio)/_S/_S
 
     metric = T3SIGMA*OnOffRatio + T3SIGMA
-    _res = "%s %4.1f %3d %3d %4.3f %4.3f %4.3f" %(_cover,_maxOff_dtw2,_maxOffn92,_maxOffn92-_maxOffset2,_maxSignal2,_maxBkgd2,metric)
+    _res = "%s %4.1f %3d %3d %4.3f %4.3f %4.3f %4.3f" %(_cover,_maxOff_dtw2,_maxOffn92,_maxOffn92-_maxOffset2,_maxSignal2,_maxBkgd2,T3SIGMA,metric)
     _strRes = "results_DTW_%dmm_U238_%4.3fPPM_Th232_%4.3fPPM_K_%4.3fPPM.txt"%(float(arguments['--shieldThick']),float(arguments["--U238_PPM"]),float(arguments["--Th232_PPM"]),float(arguments["--K_PPM"]))
     # _strRes = 'res.txt'
     with open(_strRes,'a') as file:
