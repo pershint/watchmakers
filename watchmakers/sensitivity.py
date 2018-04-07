@@ -1260,7 +1260,7 @@ def readEfficiencyHistogram():
 
     timeAcc = 0.0001*86400.
 
-    offsets_n9 = [0,2,4,6,8,10,12,14,16]  ## bin numbers
+    offsets_n9 = [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17]  ## bin numbers
     offsets_dtw = [0]       ## bin numbers
 
     binR,rangeRmin,rangeRmax = 31,0.45,3.55
@@ -1281,8 +1281,15 @@ def readEfficiencyHistogram():
 
 
     line,_line,_line2= ("",),"",""
+    _histograms = {}
     for offset in offsets_n9:
         for fv_offset in offsets_dtw:
+            _histograms["sOverB_%d"%(offset)] h = hist[_t].Clone()
+            _histograms["sOverB_%d"%(offset)].SetZTitle('singles rate (Hz)')
+            _histograms["sOverB_%d"%(offset)].SetTitle('Singles rate')
+            _histograms["sOverB_%d"%(offset)].SetName('hSinglesRate')
+            _histograms["sOverB_%d"%(offset)].Reset()
+
             _proc = '_%d_%d_%s'%(offset,fv_offset,_cov)
 
             _maxSignal,_maxBkgd,_maxSoverB,_maxOffn9,_maxOff_dtw = -1,-1,-1,-1,-1
@@ -1309,7 +1316,9 @@ def readEfficiencyHistogram():
                     _n_v_1  = h.GetBinContent(_db+fv_offset,_nb+offset)
 
                     _background = _p_v_1*_n_v_1*timeAcc*0.05
-                    if _signal/sqrt(_signal+_background)>_maxSoverB:
+                    sob = _signal/sqrt(_signal+_background)
+                    _histograms["sOverB_%d"%(offset)].Fill(sob)
+                    if sob >_maxSoverB:
                         _maxSoverB = _signal/sqrt(_signal+_background)
                         _maxSignal = _signal
                         _maxBkgd   = _background
@@ -1324,7 +1333,7 @@ def readEfficiencyHistogram():
                         _line2 =    ("acc. rate (%5.3f,%5.3f): acc. combined rate: %4.3f per day (pre-prox)"\
                          %(_p_v_1,_n_v_1,_p_v_1*_n_v_1*timeAcc),)
 
-                    if _signal/sqrt(_signal+_background)>_maxSoverB2:
+                    if sob >_maxSoverB2:
                         _maxSoverB2 = _signal/sqrt(_signal+_background)
                         _maxSignal2 = _signal
                         _maxBkgd2   = _background
@@ -1353,17 +1362,25 @@ def readEfficiencyHistogram():
             print _l[i],
         print ''
 
-    _res = "%s %4.1f %3d %3d %4.3f %4.3f" %(_cover,_maxOff_dtw2,_maxOffn92,_maxOffn92-_maxOffset2,_maxSignal2,_maxBkgd2)
+    off_frac = 0.15
+    offRate = (_maxSignal2+_maxBkgd2)*off_frac
+    onRate  = (_maxSignal2+_maxSignal2+_maxBkgd2)*(1-off_frac)
+    nSigma = 3
+    metric = nSigma/(_maxSignal2/sqrt(onRate+offRate))
+    _res = "%s %4.1f %3d %3d %4.3f %4.3f %4.3f" %(_cover,_maxOff_dtw2,_maxOffn92,_maxOffn92-_maxOffset2,_maxSignal2,_maxBkgd2,metric)
     _strRes = "results_DTW_%dmm_U238_%4.3fPPM_Th232_%4.3fPPM_K_%4.3fPPM.txt"%(float(arguments['--shieldThick']),float(arguments["--U238_PPM"]),float(arguments["--Th232_PPM"]),float(arguments["--K_PPM"]))
     # _strRes = 'res.txt'
     with open(_strRes,'a') as file:
         file.write(_res+'\n')
 
+    print 'Writing histograms to file',_str
     f_root = TFile(_str,"recreate")
     h.Write()
     hn.Write()
     hne.Write()
     hee.Write()
+    for offset in offsets_n9:
+        _histograms["sOverB_%d"%(offset)].Write()
     f_root.Close()
 
     print '\n\nall done.'
