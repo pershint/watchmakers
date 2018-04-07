@@ -1322,7 +1322,7 @@ def readEfficiencyHistogram():
                          %(_p_v_1,_n_v_1,_p_v_1*_n_v_1*timeAcc),)
 
 
-            print 'Offset:',srt(offset).rjust(3,' '),',Found max S/sqrt(S+B)',_maxSoverB,',(S,B,n9,dtw):(',_maxSignal,_maxBkgd,_maxOffn9,_maxOff_dtw,')'
+            print 'Offset:',str(offset).rjust(3,' '),',Found max S/sqrt(S+B)',_maxSoverB,',(S,B,n9,dtw):(',_maxSignal,_maxBkgd,_maxOffn9,_maxOff_dtw,')'
             line += (_line + _line2,)
 
     print '\n\nMore info on the maximal sensitivity found'
