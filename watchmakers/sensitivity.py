@@ -1331,15 +1331,15 @@ def readEfficiencyHistogram():
                         _maxOffn92   = _n_n9
                         _maxOff_dtw2 = _n_d
                         _maxOffset2 = offset
-                        _line = ("Offset:%3d, beta/n: Wall-dist (%4.1f,%4.1f) m, n9 cut (%d,%d), rel. efficiency (%4.2f,%4.2f), neutron rate :(%4.2f per day), combined eff/rate : %4.2f per day;"\
-                            %(offset,_p_d,_n_d\
-                            ,_p_n9,_n_n9\
-                            ,_p_v,_n_v\
-                            ,_rate_v*86400.\
-                            ,_rate_v*_p_v*86400.),)
-                        _line2 =    ("acc. rate (%5.3f,%5.3f): acc. combined rate: %4.3f per day (pre-prox)"\
-                         %(_p_v_1,_n_v_1,_p_v_1*_n_v_1*timeAcc),)
-
+                        # _line = ("Offset:%3d, beta/n: Wall-dist (%4.1f,%4.1f) m, n9 cut (%d,%d), rel. efficiency (%4.2f,%4.2f), neutron rate :(%4.2f per day), combined eff/rate : %4.2f per day;"\
+                        #     %(offset,_p_d,_n_d\
+                        #     ,_p_n9,_n_n9\
+                        #     ,_p_v,_n_v\
+                        #     ,_rate_v*86400.\
+                        #     ,_rate_v*_p_v*86400.),)
+                        # _line2 =    ("acc. rate (%5.3f,%5.3f): acc. combined rate: %4.3f per day (pre-prox)"\
+                        #  %(_p_v_1,_n_v_1,_p_v_1*_n_v_1*timeAcc),)
+                        #
 
 
             print 'Offset:',str(offset).rjust(3,' '),',Found max S/sqrt(S+B)',_maxSoverB,',(S,B,n9,dtw):(',_maxSignal,_maxBkgd,_maxOffn9,_maxOff_dtw,')'
@@ -1353,7 +1353,7 @@ def readEfficiencyHistogram():
             print _l[i],
         print ''
 
-    _res = "%s %s %4.1f %3d %3d %4.3f" %(arguments['--shieldThick'],_cover,_maxOff_dtw2,_maxOffn92,_maxOffn92 - _maxOffset2,_maxSignal2)
+    _res = "%s %s %4.1f %3d %3d %4.3f" %(arguments['--shieldThick'],_cover,_maxOff_dtw2,_maxOffn92,_maxOffset2,_maxSignal2)
     _str = "results_U238_%4.3fPPM_Th232_%4.3fPPM_K_%4.3fPPM.txt"%(float(arguments["--U238_PPM"]),float(arguments["--Th232_PPM"]),float(arguments["--K_PPM"]))
     _str = 'res.txt'
     with open('res.txt','a') as file:
