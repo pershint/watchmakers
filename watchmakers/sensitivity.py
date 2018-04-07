@@ -1302,7 +1302,7 @@ def readEfficiencyHistogram():
             _histograms["background_%d"%(offset)].SetZTitle('evts/day')
             _histograms["background_%d"%(offset)].SetYTitle('n9 cut on prompt')
             _histograms["background_%d"%(offset)].SetTitle('background - offset %2d'%(offset))
-            _histograms["background_%d"%(offset)].SetName('hbackground%d'%(offset))
+            _histograms["background_%d"%(offset)].SetName('hBackground%d'%(offset))
             _histograms["background_%d"%(offset)].Reset()
 
 
