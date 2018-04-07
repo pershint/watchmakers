@@ -1286,9 +1286,26 @@ def readEfficiencyHistogram():
         for fv_offset in offsets_dtw:
             _histograms["sOverB_%d"%(offset)]= h.Clone()
             _histograms["sOverB_%d"%(offset)].SetZTitle('signal/sqrt(signal+background)')
+            _histograms["sOverB_%d"%(offset)].SetYTitle('n9 cut on prompt')
             _histograms["sOverB_%d"%(offset)].SetTitle('hSoB - offset %2d'%(offset))
             _histograms["sOverB_%d"%(offset)].SetName('hSoB%d'%(offset))
             _histograms["sOverB_%d"%(offset)].Reset()
+
+            _histograms["signal_%d"%(offset)]= h.Clone()
+            _histograms["signal_%d"%(offset)].SetZTitle('evts/day')
+            _histograms["signal_%d"%(offset)].SetYTitle('n9 cut on prompt')
+            _histograms["signal_%d"%(offset)].SetTitle('Signal - offset %2d'%(offset))
+            _histograms["signal_%d"%(offset)].SetName('hSignal%d'%(offset))
+            _histograms["signal_%d"%(offset)].Reset()
+
+            _histograms["background_%d"%(offset)]= h.Clone()
+            _histograms["background_%d"%(offset)].SetZTitle('evts/day')
+            _histograms["background_%d"%(offset)].SetYTitle('n9 cut on prompt')
+            _histograms["background_%d"%(offset)].SetTitle('background - offset %2d'%(offset))
+            _histograms["background_%d"%(offset)].SetName('hbackground%d'%(offset))
+            _histograms["background_%d"%(offset)].Reset()
+
+
 
             _proc = '_%d_%d_%s'%(offset,fv_offset,_cov)
 
@@ -1319,6 +1336,8 @@ def readEfficiencyHistogram():
                     sob = _signal/sqrt(_signal+_background)
 
                     _histograms["sOverB_%d"%(offset)].SetBinContent(_db,_nb,sob)
+                    _histograms["signal_%d"%(offset)].SetBinContent(_db,_nb,_signal)
+                    _histograms["background_%d"%(offset)].SetBinContent(_db,_nb,_background)
 
                     if sob >_maxSoverB:
                         _maxSoverB = _signal/sqrt(_signal+_background)
@@ -1387,6 +1406,8 @@ def readEfficiencyHistogram():
     hee.Write()
     for offset in offsets_n9:
         _histograms["sOverB_%d"%(offset)].Write()
+        _histograms["signal_%d"%(offset)].Write()
+        _histograms["background_%d"%(offset)].Write()
     f_root.Close()
 
     print '\n\nall done.'
