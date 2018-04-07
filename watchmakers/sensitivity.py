@@ -1318,19 +1318,24 @@ def readEfficiencyHistogram():
                             ,_p_v,_n_v\
                             ,_rate_v*86400.\
                             ,_rate_v*_p_v*86400.),)
-                        _line2 =    ("acc. rate (%4.3f,%4.3f): acc. combined rate: %4.3f per day (pre-prox)"\
+                        _line2 =    ("acc. rate (%5.3f,%5.3f): acc. combined rate: %4.3f per day (pre-prox)"\
                          %(_p_v_1,_n_v_1,_p_v_1*_n_v_1*timeAcc),)
 
 
             print 'Offset:',str(offset).rjust(3,' '),',Found max S/sqrt(S+B)',_maxSoverB,',(S,B,n9,dtw):(',_maxSignal,_maxBkgd,_maxOffn9,_maxOff_dtw,')'
             line += (_line + _line2,)
 
-    print '\n\nMore info on the maximal sensitivity found'
+    print '\n\nMore info on the maximal sensitivity found:'
     # print line
-    for _l in line:
-        for i in range(len(_l)):
-            print _l[i],
-        print ''
+
+    with open('results.txt','a') as file:
+        for _l in line:
+            for i in range(len(_l)):
+                print _l[i],
+                write(_l[i],)
+            print ''
+            write(_l[i])
+
     f_root = TFile(_str,"recreate")
     h.Write()
     hn.Write()
@@ -1338,6 +1343,7 @@ def readEfficiencyHistogram():
     hee.Write()
     f_root.Close()
 
+    print '\n\nall done.'
 
 def runSensitivity():
     hBoulby = TH2D('hBoulby','hBoulby',50,0.5,50.5,50,0.5,50.5)
