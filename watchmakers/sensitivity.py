@@ -1354,8 +1354,8 @@ def readEfficiencyHistogram():
         print ''
 
     _res = "%s %s %4.1f %3d %3d %4.3f %4.3f" %(arguments['--shieldThick'],_cover,_maxOff_dtw2,_maxOffn92,_maxOffn92-_maxOffset2,_maxSignal2,_maxBkgd2)
-    _strRes = "results_U238_%4.3fPPM_Th232_%4.3fPPM_K_%4.3fPPM.txt"%(float(arguments["--U238_PPM"]),float(arguments["--Th232_PPM"]),float(arguments["--K_PPM"]))
-    _strRes = 'res.txt'
+    _strRes = "results_DTW_%dmm_U238_%4.3fPPM_Th232_%4.3fPPM_K_%4.3fPPM.txt"%(int(arguments['--shieldThick']),float(arguments["--U238_PPM"]),float(arguments["--Th232_PPM"]),float(arguments["--K_PPM"]))
+    # _strRes = 'res.txt'
     with open(_strRes,'a') as file:
         file.write(_res)
 
