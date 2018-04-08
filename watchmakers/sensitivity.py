@@ -1384,7 +1384,7 @@ def readEfficiencyHistogram():
         print ''
 
 
-    sigma = 3.
+    sigma = 4.65
     _S = _maxSignal2
     _B = _maxSignal2 + _maxBkgd2
     OnOffRatio = 3
