@@ -1383,10 +1383,10 @@ def readEfficiencyHistogram():
             print _l[i],
         print ''
 
-
+    cut_signal = 0.9
     sigma = 4.65 # 3-sigma 95% of the time, according to Owen report
-    _S = _maxSignal2
-    _B = _maxSignal2*1.15 + _maxBkgd2 # Includes a 15% other reactor component
+    _S = _maxSignal2*cut_signal
+    _B = _maxSignal2*cut_signal*1.15 + _maxBkgd2 # Includes a 15% other reactor component
     OnOffRatio = 1.5
 
     T3SIGMA = sigma**2*(_B +(_S+_B)/OnOffRatio)/_S/_S
