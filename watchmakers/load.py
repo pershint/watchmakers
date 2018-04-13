@@ -241,7 +241,7 @@ def loadSimulationParametersNew():
     'pn_ibd':['WaterVolume']}
 
     #Photocoverage selected
-    coverage = ['15pct','20pct','25pct','30pct','35pct']
+    coverage = ['15pct','20pct','25pct','30pct','35pct','SuperK','WatchmanSphere']
 
     if arguments['-C']:
         coverage = [arguments['-C']]

@@ -155,7 +155,7 @@ def macroGeneratorNew(percentage,location,element,_dict,runs,events,dirOpt):
     # print "percentage,location,element,_dict,runs,events"
     # print percentage,location,element,_dict,runs,events
     covPCT = {'10pct':0.1,'15pct':0.15,'20pct':0.2,\
-    '25pct':0.25,'30pct':0.30,'35pct':0.35,'40pct':0.40}
+    '25pct':0.25,'30pct':0.30,'35pct':0.35,'40pct':0.40,'SuperK':0.39,'WatchmanSphere':0.20}
 
     additionalString,additionalCommands,additionalMacStr,additionalMacOpt = testEnabledCondition(arguments)
     d,process,coverage = loadSimulationParametersNew()
@@ -166,8 +166,8 @@ def macroGeneratorNew(percentage,location,element,_dict,runs,events,dirOpt):
 
     depth = float(arguments["--depth"])
     rate = 1.0
-
-    header = '''
+    if 'pct' in percentage:
+        header = '''
 /glg4debug/glg4param omit_muon_processes  0.0
 /glg4debug/glg4param omit_hadronic_processes  0.0
 
@@ -191,6 +191,32 @@ def macroGeneratorNew(percentage,location,element,_dict,runs,events,dirOpt):
 # /rat/procset file "%s/root_files%s%sfile_%d.root" Now set with -o object
 #END EVENT LOOP
 ''' %(covPCT[percentage],additionalMacOpt,dir,additionalMacStr,dirOpt,runs)
+    else:
+        if location == 'GUNITE' or location == 'CONCRETE':
+            return ''
+        else:
+            header = '''
+/glg4debug/glg4param omit_muon_processes  0.0
+/glg4debug/glg4param omit_hadronic_processes  0.0
+
+/rat/db/set DETECTOR experiment "%s"
+/rat/db/set DETECTOR geo_file "%s/%s.geo"
+
+/run/initialize
+
+# BEGIN EVENT LOOP
+/rat/proc lesssimpledaq
+# /rat/proc fitbonsai
+# /rat/proc fitcentroid
+# /rat/proc fitpath
+/rat/proc count
+/rat/procset update 1000
+
+# Use IO.default_output_filename
+/rat/proclast outroot
+# /rat/procset file "%s/root_files%s%sfile_%d.root" Now set with -o object
+#END EVENT LOOP
+''' %(percentage,percentage,percentage,dir,additionalMacStr,dirOpt,runs)
 
     if element in d['FN']:
         line1 = '''
@@ -510,18 +536,22 @@ def generateMacrosNew(N,e):
         for _loc in proc[_p]:
             for idx,_cover in enumerate(coverage):
                 for _element in d[_p]:
-                    # print cnt,_p,element,_loc,cover
-                    for i in range(N/10+1):
-                        dir = "macro%s/%s/%s/%s/%s/run%08d/"%(additionalMacStr,_cover,_loc,_element,_p,i*10)
-                        testCreateDirectory(dir)
-                        cnt+=1
-                    for val in range(N):
-                        i = val/10
-                        dir = "%s/%s/%s/%s/%s/run%08d/"%(additionalMacStr,_cover,_loc,_element,_p,i*10)
-                        outfile = open("macro%s/run_%08d.mac" %(dir,val),"wb")
-                        line = macroGeneratorNew(_cover,_loc,_element,_p,val,e,dir)
-                        outfile.writelines(line)
-                        outfile.close
+                    cond1 = ('pct' in _cover)==0 and (_loc == 'GUNITE' or _loc == 'CONCRETE')!=1
+                    cond2 = ('pct' in _cover)==1
+                    print _cover,_loc,cond1,cond2, cond1 or cond2
+                    if cond1 or cond2:
+                        for i in range(N/10+1):
+                            dir = "macro%s/%s/%s/%s/%s/run%08d/"%(additionalMacStr,_cover,_loc,_element,_p,i*10)
+                            testCreateDirectory(dir)
+                            cnt+=1
+                        for val in range(N):
+                            i = val/10
+                            dir = "%s/%s/%s/%s/%s/run%08d/"%(additionalMacStr,_cover,_loc,_element,_p,i*10)
+                            outfile = open("macro%s/run_%08d.mac" %(dir,val),"wb")
+                            line = macroGeneratorNew(_cover,_loc,_element,_p,val,e,dir)
+                            outfile.writelines(line)
+                            outfile.close
+
 
     return 0
 
@@ -720,19 +750,22 @@ def generateJobsNew(N,arguments):
             for idx,_cover in enumerate(coverage):
                 for _element in d[_p]:
                     # print cnt,_p,element,_loc,cover
-                    dir = "jobs%s/%s/%s/%s/%s"%(additionalMacStr,_cover,_loc,_element,_p)
-                    if arguments['--force']:
-                        print 'Using force to recreate dir:',dir
-                        testCreateDirectory(dir)
-                    else:
-                        testCreateDirectoryIfNotExist(dir)
-                    outfile_jobs.writelines('msub %s\n'%(dir+'/job%08d.sh'%(0)))
-                    log = "log%s/%s/%s/%s/%s/log"%(additionalMacStr,_cover,_loc,_element,_p)
-                    for i in range(N/10+1):
+                    cond1 = ('pct' in _cover)==0 and (_loc == 'GUNITE' or _loc == 'CONCRETE')!=1
+                    cond2 = ('pct' in _cover)==1
+                    if cond1 or cond2:
                         dir = "jobs%s/%s/%s/%s/%s"%(additionalMacStr,_cover,_loc,_element,_p)
-                        outfile = open(dir+'/job%08d.sh'%(i*10),"wb")
-                        job_line = "%s_%s_%s_%s_%s_%s"%(additionalMacStr,_cover,_loc,_element,_p,i*10)
-                        outfile.writelines("""#!/bin/sh
+                        if arguments['--force']:
+                            print 'Using force to recreate dir:',dir
+                            testCreateDirectory(dir)
+                        else:
+                            testCreateDirectoryIfNotExist(dir)
+                        outfile_jobs.writelines('msub %s\n'%(dir+'/job%08d.sh'%(0)))
+                        log = "log%s/%s/%s/%s/%s/log"%(additionalMacStr,_cover,_loc,_element,_p)
+                        for i in range(N/10+1):
+                            dir = "jobs%s/%s/%s/%s/%s"%(additionalMacStr,_cover,_loc,_element,_p)
+                            outfile = open(dir+'/job%08d.sh'%(i*10),"wb")
+                            job_line = "%s_%s_%s_%s_%s_%s"%(additionalMacStr,_cover,_loc,_element,_p,i*10)
+                            outfile.writelines("""#!/bin/sh
 #MSUB -N job_%s    #name of job
 #MSUB -A ared         # sets bank account
 #MSUB -l nodes=1:ppn=1,walltime=23:59:59,partition=borax  # uses 1 node
@@ -748,17 +781,17 @@ source %s/../../../bin/geant4.sh
 source %s/geant4make.sh
 source %s/env.sh
 source %s/env_wm.sh\n\n"""%(job_line,log+'.out',log+'.err',directory,\
-                        rootDir,g4Dir,g4Dir,ratDir,watchmakersDir))
-                        for _j in range(10):
-                            mac = "macro%s/%s/%s/%s/%s/run%08d/run_%08d.mac"%(additionalMacStr,_cover,_loc,_element,_p,i*10,i*10+_j)
-                            r_outfile = "root_files%s/%s/%s/%s/%s/run%08d/run_%08d.root"%(additionalMacStr,_cover,_loc,_element,_p,i*10,i*10+_j)
-                            l_outfile = "log%s/%s/%s/%s/%s/run%08d/run_%08d.log"%(additionalMacStr,_cover,_loc,_element,_p,i*10,i*10+_j)
-                            b_outfile = "bonsai_root_files%s/%s/%s/%s/%s/run%08d/run_%08d.root"%(additionalMacStr,_cover,_loc,_element,_p,i*10,i*10+_j)
-                            lines = '''rat %s -o %s -l %s
-(bonsai %s %s || bonsai %s %s ||bonsai %s %s ||bonsai %s %s || echo \"Could not run bonsai after 4 tries.\")>> %s\n\n'''%(mac,r_outfile,l_outfile,r_outfile,b_outfile,r_outfile,b_outfile,r_outfile,b_outfile,r_outfile,b_outfile,l_outfile)
-                            outfile.writelines(lines)
-                        outfile.writelines("msub %s"%(dir+'/job%08d.sh'%((i+1)*10)))
-                        outfile.close()
+                            rootDir,g4Dir,g4Dir,ratDir,watchmakersDir))
+                            for _j in range(10):
+                                mac = "macro%s/%s/%s/%s/%s/run%08d/run_%08d.mac"%(additionalMacStr,_cover,_loc,_element,_p,i*10,i*10+_j)
+                                r_outfile = "root_files%s/%s/%s/%s/%s/run%08d/run_%08d.root"%(additionalMacStr,_cover,_loc,_element,_p,i*10,i*10+_j)
+                                l_outfile = "log%s/%s/%s/%s/%s/run%08d/run_%08d.log"%(additionalMacStr,_cover,_loc,_element,_p,i*10,i*10+_j)
+                                b_outfile = "bonsai_root_files%s/%s/%s/%s/%s/run%08d/run_%08d.root"%(additionalMacStr,_cover,_loc,_element,_p,i*10,i*10+_j)
+                                lines = '''rat %s -o %s -l %s
+    (bonsai %s %s || bonsai %s %s ||bonsai %s %s ||bonsai %s %s || echo \"Could not run bonsai after 4 tries.\")>> %s\n\n'''%(mac,r_outfile,l_outfile,r_outfile,b_outfile,r_outfile,b_outfile,r_outfile,b_outfile,r_outfile,b_outfile,l_outfile)
+                                outfile.writelines(lines)
+                            outfile.writelines("msub %s"%(dir+'/job%08d.sh'%((i+1)*10)))
+                            outfile.close()
     #
     # for ii in loc:
     #     for idx,cover in enumerate(coverage):
@@ -1124,66 +1157,69 @@ def mergeNtupleFilesNew(arguments):
         for _loc in proc[_p]:
             for idx,_cover in enumerate(coverage):
                 for _element in d[_p]:
-                    _tmp =  "%s_%s_%s_%s"%(_cover,_loc,_element,_p)
-                    trees[_tmp] = TChain("data")
-                    trees[_tmp+'_RS'] = TChain("runSummary")
-                    print _tmp
-                    for _ii in range(N):# Covers up to 1000 jobs,
-                        i = _ii/10
-                        dir = "bonsai_root_files%s/%s/%s/%s/%s/run%08d/run_%08d.root"%(additionalMacStr,_cover,_loc,_element,_p,i*10,_ii)
-                        try:
-                            if os.path.exists(dir):
-                                _ff = TFile(dir)
-                                _data = _ff.Get('data')
-                                _tot = _data.GetEntries()
-                                # There is a tree, and there at least 0 events in it...
-                                if _tot>=0:
-                                    trees[_tmp].Add(dir)
-                                    trees[_tmp+'_RS'].Add(dir)
-                                else:
-                                    print 'No tree in file',dir
-                            # _ff.Close()
+                    cond1 = ('pct' in _cover)==0 and (_loc == 'GUNITE' or _loc == 'CONCRETE')!=1
+                    cond2 = ('pct' in _cover)==1
+                    if cond1 or cond2:
+                        _tmp =  "%s_%s_%s_%s"%(_cover,_loc,_element,_p)
+                        trees[_tmp] = TChain("data")
+                        trees[_tmp+'_RS'] = TChain("runSummary")
+                        print _tmp
+                        for _ii in range(N):# Covers up to 1000 jobs,
+                            i = _ii/10
+                            dir = "bonsai_root_files%s/%s/%s/%s/%s/run%08d/run_%08d.root"%(additionalMacStr,_cover,_loc,_element,_p,i*10,_ii)
+                            try:
+                                if os.path.exists(dir):
+                                    _ff = TFile(dir)
+                                    _data = _ff.Get('data')
+                                    _tot = _data.GetEntries()
+                                    # There is a tree, and there at least 0 events in it...
+                                    if _tot>=0:
+                                        trees[_tmp].Add(dir)
+                                        trees[_tmp+'_RS'].Add(dir)
+                                    else:
+                                        print 'No tree in file',dir
+                                # _ff.Close()
+                                # trees[_tmp].Add(dir)
+                                # trees[_tmp+'_RS'].Add(dir)
+                                # if data == 0x0:
+                                #     print 'problem with dir, no tree'
+                                # else:
+                                #     trees[_tmp].Add(dir)
+                                #     trees[_tmp+'_RS'].Add(dir)
+                                _ff.Close()
+                            except:
+                                print 'Could not read ',dir
                             # trees[_tmp].Add(dir)
                             # trees[_tmp+'_RS'].Add(dir)
-                            # if data == 0x0:
-                            #     print 'problem with dir, no tree'
-                            # else:
-                            #     trees[_tmp].Add(dir)
-                            #     trees[_tmp+'_RS'].Add(dir)
-                            _ff.Close()
+                            # data = gROOT.FindObject('data')
+                            # print "dir: ",data.GetEntries()
+                        data = gROOT.FindObject('data')
+                        fLocation = "bonsai_root_files%s/%s/merged_%s_%s_%s.root"%(additionalMacStr,_cover,_loc,_element,_p)
+                        fLocationSum = "bonsai_root_files%s/%s/mergedSumary_%s_%s_%s.root"%(additionalMacStr,_cover,_loc,_element,_p)
+                        nEntry = data.GetEntries()
+                        runSummary = gROOT.FindObject('runSummary')
+                        totalEntries = runSummary.GetEntries()
+                        runSummary.GetEntry(0)
+                        try:
+                            totEvents = totalEntries*runSummary.nEvents
                         except:
-                            print 'Could not read ',dir
-                        # trees[_tmp].Add(dir)
-                        # trees[_tmp+'_RS'].Add(dir)
-                        # data = gROOT.FindObject('data')
-                        # print "dir: ",data.GetEntries()
-                    data = gROOT.FindObject('data')
-                    fLocation = "bonsai_root_files%s/%s/merged_%s_%s_%s.root"%(additionalMacStr,_cover,_loc,_element,_p)
-                    fLocationSum = "bonsai_root_files%s/%s/mergedSumary_%s_%s_%s.root"%(additionalMacStr,_cover,_loc,_element,_p)
-                    nEntry = data.GetEntries()
-                    runSummary = gROOT.FindObject('runSummary')
-                    totalEntries = runSummary.GetEntries()
-                    runSummary.GetEntry(0)
-                    try:
-                        totEvents = totalEntries*runSummary.nEvents
-                    except:
-                        print 'Something went wrong'
-                        totEvents = -1
-                    dir = "bonsai_root_files%s/%s/%s/%s/%s/run********/run_********.root"%(additionalMacStr,_cover,_loc,_element,_p)
-                    print 'Merging :\n\t',dir, '\n->\n\t', fLocation, \
-                    ';\ntotal entries (trigger/total):', nEntry,'/',totEvents,\
-                    ',merged a total of ',totalEntries,'files.'
-                    # data.AddFriend(runSummary)
-                    # data.Merge(fLocation)
-                    _f = TFile(fLocation,"recreate")
-                    data.Write()
-                    runSummary.Write()
-                    _f.Close()
-                    # runSummary.Merge(fLocationSum)
+                            print 'Something went wrong'
+                            totEvents = -1
+                        dir = "bonsai_root_files%s/%s/%s/%s/%s/run********/run_********.root"%(additionalMacStr,_cover,_loc,_element,_p)
+                        print 'Merging :\n\t',dir, '\n->\n\t', fLocation, \
+                        ';\ntotal entries (trigger/total):', nEntry,'/',totEvents,\
+                        ',merged a total of ',totalEntries,'files.'
+                        # data.AddFriend(runSummary)
+                        # data.Merge(fLocation)
+                        _f = TFile(fLocation,"recreate")
+                        data.Write()
+                        runSummary.Write()
+                        _f.Close()
+                        # runSummary.Merge(fLocationSum)
 
-                    print 'done\n'
-                    trees[_tmp].Delete()
-                    trees[_tmp+'_RS'].Delete()
+                        print 'done\n'
+                        trees[_tmp].Delete()
+                        trees[_tmp+'_RS'].Delete()
 
 
     # del trees
