@@ -240,11 +240,14 @@ def macroGeneratorNew(percentage,location,element,_dict,runs,events,dirOpt):
             locat = location.lower()
             if locat == 'watervolume':
                 locat = 'detector'
+                xTimes = 2
+            else:
+                xTimes = 10
             line1 = '''
 /generator/add decaychain %s:regexfill:poisson
 /generator/pos/set %s+
 /generator/rate/set %f
-/run/beamOn %d''' %(element,locat,rate,events*2)
+/run/beamOn %d''' %(element,locat,rate,events*xTimes)
 
     elif element in d['ibd_p']:
         line1 ='''
@@ -252,7 +255,7 @@ def macroGeneratorNew(percentage,location,element,_dict,runs,events,dirOpt):
 /generator/vtx/set e+ %s
 /generator/pos/set 0 0 0
 /generator/rate/set %f
-/run/beamOn %d'''%(element,rate,events)
+/run/beamOn %d'''%(element,rate,events/3)
 
     elif element in d['ibd_n']:
         line1 = '''
@@ -260,7 +263,7 @@ def macroGeneratorNew(percentage,location,element,_dict,runs,events,dirOpt):
 /generator/vtx/set %s  0 0 0 0 0.001 0.20
 /generator/pos/set 0 0 0
 /generator/rate/set %f
-/run/beamOn %d'''%('neutron',rate,events)
+/run/beamOn %d'''%('neutron',rate,events/3)
 
     elif element in d['pn_ibd']:
         line1 = '''
@@ -268,7 +271,7 @@ def macroGeneratorNew(percentage,location,element,_dict,runs,events,dirOpt):
 /generator/vtx/set %s  1 0 0
 /generator/pos/set 0 0 0
 /generator/rate/set %f
-/run/beamOn %d'''%(element,rate,events)
+/run/beamOn %d'''%(element,rate,events/3)
 
     elif element in d['A_Z']:
         A =  int(int(element)/1000)
@@ -281,7 +284,7 @@ def macroGeneratorNew(percentage,location,element,_dict,runs,events,dirOpt):
 /generator/isotope/E 0.0
 /generator/pos/set 0 0 0
 /generator/rate/set %f
-/run/beamOn %d'''%(A,Z,rate,events)
+/run/beamOn %d'''%(A,Z,rate,events/4)
 
 
 
