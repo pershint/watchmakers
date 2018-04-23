@@ -1461,7 +1461,7 @@ def findRate():
     radionuclideRate= (skRNRate*avgRNYieldRC/avgMuonSK)*muonRate*nKiloTons*1e9
     RN_boulby        = radionuclideRate[1]
     print '\nLoaded mass of rock %e g. Fast Neutron Yield %e per sec; radionuclide yield %e per sec'%(rockMass,FN_boulby,RN_boulby)
-    _strRes = "rate_%dmm_U238_%4.3fPPM_Th232_%4.3fPPM_K_%4.3fPPM_%s.txt"%(float(arguments['--shieldThick']),float(arguments["--U238_PPM"]),float(arguments["--Th232_PPM"]),float(arguments["--K_PPM"]),arguments("-C"))
+    _strRes = "rate_%dmm_U238_%4.3fPPM_Th232_%4.3fPPM_K_%4.3fPPM_%s.txt"%(float(arguments['--shieldThick']),float(arguments["--U238_PPM"]),float(arguments["--Th232_PPM"]),float(arguments["--K_PPM"]),arguments["-C"])
     _res = "%e %e %d %e %e %e"%(boulbyIBDRate,rRn222,mPMTs[0],mPMTsU238[0],mPMTsTh232[0],mPMTsK40[0])
     with open(_strRes,'a') as file:
         file.write(_res+'\n')
