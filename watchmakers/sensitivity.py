@@ -1464,7 +1464,7 @@ def findRate():
     _strRes = "rate_%dmm_U238_%4.3fPPM_Th232_%4.3fPPM_K_%4.3fPPM.txt"%(float(arguments['--shieldThick']),float(arguments["--U238_PPM"]),float(arguments["--Th232_PPM"]),float(arguments["--K_PPM"]))
     _res = boulbyIBDRate,rRn222,mPMTsU238,mPMTsTh232,mPMTsK40
     with open(_strRes,'a') as file:
-        file.write(_res+'\n')
+        file.write(_res)
 
     return boulbyIBDRate,rRn222,mPMTsU238,mPMTsTh232,mPMTsK40
 
