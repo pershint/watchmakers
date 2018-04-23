@@ -49,7 +49,7 @@ docstring = """
     --depth=<depthD>    Depth of detector (for fast neutron spectra) [Default: %f]
 
     --evalRate          Evaluate the rates and combine to efficiency histrograms
-
+    --findRate          Find rate as a function of input flags.
     -n                  generate ntuple from single rat-pac root files
     --extractNtup       generate ntuple from all rat-pac root files
     -f=<ifile>          Input file [Default: %s]

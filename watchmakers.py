@@ -80,6 +80,11 @@ if __name__ == "__main__":
         else:
             readEfficiencyHistogram()
 
+    if arguments['--findRate']:
+        if arguments['--newVers']:
+            findRate()
+        else:
+            findRate()
 
 
 ######################## Waba Luba Dub Dub!! ###########################

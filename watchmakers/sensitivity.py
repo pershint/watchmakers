@@ -1393,7 +1393,7 @@ def readEfficiencyHistogram():
         T3SIGMA = sigma**2*(_B +(_S+_B)/OnOffRatio)/_S/_S
 
     else:
-        T3SIGMA = 1e999    
+        T3SIGMA = 1e999
     metric = T3SIGMA*OnOffRatio + T3SIGMA
     _res = "%s %4.1f %3d %3d %4.3f %4.3f %4.1f %4.1f" %(_cover,_maxOff_dtw2,_maxOffn92,_maxOffn92-_maxOffset2,_maxSignal2,_maxBkgd2,T3SIGMA,metric)
     _strRes = "results_DTW_%dmm_U238_%4.3fPPM_Th232_%4.3fPPM_K_%4.3fPPM.txt"%(float(arguments['--shieldThick']),float(arguments["--U238_PPM"]),float(arguments["--Th232_PPM"]),float(arguments["--K_PPM"]))
@@ -1414,6 +1414,56 @@ def readEfficiencyHistogram():
     f_root.Close()
 
     print '\n\nall done.'
+
+
+
+def findRate():
+
+
+    d,proc,coverage = loadSimulationParametersNew()
+    additionalString,additionalCommands,additionalMacStr,additionalMacOpt = testEnabledCondition(arguments)
+
+    print '\nLoading PMT activity:'
+    mPMTs,mPMTsU238,mPMTsTh232,mPMTsK40 = loadPMTActivity()
+    print 'done.'
+
+    tankRadius  = float(arguments["--tankRadius"])-float(arguments['--steelThick'])
+    tankHeight  = float(arguments["--halfHeight"])-float(arguments['--steelThick'])
+    nKiloTons = pi*pow(tankRadius/1000.,2)*(2.*tankHeight/1000.)
+    rRn222 = float(arguments["--Rn222"])*nKiloTons
+    print '\nLoaded Rn-222 activity of ',rRn222,'Bq per water volume, assumed a rate of %4.3e Bq/m^3'%(float(arguments["--Rn222"]))
+
+
+    FreeProtons = 0.668559
+    TNU         = FreeProtons* nKiloTons /1000./365./24./3600.
+    boulbyIBDRate   = 800.*TNU
+    print '\nLoaded an IBD rate of ',boulbyIBDRate,' events per water volume per second, assumed a rate of %4.3e TNU'%(boulbyIBDRate/TNU)
+
+    innerRad = 12.5 #meters
+    outerRad = 13.5 #meters
+    rockMass = (pi*pow(outerRad,2)*(2.*outerRad)-pi*pow(innerRad,2)*(2.*innerRad))*power(100.,3)*2.39
+    # volumeR         = power(22.,3)-power(20.,3)# Rock cavern e.g. (22m x 22m x 22m) - (20m x 20m x 20m)
+    # density         = 2.39 #from McGrath
+    # rockMass        = volumeR*power(100.,3)*density
+    #Mass of rock evalyated
+    avgMuon         = npa([180.,264.])
+    avgMuonNC       = power(avgMuon,0.849)
+    avgNFluxMag     = 1e-6
+    muonRate        = npa([7.06e-7,4.09e-8]) # mu/cm2/s
+    tenMeVRatio     = npa([7.51/34.1,1.11/4.86])
+    fastNeutrons    = rockMass*avgMuonNC*avgNFluxMag*muonRate*tenMeVRatio
+    FN_boulby = fastNeutrons[1]
+
+    avgRNYieldRC    = power(avgMuon,0.73)
+    skRNRate        = 0.5e-7 # 1/mu/g cm2
+    avgMuonSK       = power(219.,0.73)
+    skMuFlux        = 1.58e-7 #mu/cm2/sec
+    radionuclideRate= (skRNRate*avgRNYieldRC/avgMuonSK)*muonRate*nKiloTons*1e9
+    RN_boulby        = radionuclideRate[1]
+    print '\nLoaded mass of rock %e g. Fast Neutron Yield %e per sec; radionuclide yield %e per sec'%(rockMass,FN_boulby,RN_boulby)
+
+    return boulbyIBDRate,rRn222,mPMTsU238,mPMTsTh232,mPMTsK40
+
 
 def runSensitivity():
     hBoulby = TH2D('hBoulby','hBoulby',50,0.5,50.5,50,0.5,50.5)
