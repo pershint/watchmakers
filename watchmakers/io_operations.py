@@ -1127,32 +1127,14 @@ def mergeNtupleFilesNew(arguments):
 
     additionalString,additionalCommands,additionalMacStr,additionalMacOpt = testEnabledCondition(arguments)
 
+    directory   = os.getcwd()
 
     pathFinal = "bonsai_root_files%s/" %(additionalString)
 
 
-    # print additionalMacOpt
-    # print N,e
-
     cnt = 0
 
 
-# #     for _p in proc:
-#         for _loc in proc[_p]:
-#             for idx,_cover in enumerate(coverage):
-#                 for _element in d[_p]:
-#                     # print cnt,_p,element,_loc,cover
-#                     for i in range(N/10+1):
-#                         dir = "macro%s/%s/%s/%s/%s/run%08d/"%(additionalMacStr,_cover,_loc,_element,_p,i*10)
-#                         testCreateDirectory(dir)
-#                         cnt+=1
-#                     for val in range(N):
-#                         i = val/10
-#                         dir = "%s/%s/%s/%s/%s/run%08d/"%(additionalMacStr,_cover,_loc,_element,_p,i*10)
-#                         outfile = open("macro%s/run_%08d.mac" %(dir,val),"wb")
-#                         line = macroGeneratorNew(_cover,_loc,_element,_p,val,e,dir)
-#                         outfile.writelines(line)
-#                         outfile.close
 
     N = int(arguments['-N'])
 
@@ -1169,7 +1151,7 @@ def mergeNtupleFilesNew(arguments):
                         print _tmp
                         for _ii in range(N):# Covers up to 1000 jobs,
                             i = _ii/10
-                            dir = "bonsai_root_files%s/%s/%s/%s/%s/run%08d/run_%08d.root"%(additionalMacStr,_cover,_loc,_element,_p,i*10,_ii)
+                            dir = "%s/bonsai_root_files%s/%s/%s/%s/%s/run%08d/run_%08d.root"%(directory,additionalMacStr,_cover,_loc,_element,_p,i*10,_ii)
                             try:
                                 if os.path.exists(dir):
                                     _ff = TFile(dir)
@@ -1197,8 +1179,8 @@ def mergeNtupleFilesNew(arguments):
                             # data = gROOT.FindObject('data')
                             # print "dir: ",data.GetEntries()
                         data = gROOT.FindObject('data')
-                        fLocation = "bonsai_root_files%s/%s/merged_%s_%s_%s.root"%(additionalMacStr,_cover,_loc,_element,_p)
-                        fLocationSum = "bonsai_root_files%s/%s/mergedSumary_%s_%s_%s.root"%(additionalMacStr,_cover,_loc,_element,_p)
+                        fLocation = "%s/bonsai_root_files%s/%s/merged_%s_%s_%s.root"%(directory,additionalMacStr,_cover,_loc,_element,_p)
+                        fLocationSum = "%s/bonsai_root_files%s/%s/mergedSumary_%s_%s_%s.root"%(directory,additionalMacStr,_cover,_loc,_element,_p)
                         nEntry = data.GetEntries()
                         runSummary = gROOT.FindObject('runSummary')
                         totalEntries = runSummary.GetEntries()
@@ -1208,7 +1190,7 @@ def mergeNtupleFilesNew(arguments):
                         except:
                             print 'Something went wrong'
                             totEvents = -1
-                        dir = "bonsai_root_files%s/%s/%s/%s/%s/run********/run_********.root"%(additionalMacStr,_cover,_loc,_element,_p)
+                        dir = "%s/bonsai_root_files%s/%s/%s/%s/%s/run********/run_********.root"%(directory,additionalMacStr,_cover,_loc,_element,_p)
                         print 'Merging :\n\t',dir, '\n->\n\t', fLocation, \
                         ';\ntotal entries (trigger/total):', nEntry,'/',totEvents,\
                         ',merged a total of ',totalEntries,'files.'
