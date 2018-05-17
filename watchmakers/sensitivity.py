@@ -1423,6 +1423,23 @@ def findRate():
     d,proc,coverage = loadSimulationParametersNew()
     additionalString,additionalCommands,additionalMacStr,additionalMacOpt = testEnabledCondition(arguments)
 
+    print '\nLoading TANK activity:'
+    tankmass,tankact_60co,tankact_137cs = loadTankActivity()
+    print 'done.'
+
+    print '\nLoading CONCRETE activity:'
+    concmass,concact_238u,concact_232th,concact_40k = loadConcreteActivity()
+    print 'done.'
+
+    print '\nLoading Shotcrete activity:'
+    shotmass,act_238u,act_232th,act_40k = loadShotcreteActivity()
+    print 'done.'
+
+    print '\nLoading ROCK activity:'
+    rockmass,act_238u,act_232th,act_40k = loadRockActivity()
+    print 'done.'
+
+
     print '\nLoading PMT activity:'
     mPMTs,mPMTsU238,mPMTsTh232,mPMTsK40 = loadPMTActivity()
     print 'done.'
@@ -1432,7 +1449,6 @@ def findRate():
     nKiloTons = pi*pow(tankRadius/1000.,2)*(2.*tankHeight/1000.)
     rRn222 = float(arguments["--Rn222"])*nKiloTons
     print '\nLoaded Rn-222 activity of ',rRn222,'Bq per water volume, assumed a rate of %4.3e Bq/m^3'%(float(arguments["--Rn222"]))
-
 
     FreeProtons = 0.668559
     TNU         = FreeProtons* nKiloTons /1000./365./24./3600.
