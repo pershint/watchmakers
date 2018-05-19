@@ -1115,6 +1115,7 @@ def readEfficiencyHistogram():
     lineU238ROCK,lineTh232ROCK,lineKROCK = '','',''
     lineU238CONC,lineTh232CONC,lineKCONC = '','',''
     lineRn222WaterVolume = ''
+    lineU238GD,lineU235GD,lineTH232GD = '','',''
     linePromptWaterVolume,lineDelayedWaterVolume,linePromptDelayedWaterVolume = '','',''
     lineELSE = ''
 
@@ -1203,6 +1204,23 @@ def readEfficiencyHistogram():
         elif 'CONC' in _t and '40K_NA' in _t:
             _sing+=hist[_t].GetMaximum()*mPMTsK40[0]
             lineKCONC += "%50s %e %15.10f\n"%(_t,hist[_t].GetMaximum(),hist[_t].GetMaximum()*mPMTsK40[0])
+
+	elif 'GD' in _t and 'CHAIN_238U_NA' in _t:
+            if '210Tl' in _t:
+                _sing+=hist[_t].GetMaximum()*GdU238*0.002
+                h.Add(hist[_t],GdU238*0.002)
+                lineU238GD += "%50s %e %15.10f\n"%(_t,hist[_t].GetMaximum(),hist[_t].GetMaximum()*GdU238*0.002)
+            else:
+                _sing+=hist[_t].GetMaximum()*GdU238
+                h.Add(hist[_t],GdU238)
+                lineU238GD += "%50s %e %15.10f\n"%(_t,hist[_t].GetMaximum(),hist[_t].GetMaximum()*GdU238)
+        elif 'GD' in _t and 'CHAIN_232Th_NA' in _t:
+            _sing+=hist[_t].GetMaximum()*GdTh232
+            lineTH232GD += "%50s %e %15.10f\n"%(_t,hist[_t].GetMaximum(),hist[_t].GetMaximum()*GdTh232)
+        elif 'GD' in _t and 'CHAIN_235U_NA' in _t:
+            _sing+=hist[_t].GetMaximum()*GdU235
+            lineU235GD += "%50s %e %15.10f\n"%(_t,hist[_t].GetMaximum(),hist[_t].GetMaximum()*GdU235)
+	    
 
         elif 'WaterVolume' in _t and 'CHAIN_222Rn_NA' in _t:
             if '210Tl' in _t:

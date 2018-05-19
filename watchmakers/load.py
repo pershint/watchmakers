@@ -29,7 +29,7 @@ except:
 defaultValues  = [1,3,2500,2805.,'merged_ntuple_watchman',\
 'merged_ntuple_watchman','null', 'processed_watchman.root',\
 10.,2.0, 100.0, 9, 0.65,0.1,8026.35,8026.35,1600.0,6.35,1000.,\
-'day','boulby', 1.0, 0.043, 0.133,0.002]
+'day','boulby', 1.0, 0.043, 0.133,50.,10.,32.,0.002]
 
 docstring = """
     Usage: watchmakers.py [options]
@@ -103,7 +103,10 @@ docstring = """
 
     --U238_PPM=<_Uppm>  Concentration of U-238 in glass [Default: %f]
     --Th232_PPM=<_Thp>  Concentration of Th-232 in glass [Default: %f]
-    --K_PPM=<_K>      Concentration of K-40 in glass [Default: 16.0]
+    --K_PPM=<_K>        Concentration of K-40 in glass [Default: 16.0]
+    --U238_Gd=<_U238Gd>    Activity of U238 in Gd sample mBq/kg [Default: %f ]
+    --Th232_Gd=<_ThGd>     Activity of Th232 in Gd sample mBq/kg [Default: %f]
+    --U235_Gd=<_U235Gd>    Activity of U235 in Gd sample mBq/kg [Default: %f]
     --Rn222=<_Rn>       Radon activity in water SK 2x10^-3 Bq/m^3 [Default: %f]
 
     --detectMedia=<_dM>  Detector media (doped_water,...)
@@ -117,7 +120,8 @@ docstring = """
            defaultValues[9],defaultValues[10],defaultValues[11],defaultValues[12],\
            defaultValues[13],defaultValues[14],defaultValues[15],defaultValues[16],\
            defaultValues[17],defaultValues[18],defaultValues[19],defaultValues[20],\
-           defaultValues[21],defaultValues[22],defaultValues[23],defaultValues[24])
+           defaultValues[21],defaultValues[22],defaultValues[23],defaultValues[24],\
+           defaultValues[25],defaultValues[26],defaultValues[27])
 
 try:
     import docopt
@@ -213,6 +217,7 @@ def loadSimulationParametersNew():
 
     d['CHAIN_238U_NA'] =['234Pa','214Pb','214Bi','210Bi','210Tl']
     d['CHAIN_232Th_NA'] = ['228Ac','212Pb','212Bi','208Tl']
+    d['CHAIN_235U_NA'] = ['231Th','223Fr','211Pb','211Bi','207Tl']
     d['40K_NA']         = ['40K']
     d['CHAIN_222Rn_NA'] = ['214Pb','214Bi','210Bi','210Tl']
     d['TANK_ACTIVITY'] = ['60Co','137Cs']
@@ -230,8 +235,9 @@ def loadSimulationParametersNew():
     d['A_Z'] =  ZA
 
     process = {'40K_NA':['WaterVolume','PMT','CONCRETE','GUNITE','ROCK'],\
-    'CHAIN_238U_NA':['PMT','CONCRETE','GUNITE','ROCK'],\
-    'CHAIN_232Th_NA':['PMT','CONCRETE','GUNITE','ROCK'],\
+    'CHAIN_238U_NA':['PMT','CONCRETE','GUNITE','ROCK','GD'],\
+    'CHAIN_232Th_NA':['PMT','CONCRETE','GUNITE','ROCK','GD'],\
+    'CHAIN_235U_NA':['GD'],\
     'CHAIN_222Rn_NA':['WaterVolume'],\
     'TANK_ACTIVITY':['TANK'],\
     'FN':['ROCK'],\
@@ -652,3 +658,14 @@ def loadPMTActivity():
     print
 
     return mPMTs,mPMTsU238,mPMTsTh232,mPMTsK
+
+def loadGdActivity():
+
+    d,process,coverage = loadSimulationParamatersNew()
+
+    GdU238    = float(arguments["--U238_Gd"]) * 1000 * nKiloTons *1e6 * 0.002 # bq/kg * kg of water * Gd(SO4)3 concentration
+    GdTh232   = float(arguments["--Th232_Gd"])*1000 * nKiloTons * 1e6 * 0.002 # bq/kg * kg of water * Gd(SO4)3 concentration
+    GdU235    = float(arguments["--U235_Gd"]) * 1000 * nKiloTons * 1e6 * 0.002 #bq/kg * kg of water * Gd(SO4)3 concentration
+
+
+    return GdU238,GdTh232,GdU235
