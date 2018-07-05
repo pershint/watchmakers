@@ -659,6 +659,148 @@ def loadPMTActivity():
 
     return mPMTs,mPMTsU238,mPMTsTh232,mPMTsK
 
+
+
+def loadTankActivity():                                         ##added by Leah: activity from steel in tank
+    ##MASS OF STEEL USED IN KG -- assuming use of steel grade 304
+    density = 8000                                              ##kg/m^3
+    r1 = (float(arguments["--tankRadius"]))/1000                ##outer radius inc steel thick in m
+    h1 = 2 * (float(arguments["--halfHeight"]))/1000            ##outer height inc steel thick in m
+    V1 = pi * h1 * r1**2                                        ##outer volume inc steel thick in m^3
+
+    r2 = r1 - ((float(arguments["--steelThick"]))/1000)         ##inner radius in m
+    h2 = h1 - 2*((float(arguments["--steelThick"]))/1000)       ##inner height in m
+    V2 = pi * h2 * r2**2                                        ##inner volume in m^3
+
+    tankvol = V1 - V2                                           ##hollow cylinder m^3
+    tankmass = tankvol*density
+
+    print "Total steel mass",tankmass,"kg"
+
+    ##STAINLESS STEEL CONTAINS 60CO, 137CS
+    act_60co = 19e-3                                           ##mean value from "Measurements of extremely low radioactivity in stainless steel" paper Bq per kg
+    tankact_60co = tankmass * act_60co                          ##activity in Bq
+    print "60Co in tank steel:\n activity per kilogram:", act_60co,"Bq/kg,\n total activity:",tankact_60co,"Bq"
+
+    act_137cs = 0.77e-3                                         ##mean value from "Measurements of extremely low radioactivity in stainless steel" paper Bq per kg
+    tankact_137cs = tankmass * act_137cs                        ##activity in Bq
+    print "137Cs in tank steel:\n activity per kilogram:", act_137cs,"Bq/kg,\n total activity:",tankact_137cs,"Bq"
+
+    return tankmass,tankact_60co,tankact_137cs
+
+
+def loadConcreteActivity():                                     ##added by Leah: activity from concrete
+    ##MASS OF CONCRETE USED IN KG -- assuming normal-weight concrete (NWC)
+    density = 2300                                              ##kg/m^3
+    thickness = 0.3                                             ## slab thickness in metres - alter for desired value
+    concvol = 25*25*thickness                                   ##assuming a 25x25 m^2 cavern
+    concmass = concvol * density
+
+    print "Total concrete slab mass",concmass,"kg"
+
+##CONCRETE CONTAINS 238U, 232TH, 40K
+
+    act_238u = 61                                              ##mean UK value from "Natural radioactivity in building materials in the European Union" paper Bq per kg
+    concact_238u = concmass * act_238u                         ##activity in Bq
+    print "238U in concrete slab:\n activity per kilogram:", act_238u,"Bq/kg,\n total activity:",concact_238u,"Bq"
+
+    act_232th = 30                                              ##mean UK value from "Natural radioactivity in building materials in the European Union" paper Bq per kg
+    concact_232th = concmass * act_232th                        ##activity in Bq
+    print "232Th in concrete slab:\n activity per kilogram:", act_232th,"Bq/kg,\n total activity:",concact_232th,"Bq"
+
+    act_40k = 493                                               ##mean UK value from "Natural radioactivity in building materials in the European Union" paper Bq per kg
+    concact_40k = concmass * act_40k                            ##activity in Bq
+    print "40K in concrete slab:\n activity per kilogram:", act_40k,"Bq/kg,\n total activity:",concact_40k,"Bq"
+
+    return concmass,concact_238u,concact_232th,concact_40k
+###gravel under concrete? 24in
+
+
+def loadShotcreteActivity():
+    ##MASS OF SHOTCRETE USED IN KG -- assuming same shotcrete as used in snolab (Shotcrete Application in SNOLAB paper)
+    density = 2400                                              ##kg/m^3 -- approx from "Shotcrete in Tunnel Construction - Introduction to the basic technology of sprayed concrete"
+    thickness = 0.1                                             ##thickness in metres
+    r1 = 25                                                     ##outer radius in m
+    h1 = 25                                                     ##outer height in m
+    V1 = pi * h1 * r1**2                                        ##outer volume in m^3
+
+    r2 = r1 - thickness                                         ##inner radius in m
+    h2 = h1 - 2*thickness                                       ##inner height in m
+    V2 = pi * h2 * r2**2                                        ##inner volume in m^3
+
+    shotvol = V1 - V2                                           ##hollow cylinder m^3
+    shotmass = shotvol*density
+
+    print "Total shotcrete mass",shotmass,"kg"
+
+    mass_238u = 3.953e-5
+    lambda_238u = 4.916e-18
+    abund_238u = 0.992745
+    ppm_238u = 2.6
+    act_238u =( (lambda_238u * ppm_238u)/mass_238u/1e6)*shotmass
+    print "238U in shotcrete coating:\n ppm:", ppm_238u,"\n total activity:",act_238u,"Bq"
+
+    mass_232th = 3.853145e-25
+    lambda_232th = 1.57e-18
+    abund_232th = 1.0
+    ppm_232th = 14
+    act_232th = ((lambda_232th * ppm_232th)/mass_232th/1e6)*shotmass
+    print "232Th in shotcrete coating:\n ppm:", ppm_232th,"\n total activity:",act_232th,"Bq"
+
+    mass_40k = 6.636286e-26
+    lambda_40k = 1.842e-18
+    abund_40k = 0.00117
+    ppm_40k = 16000           ##1.6%
+    act_40k = ((lambda_40k * ppm_40k)/mass_40k/1e6)*shotmass
+    print "40K in shotcrete coating:\n ppm:", ppm_40k,"\n total activity:",act_40k,"Bq"
+
+    return shotmass,act_238u,act_232th,act_40k
+### mineguard flag??
+
+
+def loadRockActivity():
+    ##NB MOVED TO ROCK SALT CAVERN RATHER THAN ROCK...
+    ##5M THICKNESS
+    ##MASS OF SALT IN WALL IN KG -- assuming pure rock salt walls (Overview of the European Underground Facilities paper)
+    density = 2165                                              ##kg/m^3 -- approx from "Physical Properties Data for Rock Salt"
+    thickness = 5                                               ##thickness in metres
+    r1 = 25 + thickness                                         ##outer radius in m
+    h1 = 25 + 2*thickness                                       ##outer height in m
+    V1 = pi * h1 * r1**2                                        ##outer volume in m^3
+
+    r2 = 25                                                     ##inner radius in m
+    h2 = 25                                                     ##inner height in m
+    V2 = pi * h2 * r2**2                                        ##inner volume in m^3
+
+    rockvol = V1 - V2                                           ##hollow cylinder m^3
+    rockmass = rockvol*density
+
+    print "Total relevant rock mass",rockmass,"kg"
+
+    mass_238u = 3.953e-5
+    lambda_238u = 4.916e-18
+    abund_238u = 0.992745
+    ppm_238u = 0.067
+    act_238u =( (lambda_238u * ppm_238u)/mass_238u/1e6)*rockmass
+    print "238U in shotcrete coating:\n ppm:", ppm_238u,"\n total activity:",act_238u,"Bq"
+
+    mass_232th = 3.853145e-25
+    lambda_232th = 1.57e-18
+    abund_232th = 1.0
+    ppm_232th = 0.125
+    act_232th = ((lambda_232th * ppm_232th)/mass_232th/1e6)*rockmass
+    print "232Th in shotcrete coating:\n ppm:", ppm_232th,"\n total activity:",act_232th,"Bq"
+
+    mass_40k = 6.636286e-26
+    lambda_40k = 1.842e-18
+    abund_40k = 0.00117
+    ppm_40k = 1130
+    act_40k = ((lambda_40k * ppm_40k)/mass_40k/1e6)*rockmass
+    print "40K in shotcrete coating:\n ppm:", ppm_40k,"\n total activity:",act_40k,"Bq"
+
+    return rockmass,act_238u,act_232th,act_40k
+
+
 def loadGdActivity():
 
     d,process,coverage = loadSimulationParamatersNew()
@@ -669,3 +811,8 @@ def loadGdActivity():
 
 
     return GdU238,GdTh232,GdU235
+
+
+
+
+
