@@ -29,7 +29,7 @@ except:
 defaultValues  = [1,3,2500,2805.,'merged_ntuple_watchman',\
 'merged_ntuple_watchman','null', 'processed_watchman.root',\
 10.,2.0, 100.0, 9, 0.65,0.1,8026.35,8026.35,1600.0,6.35,1000.,\
-'day','boulby', 1.0, 0.043, 0.133,50.,10.,32.,0.002]
+'day','boulby', 1.0, 0.043, 0.133,10.,0.2,0.25,0.28,0.35,1.7,0.002]
 
 docstring = """
     Usage: watchmakers.py [options]
@@ -104,9 +104,12 @@ docstring = """
     --U238_PPM=<_Uppm>  Concentration of U-238 in glass [Default: %f]
     --Th232_PPM=<_Thp>  Concentration of Th-232 in glass [Default: %f]
     --K_PPM=<_K>        Concentration of K-40 in glass [Default: 16.0]
-    --U238_Gd=<_U238Gd>    Activity of U238 in Gd sample mBq/kg [Default: %f ]
-    --Th232_Gd=<_ThGd>     Activity of Th232 in Gd sample mBq/kg [Default: %f]
-    --U235_Gd=<_U235Gd>    Activity of U235 in Gd sample mBq/kg [Default: %f]
+    --U238_Gd=<_U238Gd>    Activity of U238 in Gd (upper) mBq/kg [Default: %f ]
+    --Th232_Gd=<_Th232Gd>     Activity of Th232 in Gd (upper) mBq/kg [Default: %f]
+    --U235_Gd=<_U235Gd>    Activity of U235 in Gd (upper) mBq/kg [Default: %f]
+    --U238_Gd_l=<_U238Gd_l>    Activity of U238 in Gd (lower) mBq/kg [Default: %f]
+    --Th232_Gd_l=<_Th232Gd_l>    Activity of Th232 in Gd (lower) mBq/kg [Default: %f]
+    --U235_Gd_l=<_U235Gd_l>    Activity of U235 in Gd (lower) mBq/kg [Default: %f]
     --Rn222=<_Rn>       Radon activity in water SK 2x10^-3 Bq/m^3 [Default: %f]
 
     --detectMedia=<_dM>  Detector media (doped_water,...)
@@ -121,7 +124,8 @@ docstring = """
            defaultValues[13],defaultValues[14],defaultValues[15],defaultValues[16],\
            defaultValues[17],defaultValues[18],defaultValues[19],defaultValues[20],\
            defaultValues[21],defaultValues[22],defaultValues[23],defaultValues[24],\
-           defaultValues[25],defaultValues[26],defaultValues[27])
+           defaultValues[25],defaultValues[26],defaultValues[27],defaultValues[28],\
+	   defaultValues[29],defaultValues[30])
 
 try:
     import docopt
@@ -320,7 +324,7 @@ def loadAnalysisParameters(timeScale='day'):
     #Rock mass
     # Original Estimate
    # volumeR         = (2.*22.5*23.8*1.0+2.*17*23.8*1.0+2.*22.5*17.*1.0)
-    volumeR         = pi*pow(14,2)*28) - pi*pow(13,2)*25.5) # 'tube'-shaped rock layer surrounding cavern: 1m thick, 1.5m thick on top
+    volumeR         = (pi*pow(14,2)*28) - (pi*pow(13,2)*25.5) #'tube' shaped rock layer surrounding cavern 1m thick, 1.5m thick on top
 #    volumeR         = power(22.,3)-power(20.,3)# Rock cavern e.g. (22m x 22m x 22m) - (20m x 20m x 20m)
     density         = 2.39 #from McGrath
     rockMass        = volumeR*power(100.,3)*density
@@ -668,8 +672,8 @@ def loadTankActivity():                                         ##added by Leah:
     h1 = 2 * (float(arguments["--halfHeight"]))/1000.           ##outer height inc steel thick in m
     V1 = pi * h1 * r1**2                                        ##outer volume inc steel thick in m^3
 
-    r2 = r1 - ((float(arguments["--steelThick"]))/1000.         ##inner radius in m
-    h2 = h1 - 2*((float(arguments["--steelThick"]))/1000.       ##inner height in m
+    r2 = r1 - (float(arguments["--steelThick"]))/1000.         ##inner radius in m
+    h2 = h1 - 2*(float(arguments["--steelThick"]))/1000.       ##inner height in m
     V2 = pi * h2 * r2**2                                        ##inner volume in m^3
 
     tankvol = V1 - V2                                           ##hollow cylinder m^3
@@ -810,9 +814,12 @@ def loadGdActivity():
     GdU238    = float(arguments["--U238_Gd"]) / 1000. * nKiloTons * 1e6 * 0.002 # bq/kg * kg of water * Gd(SO4)3 concentration
     GdTh232   = float(arguments["--Th232_Gd"])/ 1000. * nKiloTons * 1e6 * 0.002 # bq/kg * kg of water * Gd(SO4)3 concentration
     GdU235    = float(arguments["--U235_Gd"]) / 1000. * nKiloTons * 1e6 * 0.002  #bq/kg * kg of water * Gd(SO4)3 concentration
+    GdU238_l    = float(arguments["--U238_Gd_l"]) / 1000. * nKiloTons * 1e6 * 0.002 # bq/kg * kg of water * Gd(SO4)3 concentration
+    GdTh232_l   = float(arguments["--Th232_Gd_l"])/ 1000. * nKiloTons * 1e6 * 0.002 # bq/kg * kg of water * Gd(SO4)3 concentration
+    GdU235_l    = float(arguments["--U235_Gd_l"]) / 1000. * nKiloTons * 1e6 * 0.002  #bq/kg * kg of water * Gd(SO4)3 concentration
 
 
-    return GdU238,GdTh232,GdU235
+    return GdU238,GdTh232,GdU235,GdU238_l,GdTh232_l,GdU235_l
 
 
 
