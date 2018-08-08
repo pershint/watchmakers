@@ -1007,6 +1007,11 @@ def testEnabledCondition(arguments):
         additionalString += "_fidThickness_%f" %(float(arguments['--fidThick']))
         additionalCommands +=" --fidThick %f" %(float(arguments['--fidThick']))
 
+    if arguments['--pmtCtrPoint']:
+        additionalMacOpt += '/rat/db/set GEO[inner_pmts] orientation "point"'
+        additionaMacStr += "_pmtCtrPoint_"
+        additionalString += "_pmtCtrPoint_"
+
     if float(arguments['--U238_PPM'])!= defaultValues[baseValue+15]:
         additionalString += "_U238_PPM_%f" %(float(arguments['--U238_PPM']))
         additionalCommands +=" --U238_PPM %f" %(float(arguments['--U238_PPM']))
