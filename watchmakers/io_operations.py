@@ -1008,7 +1008,8 @@ def testEnabledCondition(arguments):
         additionalCommands +=" --fidThick %f" %(float(arguments['--fidThick']))
 
     if arguments['--pmtCtrPoint']:
-        additionalMacOpt += '/rat/db/set GEO[inner_pmts] orientation "point"'
+        additionalMacOpt += '/rat/db/set GEO[inner_pmts] orientation "point"\n'
+        additionalMacOpt += '/rat/db/set GEO[shield] orientation_inner "point"\n' 
         additionaMacStr += "_pmtCtrPoint_"
         additionalString += "_pmtCtrPoint_"
 
