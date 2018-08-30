@@ -28,7 +28,7 @@ except:
 
 defaultValues  = [1,3,2500,2805.,'merged_ntuple_watchman',\
 'merged_ntuple_watchman','null', 'processed_watchman.root',\
-10.,2.0, 100.0, 9, 0.65,0.1,8026.35,8026.35,1600.0,6.35,1000.,\
+10.,2.0, 100.0, 9, 0.65,0.1,10026.35,10026.35,3080.0,6.35,1000.,\
 'day','boulby', 1.0, 0.043, 0.133,0.002]
 
 docstring = """
@@ -37,11 +37,12 @@ docstring = """
     Arguments:
 
     Options:
-    -D                  Delete all current photocoverage directory.
-    --newVers           Major revision to Watchmakers. By default off for old results
+    --docker            Is watchmakers running with docker, is so changes jobs files
+    -D                  Delete all current photocoverage directory (%d).
+    --newVers=<nv>      Major revision to Watchmakers. By default on, but can use old vers [Default: 1]
     --force             Forcing the recreation of the root_file,bonsai_root_file and log folders
     --noRoot            Allows to generate scripts without loading in any ROOT module
-    -j=<jobType>        Create submision scripts (1,2,4:rat-pac files|case >3 ntuplefiles) [default %d]
+    -j                  Create submision scripts (1,2,4:rat-pac files|case >3 ntuplefiles) 
                         >3 option will generate a nutple_root_files_flags folder for results
     -m                  Also generate macro files
     -N=<N>              Number of MC script that were run [Default: %d]
@@ -583,6 +584,7 @@ def loadActivity():
     pmtHeight = float(arguments['--halfHeight'])-float(arguments['--steelThick'])-float(arguments['--shieldThick'])
     psupArea = (2*pmtHeight)*2*pi*pmtRadius + 2.*(pi*pmtRadius**2)
     numPMTs = psupArea/areaPerPMT
+    
     cPMTs = [float(s.strip('pct'))/100.*numPMTs for s in coverage]
     mPMTs = [s*mass for s in cPMTs]
 

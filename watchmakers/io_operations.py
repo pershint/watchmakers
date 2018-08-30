@@ -444,6 +444,33 @@ def jobString(percentage,j,runs,models,arguments):
     directory,\
     rootDir,g4Dir,ratDir,watchmakersDir)
 
+    elif arguments["--docker"]:
+        line1 = """#!/bin/sh
+#MSUB -N WM_%s_%s_%d_%s    #name of job
+#MSUB -A ared         # sets bank account
+#MSUB -l nodes=1:ppn=1,walltime=23:59:59,partition=borax  # uses 1 node
+#MSUB -q pbatch         #pool
+#MSUB -o %s/log_case%s%s/wmpc_%s_%s_%d.log
+#MSUB -e %s/log_case%s%s/wmpc_%s_%s_%d.err
+#MSUB -d %s  # directory to run from
+#MSUB -V
+#MSUB                     # no more psub commands
+
+#source %s/bin/thisroot.sh
+#source %s/../../../bin/geant4.sh
+#source %s/geant4make.sh
+#source %s/env.sh
+#source %s/env_wm.sh
+source $HOME/software/watchman/env.sh
+export G4NEUTRONHP_USE_ONLY_PHOTONEVAPORATION=1\n
+    """ %(percentage,location,runs,additionalMacStr,\
+    directory,case,additionalMacStr,percentage,location,runs,\
+    directory,case,additionalMacStr,percentage,location,runs,\
+    directory,\
+    rootDir,g4Dir,g4Dir,ratDir,watchmakersDir)
+
+
+
     else:
         line1 = """#!/bin/sh
 #MSUB -N WM_%s_%s_%d_%s    #name of job
@@ -630,16 +657,26 @@ def generateJobs(N,arguments):
     '''Make sure that the softlink are correct for Bonsai input'''
 
     ratDir      = os.environ['RATROOT']
+    if arguments["--docker"]:
+      src = '$HOME/software/watchman/fit_param.dat'
+      dst = os.getcwd()+'/fit_param.dat'
+      if not os.path.exists(dst):
+          os.symlink(src,dst)
 
-    src = ratDir+'/fit_param.dat'
-    dst = os.getcwd()+'/fit_param.dat'
-    if not os.path.exists(dst):
-        os.symlink(src,dst)
+      src = '$HOME/software/watchman/like.bin'
+      dst = os.getcwd()+'/like.bin'
+      if not os.path.exists(dst):
+          os.symlink(src,dst)
+    else:
+      src = ratDir+'/fit_param.dat'
+      dst = os.getcwd()+'/fit_param.dat'
+      if not os.path.exists(dst):
+          os.symlink(src,dst)
 
-    src = ratDir+'/like.bin'
-    dst = os.getcwd()+'/like.bin'
-    if not os.path.exists(dst):
-        os.symlink(src,dst)
+      src = ratDir+'/like.bin'
+      dst = os.getcwd()+'/like.bin'
+      if not os.path.exists(dst):
+          os.symlink(src,dst) 
 
     job = 'jobs_case%s%s'%(case,additionalMacStr)
 
@@ -668,7 +705,7 @@ def generateJobs(N,arguments):
                                                                                                  "%s"%(iso[int(j)]),loc[j],index+1,case)
                     outfile.writelines(stringFile1)
                 outfile.close
-                os.chmod(stringFile,S_IRWXU)
+    #            os.chmod(stringFile,S_IRWXU)
 
 
     outfile = open('sub_jobs_case%s%s'%(case,additionalMacStr),"wb")
@@ -728,16 +765,29 @@ def generateJobsNew(N,arguments):
     '''Make sure that the softlink are correct for Bonsai input'''
 
     ratDir      = os.environ['RATROOT']
+    if arguments["--docker"]:
 
-    src = ratDir+'/fit_param.dat'
-    dst = os.getcwd()+'/fit_param.dat'
-    if not os.path.exists(dst):
-        os.symlink(src,dst)
+        src = '%s/fit_param.dat'%(ratDir)
+        dst = os.getcwd()+'/fit_param.dat'
+        if not os.path.exists(dst):
+                os.system("rsync -avz %s %s "%(src,dst))
 
-    src = ratDir+'/like.bin'
-    dst = os.getcwd()+'/like.bin'
-    if not os.path.exists(dst):
-        os.symlink(src,dst)
+        src = '%s/like.bin'%(ratDir)
+        dst = os.getcwd()+'/like.bin'
+        if not os.path.exists(dst):
+                os.system("rsync -avz %s %s "%(src,dst))
+    else:
+    	src = ratDir+'/fit_param.dat'
+    	dst = os.getcwd()+'/fit_param.dat'
+    	if not os.path.exists(dst):
+        	os.symlink(src,dst)
+	
+    	src = ratDir+'/like.bin'
+    	dst = os.getcwd()+'/like.bin'
+    	if not os.path.exists(dst):
+        	os.symlink(src,dst)
+
+
 
     rootDir     = os.environ['ROOTSYS']
     softDir     = "/usr/gapps/adg/geant4/rat_pac_and_dependency"
@@ -767,8 +817,26 @@ def generateJobsNew(N,arguments):
                         for i in range(N/10+1):
                             dir = "jobs%s/%s/%s/%s/%s"%(additionalMacStr,_cover,_loc,_element,_p)
                             outfile = open(dir+'/job%08d.sh'%(i*10),"wb")
+			    #os.chmod(dir+'/job%08d.sh'%(i*10),S_IRWXG)
+    			    #os.chmod(dir+'/job%08d.sh'%(i*10),S_IRWXU)
                             job_line = "%s_%s_%s_%s_%s_%s"%(additionalMacStr,_cover,_loc,_element,_p,i*10)
-                            outfile.writelines("""#!/bin/sh
+                            if arguments["--docker"]:
+				outfile.writelines("""#!/bin/sh
+#MSUB -N job_%s    #name of job
+#MSUB -A ared         # sets bank account
+#MSUB -l nodes=1:ppn=1,walltime=23:59:59,partition=borax  # uses 1 node
+#MSUB -q pbatch         #pool
+#MSUB -o %s
+#MSUB -e %s
+#MSUB -d %s  # directory to run from
+#MSUB -V
+#MSUB                     # no more psub commands
+
+source $HOME/software/watchman/env.sh
+
+"""%(job_line,log+'.out',log+'.err',directory))
+			    else:
+				outfile.writelines("""#!/bin/sh
 #MSUB -N job_%s    #name of job
 #MSUB -A ared         # sets bank account
 #MSUB -l nodes=1:ppn=1,walltime=23:59:59,partition=borax  # uses 1 node
@@ -790,68 +858,20 @@ source %s/env_wm.sh\n\n"""%(job_line,log+'.out',log+'.err',directory,\
                                 r_outfile = "root_files%s/%s/%s/%s/%s/run%08d/run_%08d.root"%(additionalMacStr,_cover,_loc,_element,_p,i*10,i*10+_j)
                                 l_outfile = "log%s/%s/%s/%s/%s/run%08d/run_%08d.log"%(additionalMacStr,_cover,_loc,_element,_p,i*10,i*10+_j)
                                 b_outfile = "bonsai_root_files%s/%s/%s/%s/%s/run%08d/run_%08d.root"%(additionalMacStr,_cover,_loc,_element,_p,i*10,i*10+_j)
-                                lines = '''rat %s -o %s -l %s
+                                if arguments["--docker"]:
+					lines = '''drat %s %s %s
+    (dbonsai %s %s || dbonsai %s %s ||dbonsai %s %s ||dbonsai %s %s || echo \"Could not run bonsai after 4 tries.\")>> %s\n\n'''%(mac,r_outfile,l_outfile,r_outfile,b_outfile,r_outfile,b_outfile,r_outfile,b_outfile,r_outfile,b_outfile,l_outfile)
+				else:
+					lines = '''rat %s -o %s -l %s
     (bonsai %s %s || bonsai %s %s ||bonsai %s %s ||bonsai %s %s || echo \"Could not run bonsai after 4 tries.\")>> %s\n\n'''%(mac,r_outfile,l_outfile,r_outfile,b_outfile,r_outfile,b_outfile,r_outfile,b_outfile,r_outfile,b_outfile,l_outfile)
                                 outfile.writelines(lines)
                             outfile.writelines("msub %s"%(dir+'/job%08d.sh'%((i+1)*10)))
                             outfile.close()
-    #
-    # for ii in loc:
-    #     for idx,cover in enumerate(coverage):
-    #         directory = "jobs_case%s%s/%s/%s" %(case,additionalMacStr,ii,cover)
-    #         if not os.path.exists(directory):
-    #             os.makedirs(directory)
-    #         else:
-    #             rmtree(directory)
-    #             os.makedirs(directory)
-    #
-    # '''Find wheter the jobs folder exist: if no create, if yes clean and recreate'''
-    # directory = 'log_case%s%s'%(case,additionalMacStr)
-    # if not os.path.exists(directory):
-    #     os.makedirs(directory)
-    # else:
-    #     rmtree(directory)
-    #     os.makedirs(directory)
-    #
+		
 
 
 
 
-    # job = 'jobs_case%s%s'%(case,additionalMacStr)
-    #
-    # job_list = '''#!/bin/sh\n'''
-    #
-    # for j in range(len(iso)):
-    #     for idx,cover in enumerate(coverage):
-    #         models  = d["%s" %(iso[j])]
-    #         for index in range(N):
-    #             line,case = jobString(cover,j,index,models,arguments)
-    #             stringFile = "%s/%s/%s/jobs%s_%s_%s_%d_case%d.sh" %(job,loc[j],cover,cover,\
-    #                                                         "%s"%(iso[int(j)]),loc[j],index,case)
-	# 	if sheffield:
-    #                 job_list+= 'condor_qsub -l nodes=1:ppn=1 ' + stringFile + '\n'
-    #                 outfile = open(stringFile,"wb")
-    #                 outfile.writelines(line)
-    #             else:
-	# 	    if index == 0:
-    #                     job_list+= '(msub ' + stringFile +') || ./'+ stringFile + '\n'
-    #                 outfile = open(stringFile,"wb")
-    #                 outfile.writelines(line)
-    #
-    #                 if index < N-1:
-    #                     stringFile1 = "(msub %s/%s/%s/jobs%s_%s_%s_%d_case%d.sh || ./%s/%s/%s/jobs%s_%s_%s_%d_case%d.sh)" %(job,loc[j],cover,cover,\
-    #                                                                                              "%s"%(iso[int(j)]),loc[j],index+1,case,job,loc[j],cover,cover,\
-    #                                                                                              "%s"%(iso[int(j)]),loc[j],index+1,case)
-    #                 outfile.writelines(stringFile1)
-    #             outfile.close
-    #             os.chmod(stringFile,S_IRWXU)
-    #
-    #
-    # outfile = open('sub_jobs_case%s%s'%(case,additionalMacStr),"wb")
-    # outfile.writelines(job_list)
-    # outfile.close
-    # os.chmod('sub_jobs_case%s%s'%(case,additionalMacStr),S_IRWXG)
-    # os.chmod('sub_jobs_case%s%s'%(case,additionalMacStr),S_IRWXU)
     return 0
 
 
