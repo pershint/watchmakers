@@ -12,7 +12,8 @@ WATCHENV=$wmroot
 PATH=\$WATCHENV:\$PATH
 PYTHONPATH=\$WATCHENV:\$PYTHONPATH
 export WATCHENV PATH PYTHONPATH
-alias watch="python $WATCHENV/watchmakers.py "
+unalias watchmakers
+alias watchmakers='python $PWD/watchmakers.py '
 EOF
 
 cat > env_wm.csh <<EOF
@@ -25,5 +26,5 @@ if ({\$?PYTHONPATH}) then
 else
   setenv PYTHONPATH "\$WATCHENV"
 endif
-alias watch "python $WATCHENV/watchmakers.py "
+alias watchmakers "python $WATCHENV/watchmakers.py "
 EOF
