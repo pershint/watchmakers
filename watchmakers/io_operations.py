@@ -1030,7 +1030,7 @@ def testEnabledCondition(arguments):
     if arguments['--pmtCtrPoint']:
         additionalMacOpt += '/rat/db/set GEO[inner_pmts] orientation "point"\n'
         additionalMacOpt += '/rat/db/set GEO[shield] orientation_inner "point"\n' 
-        additionaMacStr += "_pmtCtrPoint_"
+        additionalMacStr += "_pmtCtrPoint_"
         additionalString += "_pmtCtrPoint_"
 
     if float(arguments['--U238_PPM'])!= defaultValues[baseValue+15]:
