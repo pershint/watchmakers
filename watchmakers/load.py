@@ -85,6 +85,8 @@ docstring = """
     --steelThick=<StT>  Steel Thickness (mm)     [Default: %f]
     --fidThick=<fT>     Fiducial volume-> PMT Thickness (mm) [Default: %f]
 
+    --pmtCtrPoint       Point inner PMTs of Watchman geometry to detector center
+
     -M                  Merge result files from trial ntuples
 
     --efficiency        Read merged files and perform analysis
