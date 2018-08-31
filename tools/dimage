@@ -1,0 +1,3 @@
+#!/bin/sh
+##echo "$1 $2 $3"
+docker run -w=/container -v $PWD:/container/ -it aitwatchman/simulation:bonsai 
