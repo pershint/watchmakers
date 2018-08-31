@@ -1,3 +1,8 @@
 #!/bin/sh
 ##echo "$1 $2 $3"
-docker run -v $PWD:/container/ -it aitwatchman/simulation:bonsai  /src/rat-pac/tools/bonsai/bonsai /container/$1 /container/$2 /container/$3 /container/$4 /container/$5 /container/$6
+
+if test "$1" == "tag"; then
+  docker run -v $PWD:/container/ -it aitwatchman/simulation:$2 /src/rat-pac/tools/bonsai/bonsai /container/$3 /container/$4 $@
+else
+  docker run -v $PWD:/container/ -it aitwatchman/simulation:latest /src/rat-pac/tools/bonsai/bonsai /container/$1 /container/$2 $@  
+fi
