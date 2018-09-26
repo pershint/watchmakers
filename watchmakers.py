@@ -68,7 +68,7 @@ if __name__ == "__main__":
     if arguments['--PDFs']:
         extractPDFandCorrectRate()
 
-    if arguments['--sensIBD']:
+    if arguments['--histograms']:
         if arguments['--newVers']:
             sensitivityMapPass2New()
         else:

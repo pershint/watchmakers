@@ -94,7 +94,8 @@ docstring = """
 
     -R                  Read analyzed result and evaluate sensitivity
     --sensitivity       Read analyzed results and evaluate sensitivity
-    --sensIBD           Read, analyze IBD with different cuts on prompt and delayed
+
+    --histograms        Apply n9-position cuts and create histograms 
 
     --timeScale=<_ts>   Integration period (sec,day,month,year) [Default: %s]
     --site=<_site>      Site of the experiment (boulby,fairport) [Default: %s]
