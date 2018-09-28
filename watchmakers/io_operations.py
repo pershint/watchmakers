@@ -461,7 +461,7 @@ def jobString(percentage,j,runs,models,arguments):
 #source %s/geant4make.sh
 #source %s/env.sh
 #source %s/env_wm.sh
-source $HOME/software/watchman/env.sh
+source $HOME/software/docker_watchman/env.sh
 export G4NEUTRONHP_USE_ONLY_PHOTONEVAPORATION=1\n
     """ %(percentage,location,runs,additionalMacStr,\
     directory,case,additionalMacStr,percentage,location,runs,\
