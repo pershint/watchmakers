@@ -832,7 +832,7 @@ def generateJobsNew(N,arguments):
 #MSUB -V
 #MSUB                     # no more psub commands
 
-source $HOME/software/watchman/env.sh
+source $HOME/software/docker_watchman/env.sh
 
 """%(job_line,log+'.out',log+'.err',directory))
 			    else:
