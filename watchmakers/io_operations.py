@@ -854,18 +854,20 @@ source %s/env.sh
 source %s/env_wm.sh\n\n"""%(job_line,log+'.out',log+'.err',directory,\
                             rootDir,g4Dir,g4Dir,ratDir,watchmakersDir))
                             for _j in range(10):
-                                mac = "macro%s/%s/%s/%s/%s/run%08d/run_%08d.mac"%(additionalMacStr,_cover,_loc,_element,_p,i*10,i*10+_j)
-                                r_outfile = "root_files%s/%s/%s/%s/%s/run%08d/run_%08d.root"%(additionalMacStr,_cover,_loc,_element,_p,i*10,i*10+_j)
-                                l_outfile = "log%s/%s/%s/%s/%s/run%08d/run_%08d.log"%(additionalMacStr,_cover,_loc,_element,_p,i*10,i*10+_j)
-                                b_outfile = "bonsai_root_files%s/%s/%s/%s/%s/run%08d/run_%08d.root"%(additionalMacStr,_cover,_loc,_element,_p,i*10,i*10+_j)
-                                if arguments["--docker"]:
-					lines = '''drat %s %s %s
+				if i*10+_j < N:
+                                	mac = "macro%s/%s/%s/%s/%s/run%08d/run_%08d.mac"%(additionalMacStr,_cover,_loc,_element,_p,i*10,i*10+_j)
+                                	r_outfile = "root_files%s/%s/%s/%s/%s/run%08d/run_%08d.root"%(additionalMacStr,_cover,_loc,_element,_p,i*10,i*10+_j)
+                                	l_outfile = "log%s/%s/%s/%s/%s/run%08d/run_%08d.log"%(additionalMacStr,_cover,_loc,_element,_p,i*10,i*10+_j)
+                                	b_outfile = "bonsai_root_files%s/%s/%s/%s/%s/run%08d/run_%08d.root"%(additionalMacStr,_cover,_loc,_element,_p,i*10,i*10+_j)
+                                	if arguments["--docker"]:
+						lines = '''drat %s %s %s
     (dbonsai %s %s || dbonsai %s %s ||dbonsai %s %s ||dbonsai %s %s || echo \"Could not run bonsai after 4 tries.\")>> %s\n\n'''%(mac,r_outfile,l_outfile,r_outfile,b_outfile,r_outfile,b_outfile,r_outfile,b_outfile,r_outfile,b_outfile,l_outfile)
-				else:
-					lines = '''rat %s -o %s -l %s
+					else:
+						lines = '''rat %s -o %s -l %s
     (bonsai %s %s || bonsai %s %s ||bonsai %s %s ||bonsai %s %s || echo \"Could not run bonsai after 4 tries.\")>> %s\n\n'''%(mac,r_outfile,l_outfile,r_outfile,b_outfile,r_outfile,b_outfile,r_outfile,b_outfile,r_outfile,b_outfile,l_outfile)
-                                outfile.writelines(lines)
-                            outfile.writelines("msub %s"%(dir+'/job%08d.sh'%((i+1)*10)))
+                                	outfile.writelines(lines)
+                            if i*10+10  < N:
+				outfile.writelines("./%s"%(dir+'/job%08d.sh'%((i+1)*10)))
                             outfile.close()
 		
 
