@@ -26,6 +26,8 @@ try:
 except:
     print "Could not load in root_numpy or rootpy, they are required to run this module."
 
+defaultValues  = [1,3,2500,2805.,'merged_ntuple_watchman',\
+'merged_ntuple_watchman','null', 'processed_watchman.root',\
 10.,2.0, 100.0, 9, 0.65,0.1,8026.35,8026.35,1600.0,6.35,1000.,\
 'day','boulby', 1.0, 0.043, 0.133,10.,0.2,0.25,0.28,0.35,1.7,0.002]
 
