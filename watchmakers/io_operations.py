@@ -432,7 +432,7 @@ def jobString(percentage,j,runs,models,arguments):
 
 source %s/bin/thisroot.sh
 source /cvmfs/sft.cern.ch/lcg/releases/LCG_85swan2/gcc/4.9.3/x86_64-slc6/setup.sh
-source /usr/local/geant4/setup.sh 10.3
+source /usr/local/geant4/setup.sh 10.2
 source %s/geant4make.sh
 source %s/env.sh
 source %s/env_wm.sh
@@ -863,7 +863,6 @@ source %s/env.sh
 source %s/env_wm.sh\n\n"""%(job_line,log+'.out',log+'.err',directory,\
                             rootDir,g4Dir,g4Dir,ratDir,watchmakersDir))
                             for _j in range(10):
-<<<<<<< HEAD
 				if i*10+_j < N:
                                 	mac = "macro%s/%s/%s/%s/%s/run%08d/run_%08d.mac"%(additionalMacStr,_cover,_loc,_element,_p,i*10,i*10+_j)
                                 	r_outfile = "root_files%s/%s/%s/%s/%s/run%08d/run_%08d.root"%(additionalMacStr,_cover,_loc,_element,_p,i*10,i*10+_j)
