@@ -10,8 +10,8 @@ setcontext(ExtendedContext)
 from numpy import max
 t = arguments['--timeScale']
 
-fidRadius = float(arguments['--tankRadius'])-float(arguments['--steelThick'])-float(arguments['--shieldThick'])-float(arguments['--fidThick'])
-fidHeight = float(arguments['--halfHeight'])-float(arguments['--steelThick'])-float(arguments['--shieldThick'])-float(arguments['--fidThick'])
+fidRadius = float(arguments['--tankRadius'])-float(arguments['--steelThick'])-float(arguments['--vetoThickR'])-float(arguments['--fidThick'])
+fidHeight = float(arguments['--halfHeight'])-float(arguments['--steelThick'])-float(arguments['--vetoThickZ'])-float(arguments['--fidThick'])
 detectorRadius  = float(arguments['--tankRadius'])-float(arguments['--steelThick'])
 detectorHeight  = float(arguments['--halfHeight'])-float(arguments['--steelThick'])
 

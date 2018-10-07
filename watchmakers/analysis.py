@@ -14,11 +14,11 @@ def fillHistograms(inFilePrefix,a1,t1,h,cover,ii,locj,covPCT):
 
     #fiducialVolume = float(arguments["--fv"])
     #pmtDist         = float(arguments["--psup"])
-    # pmtDist = (float(arguments["--halfHeight"]))-(float(arguments["--shieldThick"]))
-    pmtDist  = float(arguments["--tankRadius"])-float(arguments['--steelThick'])-float(arguments["--shieldThick"])
-    pmtDistZ = float(arguments["--halfHeight"])-float(arguments['--steelThick'])-float(arguments["--shieldThick"])
-    fiducialHalfHeight = float(arguments['--halfHeight'])-float(arguments['--steelThick'])-float(arguments['--shieldThick'])-float(arguments['--fidThick'])
-    fiducialRadius     = float(arguments['--tankRadius'])-float(arguments['--steelThick'])-float(arguments['--shieldThick'])-float(arguments['--fidThick'])
+    # pmtDist = (float(arguments["--halfHeight"]))-(float(arguments["--Thick"]))
+    pmtDist  = float(arguments["--tankRadius"])-float(arguments['--steelThick'])-float(arguments["--vetoThickR"])
+    pmtDistZ = float(arguments["--halfHeight"])-float(arguments['--steelThick'])-float(arguments["--vetoThickZ"])
+    fiducialHalfHeight = float(arguments['--halfHeight'])-float(arguments['--steelThick'])-float(arguments['--vetoThickZ'])-float(arguments['--fidThick'])
+    fiducialRadius     = float(arguments['--tankRadius'])-float(arguments['--steelThick'])-float(arguments['--vetoThickR'])-float(arguments['--fidThick'])
     print "First change in analysis.py"
 
 
@@ -347,12 +347,12 @@ def extractHistogramWitCorrectRate():
     boolSUPERNOVA_FORMAT    = arguments["--supernovaFormat"]
 
     #fiducialVolume          = float(arguments["--fv"])
-    fiducialHalfHeight= float(arguments['--halfHeight'])- float(arguments['--steelThick'])- float(arguments['--shieldThick'])- float(arguments['--fidThick'])
-    fiducialRadius    = float(arguments['--tankRadius'])- float(arguments['--steelThick'])- float(arguments['--shieldThick'])- float(arguments['--fidThick'])
+    fiducialHalfHeight= float(arguments['--halfHeight'])- float(arguments['--steelThick'])- float(arguments['--vetoThickZ'])- float(arguments['--fidThick'])
+    fiducialRadius    = float(arguments['--tankRadius'])- float(arguments['--steelThick'])- float(arguments['--vetoThickR'])- float(arguments['--fidThick'])
 
     #pmtDist                 = float(arguments["--psup"])
-    pmtDist  = float(arguments["--tankRadius"])-float(arguments['--steelThick'])-float(arguments["--shieldThick"])
-    pmtDistZ = float(arguments["--halfHeight"])-float(arguments['--steelThick'])-float(arguments["--shieldThick"])
+    pmtDist  = float(arguments["--tankRadius"])-float(arguments['--steelThick'])-float(arguments["--vetoThickR"])
+    pmtDistZ = float(arguments["--halfHeight"])-float(arguments['--steelThick'])-float(arguments["--vetoThickZ"])
     print "Values of Fid. Vol. (HalfHeight,Radius) and PMT placement (HalfHeight,Radius) ",fiducialHalfHeight,fiducialRadius,pmtDist,pmtDistZ, ' mm'
 
     timeScale               = arguments["--timeScale"]
@@ -874,12 +874,12 @@ _pe=8,_nhit=8,_itr = 0.0):
     additionalString,additionalCommands,additionalMacStr,additionalMacOpt = testEnabledCondition(arguments)
 
     #fiducialVolume          = float(arguments["--fv"])
-    fiducialHalfHeight= float(arguments['--halfHeight'])- float(arguments['--steelThick'])- float(arguments['--shieldThick'])- float(arguments['--fidThick'])
-    fiducialRadius    = float(arguments['--tankRadius'])- float(arguments['--steelThick'])- float(arguments['--shieldThick'])- float(arguments['--fidThick'])
+    fiducialHalfHeight= float(arguments['--halfHeight'])- float(arguments['--steelThick'])- float(arguments['--vetoThickZ'])- float(arguments['--fidThick'])
+    fiducialRadius    = float(arguments['--tankRadius'])- float(arguments['--steelThick'])- float(arguments['--vetoThickR'])- float(arguments['--fidThick'])
 
     #pmtDist                 = float(arguments["--psup"])
-    pmtDist  = float(arguments["--tankRadius"])-float(arguments['--steelThick'])-float(arguments["--shieldThick"])
-    pmtDistZ = float(arguments["--halfHeight"])-float(arguments['--steelThick'])-float(arguments["--shieldThick"])
+    pmtDist  = float(arguments["--tankRadius"])-float(arguments['--steelThick'])-float(arguments["--vetoThickR"])
+    pmtDistZ = float(arguments["--halfHeight"])-float(arguments['--steelThick'])-float(arguments["--vetoThickZ"])
 
     print "Values of Fid. Vol. (HalfHeight,Radius) and PMT placement (HalfHeight,Radius) ",fiducialHalfHeight,fiducialRadius,pmtDist,pmtDistZ, ' mm'
 
