@@ -408,10 +408,10 @@ def jobString(percentage,j,runs,models,arguments):
     dirGoodness  = float(arguments['-G'])
     minNHIT      = float(arguments['-T'])
     fIn          = arguments["-f"]
-    fidR         = (float(arguments["--tankRadius"])-float(arguments["--shieldThick"])-float(arguments["--steelThick"])-float(arguments["--fidThick"]))/1000.
-    fidZ         = (float(arguments["--halfHeight"])-float(arguments["--shieldThick"])-float(arguments["--steelThick"])-float(arguments["--fidThick"]))/1000.
-    pmtR         = (float(arguments["--tankRadius"])-float(arguments["--steelThick"])-float(arguments["--shieldThick"]))/1000.
-    pmtZ         = (float(arguments["--halfHeight"])-float(arguments["--steelThick"])-float(arguments["--shieldThick"]))/1000.
+    fidR         = (float(arguments["--tankRadius"])-float(arguments["--vetoThickR"])-float(arguments["--steelThick"])-float(arguments["--fidThick"]))/1000.
+    fidZ         = (float(arguments["--halfHeight"])-float(arguments["--vetoThickZ"])-float(arguments["--steelThick"])-float(arguments["--fidThick"]))/1000.
+    pmtR         = (float(arguments["--tankRadius"])-float(arguments["--steelThick"])-float(arguments["--vetoThickR"]))/1000.
+    pmtZ         = (float(arguments["--halfHeight"])-float(arguments["--steelThick"])-float(arguments["--vetoThickZ"]))/1000.
     tankR        = float(arguments["--tankRadius"])/1000.
     tankZ        = float(arguments["--halfHeight"])/1000.
     outF         = arguments["--ntupleout"]
@@ -1015,10 +1015,17 @@ def testEnabledCondition(arguments):
         additionalMacStr += "_halfHeight_%f" %(float(arguments['--halfHeight']))
         additionalString += "_halfHeight_%f" %(float(arguments['--halfHeight']))
 
-    if float(arguments['--shieldThick'])!= defaultValues[baseValue+9]:
-        additionalMacOpt += "/rat/db/set GEO[shield] shield_thickness %f\n" %(float(arguments['--shieldThick']))
-        additionalMacStr += "_shieldThickness_%f" %(float(arguments['--shieldThick']))
-        additionalString += "_shieldThickness_%f" %(float(arguments['--shieldThick']))
+    if float(arguments['--vetoThickR'])>0:
+        additionalMacOpt += "/rat/db/set GEO[shield] veto_thickness_r %f\n" %(float(arguments['--vetoThickR']))
+        additionalMacStr += "_vetoThickR_%f" %(float(arguments['--vetoThickR']))
+        additionalString += "_vetoThickR_%f" %(float(arguments['--vetoThickR']))
+
+    if float(arguments['--vetoThickZ'])>0:
+        additionalMacOpt += "/rat/db/set GEO[shield] veto_thickness_z %f\n" %(float(arguments['--vetoThickZ']))
+        additionalMacStr += "_vetoThickZ_%f" %(float(arguments['--vetoThickZ']))
+        additionalString += "_vetoThickZ_%f" %(float(arguments['--vetoThickZ']))
+
+
 
     if float(arguments['--steelThick'])!= defaultValues[baseValue+10]:
         additionalMacOpt += "/rat/db/set GEO[shield] steel_thickness %f\n" %(float(arguments['--steelThick']))
@@ -1249,10 +1256,10 @@ def extractNtuple(arguments):
     dirGoodness  = float(arguments['-G'])
     minNHIT      = float(arguments['-T'])
     fIn          = arguments["-f"]
-    fidR         = (float(arguments["--tankRadius"])-float(arguments["--shieldThick"])-float(arguments["--steelThick"])-float(arguments["--fidThick"]))/1000.
-    fidZ         = (float(arguments["--halfHeight"])-float(arguments["--shieldThick"])-float(arguments["--steelThick"])-float(arguments["--fidThick"]))/1000.
-    pmtR         = (float(arguments["--tankRadius"])-float(arguments["--steelThick"])-float(arguments["--shieldThick"]))/1000.
-    pmtZ         = (float(arguments["--halfHeight"])-float(arguments["--steelThick"])-float(arguments["--shieldThick"]))/1000.
+    fidR         = (float(arguments["--tankRadius"])-float(arguments["--vetoThickR"])-float(arguments["--steelThick"])-float(arguments["--fidThick"]))/1000.
+    fidZ         = (float(arguments["--halfHeight"])-float(arguments["--vetoThickZ"])-float(arguments["--steelThick"])-float(arguments["--fidThick"]))/1000.
+    pmtR         = (float(arguments["--tankRadius"])-float(arguments["--steelThick"])-float(arguments["--vetoThickR"]))/1000.
+    pmtZ         = (float(arguments["--halfHeight"])-float(arguments["--steelThick"])-float(arguments["--vetoThickZ"]))/1000.
     tankR        = float(arguments["--tankRadius"])/1000.
     tankZ        = float(arguments["--halfHeight"])/1000.
     outF         = arguments["--ntupleout"]
@@ -1291,10 +1298,10 @@ def extractNtupleALL(arguments):
     goodness     = float(arguments['-g'])
     dirGoodness  = float(arguments['-G'])
     minNHIT      = float(arguments['-T'])
-    fidR         = (float(arguments["--tankRadius"])-float(arguments["--shieldThick"])-float(arguments["--steelThick"])-float(arguments["--fidThick"]))/1000.
-    fidZ         = (float(arguments["--halfHeight"])-float(arguments["--shieldThick"])-float(arguments["--steelThick"])-float(arguments["--fidThick"]))/1000.
-    pmtR         = (float(arguments["--tankRadius"])-float(arguments["--steelThick"])-float(arguments["--shieldThick"]))/1000.
-    pmtZ         = (float(arguments["--halfHeight"])-float(arguments["--steelThick"])-float(arguments["--shieldThick"]))/1000.
+    fidR         = (float(arguments["--tankRadius"])-float(arguments["--vetoThickR"])-float(arguments["--steelThick"])-float(arguments["--fidThick"]))/1000.
+    fidZ         = (float(arguments["--halfHeight"])-float(arguments["--vetoThickZ"])-float(arguments["--steelThick"])-float(arguments["--fidThick"]))/1000.
+    pmtR         = (float(arguments["--tankRadius"])-float(arguments["--steelThick"])-float(arguments["--vetoThickR"]))/1000.
+    pmtZ         = (float(arguments["--halfHeight"])-float(arguments["--steelThick"])-float(arguments["--vetoThickZ"]))/1000.
     tankR        = float(arguments["--tankRadius"])/1000.
     tankZ        = float(arguments["--halfHeight"])/1000.
 
@@ -1458,8 +1465,8 @@ def performPass1(arguments):
     additionalMacOpt    = testCond[3]
 
 
-    pmtR         = (float(arguments["--tankRadius"])-float(arguments["--steelThick"])-float(arguments["--shieldThick"]))/1000.
-    pmtZ         = (float(arguments["--halfHeight"])-float(arguments["--steelThick"])-float(arguments["--shieldThick"]))/1000.
+    pmtR         = (float(arguments["--tankRadius"])-float(arguments["--steelThick"])-float(arguments["--vetoThickR"]))/1000.
+    pmtZ         = (float(arguments["--halfHeight"])-float(arguments["--steelThick"])-float(arguments["--vetoThickZ"]))/1000.
     tankR        = (float(arguments["--tankRadius"])-float(arguments["--steelThick"]))/1000.
     tankZ        = (float(arguments["--halfHeight"])-float(arguments["--steelThick"]))/1000.
 

@@ -82,6 +82,8 @@ docstring = """
     --tankRadius=<TR>   Total radius of tank (mm) [Default: %f]
     --halfHeight=<HH>   Half height of tank (mm) [Default: %f]
     --shieldThick=<ST>  Steel->PMT distance (mm) [Default: %f]
+    --vetoThickR=<VTR>  Steel->PMT radius distance (mm) 
+    --vetoThickZ=<VTZ>  Steel->PMT height distance (mm)
     --steelThick=<StT>  Steel Thickness (mm)     [Default: %f]
     --fidThick=<fT>     Fiducial volume-> PMT Thickness (mm) [Default: %f]
 
@@ -129,6 +131,16 @@ try:
     print 'using docopt as the user control interface'
 except ImportError:
     print 'docopt is not a recognized module, it is required to run this module'
+
+
+
+if (arguments['--vetoThickZ'] and arguments['--vetoThickR']):
+        print "Argument provided for veto radius and height"
+else:
+        print "No argument provided for veto radius and height, assumes shieldThick value for both"
+        arguments['--vetoThickR'] = arguments['--shieldThick']
+        arguments['--vetoThickZ'] = arguments['--shieldThick']
+
 
 
 if arguments['--noRoot']:
@@ -297,8 +309,8 @@ def loadAnalysisParameters(timeScale='day'):
     mass = 1.4 # from Hamamatsu tech details
 
     ### This had been changed by M.B. from Tamzin implementation
-    fidRadius = float(arguments['--tankRadius'])-float(arguments['--steelThick'])-float(arguments['--shieldThick'])-float(arguments['--fidThick'])
-    fidHeight = float(arguments['--halfHeight'])-float(arguments['--steelThick'])-float(arguments['--shieldThick'])-float(arguments['--fidThick'])
+    fidRadius = float(arguments['--tankRadius'])-float(arguments['--steelThick'])-float(arguments['--vetoThickR'])-float(arguments['--fidThick'])
+    fidHeight = float(arguments['--halfHeight'])-float(arguments['--steelThick'])-float(arguments['--vetoThickZ'])-float(arguments['--fidThick'])
 
     tankRadius  = float(arguments["--tankRadius"])-float(arguments['--steelThick'])
     tankHeight  = float(arguments["--halfHeight"])-float(arguments['--steelThick'])
@@ -583,8 +595,8 @@ def loadActivity():
     ##Evaluate the total mass of PMT glass in kg
     mass, diameter = 1.4, 10.0/0.039 #inch_per_mm # from Hamamatsu tech details
     areaPerPMT = pi*diameter*diameter/4.
-    pmtRadius = float(arguments['--tankRadius'])-float(arguments['--steelThick'])-float(arguments['--shieldThick'])
-    pmtHeight = float(arguments['--halfHeight'])-float(arguments['--steelThick'])-float(arguments['--shieldThick'])
+    pmtRadius = float(arguments['--tankRadius'])-float(arguments['--steelThick'])-float(arguments['--vetoThickR'])
+    pmtHeight = float(arguments['--halfHeight'])-float(arguments['--steelThick'])-float(arguments['--vetoThickZ'])
     psupArea = (2*pmtHeight)*2*pi*pmtRadius + 2.*(pi*pmtRadius**2)
     numPMTs = psupArea/areaPerPMT
     
@@ -626,8 +638,8 @@ def loadPMTActivity():
     ##Evaluate the total mass of PMT glass in kg
     mass, diameter = 1.4, 10.0/0.039 #inch_per_mm # from Hamamatsu tech details
     areaPerPMT = pi*diameter*diameter/4.
-    pmtRadius = float(arguments['--tankRadius'])-float(arguments['--steelThick'])-float(arguments['--shieldThick'])
-    pmtHeight = float(arguments['--halfHeight'])-float(arguments['--steelThick'])-float(arguments['--shieldThick'])
+    pmtRadius = float(arguments['--tankRadius'])-float(arguments['--steelThick'])-float(arguments['--vetoThickR'])
+    pmtHeight = float(arguments['--halfHeight'])-float(arguments['--steelThick'])-float(arguments['--vetoThickZ'])
     psupArea = (2*pmtHeight)*2*pi*pmtRadius + 2.*(pi*pmtRadius**2)
     numPMTs = psupArea/areaPerPMT
     cPMTs = [float(s.strip('pct'))/100.*numPMTs for s in coverage]
