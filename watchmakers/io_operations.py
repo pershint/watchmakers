@@ -46,6 +46,7 @@ def macroGenerator(percentage,isotope,location,runs,events):
 /rat/db/set DETECTOR experiment "Watchman"
 /rat/db/set DETECTOR detector_factory "Watchman"
 /rat/db/set WATCHMAN_PARAMS photocathode_coverage %4.2f
+/rat/db/set WATCHMAN_PARAMS veto_coverage %4.2f
 %s
 
 /run/initialize
@@ -948,6 +949,11 @@ def testEnabledCondition(arguments):
 
     # Commands required for root_file
 
+    if (arguments['--vetoCov']):
+        additionalMacOpt += "/rat/db/set WATCHMAN_PARAMS veto_coverage %s \n" %(arguments['--vetoCov'])
+        additionalMacStr += "_veto_coverage_%s" %(arguments['--vetoCov'])
+        additionalString += "_veto_coverage_%s" %(arguments['--vetoCov'])
+    
     if (arguments['--detectMedia']):
         additionalMacOpt += "/rat/db/set GEO[detector] material \"%s\"\n" %(arguments['--detectMedia'])
         additionalMacStr += "_detectorMedia_%s" %(arguments['--detectMedia'])
@@ -972,6 +978,21 @@ def testEnabledCondition(arguments):
         additionalMacOpt += "/rat/db/set PMT[%s]  photocathode_surface \"photocathode_%s\"\n" %(arguments['--pmtModel'],arguments['--photocath'])
         additionalMacStr += "_photocathode_%s" %((arguments['--photocath']))
         additionalString += "_photocathode_%s" %((arguments['--photocath']))
+
+    if (arguments['--vetoModel']):
+        additionalMacOpt += "/rat/db/set GEO[veto_pmts] pmt_model \"%s\"\n" %((arguments['--vetoModel']))
+        additionalMacStr += "_vetoModel_%s" %((arguments['--vetoModel']))
+        additionalString += "_vetoModel_%s" %((arguments['--vetoModel']))
+
+    if (arguments['--vetophotocath'] and not arguments['--vetoModel']):
+        additionalMacOpt += "/rat/db/set PMT[r7081pe]  photocathode_surface \"photocathode_%s\"\n" %((arguments['--vetophotocath']))
+        additionalMacStr += "_vetophotocathode_%s" %((arguments['--vetophotocath']))
+        additionalString += "_vetophotocathode_%s" %((arguments['--vetophotocath']))
+
+    if (arguments['--vetophotocath'] and arguments['--vetoModel']):
+        additionalMacOpt += "/rat/db/set PMT[%s]  photocathode_surface \"photocathode_%s\"\n" %(arguments['--vetoModel'],arguments['--vetophotocath'])
+	additionalMacStr += "_vetophotocathode_%s" %((arguments['--vetophotocath']))
+        additionalString += "_vetophotocathode_%s" %((arguments['--vetophotocath']))
 
     baseValue = 7
     #Analysis strings, usually shows up in ntuple processing
