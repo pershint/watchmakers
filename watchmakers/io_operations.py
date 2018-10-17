@@ -968,31 +968,12 @@ def testEnabledCondition(arguments):
         additionalMacOpt += "/rat/db/set GEO[inner_pmts] pmt_model \"%s\"\n" %((arguments['--pmtModel']))
         additionalMacStr += "_pmtModel_%s" %((arguments['--pmtModel']))
         additionalString += "_pmtModel_%s" %((arguments['--pmtModel']))
-
-    if (arguments['--photocath'] and not arguments['--pmtModel']):
-        additionalMacOpt += "/rat/db/set PMT[r7081pe]  photocathode_surface \"photocathode_%s\"\n" %((arguments['--photocath']))
-        additionalMacStr += "_photocathode_%s" %((arguments['--photocath']))
-        additionalString += "_photocathode_%s" %((arguments['--photocath']))
-
-    if (arguments['--photocath'] and arguments['--pmtModel']):
-        additionalMacOpt += "/rat/db/set PMT[%s]  photocathode_surface \"photocathode_%s\"\n" %(arguments['--pmtModel'],arguments['--photocath'])
-        additionalMacStr += "_photocathode_%s" %((arguments['--photocath']))
-        additionalString += "_photocathode_%s" %((arguments['--photocath']))
+ 
 
     if (arguments['--vetoModel']):
         additionalMacOpt += "/rat/db/set GEO[veto_pmts] pmt_model \"%s\"\n" %((arguments['--vetoModel']))
         additionalMacStr += "_vetoModel_%s" %((arguments['--vetoModel']))
         additionalString += "_vetoModel_%s" %((arguments['--vetoModel']))
-
-    if (arguments['--vetophotocath'] and not arguments['--vetoModel']):
-        additionalMacOpt += "/rat/db/set PMT[r7081pe]  photocathode_surface \"photocathode_%s\"\n" %((arguments['--vetophotocath']))
-        additionalMacStr += "_vetophotocathode_%s" %((arguments['--vetophotocath']))
-        additionalString += "_vetophotocathode_%s" %((arguments['--vetophotocath']))
-
-    if (arguments['--vetophotocath'] and arguments['--vetoModel']):
-        additionalMacOpt += "/rat/db/set PMT[%s]  photocathode_surface \"photocathode_%s\"\n" %(arguments['--vetoModel'],arguments['--vetophotocath'])
-	additionalMacStr += "_vetophotocathode_%s" %((arguments['--vetophotocath']))
-        additionalString += "_vetophotocathode_%s" %((arguments['--vetophotocath']))
 
     baseValue = 7
     #Analysis strings, usually shows up in ntuple processing
@@ -1045,7 +1026,6 @@ def testEnabledCondition(arguments):
         additionalMacOpt += "/rat/db/set GEO[shield] veto_thickness_z %f\n" %(float(arguments['--vetoThickZ']))
         additionalMacStr += "_vetoThickZ_%f" %(float(arguments['--vetoThickZ']))
         additionalString += "_vetoThickZ_%f" %(float(arguments['--vetoThickZ']))
-
 
 
     if float(arguments['--steelThick'])!= defaultValues[baseValue+10]:

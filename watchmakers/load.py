@@ -116,11 +116,9 @@ docstring = """
     --collectionEff=<CE> Collection efficiency (e.g.: 0.85,0.67,0.475)
 
     --pmtModel=<_PMTM>   PMT Model (r7081pe for 10inch or r11780_hqe for 12inch)
-    --photocath =<_PC>   PMT photocathode (R7081HQE)
-
+    
     --vetoCov=<VC>         Coverage of the veto pmts [Default: %f]
     --vetoModel=<_vPMTM>   Veto PMT Model (r7081pe for 10inch or r11780_hqe for 12inch)  
-    --vetophotocath=<_vPC> Veto PMT photocathode (R7081HQE)
 
     """ % (defaultValues[0],defaultValues[1],defaultValues[2],defaultValues[3],defaultValues[4],\
            defaultValues[5],defaultValues[6],defaultValues[7],defaultValues[8],\
