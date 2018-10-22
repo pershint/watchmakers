@@ -115,10 +115,10 @@ docstring = """
     --detectMedia=<_dM>  Detector media (doped_water,...)
     --collectionEff=<CE> Collection efficiency (e.g.: 0.85,0.67,0.475)
 
-    --pmtModel=<_PMTM>   PMT Model (r7081pe for 10inch or r11780_hqe for 12inch)
+    --pmtModel=<_PMTM>   PMT Model (r7081_lqe/r7081_hqe for 10inch or r11780_lqe/r11780_hqe for 12inch)
     
     --vetoCov=<VC>         Coverage of the veto pmts [Default: %f]
-    --vetoModel=<_vPMTM>   Veto PMT Model (r7081pe for 10inch or r11780_hqe for 12inch)  
+    --vetoModel=<_vPMTM>   Veto PMT Model (r7081_lqe/r7081_hqe for 10inch or r11780_lqe/r11780_hqe for 12inch)  
 
     """ % (defaultValues[0],defaultValues[1],defaultValues[2],defaultValues[3],defaultValues[4],\
            defaultValues[5],defaultValues[6],defaultValues[7],defaultValues[8],\
