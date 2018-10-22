@@ -949,11 +949,17 @@ def testEnabledCondition(arguments):
 
     # Commands required for root_file
 
+<<<<<<< HEAD
+
+
+
+=======
     if (arguments['--vetoCov']):
         additionalMacOpt += "/rat/db/set WATCHMAN_PARAMS veto_coverage %s \n" %(arguments['--vetoCov'])
         additionalMacStr += "_veto_coverage_%s" %(arguments['--vetoCov'])
         additionalString += "_veto_coverage_%s" %(arguments['--vetoCov'])
     
+>>>>>>> 53019febb773faa40f27734625f2381da8d461f5
     if (arguments['--detectMedia']):
         additionalMacOpt += "/rat/db/set GEO[detector] material \"%s\"\n" %(arguments['--detectMedia'])
         additionalMacStr += "_detectorMedia_%s" %(arguments['--detectMedia'])
@@ -970,52 +976,84 @@ def testEnabledCondition(arguments):
         additionalString += "_pmtModel_%s" %((arguments['--pmtModel']))
  
 
+<<<<<<< HEAD
+    if (arguments['--ipc']):
+        additionalMacOpt += "/rat/db/set WATCHMAN_PARAMS photocathode_coverage %s \n" %(arguments['--ipc'])
+        additionalMacStr += "_inner_coverage_%s" %(arguments['--ipc'])
+        additionalString += "_inner_coverage_%s" %(arguments['--ipc'])
+
+    if (arguments['--vpc']):
+        additionalMacOpt += "/rat/db/set WATCHMAN_PARAMS veto_coverage %s \n" %(arguments['--vpc'])
+        additionalMacStr += "_veto_coverage_%s" %(arguments['--vpc'])
+        additionalString += "_veto_coverage_%s" %(arguments['--vpc'])
+
+    if (arguments['--photocath'] and not arguments['--pmtModel']):
+        additionalMacOpt += "/rat/db/set PMT[r7081pe]  photocathode_surface \"photocathode_%s\"\n" %((arguments['--photocath']))
+        additionalMacStr += "_photocathode_%s" %((arguments['--photocath']))
+        additionalString += "_photocathode_%s" %((arguments['--photocath']))
+
+    if (arguments['--photocath'] and arguments['--pmtModel']):
+        additionalMacOpt += "/rat/db/set PMT[%s]  photocathode_surface \"photocathode_%s\"\n" %(arguments['--pmtModel'],arguments['--photocath'])
+        additionalMacStr += "_photocathode_%s" %((arguments['--photocath']))
+        additionalString += "_photocathode_%s" %((arguments['--photocath']))
+=======
     if (arguments['--vetoModel']):
         additionalMacOpt += "/rat/db/set GEO[veto_pmts] pmt_model \"%s\"\n" %((arguments['--vetoModel']))
         additionalMacStr += "_vetoModel_%s" %((arguments['--vetoModel']))
         additionalString += "_vetoModel_%s" %((arguments['--vetoModel']))
+>>>>>>> 53019febb773faa40f27734625f2381da8d461f5
 
     baseValue = 7
     #Analysis strings, usually shows up in ntuple processing
     #    print defaultValues[baseValue+1]
-    if float(arguments['-r'])          != defaultValues[baseValue+1]:
-        additionalString += "_rate_%f" %(float(arguments['-r']))
-        additionalCommands += " -r %f " %(float(arguments['-r']))
+#    if float(arguments['-r'])          != defaultValues[baseValue+1]:
+#        additionalString += "_rate_%f" %(float(arguments['-r']))
+#        additionalCommands += " -r %f " %(float(arguments['-r']))
+#
+#    if float(arguments['-d'])          != defaultValues[baseValue+2]:
+#        additionalString += "_deltaR_%f" %(float(arguments['-d']))
+#        additionalCommands += " -d %f" %(float(arguments['-d']))
+#
+#    if float(arguments['-t'])          != defaultValues[baseValue+3]:
+#        additionalString += "_deltaT_%f" %(float(arguments['-t']))
+#        additionalCommands +=  " -t %f" %(float(arguments['-t']))
+#
+#    if float(arguments['-T'])            != (defaultValues[baseValue+4]):
+#        additionalString += "_n9Min_%d" %(int(arguments['-T']))
+#        additionalCommands += " -T %d" %(int(arguments['-T']))
+#
+#    if float(arguments['-g'])          != defaultValues[baseValue+5]:
+#        additionalString += "_posGood_%f" %(float(arguments['-g']))
+#        additionalCommands += " -g %f" %(float(arguments['-g']))
+#
+#    if float(arguments['-G'])          != defaultValues[baseValue+6]:
+#        additionalString += "_dirGood_%f" %(float(arguments['-G']))
+#        additionalCommands += " -G %f" %(float(arguments['-G']))
 
-    if float(arguments['-d'])          != defaultValues[baseValue+2]:
-        additionalString += "_deltaR_%f" %(float(arguments['-d']))
-        additionalCommands += " -d %f" %(float(arguments['-d']))
-
-    if float(arguments['-t'])          != defaultValues[baseValue+3]:
-        additionalString += "_deltaT_%f" %(float(arguments['-t']))
-        additionalCommands +=  " -t %f" %(float(arguments['-t']))
-
-    if float(arguments['-T'])            != (defaultValues[baseValue+4]):
-        additionalString += "_n9Min_%d" %(int(arguments['-T']))
-        additionalCommands += " -T %d" %(int(arguments['-T']))
-
-    if float(arguments['-g'])          != defaultValues[baseValue+5]:
-        additionalString += "_posGood_%f" %(float(arguments['-g']))
-        additionalCommands += " -g %f" %(float(arguments['-g']))
-
-    if float(arguments['-G'])          != defaultValues[baseValue+6]:
-        additionalString += "_dirGood_%f" %(float(arguments['-G']))
-        additionalCommands += " -G %f" %(float(arguments['-G']))
-
-    if float(arguments['--tankRadius']) != defaultValues[baseValue+7]:
+    if float(arguments['--tankRadius']) != defaultValues[3]:
         additionalMacOpt += "/rat/db/set GEO[tank] r_max %f\n" %(float(arguments['--tankRadius']))
         additionalMacOpt += "/rat/db/set GEO[detector] r_max %f\n" %(float(arguments['--tankRadius'])-1.5875)
         additionalMacOpt += "/rat/db/set GEO[shield] detector_size_d %f\n" %(float(arguments['--tankRadius'])*2)
         additionalMacStr += "_tankRadius_%f" %(float(arguments['--tankRadius']))
         additionalString += "_tankRadius_%f" %(float(arguments['--tankRadius']))
+    else:
+        additionalMacOpt += "/rat/db/set GEO[tank] r_max %f\n" %(float(defaultValues[3]))
+        additionalMacOpt += "/rat/db/set GEO[detector] r_max %f\n" %(float(defaultValues[3])-1.5875)
+        additionalMacOpt += "/rat/db/set GEO[shield] detector_size_d %f\n" %(float(defaultValues[3])*2)
 
-    if float(arguments['--halfHeight'])!= defaultValues[baseValue+8]:
+
+    if float(arguments['--halfHeight'])!= defaultValues[4]:
         additionalMacOpt += "/rat/db/set GEO[tank] size_z %f\n" %(float(arguments['--halfHeight']))
         additionalMacOpt += "/rat/db/set GEO[shield] detector_size_z %f\n" %(float(arguments['--halfHeight'])*2)
         additionalMacOpt += "/rat/db/set GEO[detector] size_z %f\n" %(float(arguments['--halfHeight'])-1.5875)
         additionalMacOpt += "/rat/db/set GEO[cables] size_z %f\n" %(float(arguments['--halfHeight'])-1.5875)
         additionalMacStr += "_halfHeight_%f" %(float(arguments['--halfHeight']))
         additionalString += "_halfHeight_%f" %(float(arguments['--halfHeight']))
+    else:
+        additionalMacOpt += "/rat/db/set GEO[tank] size_z %f\n" %(float(defaultValues[4]))
+        additionalMacOpt += "/rat/db/set GEO[shield] detector_size_z %f\n" %(float(defaultValues[4])*2)
+        additionalMacOpt += "/rat/db/set GEO[detector] size_z %f\n" %(float(defaultValues[4])-1.5875)
+        additionalMacOpt += "/rat/db/set GEO[cables] size_z %f\n" %(float(defaultValues[4])-1.5875)
 
     if float(arguments['--vetoThickR'])>0:
         additionalMacOpt += "/rat/db/set GEO[shield] veto_thickness_r %f\n" %(float(arguments['--vetoThickR']))
@@ -1028,12 +1066,20 @@ def testEnabledCondition(arguments):
         additionalString += "_vetoThickZ_%f" %(float(arguments['--vetoThickZ']))
 
 
+<<<<<<< HEAD
+
+    if float(arguments['--steelThick'])!= defaultValues[6]:
+=======
     if float(arguments['--steelThick'])!= defaultValues[baseValue+10]:
+>>>>>>> 53019febb773faa40f27734625f2381da8d461f5
         additionalMacOpt += "/rat/db/set GEO[shield] steel_thickness %f\n" %(float(arguments['--steelThick']))
         additionalMacStr += "_steelThickness_%f" %(float(arguments['--steelThick']))
         additionalString += "_steelThickness_%f" %(float(arguments['--steelThick']))
+    else:
+        additionalMacOpt += "/rat/db/set GEO[shield] steel_thickness %f\n" %(float(defaultValues[6]))
 
-    if float(arguments['--fidThick'])!= defaultValues[baseValue+11]:
+
+    if float(arguments['--fidThick'])!= defaultValues[7]:
         additionalString += "_fidThickness_%f" %(float(arguments['--fidThick']))
         additionalCommands +=" --fidThick %f" %(float(arguments['--fidThick']))
 
@@ -1043,22 +1089,22 @@ def testEnabledCondition(arguments):
         additionalMacStr += "_pmtCtrPoint_"
         additionalString += "_pmtCtrPoint_"
 
-    if float(arguments['--U238_PPM'])!= defaultValues[baseValue+15]:
+    if float(arguments['--U238_PPM'])!= defaultValues[8]:
         additionalString += "_U238_PPM_%f" %(float(arguments['--U238_PPM']))
         additionalCommands +=" --U238_PPM %f" %(float(arguments['--U238_PPM']))
 
-    if float(arguments['--Th232_PPM'])!= defaultValues[baseValue+16]:
+    if float(arguments['--Th232_PPM'])!= defaultValues[9]:
         additionalString += "_Th232_PPM_%f" %(float(arguments['--Th232_PPM']))
         additionalCommands +=" --Th232_PPM %f" %(float(arguments['--Th232_PPM']))
 
-    if float(arguments['--Rn222'])!= defaultValues[baseValue+17]:
+    if float(arguments['--Rn222'])!= defaultValues[10]:
         additionalString += "_Rn222_%f" %(float(arguments['--Rn222']))
         additionalCommands +=" --Rn222 %f" %(float(arguments['--Rn222']))
 
-
-    if int(arguments['--supernovaFormat']):
-        additionalString += "_supernovaFormat"
-        additionalCommands +=" --supernovaFormat "
+#
+#    if int(arguments['--supernovaFormat']):
+#        additionalString += "_supernovaFormat"
+#        additionalCommands +=" --supernovaFormat "
 
     if additionalString == "":
         additionalString = "_default"
