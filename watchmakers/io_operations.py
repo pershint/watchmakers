@@ -46,6 +46,7 @@ def macroGenerator(percentage,isotope,location,runs,events):
 /rat/db/set DETECTOR experiment "Watchman"
 /rat/db/set DETECTOR detector_factory "Watchman"
 /rat/db/set WATCHMAN_PARAMS photocathode_coverage %4.2f
+/rat/db/set WATCHMAN_PARAMS veto_coverage %4.2f
 %s
 
 /run/initialize
@@ -948,9 +949,17 @@ def testEnabledCondition(arguments):
 
     # Commands required for root_file
 
+<<<<<<< HEAD
 
 
 
+=======
+    if (arguments['--vetoCov']):
+        additionalMacOpt += "/rat/db/set WATCHMAN_PARAMS veto_coverage %s \n" %(arguments['--vetoCov'])
+        additionalMacStr += "_veto_coverage_%s" %(arguments['--vetoCov'])
+        additionalString += "_veto_coverage_%s" %(arguments['--vetoCov'])
+    
+>>>>>>> 53019febb773faa40f27734625f2381da8d461f5
     if (arguments['--detectMedia']):
         additionalMacOpt += "/rat/db/set GEO[detector] material \"%s\"\n" %(arguments['--detectMedia'])
         additionalMacStr += "_detectorMedia_%s" %(arguments['--detectMedia'])
@@ -965,7 +974,9 @@ def testEnabledCondition(arguments):
         additionalMacOpt += "/rat/db/set GEO[inner_pmts] pmt_model \"%s\"\n" %((arguments['--pmtModel']))
         additionalMacStr += "_pmtModel_%s" %((arguments['--pmtModel']))
         additionalString += "_pmtModel_%s" %((arguments['--pmtModel']))
+ 
 
+<<<<<<< HEAD
     if (arguments['--ipc']):
         additionalMacOpt += "/rat/db/set WATCHMAN_PARAMS photocathode_coverage %s \n" %(arguments['--ipc'])
         additionalMacStr += "_inner_coverage_%s" %(arguments['--ipc'])
@@ -985,6 +996,12 @@ def testEnabledCondition(arguments):
         additionalMacOpt += "/rat/db/set PMT[%s]  photocathode_surface \"photocathode_%s\"\n" %(arguments['--pmtModel'],arguments['--photocath'])
         additionalMacStr += "_photocathode_%s" %((arguments['--photocath']))
         additionalString += "_photocathode_%s" %((arguments['--photocath']))
+=======
+    if (arguments['--vetoModel']):
+        additionalMacOpt += "/rat/db/set GEO[veto_pmts] pmt_model \"%s\"\n" %((arguments['--vetoModel']))
+        additionalMacStr += "_vetoModel_%s" %((arguments['--vetoModel']))
+        additionalString += "_vetoModel_%s" %((arguments['--vetoModel']))
+>>>>>>> 53019febb773faa40f27734625f2381da8d461f5
 
     baseValue = 7
     #Analysis strings, usually shows up in ntuple processing
@@ -1049,8 +1066,12 @@ def testEnabledCondition(arguments):
         additionalString += "_vetoThickZ_%f" %(float(arguments['--vetoThickZ']))
 
 
+<<<<<<< HEAD
 
     if float(arguments['--steelThick'])!= defaultValues[6]:
+=======
+    if float(arguments['--steelThick'])!= defaultValues[baseValue+10]:
+>>>>>>> 53019febb773faa40f27734625f2381da8d461f5
         additionalMacOpt += "/rat/db/set GEO[shield] steel_thickness %f\n" %(float(arguments['--steelThick']))
         additionalMacStr += "_steelThickness_%f" %(float(arguments['--steelThick']))
         additionalString += "_steelThickness_%f" %(float(arguments['--steelThick']))

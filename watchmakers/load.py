@@ -29,7 +29,7 @@ except:
 defaultValues  = [1,3,2500,2805.,'merged_ntuple_watchman',\
 'merged_ntuple_watchman','null', 'processed_watchman.root',\
 10.,2.0, 100.0, 9, 0.65,0.1,10026.35,10026.35,3080.0,6.35,1000.,\
-'day','boulby', 1.0, 0.043, 0.133,0.002]
+                  'day','boulby', 1.0, 0.043, 0.133,0.002,0.00]
 
 docstring = """
     Usage: watchmakers.py [options]
@@ -86,7 +86,7 @@ docstring = """
     --vetoThickZ=<VTZ>  Steel->PMT height distance (mm)
     --steelThick=<StT>  Steel Thickness (mm)     [Default: %f]
     --fidThick=<fT>     Fiducial volume-> PMT Thickness (mm) [Default: %f]
-
+    
     --pmtCtrPoint       Point inner PMTs of Watchman geometry to detector center
 
     -M                  Merge result files from trial ntuples
@@ -115,15 +115,18 @@ docstring = """
     --detectMedia=<_dM>  Detector media (doped_water,...)
     --collectionEff=<CE> Collection efficiency (e.g.: 0.85,0.67,0.475)
 
-    --pmtModel=<_PMTM>   PMT Model (r7081pe for 10inch or r11780_hqe for 12inch)
-    --photocath =<_PC>  PMT photocathode (R7081HQE)
+    --pmtModel=<_PMTM>   PMT Model (r7081_lqe/r7081_hqe for 10inch or r11780_lqe/r11780_hqe for 12inch)
+    
+    --vetoCov=<VC>         Coverage of the veto pmts [Default: %f]
+    --vetoModel=<_vPMTM>   Veto PMT Model (r7081_lqe/r7081_hqe for 10inch or r11780_lqe/r11780_hqe for 12inch)  
 
     """ % (defaultValues[0],defaultValues[1],defaultValues[2],defaultValues[3],defaultValues[4],\
            defaultValues[5],defaultValues[6],defaultValues[7],defaultValues[8],\
            defaultValues[9],defaultValues[10],defaultValues[11],defaultValues[12],\
            defaultValues[13],defaultValues[14],defaultValues[15],defaultValues[16],\
            defaultValues[17],defaultValues[18],defaultValues[19],defaultValues[20],\
-           defaultValues[21],defaultValues[22],defaultValues[23],defaultValues[24])
+           defaultValues[21],defaultValues[22],defaultValues[23],defaultValues[24],defaultValues[25])
+
 
 defaultValues  = [3,2500,2805.,\
 10026.35,10026.35,3080.0,6.35,1000.,\
@@ -255,7 +258,12 @@ else:
         arguments['--vetoThickR'] = arguments['--shieldThick']
         arguments['--vetoThickZ'] = arguments['--shieldThick']
 
+#OAA
+if (arguments['--vetoCov']):
+    print "Argument provided for veto coverage"
 
+else:
+    print "Veto PMTs are not generated in this study"
 
 if arguments['--noRoot']:
     print 'Not loading any ROOT modules. usefull for generating files on oslic'
