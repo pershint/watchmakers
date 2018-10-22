@@ -178,7 +178,8 @@ docstring = """
                         are generated
     --ipc=<_ipc>	Inner PMTs photocoverage. If set WILL OVERIDE DEFAULT CONFIGURATION COVERAGE
     --vpc=<_vpc>        Veto PMTs photocoverage. 
-
+    --vetoCov=<_veto>   Tomi's veto option
+    --vetoModel=<_vPMTM>   Veto PMT Model (r7081_lqe/r7081_hqe for 10inch or r11780_lqe/r11780_hqe for 12inch)  
 
 
     ## Analysis - efficiency and sensitivity evaluation. Once jobs have run, do these steps
