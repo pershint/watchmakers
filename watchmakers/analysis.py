@@ -1,5 +1,5 @@
 from load import *
-from io_operations import testEnabledCondition,writeResultsToFile
+from io_operations import testEnabledCondition
 
 def drange(start, stop, step):
     rii= start
