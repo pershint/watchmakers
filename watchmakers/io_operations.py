@@ -108,6 +108,12 @@ def macroGeneratorNew(percentage,location,element,_dict,runs,events,dirOpt):
 /generator/pos/set inner_pmts[0-9]+
 /generator/rate/set %f
 /run/beamOn %d''' %(element,rate,events*2)
+        elif location == 'VETO':
+            line1 = '''
+/generator/add decaychain %s:regexfill:poisson
+/generator/pos/set veto_pmts[0-9]+             
+/generator/rate/set %f
+/run/beamOn %d''' %(element,rate,events*2)
         else:
             locat = location.lower()
             if locat == 'watervolume':
@@ -585,11 +591,6 @@ def testEnabledCondition(arguments):
     # Commands required for root_file
 
 
-    if (arguments['--vetoCov']):
-        additionalMacOpt += "/rat/db/set WATCHMAN_PARAMS veto_coverage %s \n" %(arguments['--vetoCov'])
-        additionalMacStr += "_veto_coverage_%s" %(arguments['--vetoCov'])
-        additionalString += "_veto_coverage_%s" %(arguments['--vetoCov'])
-
     if (arguments['--detectMedia']):
         additionalMacOpt += "/rat/db/set GEO[detector] material \"%s\"\n" %(arguments['--detectMedia'])
         additionalMacStr += "_detectorMedia_%s" %(arguments['--detectMedia'])
@@ -615,16 +616,6 @@ def testEnabledCondition(arguments):
         additionalMacOpt += "/rat/db/set WATCHMAN_PARAMS veto_coverage %s \n" %(arguments['--vpc'])
         additionalMacStr += "_veto_coverage_%s" %(arguments['--vpc'])
         additionalString += "_veto_coverage_%s" %(arguments['--vpc'])
-
-    if (arguments['--photocath'] and not arguments['--pmtModel']):
-        additionalMacOpt += "/rat/db/set PMT[r7081pe]  photocathode_surface \"photocathode_%s\"\n" %((arguments['--photocath']))
-        additionalMacStr += "_photocathode_%s" %((arguments['--photocath']))
-        additionalString += "_photocathode_%s" %((arguments['--photocath']))
-
-    if (arguments['--photocath'] and arguments['--pmtModel']):
-        additionalMacOpt += "/rat/db/set PMT[%s]  photocathode_surface \"photocathode_%s\"\n" %(arguments['--pmtModel'],arguments['--photocath'])
-        additionalMacStr += "_photocathode_%s" %((arguments['--photocath']))
-        additionalString += "_photocathode_%s" %((arguments['--photocath']))
 
     if (arguments['--vetoModel']):
         additionalMacOpt += "/rat/db/set GEO[veto_pmts] pmt_model \"%s\"\n" %((arguments['--vetoModel']))

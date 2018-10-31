@@ -54,27 +54,26 @@ docstring = """
     -m                  Generate rat-pac macro files
     -j                  Create rat-pac/bonsai submision scripts for option above. Can be run with -m.
 
-    -N=<N>              Number of rat-pac macros per unique process [Default: %d]
-    -e=<runBeamEntry>   Number of entries per macro (U/Th event x5) [Default: %d]
-    --depth=<depthD>    Depth of detector (for fast neutron spectra) [Default: %f]
-    --tankRadius=<TR>   Total radius of tank (mm) [Default: %f]
-    --halfHeight=<HH>   Half height of tank (mm) [Default: %f]
-    --shieldThick=<ST>  Steel->PMT distance (mm) [Default: %f]
-    --vetoThickR=<VTR>  Steel->PMT radius distance (mm)
-    --vetoThickZ=<VTZ>  Steel->PMT height distance (mm)
-    --steelThick=<StT>  Steel Thickness (mm)     [Default: %f]
-    --fidThick=<fT>     Fiducial volume-> PMT Thickness (mm) [Default: %f]
-    --detectMedia=<_dM>  Detector media (doped_water,...)
-    --collectionEff=<CE> Collection efficiency (e.g.: 0.85,0.67,0.475)
-    --pmtModel=<_PMTM>   PMT Model (r7081pe for 10inch or r11780_hqe for 12inch)
-    --photocath =<_PC>  PMT photocathode (R7081HQE)
-    --pmtCtrPoint       Point inner PMTs of Watchman geometry to detector center
-    -C=<cov>            Pick a single detector Configuration (25pct, SuperK,...). If not config, all
-                        are generated
-    --ipc=<_ipc>	Inner PMTs photocoverage. If set WILL OVERIDE DEFAULT CONFIGURATION COVERAGE
-    --vpc=<_vpc>        Veto PMTs photocoverage.
-    --vetoCov=<_veto>   Tomi's veto option
-    --vetoModel=<_vPMTM>   Veto PMT Model (r7081_lqe/r7081_hqe for 10inch or r11780_lqe/r11780_hqe for 12inch)
+    -N=<N>                 Number of rat-pac macros per unique process [Default: %d]
+    -e=<runBeamEntry>      Number of entries per macro (U/Th event x5) [Default: %d]
+    --depth=<depthD>       Depth of detector (for fast neutron spectra) [Default: %f]
+    --tankRadius=<TR>      Total radius of tank (mm) [Default: %f]
+    --halfHeight=<HH>      Half height of tank (mm) [Default: %f]
+    --shieldThick=<ST>     Steel->PMT distance (mm) [Default: %f]
+    --vetoThickR=<VTR>     Steel->PMT radius distance (mm)
+    --vetoThickZ=<VTZ>     Steel->PMT height distance (mm)
+    --steelThick=<StT>     Steel Thickness (mm)     [Default: %f]
+    --fidThick=<fT>        Fiducial volume-> PMT Thickness (mm) [Default: %f]
+    --detectMedia=<_dM>    Detector media (doped_water,...)
+    --collectionEff=<CE>   Collection efficiency (e.g.: 0.85,0.67,0.475)
+    --pmtModel=<_PMTM>     PMT Model (r7081_lqe/r7081_hqe for 10inch or r11780_lqe/r11780_hqe for 12inch) 
+    --photocath =<_PC>     PMT photocathode (R7081HQE)
+    --pmtCtrPoint          Point inner PMTs of Watchman geometry to detector center
+    -C=<cov>               Pick a single detector Configuration (25pct, SuperK,...). If not config, all
+                           are generated
+    --ipc=<_ipc>	   Inner PMTs photocoverage. If set WILL OVERIDE DEFAULT CONFIGURATION COVERAGE
+    --vpc=<_vpc>           Veto PMTs photocoverage.
+    --vetoModel=<_vPMTM>   Veto PMT Model (ETEL, r7081_lqe/r7081_hqe for 10inch or r11780_lqe/r11780_hqe for 12inch) 
 
 
     ## Analysis - efficiency and sensitivity evaluation. Once jobs have run, do these steps
@@ -87,7 +86,10 @@ docstring = """
     --Th232_PPM=<_Thp>  Concentration of Th-232 in glass [Default: %f]
     --K_PPM=<_K>        Concentration of K-40 in glass [Default: 16.0]
     --Rn222=<_Rn>       Radon activity in water SK 2x10^-3 Bq/m^3 [Default: %f]
-
+    --U238_vPPM=<_vUppm>  Concentration of U-238 in veto pmt glass (ULB 0.0431 STD 0.341)
+    --Th232_vPPM=<_vThp>  Concentration of Th-232 in veto pmt glass (ULB 0.133 STD 1.33)
+    --K_vPPM=<_vK>        Concentration of K-40 in veto pmt glass (ULB 36.0 STD 260.0) 
+    
     --totRate		     ALTERNATIVE. Flag to use total rate from radiopurity google spreadsheet
     --U238_PMT=<_Upmt>  Total concentration of U-238 in glass [Default: 20.]
     --Th232_PMT=<_Tpmt> Total concentration of Th-232 in glass [Default: 20.]
@@ -150,16 +152,22 @@ else:
         arguments['--vetoThickR'] = arguments['--shieldThick']
         arguments['--vetoThickZ'] = arguments['--shieldThick']
 
-#OAA
-if (arguments['--vetoCov']):
-    print "Argument provided for veto coverage"
-
+# Unless specified the default glass is standard in the vetos
+if not (arguments['--U238_vPPM']):
+        arguments['--U238_vPPM'] = '0.341' 
+if not (arguments['--Th232_vPPM']):
+        arguments['--Th232_vPPM'] = '1.33'
+if not (arguments['--K_vPPM']):
+        arguments['--K_vPPM'] = '260.0'
+        
+if (arguments['--vpc']):
+     print "Arguments provided for the veto covereage"
 else:
-    print "Veto PMTs are not generated in this study"
-
+     arguments['--vpc'] = ".002"
+    
 if arguments['--noRoot']:
     print 'Not loading any ROOT modules. usefull for generating files on oslic'
-
+    
 else:
     from ROOT import TRandom3
     from ROOT import TChain,TGraph,TGraphErrors,gSystem,gROOT,TH1D,TH2D,TFile,TCanvas,TF1
@@ -204,9 +212,9 @@ def loadSimulationParametersNew():
         ZA[i] = str(int(A[i])*1000 +int(Z[i]))
     d['A_Z'] =  ZA
 
-    process = {'40K_NA':['WaterVolume','PMT','CONCRETE','GUNITE','ROCK'],\
-    'CHAIN_238U_NA':['PMT','CONCRETE','GUNITE','ROCK'],\
-    'CHAIN_232Th_NA':['PMT','CONCRETE','GUNITE','ROCK'],\
+    process = {'40K_NA':['WaterVolume','PMT','VETO','CONCRETE','GUNITE','ROCK'],\
+    'CHAIN_238U_NA':['PMT','VETO','CONCRETE','GUNITE','ROCK'],\
+    'CHAIN_232Th_NA':['PMT','VETO','CONCRETE','GUNITE','ROCK'],\
     'CHAIN_222Rn_NA':['WaterVolume'],\
     'TANK_ACTIVITY':['TANK'],\
     'FN':['ROCK'],\
@@ -308,9 +316,47 @@ def loadPMTActivity():
 
     return mPMTs,mPMTsU238,mPMTsTh232,mPMTsK
 
+def loadVETOActivity():
+    d,process,coverage = loadSimulationParametersNew()
+    if (arguments['--vetoModel']=="r11780_hqe" or arguments['--vetoModel']=="r11780_lqe"):
+        mass, diameter = 2.0, 12.0/0.039 #inch_per_mm
+    elif (arguments['--vetoModel']=="r7081_hqe" or arguments['--vetoModel']=="r7081_lqe"):
+        mass, diameter = 1.4, 10.0/0.039 #inch_per_mm
+    else: #assuming this would be the ETL pmt
+        mass, diameter = 2.0, 11.0/0.039
+    areaPerPMT = pi*diameter*diameter/4.0
+    pmtRadius = float(arguments['--tankRadius'])-float(arguments['--steelThick'])-float(arguments['--vetoThickR'])+700.0#still need to find dim
+    pmtHeight =float(arguments['--halfHeight'])-float(arguments['--steelThick'])-float(arguments['--vetoThickZ'])+700.0#still need to find dim
+    psupArea = (2*pmtHeight)*2*pi*pmtRadius + 2.*(pi*pmtRadius**2)
+    numPMTs = psupArea/areaPerPMT
+    cVETOs = float(arguments["--vpc"])*numPMTs
+    mVETOs = mass*cVETOs
 
+    print "Number of Veto", cVETOs
+    print "Total Mass", mVETOs
 
+    M_U238,Lambda_U238,Abund_U238 = 3.953e-25,4.916e-18,0.992745
+    PPM_U238    = float(arguments["--U238_vPPM"])
+    ActivityU238= Lambda_U238*PPM_U238/M_U238/1e6
+    mVETOsU238 = mVETOS*ActivityU238
+    print 'U238',mVETOsU238, ', PPM:',PPM_U238,'activity per PMT:', ActivityU238*mass,'Bq per PMT per isotope in chain'
 
+    M_Th232,Lambda_Th232,Abund_Th232 = 3.853145e-25, 1.57e-18,1.0
+    PPM_Th232    = float(arguments["--Th232_vPPM"])
+    ActivityTh232= Lambda_Th232*PPM_Th232/M_Th232/1e6
+    mVETOsTh232 = mVETOs*ActivityTh232
+    print 'Th232',mVETOsTh232, ', PPM:',PPM_Th232, 'activity per PMT:', ActivityTh232*mass,'Bq per PMT per isotope in chain'
+
+    M_K,Lambda_K,Abund_K = 6.636286e-26,1.842e-18,0.00117
+    PPM_K    = float(arguments["--K_PPM"])
+    ActivityK= Lambda_K*PPM_K/M_K/1e6*Abund_K
+    mVETOsK = mVETOs*ActivityK
+    print 'K',mVETOsK, ', PPM:',PPM_K, 'activity per PMT:', ActivityK*mass,'Bq per PMT per isotope in chain'
+
+    print
+
+    return mVETOs,mVETOsU238,mVETOsTh232,mVETOsK
+    
 def loadTankActivity():                                         ##added by Leah: activity from steel in tank
     ##MASS OF STEEL USED IN KG -- assuming use of steel grade 304
     density = 8000                                              ##kg/m^3

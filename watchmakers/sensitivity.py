@@ -186,6 +186,10 @@ def readEfficiencyHistogram():
     mPMTs,mPMTsU238,mPMTsTh232,mPMTsK40 = loadPMTActivity()
     print 'done.'
 
+    print '\nLoading Veto activity:'
+    mVETOs,mVETOsU238,mVETOsTh232,mVETOsK40 = loadVETOActivity()
+    print 'done.'
+    
     tankRadius  = float(arguments["--tankRadius"])-float(arguments['--steelThick'])
     tankHeight  = float(arguments["--halfHeight"])-float(arguments['--steelThick'])
     nKiloTons = pi*pow(tankRadius/1000.,2)*(2.*tankHeight/1000.)
@@ -225,6 +229,7 @@ def readEfficiencyHistogram():
     print '\n What are the maximum efficiency/rate found in each histogram:'
     _sing = 0.0
     lineU238PMT,lineTh232PMT,lineKPMT = '','',''
+    lineU238VETO,lineTh232VETO,lineKVETO = '','',''
     lineFNROCK = ''
     lineU238GUN,lineTh232GUN,lineKGUN = '','',''
     lineU238ROCK,lineTh232ROCK,lineKROCK = '','',''
@@ -275,6 +280,24 @@ def readEfficiencyHistogram():
             _sing+=hist[_t].GetMaximum()*mPMTsK40[0]
             h.Add(hist[_t],mPMTsK40[0])
             lineKPMT += "%50s %e %15.10f\n"%(_t,hist[_t].GetMaximum(),hist[_t].GetMaximum()*mPMTsK40[0])
+
+        elif 'VETO' in _t and 'CHAIN_238U_NA' in _t:
+            if '210Tl' in _t:
+                _sing+=hist[_t].GetMaximum()*mVETOsU238[0]*0.002
+                h.Add(hist[_t],mVETOsU238[0]*0.002)
+                lineU238VETO += "%50s %e %15.10f\n"%(_t,hist[_t].GetMaximum(),hist[_t].GetMaximum()*mVETOsU238[0]*0.002)
+            else:
+                _sing+=hist[_t].GetMaximum()*mVETOsU238[0]
+                h.Add(hist[_t],mVETOsU238[0])
+                lineU238VETO+= "%50s %e %15.10f\n"%(_t,hist[_t].GetMaximum(),hist[_t].GetMaximum()*mVETOsU238[0])
+        elif 'VETO' in _t and 'CHAIN_232Th_NA' in _t:
+            _sing+=hist[_t].GetMaximum()*mVETOsTh232[0]
+            h.Add(hist[_t],mVETOsTh232[0])
+            lineTh232VETO += "%50s %e %15.10f\n"%(_t,hist[_t].GetMaximum(),hist[_t].GetMaximum()*mVETOsTh232[0])
+        elif 'VETO' in _t and '40K_NA' in _t:
+            _sing+=hist[_t].GetMaximum()*mVETOsK40[0]
+            h.Add(hist[_t],mVETOsK40[0])
+            lineKVETO += "%50s %e %15.10f\n"%(_t,hist[_t].GetMaximum(),hist[_t].GetMaximum()*mVETOsK40[0])
 
         elif 'GUNITE' in _t and 'CHAIN_238U_NA' in _t:
             if '210Tl' in _t:
@@ -354,6 +377,9 @@ def readEfficiencyHistogram():
     print 'PMT U-238 \n', lineU238PMT
     print 'PMT Th-232\n', lineTh232PMT
     print 'PMT K\n', lineKPMT,'\n'
+    print 'VETO U-238 \n', lineU238VETO
+    print 'VETO Th-232 \n', lineTh232VETO
+    print 'VETO K \n', lineKVETO,'\n'
     print 'Water Rn-222\n',lineRn222WaterVolume,'\n'
     print 'Gunite U-238 \n', lineU238GUN
     print 'Gunite Th-232\n', lineTh232GUN
@@ -550,6 +576,11 @@ def findRate():
     mPMTs,mPMTsU238,mPMTsTh232,mPMTsK40 = loadPMTActivity()
     print 'done.'
 
+    print '\nLoading VETO activity:'
+    mVETOs,mVETOsU238,mVETOsTh232,mVETOsK40 = loadVETOActivity()
+    print 'done.'
+
+    
     tankRadius  = float(arguments["--tankRadius"])-float(arguments['--steelThick'])
     tankHeight  = float(arguments["--halfHeight"])-float(arguments['--steelThick'])
     nKiloTons = pi*pow(tankRadius/1000.,2)*(2.*tankHeight/1000.)
