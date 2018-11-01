@@ -43,6 +43,8 @@ docstring = """
     ## System options
 
     --docker            Is watchmakers running with docker, is so changes jobs files
+    --singularity       Will change job submission script to reflect use of singularity
+    --simg=<simg>       Wath singularity image will you be using [Default: /usr/gapps/adg/geant4/rat_pac_and_dependency/AITWATCHMAN/watch.simg]
     --newVers=<nv>      Major revision to Watchmakers. By default on, but can use old vers [Default: 1]
     --force             Forcing the recreation of the root_file,bonsai_root_file and log folders
     --noRoot            Allows to generate scripts without loading in any ROOT module
@@ -171,7 +173,7 @@ if not (arguments['--K_vPPM']):
 if (arguments['--vpc']):
      print "Arguments provided for the veto covereage"
 else:
-     arguments['--vpc'] = ".002"
+     arguments['--vpc'] = "0.002"
     
 if arguments['--noRoot']:
     print 'Not loading any ROOT modules. usefull for generating files on oslic'
