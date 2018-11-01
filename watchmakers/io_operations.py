@@ -272,7 +272,30 @@ export G4NEUTRONHP_USE_ONLY_PHOTONEVAPORATION=1\n
     directory,\
     rootDir,g4Dir,g4Dir,ratDir,watchmakersDir)
 
+    elif  arguments["--singularity"]:
+        line1 = """#!/bin/sh
+#MSUB -N WM_%s_%s_%d_%s    #name of job
+#MSUB -A ared         # sets bank account
+#MSUB -l nodes=1:ppn=1,walltime=23:59:59,partition=borax  # uses 1 node
+#MSUB -q pbatch         #pool
+#MSUB -o %s/log_case%s%s/wmpc_%s_%s_%d.log
+#MSUB -e %s/log_case%s%s/wmpc_%s_%s_%d.err
+#MSUB -d %s  # directory to run from
+#MSUB -V
+#MSUB                     # no more psub commands
 
+#source %s/bin/thisroot.sh
+#source %s/../../../bin/geant4.sh
+#source %s/geant4make.sh
+#source %s/env.sh
+#source %s/env_wm.sh
+
+export G4NEUTRONHP_USE_ONLY_PHOTONEVAPORATION=1\n
+    """ %(percentage,location,runs,additionalMacStr,\
+    directory,case,additionalMacStr,percentage,location,runs,\
+    directory,case,additionalMacStr,percentage,location,runs,\
+    directory,\
+    rootDir,g4Dir,g4Dir,ratDir,watchmakersDir)
 
     else:
         line1 = """#!/bin/sh
@@ -432,12 +455,12 @@ def generateJobsNew(N,arguments):
                             testCreateDirectory(dir)
                         else:
                             testCreateDirectoryIfNotExist(dir)
-                        dir = "jobs%s/%s/%s/%s/%s/run%08d"%(additionalMacStr,_cover,_loc,_element,_p,i*10)
-                        if arguments['--force']:
-                            print 'Using force to recreate dir:',dir
-                            testCreateDirectory(dir)
-                        else:
-                            testCreateDirectoryIfNotExist(dir)
+                        #dir = "jobs%s/%s/%s/%s/%s/run%08d"%(additionalMacStr,_cover,_loc,_element,_p,i*10)
+                        #if arguments['--force']:
+                        #    print 'Using force to recreate dir:',dir
+                        #    testCreateDirectory(dir)
+                        #else:
+                        #    testCreateDirectoryIfNotExist(dir)
 
 
     '''Make sure that the softlink are correct for Bonsai input'''
@@ -454,6 +477,17 @@ def generateJobsNew(N,arguments):
         dst = os.getcwd()+'/like.bin'
         if not os.path.exists(dst):
                 os.system("rsync -avz %s %s "%(src,dst))
+    elif arguments["--singularity"]:
+	src = '/src/rat-pac/fit_param.dat'
+        dst = '%s/fit_param.dat'%(os.environ['PWD'])
+        if not os.path.exists(dst):
+            os.system("singularity exec --bind $PWD %s /usr/bin/rsync -avz %s %s "%(arguments['--simg'],src,dst))
+
+        src = '/src/rat-pac/like.bin'
+        dst = '%s/like.bin'%(os.environ['PWD'])
+        if not os.path.exists(dst):
+            os.system("singularity exec --bind $PWD %s /usr/bin/rsync -avz %s %s "%(arguments['--simg'],src,dst))
+
     else:
     	src = ratDir+'/fit_param.dat'
     	dst = os.getcwd()+'/fit_param.dat'
@@ -473,6 +507,11 @@ def generateJobsNew(N,arguments):
     g4Dir       =  os.environ['G4INSTALL']
     watchmakersDir = os.environ['WATCHENV']
     directory   = os.getcwd()
+
+    if arguments["--singularity"]:
+        srat    = "singularity exec --bind $PWD %s /src/rat-pac/bin/rat" %(arguments["--simg"])
+	sbonsai = "singularity exec --bind $PWD %s /src/rat-pac/tools/bonsai/bonsai"%(arguments["--simg"]) 
+
 
     outfile_jobs = open('sub_job_%s'%(additionalMacStr),"wb")
     outfile_jobs.writelines("#!/bin/sh\n")
@@ -516,7 +555,22 @@ def generateJobsNew(N,arguments):
 source $HOME/software/docker_watchman/env.sh
 
 """%(job_line,log+'.out',log+'.err',directory))
-			    else:
+			    elif arguments["--singularity"]:
+				outfile.writelines("""#!/bin/sh
+#MSUB -N job_%s    #name of job
+#MSUB -A ared         # sets bank account
+#MSUB -l nodes=1:ppn=1,walltime=23:59:59,partition=borax  # uses 1 node
+#MSUB -q pbatch         #pool
+#MSUB -o %s
+#MSUB -e %s
+#MSUB -d %s  # directory to run from
+#MSUB -V
+#MSUB                     # no more psub commands
+
+
+
+"""%(job_line,log+'.out',log+'.err',directory))
+                            else:
 				outfile.writelines("""#!/bin/sh
 #MSUB -N job_%s    #name of job
 #MSUB -A ared         # sets bank account
@@ -543,6 +597,9 @@ source %s/env_wm.sh\n\n"""%(job_line,log+'.out',log+'.err',directory,\
                                 	if arguments["--docker"]:
 						lines = '''drat %s %s %s
     (dbonsai %s %s || dbonsai %s %s ||dbonsai %s %s ||dbonsai %s %s || echo \"Could not run bonsai after 4 tries.\")>> %s\n\n'''%(mac,r_outfile,l_outfile,r_outfile,b_outfile,r_outfile,b_outfile,r_outfile,b_outfile,r_outfile,b_outfile,l_outfile)
+					elif arguments["--singularity"]:
+						lines = '''%s %s -o %s -l %s
+    (%s %s %s || %s %s %s ||%s %s %s ||%s %s %s || echo \"Could not run bonsai after 4 tries.\")>> %s\n\n'''%(srat,mac,r_outfile,l_outfile,sbonsai,r_outfile,b_outfile,sbonsai,r_outfile,b_outfile,sbonsai,r_outfile,b_outfile,sbonsai,r_outfile,b_outfile,l_outfile)
 					else:
 						lines = '''rat %s -o %s -l %s
     (bonsai %s %s || bonsai %s %s ||bonsai %s %s ||bonsai %s %s || echo \"Could not run bonsai after 4 tries.\")>> %s\n\n'''%(mac,r_outfile,l_outfile,r_outfile,b_outfile,r_outfile,b_outfile,r_outfile,b_outfile,r_outfile,b_outfile,l_outfile)
