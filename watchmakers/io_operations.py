@@ -101,7 +101,7 @@ def macroGeneratorNew(percentage,location,element,_dict,runs,events,dirOpt):
 /generator/rate/set %f
 /run/beamOn %d'''%(depth,rate,events)
 
-    elif element in d['CHAIN_238U_NA'] or element in d['CHAIN_232Th_NA'] or element in d['40K_NA'] or element in d['TANK_ACTIVITY']:
+    elif element in d['CHAIN_238U_NA'] or element in d['CHAIN_232Th_NA'] or element in d['40K_NA'] or element in d['TANK_ACTIVITY'] or element in d['CHAIN_235U_NA']:
         if location == 'PMT':
             line1 = '''
 /generator/add decaychain %s:regexfill:poisson
@@ -110,7 +110,7 @@ def macroGeneratorNew(percentage,location,element,_dict,runs,events,dirOpt):
 /run/beamOn %d''' %(element,rate,events*2)
         else:
             locat = location.lower()
-            if locat == 'watervolume':
+            if locat == 'watervolume' or locat == 'gd':
                 locat = 'detector'
                 xTimes = 2
             else:
@@ -217,24 +217,24 @@ def jobString(percentage,j,runs,models,arguments):
     if sheffield:
 
         line1 = """#!/bin/sh
-    #MSUB -N WM_%s_%s_%d_%s    #name of job
-    #MSUB -A ared         # sets bank account
-    #MSUB -l nodes=1:ppn=1,walltime=23:59:59,partition=borax  # uses 1 node
-    #MSUB -q pbatch         #pool
-    #MSUB -o %s/log_case%s%s/wmpc_%s_%s_%d.log
-    #MSUB -e %s/log_case%s%s/wmpc_%s_%s_%d.err
-    #MSUB -d %s  # directory to run from
-    #MSUB -V
-    #MSUB                     # no more psub commands
+#MSUB -N WM_%s_%s_%d_%s    #name of job
+#MSUB -A ared         # sets bank account
+#MSUB -l nodes=1:ppn=1,walltime=23:59:59,partition=borax  # uses 1 node
+#MSUB -q pbatch         #pool
+#MSUB -o %s/log_case%s%s/wmpc_%s_%s_%d.log
+#MSUB -e %s/log_case%s%s/wmpc_%s_%s_%d.err
+#MSUB -d %s  # directory to run from
+#MSUB -V
+#MSUB                     # no more psub commands
 
-    source %s/bin/thisroot.sh
-    source /usr/local/gcc49/setup.sh
-    source /usr/local/geant4/setup.sh 10.3
-    source %s/geant4make.sh
-    source %s/env.sh
-    source %s/env_wm.sh
-    export G4NEUTRONHP_USE_ONLY_PHOTONEVAPORATION=1
-    export SHEFFIELD=1\n
+source %s/bin/thisroot.sh
+source /cvmfs/sft.cern.ch/lcg/releases/LCG_85swan2/gcc/4.9.3/x86_64-slc6/setup.sh
+source /usr/local/geant4/setup.sh 10.2
+source %s/geant4make.sh
+source %s/env.sh
+source %s/env_wm.sh
+export G4NEUTRONHP_USE_ONLY_PHOTONEVAPORATION=1
+export SHEFFIELD=1\n
     """ %(percentage,location,runs,additionalMacStr,\
     directory,case,additionalMacStr,percentage,location,runs,\
     directory,case,additionalMacStr,percentage,location,runs,\
@@ -426,6 +426,12 @@ def generateJobsNew(N,arguments):
                             testCreateDirectory(dir)
                         else:
                             testCreateDirectoryIfNotExist(dir)
+                        dir = "jobs%s/%s/%s/%s/%s/run%08d"%(additionalMacStr,_cover,_loc,_element,_p,i*10)
+                        if arguments['--force']:
+                            print 'Using force to recreate dir:',dir
+                            testCreateDirectory(dir)
+                        else:
+                            testCreateDirectoryIfNotExist(dir)
 
 
     '''Make sure that the softlink are correct for Bonsai input'''
@@ -456,7 +462,7 @@ def generateJobsNew(N,arguments):
 
 
     rootDir     = os.environ['ROOTSYS']
-    softDir     = "/usr/gapps/adg/geant4/rat_pac_and_dependency"
+    softDir     = os.environ['RATROOT']
     rootDir     = os.environ['ROOTSYS']
     g4Dir       =  os.environ['G4INSTALL']
     watchmakersDir = os.environ['WATCHENV']
@@ -478,7 +484,10 @@ def generateJobsNew(N,arguments):
                             testCreateDirectory(dir)
                         else:
                             testCreateDirectoryIfNotExist(dir)
-                        outfile_jobs.writelines('msub %s\n'%(dir+'/job%08d.sh'%(0)))
+			if sheffield:
+                            outfile_jobs.writelines('condor_qsub %s\n'%(dir+'/job%08d.sh'%(0)))
+			else: 
+                            outfile_jobs.writelines('msub %s\n'%(dir+'/job%08d.sh'%(0)))
                         log = "log%s/%s/%s/%s/%s/log"%(additionalMacStr,_cover,_loc,_element,_p)
                         for i in range(N/10+1):
                             dir = "jobs%s/%s/%s/%s/%s"%(additionalMacStr,_cover,_loc,_element,_p)
@@ -680,6 +689,7 @@ def testEnabledCondition(arguments):
 
     if float(arguments['--fidThick'])!= defaultValues[7]:
         additionalString += "_fidThickness_%f" %(float(arguments['--fidThick']))
+	additionalMacStr += "_fidThickness_%f" %(float (arguments['--fidThick']))
         additionalCommands +=" --fidThick %f" %(float(arguments['--fidThick']))
 
     if arguments['--pmtCtrPoint']:

@@ -27,11 +27,11 @@ except:
 defaultValues  = [3,2500,2805.,\
 10026.35,10026.35,3080.0,6.35,1000.,\
 0.043, 0.133,0.002,\
+10.,0.2,0.25,0.28,0.35,1.7,\
 'merged_ntuple_watchman','merged_ntuple_watchman','null', 'processed_watchman.root',\
 10.,2.0, 100.0, 9, 0.65,0.1,\
 'day','boulby', \
 1.0]
-
 
 docstring = """
     Usage: watchmakers.py [options]
@@ -88,6 +88,13 @@ docstring = """
     --K_PPM=<_K>        Concentration of K-40 in glass [Default: 16.0]
     --Rn222=<_Rn>       Radon activity in water SK 2x10^-3 Bq/m^3 [Default: %f]
 
+    --U238_Gd=<_U238Gd>    Activity of U238 in Gd (upper) mBq/kg [Default: %f ]
+    --Th232_Gd=<_Th232Gd>     Activity of Th232 in Gd (upper) mBq/kg [Default: %f]
+    --U235_Gd=<_U235Gd>    Activity of U235 in Gd (upper) mBq/kg [Default: %f]
+    --U238_Gd_l=<_U238Gd_l>    Activity of U238 in Gd (lower) mBq/kg [Default: %f]
+    --Th232_Gd_l=<_Th232Gd_l>    Activity of Th232 in Gd (lower) mBq/kg [Default: %f]
+    --U235_Gd_l=<_U235Gd_l>    Activity of U235 in Gd (lower) mBq/kg [Default: %f]
+
     --totRate		     ALTERNATIVE. Flag to use total rate from radiopurity google spreadsheet
     --U238_PMT=<_Upmt>  Total concentration of U-238 in glass [Default: 20.]
     --Th232_PMT=<_Tpmt> Total concentration of Th-232 in glass [Default: 20.]
@@ -130,9 +137,9 @@ docstring = """
            defaultValues[9],defaultValues[10],defaultValues[11],defaultValues[12],\
            defaultValues[13],defaultValues[14],defaultValues[15],defaultValues[16],\
            defaultValues[17],defaultValues[18],defaultValues[19],defaultValues[20],\
-           defaultValues[21],defaultValues[22],defaultValues[23])
-
-
+           defaultValues[21],defaultValues[22],defaultValues[23],defaultValues[24],\
+           defaultValues[25],defaultValues[26],defaultValues[27],defaultValues[28],\
+	   defaultValues[29])
 
 try:
     import docopt
@@ -188,6 +195,7 @@ def loadSimulationParametersNew():
 
     d['CHAIN_238U_NA'] =['234Pa','214Pb','214Bi','210Bi','210Tl']
     d['CHAIN_232Th_NA'] = ['228Ac','212Pb','212Bi','208Tl']
+    d['CHAIN_235U_NA'] = ['231Th','223Fr','211Pb','211Bi','207Tl']
     d['40K_NA']         = ['40K']
     d['CHAIN_222Rn_NA'] = ['214Pb','214Bi','210Bi','210Tl']
     d['TANK_ACTIVITY'] = ['60Co','137Cs']
@@ -205,8 +213,9 @@ def loadSimulationParametersNew():
     d['A_Z'] =  ZA
 
     process = {'40K_NA':['WaterVolume','PMT','CONCRETE','GUNITE','ROCK'],\
-    'CHAIN_238U_NA':['PMT','CONCRETE','GUNITE','ROCK'],\
-    'CHAIN_232Th_NA':['PMT','CONCRETE','GUNITE','ROCK'],\
+    'CHAIN_238U_NA':['PMT','CONCRETE','GUNITE','ROCK','GD'],\
+    'CHAIN_232Th_NA':['PMT','CONCRETE','GUNITE','ROCK','GD'],\
+    'CHAIN_235U_NA':['GD'],\
     'CHAIN_222Rn_NA':['WaterVolume'],\
     'TANK_ACTIVITY':['TANK'],\
     'FN':['ROCK'],\
@@ -310,16 +319,15 @@ def loadPMTActivity():
 
 
 
-
 def loadTankActivity():                                         ##added by Leah: activity from steel in tank
     ##MASS OF STEEL USED IN KG -- assuming use of steel grade 304
     density = 8000                                              ##kg/m^3
-    r1 = (float(arguments["--tankRadius"]))/1000                ##outer radius inc steel thick in m
-    h1 = 2 * (float(arguments["--halfHeight"]))/1000            ##outer height inc steel thick in m
+    r1 = (float(arguments["--tankRadius"]))/1000.               ##outer radius inc steel thick in m
+    h1 = 2 * (float(arguments["--halfHeight"]))/1000.           ##outer height inc steel thick in m
     V1 = pi * h1 * r1**2                                        ##outer volume inc steel thick in m^3
 
-    r2 = r1 - ((float(arguments["--steelThick"]))/1000)         ##inner radius in m
-    h2 = h1 - 2*((float(arguments["--steelThick"]))/1000)       ##inner height in m
+    r2 = r1 - (float(arguments["--steelThick"]))/1000.         ##inner radius in m
+    h2 = h1 - 2*(float(arguments["--steelThick"]))/1000.       ##inner height in m
     V2 = pi * h2 * r2**2                                        ##inner volume in m^3
 
     tankvol = V1 - V2                                           ##hollow cylinder m^3
@@ -342,8 +350,9 @@ def loadTankActivity():                                         ##added by Leah:
 def loadConcreteActivity():                                     ##added by Leah: activity from concrete
     ##MASS OF CONCRETE USED IN KG -- assuming normal-weight concrete (NWC)
     density = 2300                                              ##kg/m^3
-    thickness = 0.3                                             ## slab thickness in metres - alter for desired value
-    concvol = 25*25*thickness                                   ##assuming a 25x25 m^2 cavern
+    thickness = 0.5                                             ## slab thickness in metres - alter for desired value
+    concvol = 25.5*(pi*pow(13.,2)-pi*pow(12.5,2)) + 0.5*pi*(pow(13.,2)) #0.5m thick, 25m high concrete 'tube': outer diameter 26m, 
+									#inner diameter 25m, plus 0.5m base of diameter 26m
     concmass = concvol * density
 
     print "Total concrete slab mass",concmass,"kg"
@@ -405,7 +414,7 @@ def loadShotcreteActivity():
     print "40K in shotcrete coating:\n ppm:", ppm_40k,"\n total activity:",act_40k,"Bq"
 
     return shotmass,act_238u,act_232th,act_40k
-### mineguard flag??
+
 
 
 def loadRockActivity():
@@ -414,15 +423,16 @@ def loadRockActivity():
     ##MASS OF SALT IN WALL IN KG -- assuming pure rock salt walls (Overview of the European Underground Facilities paper)
     density = 2165                                              ##kg/m^3 -- approx from "Physical Properties Data for Rock Salt"
     thickness = 5                                               ##thickness in metres
-    r1 = 25 + thickness                                         ##outer radius in m
-    h1 = 25 + 2*thickness                                       ##outer height in m
+    r1 = 13 + thickness                                         ##outer radius in m
+    h1 = 25.5 + 2*thickness                                     ##outer height in m
     V1 = pi * h1 * r1**2                                        ##outer volume in m^3
 
-    r2 = 25                                                     ##inner radius in m
-    h2 = 25                                                     ##inner height in m
+    r2 = 13                                                     ##inner radius in m
+    h2 = 25.5                                                   ##inner height in m
     V2 = pi * h2 * r2**2                                        ##inner volume in m^3
 
-    rockvol = V1 - V2                                           ##hollow cylinder m^3
+    rockvol = V1 - V2                                           ##hollow cylinder m^3 outside 25m cylindrical cavern 
+								##plus 0.5m concrete layer on walls and floor 
     rockmass = rockvol*density
 
     print "Total relevant rock mass",rockmass,"kg"
@@ -449,3 +459,23 @@ def loadRockActivity():
     print "40K in shotcrete coating:\n ppm:", ppm_40k,"\n total activity:",act_40k,"Bq"
 
     return rockmass,act_238u,act_232th,act_40k
+
+
+def loadGdActivity():
+
+    d,process,coverage = loadSimulationParamatersNew()
+    tankVolume = pi*pow(tankRadius/1000.,2)*(2.*tankHeight/1000.)/1000.
+    GdU238    = float(arguments["--U238_Gd"]) / 1000. * tankVolume * 1e6 * 0.002 # bq/kg * kg of water * Gd(SO4)3 concentration
+    GdTh232   = float(arguments["--Th232_Gd"])/ 1000. * tankVolume * 1e6 * 0.002 # bq/kg * kg of water * Gd(SO4)3 concentration
+    GdU235    = float(arguments["--U235_Gd"]) / 1000. * tankVolume * 1e6 * 0.002  #bq/kg * kg of water * Gd(SO4)3 concentration
+    GdU238_l    = float(arguments["--U238_Gd_l"]) / 1000. * tankVolume * 1e6 * 0.002 # bq/kg * kg of water * Gd(SO4)3 concentration
+    GdTh232_l   = float(arguments["--Th232_Gd_l"])/ 1000. * tankVolume * 1e6 * 0.002 # bq/kg * kg of water * Gd(SO4)3 concentration
+    GdU235_l    = float(arguments["--U235_Gd_l"]) / 1000. * tankVolume * 1e6 * 0.002  #bq/kg * kg of water * Gd(SO4)3 concentration
+
+
+    return GdU238,GdTh232,GdU235,GdU238_l,GdTh232_l,GdU235_l
+
+
+
+
+
