@@ -82,9 +82,11 @@ _posGood=0.1,_dirGood=0.1,_pe=8,_nhit=8,_itr = 1.5):
         for _n9 in range(int(rangeNmin+binwidthN/2.0),int(rangeNmax)):
             cond = "closestPMT/1000.>%f"%(_d)
             cond += "&& good_pos>%f " %(_posGood)
-            cond += "&& n9 > %f && nhit > %f && pe > %f" %(_n9,_nhit,_pe)
-            cond += "&& pe/nhit < %f" %(_itr)
-            cond += "&& sqrt(pow(x-mcx,2)+pow(y-mcy,2)+pow(z-mcz,2))/1000.<%f"%(_dist)
+            cond += "&& inner_hit > 4 &&  veto_hit < 4"
+            cond += "&& n9 > %f" %(n9)
+            #cond += "&& n9 > %f && nhit > %f && pe > %f" %(_n9,_nhit,_pe)
+            #cond += "&& pe/nhit < %f" %(_itr)
+            #cond += "&& sqrt(pow(x-mcx,2)+pow(y-mcy,2)+pow(z-mcz,2))/1000.<%f"%(_dist)
 
             if _someEntries !=0:
                 if minAchieve == 0:
