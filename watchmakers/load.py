@@ -223,10 +223,10 @@ def loadSimulationParametersNew():
         ZA[i] = str(int(A[i])*1000 +int(Z[i]))
     d['A_Z'] =  ZA
 
-    process = {'40K_NA':['WaterVolume','PMT','VETO','CONCRETE','GUNITE','ROCK'],\
-    'CHAIN_238U_NA':['PMT','VETO','CONCRETE','GUNITE','ROCK','GD'],\
-    'CHAIN_232Th_NA':['PMT','VETO','CONCRETE','GUNITE','ROCK','GD'],\
-    'CHAIN_235U_NA':['GD'],\
+    process = {'40K_NA':['WaterVolume','PMT','VETO','CONCRETE','TANK','ROCK'],\
+    'CHAIN_238U_NA':['PMT','VETO','CONCRETE','TANK','ROCK','GD'],\
+    'CHAIN_232Th_NA':['PMT','VETO','CONCRETE','TANK','ROCK','GD'],\
+    'CHAIN_235U_NA':['TANK','GD'],\
     'CHAIN_222Rn_NA':['WaterVolume'],\
     'TANK_ACTIVITY':['TANK'],\
     'FN':['ROCK'],\
