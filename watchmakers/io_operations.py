@@ -225,7 +225,7 @@ def jobString(percentage,j,runs,models,arguments):
         line1 = """#!/bin/sh
 #MSUB -N WM_%s_%s_%d_%s    #name of job
 #MSUB -A ared         # sets bank account
-#MSUB -l nodes=1:ppn=1,walltime=23:59:59,partition=borax  # uses 1 node
+#MSUB -l nodes=1:ppn=1,walltime=73:59:59,partition=borax  # uses 1 node
 #MSUB -q pbatch         #pool
 #MSUB -o %s/log_case%s%s/wmpc_%s_%s_%d.log
 #MSUB -e %s/log_case%s%s/wmpc_%s_%s_%d.err
@@ -251,7 +251,7 @@ export SHEFFIELD=1\n
         line1 = """#!/bin/sh
 #MSUB -N WM_%s_%s_%d_%s    #name of job
 #MSUB -A ared         # sets bank account
-#MSUB -l nodes=1:ppn=1,walltime=23:59:59,partition=borax  # uses 1 node
+#MSUB -l nodes=1:ppn=1,walltime=73:59:59,partition=borax  # uses 1 node
 #MSUB -q pbatch         #pool
 #MSUB -o %s/log_case%s%s/wmpc_%s_%s_%d.log
 #MSUB -e %s/log_case%s%s/wmpc_%s_%s_%d.err
@@ -276,7 +276,7 @@ export G4NEUTRONHP_USE_ONLY_PHOTONEVAPORATION=1\n
         line1 = """#!/bin/sh
 #MSUB -N WM_%s_%s_%d_%s    #name of job
 #MSUB -A ared         # sets bank account
-#MSUB -l nodes=1:ppn=1,walltime=23:59:59,partition=borax  # uses 1 node
+#MSUB -l nodes=1:ppn=1,walltime=73:59:59,partition=borax  # uses 1 node
 #MSUB -q pbatch         #pool
 #MSUB -o %s/log_case%s%s/wmpc_%s_%s_%d.log
 #MSUB -e %s/log_case%s%s/wmpc_%s_%s_%d.err
@@ -301,7 +301,7 @@ export G4NEUTRONHP_USE_ONLY_PHOTONEVAPORATION=1\n
         line1 = """#!/bin/sh
 #MSUB -N WM_%s_%s_%d_%s    #name of job
 #MSUB -A ared         # sets bank account
-#MSUB -l nodes=1:ppn=1,walltime=23:59:59,partition=borax  # uses 1 node
+#MSUB -l nodes=1:ppn=1,walltime=73:59:59,partition=borax  # uses 1 node
 #MSUB -q pbatch         #pool
 #MSUB -o %s/log_case%s%s/wmpc_%s_%s_%d.log
 #MSUB -e %s/log_case%s%s/wmpc_%s_%s_%d.err
@@ -544,7 +544,7 @@ def generateJobsNew(N,arguments):
 				outfile.writelines("""#!/bin/sh
 #MSUB -N job_%s    #name of job
 #MSUB -A ared         # sets bank account
-#MSUB -l nodes=1:ppn=1,walltime=23:59:59,partition=borax  # uses 1 node
+#MSUB -l nodes=1:ppn=1,walltime=73:59:59,partition=borax  # uses 1 node
 #MSUB -q pbatch         #pool
 #MSUB -o %s
 #MSUB -e %s
@@ -559,7 +559,7 @@ source $HOME/software/docker_watchman/env.sh
 				outfile.writelines("""#!/bin/sh
 #MSUB -N job_%s    #name of job
 #MSUB -A ared         # sets bank account
-#MSUB -l nodes=1:ppn=1,walltime=23:59:59,partition=borax  # uses 1 node
+#MSUB -l nodes=1:ppn=1,walltime=73:59:59,partition=borax  # uses 1 node
 #MSUB -q pbatch         #pool
 #MSUB -o %s
 #MSUB -e %s
@@ -574,7 +574,7 @@ source $HOME/software/docker_watchman/env.sh
 				outfile.writelines("""#!/bin/sh
 #MSUB -N job_%s    #name of job
 #MSUB -A ared         # sets bank account
-#MSUB -l nodes=1:ppn=1,walltime=23:59:59,partition=borax  # uses 1 node
+#MSUB -l nodes=1:ppn=1,walltime=73:59:59,partition=borax  # uses 1 node
 #MSUB -q pbatch         #pool
 #MSUB -o %s
 #MSUB -e %s
