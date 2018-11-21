@@ -350,7 +350,7 @@ def loadVETOActivity():
     M_U238,Lambda_U238,Abund_U238 = 3.953e-25,4.916e-18,0.992745
     PPM_U238    = float(arguments["--U238_vPPM"])
     ActivityU238= Lambda_U238*PPM_U238/M_U238/1e6
-    mVETOsU238 = mVETOS*ActivityU238
+    mVETOsU238 = mVETOs*ActivityU238
     print 'U238',mVETOsU238, ', PPM:',PPM_U238,'activity per PMT:', ActivityU238*mass,'Bq per PMT per isotope in chain'
 
     M_Th232,Lambda_Th232,Abund_Th232 = 3.853145e-25, 1.57e-18,1.0
