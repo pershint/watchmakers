@@ -515,15 +515,15 @@ def loadRockActivity():
 def loadGdActivity():
 
     d,process,coverage = loadSimulationParametersNew()
-    tankRadius = float(arguments['--tankRadius'])
-    halfHeight = float(arguments['--halfHeight'])
-    tankVolume = pi*pow(tankRadius/1000.,2)*(2.*halfHeight/1000.)
-    GdU238    = float(arguments["--U238_Gd"]) / 1000. * tankVolume * 1e6 * 0.002 # bq/kg * kg of water * Gd(SO4)3 concentration
-    GdTh232   = float(arguments["--Th232_Gd"])/ 1000. * tankVolume * 1e6 * 0.002 # bq/kg * kg of water * Gd(SO4)3 concentration
-    GdU235    = float(arguments["--U235_Gd"]) / 1000. * tankVolume * 1e6 * 0.002  #bq/kg * kg of water * Gd(SO4)3 concentration
-    GdU238_l    = float(arguments["--U238_Gd_l"]) / 1000. * tankVolume * 1e6 * 0.002 # bq/kg * kg of water * Gd(SO4)3 concentration
-    GdTh232_l   = float(arguments["--Th232_Gd_l"])/ 1000. * tankVolume * 1e6 * 0.002 # bq/kg * kg of water * Gd(SO4)3 concentration
-    GdU235_l    = float(arguments["--U235_Gd_l"]) / 1000. * tankVolume * 1e6 * 0.002  #bq/kg * kg of water * Gd(SO4)3 concentration
+    tankRadius = float(arguments['--tankRadius']) - float(arguments['--steelThick'])
+    halfHeight = float(arguments['--halfHeight']) - float(arguments['--steelThick'])
+    nKiloTons = pi*pow(tankRadius/1000.,2)*(2.*halfHeight/1000.)
+    GdU238    = float(arguments["--U238_Gd"]) / 1000. * nKiloTons * 1e6 * 0.002 # bq/kg * kg of water * Gd(SO4)3 concentration
+    GdTh232   = float(arguments["--Th232_Gd"])/ 1000. * nKiloTons * 1e6 * 0.002 # bq/kg * kg of water * Gd(SO4)3 concentration
+    GdU235    = float(arguments["--U235_Gd"]) / 1000. * nKiloTons * 1e6 * 0.002  #bq/kg * kg of water * Gd(SO4)3 concentration
+    GdU238_l    = float(arguments["--U238_Gd_l"]) / 1000. * nKiloTons * 1e6 * 0.002 # bq/kg * kg of water * Gd(SO4)3 concentration
+    GdTh232_l   = float(arguments["--Th232_Gd_l"])/ 1000. * nKiloTons * 1e6 * 0.002 # bq/kg * kg of water * Gd(SO4)3 concentration
+    GdU235_l    = float(arguments["--U235_Gd_l"]) / 1000. * nKiloTons * 1e6 * 0.002  #bq/kg * kg of water * Gd(SO4)3 concentration
 
 
     return GdU238,GdTh232,GdU235,GdU238_l,GdTh232_l,GdU235_l
