@@ -518,7 +518,7 @@ def loadGdActivity():
     d,process,coverage = loadSimulationParametersNew()
     tankRadius = float(arguments['--tankRadius']) - float(arguments['--steelThick'])
     halfHeight = float(arguments['--halfHeight']) - float(arguments['--steelThick'])
-    nKiloTons = pi*pow(tankRadius/1000.,2)*(2.*halfHeight/1000.)
+    nKiloTons = pi*pow(tankRadius/1000.,2)*(2.*halfHeight/1000.)/1000.
     GdU238    = float(arguments["--U238_Gd"]) / 1000. * nKiloTons * 1e6 * 0.002 # bq/kg * kg of water * Gd(SO4)3 concentration
     GdTh232   = float(arguments["--Th232_Gd"])/ 1000. * nKiloTons * 1e6 * 0.002 # bq/kg * kg of water * Gd(SO4)3 concentration
     GdU235    = float(arguments["--U235_Gd"]) / 1000. * nKiloTons * 1e6 * 0.002  #bq/kg * kg of water * Gd(SO4)3 concentration
