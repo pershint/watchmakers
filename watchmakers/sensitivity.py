@@ -253,7 +253,11 @@ def readEfficiencyHistogram():
     print '\nLoading Veto activity:'
     mVETOs,mVETOsU238,mVETOsTh232,mVETOsK40 = loadVETOActivity()
     print 'done.'
-    
+   
+    print '\nLoading Gd activity:'
+    GdU238,GdTh232,GdU235,GdU238_l,GdTh232_l,GdU235_l = loadGdActivity()
+    print 'done.'
+ 
     tankRadius  = float(arguments["--tankRadius"])-float(arguments['--steelThick'])
     tankHeight  = float(arguments["--halfHeight"])-float(arguments['--steelThick'])
     nKiloTons = pi*pow(tankRadius/1000.,2)*(2.*tankHeight/1000.)
@@ -348,21 +352,22 @@ def readEfficiencyHistogram():
 
         elif 'VETO' in _t and 'CHAIN_238U_NA' in _t:
             if '210Tl' in _t:
-                _sing+=hist[_t].GetMaximum()*mVETOsU238[0]*0.002
-                h.Add(hist[_t],mVETOsU238[0]*0.002)
-                lineU238VETO += "%50s %e %15.10f\n"%(_t,hist[_t].GetMaximum(),hist[_t].GetMaximum()*mVETOsU238[0]*0.002)
+                _sing+=hist[_t].GetMaximum()*mVETOsU238*0.002
+                h.Add(hist[_t],mVETOsU238*0.002)
+                lineU238VETO += "%50s %e %15.10f\n"%(_t,hist[_t].GetMaximum(),hist[_t].GetMaximum()*mVETOsU238*0.002)
             else:
-                _sing+=hist[_t].GetMaximum()*mVETOsU238[0]
-                h.Add(hist[_t],mVETOsU238[0])
-                lineU238VETO+= "%50s %e %15.10f\n"%(_t,hist[_t].GetMaximum(),hist[_t].GetMaximum()*mVETOsU238[0])
+                _sing+=hist[_t].GetMaximum()*mVETOsU238
+                h.Add(hist[_t],mVETOsU238)
+                lineU238VETO+= "%50s %e %15.10f\n"%(_t,hist[_t].GetMaximum(),hist[_t].GetMaximum()*mVETOsU238)
         elif 'VETO' in _t and 'CHAIN_232Th_NA' in _t:
-            _sing+=hist[_t].GetMaximum()*mVETOsTh232[0]
-            h.Add(hist[_t],mVETOsTh232[0])
-            lineTh232VETO += "%50s %e %15.10f\n"%(_t,hist[_t].GetMaximum(),hist[_t].GetMaximum()*mVETOsTh232[0])
+            print(mVETOsTh232)
+            _sing+=hist[_t].GetMaximum()*mVETOsTh232
+            h.Add(hist[_t],mVETOsTh232)
+            lineTh232VETO += "%50s %e %15.10f\n"%(_t,hist[_t].GetMaximum(),hist[_t].GetMaximum()*mVETOsTh232)
         elif 'VETO' in _t and '40K_NA' in _t:
-            _sing+=hist[_t].GetMaximum()*mVETOsK40[0]
-            h.Add(hist[_t],mVETOsK40[0])
-            lineKVETO += "%50s %e %15.10f\n"%(_t,hist[_t].GetMaximum(),hist[_t].GetMaximum()*mVETOsK40[0])
+            _sing+=hist[_t].GetMaximum()*mVETOsK40
+            h.Add(hist[_t],mVETOsK40)
+            lineKVETO += "%50s %e %15.10f\n"%(_t,hist[_t].GetMaximum(),hist[_t].GetMaximum()*mVETOsK40)
 
         elif 'GUNITE' in _t and 'CHAIN_238U_NA' in _t:
             if '210Tl' in _t:
