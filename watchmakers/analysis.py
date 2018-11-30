@@ -1,5 +1,6 @@
 from load import *
 from io_operations import testEnabledCondition
+from ROOT import gDirectory
 
 fidRadius = float(arguments['--tankRadius'])-float(arguments['--steelThick'])-float(arguments['--vetoThickR'])-float(arguments['--fidThick'])
 fidHeight = float(arguments['--halfHeight'])-float(arguments['--steelThick'])-float(arguments['--vetoThickZ'])-float(arguments['--fidThick'])
@@ -140,9 +141,9 @@ _posGood=0.1,_dirGood=0.1,_pe=8,_nhit=8,_itr = 1.5):
         _eventPerRun = runSummary.nEvents
     except:
         print 'File',file,'did not have run associated with it. Returning empty histogram.'
-        binR,rangeRmin,rangeRmax = 31,0.0,(fidRadius/PMTRadius)**2
+        binR,rangeRmin,rangeRmax = 31,0.0,(fidRadius/pmtRadius)**2
         binwidthR = (rangeRmax-rangeRmin)/binR
-        binN,rangeNmin,rangeNmax = 48,-fidHeight,fidHeight
+        binN,rangeNmin,rangeNmax = 48,-1.0*fidHeight,fidHeight
         binwidthN = (rangeNmax-rangeNmin)/binN
         h = TH2D('hist%s'%(_tag),'EMPTY - Acceptance in FV -  %s '%(_tag),binR,rangeRmin,rangeRmax,binN,rangeNmin,rangeNmax)
         h.SetXTitle(r'($\rho$/$\rho_{tank}$)$^{2}$')
@@ -161,45 +162,47 @@ _posGood=0.1,_dirGood=0.1,_pe=8,_nhit=8,_itr = 1.5):
     arbre["data"]   = arbre["rfile"].Get('data')
     _someEntries = arbre["data"].GetEntries()
 
-    binR,rangeRmin,rangeRmax = 31,0.0,(fidRadius/PMTRadius)**2
-    binwidthR = (rangeRmax-rangeRmin)/binR
-    binN,rangeNmin,rangeNmax = 48,-fidHeight,fidHeight
-    binwidthN = (rangeNmax-rangeNmin)/binN
+    binR,rangeRmin,rangeRmax = 10,0.0,(fidRadius/pmtRadius)**2
+    binN,rangeNmin,rangeNmax = 10,-1.*fidHeight,fidHeight
     h = TH2D('delEff%s'%(_tag),'Acceptance in FV -  %s '%(_tag),binR,rangeRmin,rangeRmax,binN,rangeNmin,rangeNmax)
-    h.SetXTitle(r'($\rho$/$\rho_{tank}$)$^{2}$')
-    h.SetYTitle('Z (m)')
+    h.SetXTitle(r'($\rho_{true}$/$\rho_{tank}$)$^{2}$')
+    h.SetYTitle('True Z (m)')
     h.SetZTitle('Acceptance Fraction')
     h.GetZaxis().SetTitleOffset(-.55)
     h.GetZaxis().SetTitleColor(1)
     h.GetZaxis().CenterTitle()
     #Now, we need to go entry by entry and fill our total histogram (denom)
     #And also fill our numerator if events pass the condition
-    rho2eqn ="(r/%f)**2"%(PMTRadius)
-    thedraw = "z:%s"%(rho2eqn)
+    mcr = "sqrt(mcx**2 + mcy**2)"
+    r = "sqrt(x**2 + y**2)"
+    rho2eqn ="(%s/%f)**2"%(mcr,pmtRadius)
+    thedraw = "mcz:%s"%(rho2eqn)
+
+    MCFVcond = "mcz>%f"%(rangeNmin)
+    MCFVcond += "&& mcz<%f"%(rangeNmax)
+    MCFVcond += "&& %s<%f"%(mcr,fidRadius)
 
     FVcond = "z>%f"%(rangeNmin)
     FVcond += "&& z<%f"%(rangeNmax)
-    FVcond += "&& r<%f"%(fidRadius)
+    FVcond += "&& %s<%f"%(r,fidRadius)
 
-    effcond = "closestPMT/1000.>%f"%(_d)
+    effcond = "closestPMT/1000.>%f"%(_distance2pmt)
     effcond += "&& good_pos>%f " %(_posGood)
     effcond += "&& inner_hit > 4 &&  veto_hit < 4"
     effcond += "&& n9 > %f" %(_n9)
     #First, draw that sweet, sweet total events in FV
-    arbre["data"].Draw("%f>>h_effdenominator(%s,%s,%I,%f,%f,%I,%f,%f)"%(\
-          'totDet%s'%(_tag),'Total Events in each bin -  %s '%(_tag),\
-          binR,rangeRmin,rangeRmax,binN,rangeNmin,rangeNmax),FVcond,"goff")
-    hnum = gDirectory.Get("h_effdenominator")
-    arbre["data"].Draw("%f>>h_effnumerator(%s,%s,%I,%f,%f,%I,%f,%f)"%(\
-          'totDet%s'%(_tag),'Events accepted in each bin -  %s '%(_tag),\
-          binR,rangeRmin,rangeRmax,binN,rangeNmin,rangeNmax) ,"%s && %s"%(FVcond,effcond),"goff")
-    hdenomm = gDirectory.Get("h_effnumerator")
+    arbre["data"].Draw("%s>>h_effdenominator(%i,%f,%f,%i,%f,%f)"%(thedraw,\
+          binR,rangeRmin,rangeRmax,binN,rangeNmin,rangeNmax),\
+          MCFVcond,"goff")
+    hdenom = gDirectory.Get("h_effdenominator")
+    arbre["data"].Draw("%s>>h_effnumerator(%i,%f,%f,%i,%f,%f)"%(thedraw,\
+          binR,rangeRmin,rangeRmax,binN,rangeNmin,rangeNmax) ,"%s && %s && %s"%(MCFVcond,FVcond,effcond),"goff")
+    hnum = gDirectory.Get("h_effnumerator")
     #Now, we fill the actual efficiency histogram with the division of the two
     h.Divide(hnum,hdenom,1.,1.,"b")
     h.SaveAs("bonsai_root_files%s/%s/FVAcc%s.C"%(additionalString,cover,_tag))
     arbre["rfile"].Close()
     del arbre
-    return eff
 
 
 def integralCoincidence(R,lowerBound,upperBound):

@@ -82,7 +82,7 @@ docstring = """
 
     -M                  Merge result files from trial ntuples. Step one.
     --histograms        Apply n9-position cuts and create efficiency histograms. Step two.
-    --FVEfficiency      Look at event selection in Fiducial volume and create histograms. Optional.
+    --FVAccHists     Look at Acceptance in Fiducial volume for given parameter cuts and create histograms. Optional.
     --evalRate          Evaluate the rates and combine to efficiency histrograms Step three.
 
     --U238_PPM=<_Uppm>  Concentration of U-238 in glass [Default: %f]
