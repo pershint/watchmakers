@@ -1,6 +1,15 @@
 from load import *
 from io_operations import testEnabledCondition
 
+fidRadius = float(arguments['--tankRadius'])-float(arguments['--steelThick'])-float(arguments['--vetoThickR'])-float(arguments['--fidThick'])
+fidHeight = float(arguments['--halfHeight'])-float(arguments['--steelThick'])-float(arguments['--vetoThickZ'])-float(arguments['--fidThick'])
+
+pmtRadius = float(arguments['--tankRadius'])-float(arguments['--steelThick'])-float(arguments['--vetoThickR'])
+pmtHeight = float(arguments['--halfHeight'])-float(arguments['--steelThick'])-float(arguments['--vetoThickZ'])
+
+detectorRadius  = float(arguments['--tankRadius'])-float(arguments['--steelThick'])
+detectorHeight  = float(arguments['--halfHeight'])-float(arguments['--steelThick'])
+
 def drange(start, stop, step):
     rii= start
     while rii<stop:
@@ -109,6 +118,85 @@ _posGood=0.1,_dirGood=0.1,_pe=8,_nhit=8,_itr = 1.5):
             print '(%2d,%4.2e),'%(_n9,eff),
 
     h.SaveAs("bonsai_root_files%s/%s/hist%s.C"%(additionalString,cover,_tag))
+    arbre["rfile"].Close()
+    del arbre
+    return eff
+
+def obtainEfficiencyInFV(cover,file,_tag,_distance2pmt=1,_n9=8,_dist=30.0,\
+_posGood=0.1,_dirGood=0.1,_pe=8,_nhit=8,_itr = 1.5):
+    '''For the given merged bonsai file, will generate a histogram giving the
+    efficiency inside of the defined fiducial volume'''
+    # covPCT  = coveragePCT[cover]
+    para = testEnabledCondition(arguments)
+    additionalString  = para[0]
+    arbre = {}
+    arbre["rfile"] = TFile(file)
+    print 'Reading', file
+    try:
+        runSummary = arbre["rfile"].Get('runSummary')
+        Entries = runSummary.GetEntries()
+        runSummary.GetEntry(Entries-1)
+        events = 0
+        _eventPerRun = runSummary.nEvents
+    except:
+        print 'File',file,'did not have run associated with it. Returning empty histogram.'
+        binR,rangeRmin,rangeRmax = 31,0.0,(fidRadius/PMTRadius)**2
+        binwidthR = (rangeRmax-rangeRmin)/binR
+        binN,rangeNmin,rangeNmax = 48,-fidHeight,fidHeight
+        binwidthN = (rangeNmax-rangeNmin)/binN
+        h = TH2D('hist%s'%(_tag),'EMPTY - Acceptance in FV -  %s '%(_tag),binR,rangeRmin,rangeRmax,binN,rangeNmin,rangeNmax)
+        h.SetXTitle(r'($\rho$/$\rho_{tank}$)$^{2}$')
+        h.SetYTitle('Z (m)')
+        h.SetZTitle('Acceptance Fraction')
+        h.GetZaxis().SetTitleOffset(-.55);
+        h.GetZaxis().SetTitleColor(1);
+        h.GetZaxis().CenterTitle();
+        h.SaveAs("bonsai_root_files%s/%s/FVAcc%s.C"%(additionalString,cover,_tag))
+        return -1
+
+    for i in range(10):
+        events+= runSummary.subEventTally[i]
+    totalEvents = float(Entries)*_eventPerRun
+
+    arbre["data"]   = arbre["rfile"].Get('data')
+    _someEntries = arbre["data"].GetEntries()
+
+    binR,rangeRmin,rangeRmax = 31,0.0,(fidRadius/PMTRadius)**2
+    binwidthR = (rangeRmax-rangeRmin)/binR
+    binN,rangeNmin,rangeNmax = 48,-fidHeight,fidHeight
+    binwidthN = (rangeNmax-rangeNmin)/binN
+    h = TH2D('delEff%s'%(_tag),'Acceptance in FV -  %s '%(_tag),binR,rangeRmin,rangeRmax,binN,rangeNmin,rangeNmax)
+    h.SetXTitle(r'($\rho$/$\rho_{tank}$)$^{2}$')
+    h.SetYTitle('Z (m)')
+    h.SetZTitle('Acceptance Fraction')
+    h.GetZaxis().SetTitleOffset(-.55)
+    h.GetZaxis().SetTitleColor(1)
+    h.GetZaxis().CenterTitle()
+    #Now, we need to go entry by entry and fill our total histogram (denom)
+    #And also fill our numerator if events pass the condition
+    rho2eqn ="(r/%f)**2"%(PMTRadius)
+    thedraw = "z:%s"%(rho2eqn)
+
+    FVcond = "z>%f"%(rangeNmin)
+    FVcond += "&& z<%f"%(rangeNmax)
+    FVcond += "&& r<%f"%(fidRadius)
+
+    effcond = "closestPMT/1000.>%f"%(_d)
+    effcond += "&& good_pos>%f " %(_posGood)
+    effcond += "&& inner_hit > 4 &&  veto_hit < 4"
+    effcond += "&& n9 > %f" %(_n9)
+    #First, draw that sweet, sweet total events in FV
+    arbre["data"].Draw("%f>>h_effdenominator(%s,%s,%I,%f,%f,%I,%f,%f)"%(\
+          'totDet%s'%(_tag),'Total Events in each bin -  %s '%(_tag),\
+          binR,rangeRmin,rangeRmax,binN,rangeNmin,rangeNmax),FVcond,"goff")
+    hnum = gDirectory.Get("h_effdenominator")
+    arbre["data"].Draw("%f>>h_effnumerator(%s,%s,%I,%f,%f,%I,%f,%f)"%(\
+          'totDet%s'%(_tag),'Events accepted in each bin -  %s '%(_tag),\
+          binR,rangeRmin,rangeRmax,binN,rangeNmin,rangeNmax) ,"%s && %s"%(FVcond,effcond),"goff")
+    hdenomm = gDirectory.Get("h_effnumerator")
+    #Now, we fill the actual efficiency histogram with the division of the two
+    h.Divide(hnum,hdenom,1.,1.,"b")
+    h.SaveAs("bonsai_root_files%s/%s/FVAcc%s.C"%(additionalString,cover,_tag))
     arbre["rfile"].Close()
     del arbre
     return eff

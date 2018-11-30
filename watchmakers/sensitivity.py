@@ -159,6 +159,70 @@ def sensitivityMapPass2New():
 
                     print ''
 
+def sensitivityMapInFV():
+    '''For the given configuration on initializing watchmakers,
+    Generates Fiducial Volume Efficiency histograms for all merged
+    files.'''
+
+    print "Evaluating sensitivity in FV for all signal/background with given minimum parameter requirements"
+
+    proc,loca,type,color,lineS,acc,scale   = [],[],[],[],[],[],[]
+
+    proc        += ['QGSP_BERT_EMV','QGSP_BERT_EMX','QGSP_BERT','QGSP_BIC',\
+    'QBBC','QBBC_EMZ','FTFP_BERT','QGSP_FTFP_BERT']
+    _t          = 'FN%s' % (site)
+    loca        += [_t,_t, _t,_t,_t,_t,_t,_t]
+    type        += ['si','si','si','si','si','si','si','si']
+    acc         += ['corr','corr','corr','corr','corr','corr','corr', 'corr']
+    color       += [kO+6,kO+6,kO+6,kO+6,kO+6,kO+6,kO+6,kO+6]
+    lineS       += [2,2,2,2,2,2,2,2]
+    scale       += [1./8.,1./8.,1./8.,1./8.,1./8.,1./8.,1./8.,1./8.]
+
+    #radionuclides
+    proc        += ['9003','11003']
+    _t          =  'RN%s' % (site)
+    loca        += [_t,_t]
+    type        += ['ei','ei']
+    acc         += ['di','di']
+    color       += [kG+3,kG+3]
+    lineS       += [1,1]
+    scale       += [1.,1.]
+    #ibds
+    if site == 'boulby':
+        proc    += ['boulby','boulby','neutron']
+    else:
+        proc    += ['imb','imb','neutron']
+    loca        += ['S','S','N%s'%(site)]
+    type        += ['ei','ei','ei']
+    acc         += ['di','corr','corr']
+    color       += [kA+0,kA-0,kA-0]
+    lineS       += [1,2,2]
+    scale       += [-1.0,0.0,0.0]
+
+    additionalString,additionalCommands,additionalMacStr,additionalMacOpt = testEnabledCondition(arguments)
+    if additionalString == "":
+        additionalString = "_default"
+    location = 'Boulby '
+
+    h = {}
+    
+    d,proc,coverage = loadSimulationParametersNew()
+
+    minAchieve = 0
+
+    for _p in proc:
+        for _loc in proc[_p]:
+            for idx,_cover in enumerate(coverage):
+                for _element in d[_p]:
+                    _tag = "%s_%s_%s_%s"%(_cover,_loc,_element,_p)
+                    _file = "bonsai_root_files%s/%s/merged_%s_%s_%s.root"%(additionalMacStr,_cover,_loc,_element,_p)
+                    print _tag
+                    obtainEfficiencyInFV(_cover,_file,_tag)
+                    print ''
+
+
+
+
 def readEfficiencyHistogram():
 
     hist = {}
