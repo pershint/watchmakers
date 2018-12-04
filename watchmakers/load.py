@@ -350,7 +350,7 @@ def loadVETOActivity():
     M_U238,Lambda_U238,Abund_U238 = 3.953e-25,4.916e-18,0.992745
     PPM_U238    = float(arguments["--U238_vPPM"])
     ActivityU238= Lambda_U238*PPM_U238/M_U238/1e6
-    mVETOsU238 = mVETOS*ActivityU238
+    mVETOsU238 = mVETOs*ActivityU238
     print 'U238',mVETOsU238, ', PPM:',PPM_U238,'activity per PMT:', ActivityU238*mass,'Bq per PMT per isotope in chain'
 
     M_Th232,Lambda_Th232,Abund_Th232 = 3.853145e-25, 1.57e-18,1.0
@@ -514,14 +514,16 @@ def loadRockActivity():
 
 def loadGdActivity():
 
-    d,process,coverage = loadSimulationParamatersNew()
-    tankVolume = pi*pow(tankRadius/1000.,2)*(2.*tankHeight/1000.)/1000.
-    GdU238    = float(arguments["--U238_Gd"]) / 1000. * tankVolume * 1e6 * 0.002 # bq/kg * kg of water * Gd(SO4)3 concentration
-    GdTh232   = float(arguments["--Th232_Gd"])/ 1000. * tankVolume * 1e6 * 0.002 # bq/kg * kg of water * Gd(SO4)3 concentration
-    GdU235    = float(arguments["--U235_Gd"]) / 1000. * tankVolume * 1e6 * 0.002  #bq/kg * kg of water * Gd(SO4)3 concentration
-    GdU238_l    = float(arguments["--U238_Gd_l"]) / 1000. * tankVolume * 1e6 * 0.002 # bq/kg * kg of water * Gd(SO4)3 concentration
-    GdTh232_l   = float(arguments["--Th232_Gd_l"])/ 1000. * tankVolume * 1e6 * 0.002 # bq/kg * kg of water * Gd(SO4)3 concentration
-    GdU235_l    = float(arguments["--U235_Gd_l"]) / 1000. * tankVolume * 1e6 * 0.002  #bq/kg * kg of water * Gd(SO4)3 concentration
+    d,process,coverage = loadSimulationParametersNew()
+    tankRadius = float(arguments['--tankRadius']) - float(arguments['--steelThick'])
+    halfHeight = float(arguments['--halfHeight']) - float(arguments['--steelThick'])
+    nKiloTons = pi*pow(tankRadius/1000.,2)*(2.*halfHeight/1000.)/1000.
+    GdU238    = float(arguments["--U238_Gd"]) / 1000. * nKiloTons * 1e6 * 0.002 # bq/kg * kg of water * Gd(SO4)3 concentration
+    GdTh232   = float(arguments["--Th232_Gd"])/ 1000. * nKiloTons * 1e6 * 0.002 # bq/kg * kg of water * Gd(SO4)3 concentration
+    GdU235    = float(arguments["--U235_Gd"]) / 1000. * nKiloTons * 1e6 * 0.002  #bq/kg * kg of water * Gd(SO4)3 concentration
+    GdU238_l    = float(arguments["--U238_Gd_l"]) / 1000. * nKiloTons * 1e6 * 0.002 # bq/kg * kg of water * Gd(SO4)3 concentration
+    GdTh232_l   = float(arguments["--Th232_Gd_l"])/ 1000. * nKiloTons * 1e6 * 0.002 # bq/kg * kg of water * Gd(SO4)3 concentration
+    GdU235_l    = float(arguments["--U235_Gd_l"]) / 1000. * nKiloTons * 1e6 * 0.002  #bq/kg * kg of water * Gd(SO4)3 concentration
 
 
     return GdU238,GdTh232,GdU235,GdU238_l,GdTh232_l,GdU235_l
