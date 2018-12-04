@@ -163,35 +163,12 @@ def sensitivityMapInFV():
     '''For the given configuration on initializing watchmakers,
     Generates Fiducial Volume Efficiency histograms for all merged
     files.'''
-
-    site = arguments["--site"]
-
+    
     print "Evaluating sensitivity in FV for all signal/background with given minimum parameter requirements"
-
-    proc = []
-
-    proc        += ['QGSP_BERT_EMV','QGSP_BERT_EMX','QGSP_BERT','QGSP_BIC',\
-    'QBBC','QBBC_EMZ','FTFP_BERT','QGSP_FTFP_BERT']
-    
-    #radionuclides
-    proc        += ['9003','11003']
-    
-    if site == 'boulby':
-        proc    += ['boulby','boulby','neutron']
-    else:
-        proc    += ['imb','imb','neutron']
-
     additionalString,additionalCommands,additionalMacStr,additionalMacOpt = testEnabledCondition(arguments)
     if additionalString == "":
         additionalString = "_default"
-    location = 'Boulby '
-
-    h = {}
-    
     d,proc,coverage = loadSimulationParametersNew()
-
-    minAchieve = 0
-
     for _p in proc:
         for _loc in proc[_p]:
             for idx,_cover in enumerate(coverage):
