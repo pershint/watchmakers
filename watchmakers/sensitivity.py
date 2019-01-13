@@ -9,6 +9,7 @@ else:
     import watchmakers.NeutrinoOscillation as nuOsc
 
 from decimal import *
+import json
 setcontext(ExtendedContext)
 
 from numpy import max
@@ -569,8 +570,11 @@ def readEfficiencyHistogram():
     _res = "%s %4.1f %3d %3d %4.3f %4.3f %4.1f %4.1f" %(_cover,_maxOff_dtw2,_maxOffn92,_maxOffn92-_maxOffset2,_maxSignal2,_maxBkgd2,T3SIGMA,metric)
     _strRes = "results_DTW_%dmm_U238_%4.3fPPM_Th232_%4.3fPPM_K_%4.3fPPM.txt"%(float(arguments['--vetoThickR']),float(arguments["--U238_PPM"]),float(arguments["--Th232_PPM"]),float(arguments["--K_PPM"]))
     # _strRes = 'res.txt'
-    with open(_strRes,'a') as file:
-        file.write(_res+'\n')
+    print '\n\n Writing maximal sensitivity summary to JSON file'
+    _JSONRes = "results_DTW_%dmm_U238_%4.3fPPM_Th232_%4.3fPPM_K_%4.3fPPM.json"%(float(arguments['--vetoThickR']),float(arguments["--U238_PPM"]),float(arguments["--Th232_PPM"]),float(arguments["--K_PPM"]))
+    resultSummary = CreateEvalRateJson(_cover,_maxOff_dtw2,_maxOffn92,_maxOffn92-_maxOffset2,_maxSignal2,_maxBkgd2)
+    with open(_JSONRes,'a') as f:
+        json.dump(resultSummary, f, sort_keys=True, indent=4)
 
     print '\n\nWriting histograms to file',_str
     f_root = TFile(_str,"recreate")
@@ -659,3 +663,24 @@ def findRate():
         file.write(_res+'\n')
 
     return boulbyIBDRate,rRn222,mPMTsU238,mPMTsTh232,mPMTsK40
+
+def CreateEvalRateJson(coverage, dist_wall, n9_del,n9_prompt,sig,bkg):
+    '''Function returns a JSON object with a summary of the detector configuration
+    used, optimal n9/dist_wall cuts found, and the signal/background rates. Format
+    can be fed directly into WATCHStat JSON database for loading'''
+    evalRateLog = {}
+    evalRateLog["buffersize"] = dist_wall
+    evalRateLog["Photocoverage"] = coverage
+    evalRateLog["n9_delayed"] = n9_del
+    evalRateLog["n9_prompt"] = n9_prompt
+    evalRateLog["site"] = arguments["--site"]
+    tankRadius = float(arguments["--tankRadius"])-float(arguments['--steelThick'])
+    tankHeight  = float(arguments["--halfHeight"])-float(arguments['--steelThick'])
+    evalRateLog["pmt_type"] = arguments["--pmtModel"]
+    evalRateLog["tank_radius"] = tankRadius
+    evalRateLog["tank_height"] = tankHeight
+    evalRateLog["Signal_Contributions"] = {}
+    evalRateLog["Signal_Contributions"]["Core_1"] = sig
+    evalRateLog["Signal_Contributions"]["Core_2"] = sig
+    evalRateLog["Signal_Contributions"]["Accidentals"] = bkg
+    return evalRateLog
