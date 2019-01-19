@@ -28,8 +28,8 @@ if __name__ == "__main__":
     if arguments['--histograms']:
         sensitivityMapPass2New()
 
-    if arguments['--FVAccHists']:
-        sensitivityMapInFV()
+    if arguments['--PMTAccHists']:
+        EfficiencyMapInPMTVol()
 
     if arguments['--evalRate']:
         readEfficiencyHistogram()
